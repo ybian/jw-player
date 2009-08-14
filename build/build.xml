@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<project name="jwplayer" basedir="../" default="build-debug-player">
+	<!-- Define variables/paths used in this build script -->
+	<property file="./build/build.properties" />
+
+	<!--
+		Have you edit the properties file to make sure the paths are right oo your system?
+	-->
+	<target name="check-properties">
+		<fail unless="asdoc.exe">The "asdoc.exe" property must be set in ${build.dir}/build.properties.</fail>
+		<fail unless="compc.exe">The "compc.exe" property must be set in ${build.dir}/build.properties.</fail>
+		<fail unless="mxmlc.exe">The "mxmlc.exe" property must be set in ${build.dir}/build.properties.</fail>
+	</target>
+
+	<!-- Clean out a directory -->
+	<target name="clean-dir">
+		<delete dir="${clean-directory}" />
+		<mkdir dir="${clean-directory}" />
+	</target>
+
+	<!--
+		Clean out the debug folder
+	-->
+	<target name="clean-debug">
+		<delete dir="${debug.dir}">
+			<include name="*.swf" />
+		</delete>
+	</target>
+
+	<!--
+		Clean out the release folder
+	-->
+	<target name="clean-release">
+		<delete dir="${release.dir}" />
+	</target>
+
+	<!--
+		Generate ASDoc output for the library
+	-->
+	<target name="asdoc-all" depends="check-properties">
+		<!-- Clean out the contents of the doc directory, without delete "docs" -->
+		<!--
+		<delete includeemptydirs="true">
+			<fileset dir="${docs.dir}" includes="**/*" />
+		</delete>
+		-->
+
+		<exec executable="${asdoc.exe}" spawn="no">
+			<!-- Place the documentation in the "docs" directory -->
+			<arg line="-output '${docs.dir}'" />
+
+			<!-- Specify the main source path as "src" -->
+			<arg line="-compiler.source-path '${src.dir}'" />
+
+			<!-- Include the necessary framework libraries in the class path -->
+			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
+			<arg line="-compiler.library-path '${lib.dir}'" />
+
+			<!-- Document all of the classes in the "src" tree -->
+			<arg line="-doc-sources '${src.dir}' " />
+
+			<!-- Include the library name in the window title -->
+			<arg line="-window-title 'JW Player' " />
+
+			<!-- Ignore missing type declarations -->
+			<arg line="-warnings=false" />
+		</exec>
+
+		<exec executable="${browser}" spawn="yes">
+			<arg line="'file://${docs.dir}/index.html'" />
+		</exec>
+	</target>
+
+	<target name="test-all">
+		<exec executable="${flashDebugPlayer.exe}" spawn="yes">
+			<arg line="'${debug.dir}/player.swf'" />
+		</exec>
+	</target>
+
+	<target name="build-swf">
+		<condition property="debugLine" value="-debug=true" else="">
+			<isset property="debug" />
+		</condition>
+		<condition property="optimizeLine" value="-optimize=true" else="">
+			<isset property="optimize" />
+		</condition>
+		<condition property="incrementLine" value="-incremental=true" else="">
+			<isset property="increment" />
+		</condition>
+		<condition property="additionalArgLine" value="${additionalArgs}" else="">
+			<isset property="additionalArgs" />
+		</condition>
+
+		<exec executable="${mxmlc.exe}" dir="${basedir}">
+			<!-- Point to the main class .as file -->
+			<arg line="'${src.dir}/${package}/${class}.as'" />
+
+			<!-- Place the built .swf file in the "bin" directory -->
+			<arg line="-output '${outputPath}/${swf}.swf'" />
+
+			<!-- Define source directories for "src" and "tests" -->
+			<arg line="-compiler.source-path '${src.dir}'" />
+
+			<!-- Include the necessary framework libraries in the class path -->
+			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
+			<arg line="-compiler.library-path '${lib.dir}'" />
+
+			<!-- Include locale-specific items in the path -->
+			<arg line="-locale ${flexsdk.locale}" />
+			<arg line="-compiler.library-path '${flexsdk.locale.dir}'" />
+			
+			<!-- Enable incremental compilation -->
+			<arg line="${incrementLine}" />
+			
+			<!-- Optimize for size -->
+			<arg line="${optimizeLine}" />
+
+			<!-- Compile with network sandbox -->
+			<arg line="-use-network=true" />
+
+			<!-- Ignore missing type definitions -->
+			<arg line="-warnings=false" />
+
+			<!-- Allow additional arguments to be passed in as parameters -->
+			<arg value="${additionalArgLine}" />
+			
+			<!-- Enable debugging -->
+			<arg line="${debugLine}" />
+
+		</exec>
+	</target>
+	
+	
+	<!--
+		Compile the player in debug mode.
+	-->
+	<target name="debug-swf">
+		<antcall target="build-swf">
+			<param name="swf" value="${swf}" />
+			<param name="class" value="${class}" />
+			<param name="package" value="${package}" />
+			<param name="debug" value="true" />
+			<param name="increment" value="true"/>
+			<param name="outputPath" value="${debug.dir}"/>
+		</antcall>
+
+	</target>
+
+	<target name="release-swf">
+		<condition property="additionalArgs" value="${additionalArgs}" else="">
+			<isset property="additionalArgs" />
+		</condition>
+		<antcall target="build-swf">
+			<param name="swf" value="${swf}" />
+			<param name="class" value="${class}" />
+			<param name="package" value="${package}" />
+			<param name="optimize" value="true" />
+			<param name="outputPath" value="${release.dir}"/>
+		</antcall>
+	</target>
+
+	<target name="build-debug-player" depends="check-properties">
+		<antcall target="debug-swf">
+			<param name="package" value="${application.package}" />
+			<param name="class" value="${application.class}" />
+			<param name="swf" value="player" />
+		</antcall>
+	</target>
+
+	<target name="build-release-player" depends="check-properties, clean-release">
+		<antcall target="release-swf">
+			<param name="package" value="${application.package}" />
+			<param name="class" value="${application.class}" />
+			<param name="swf" value="player" />
+		</antcall>
+	</target>
+
+</project>
