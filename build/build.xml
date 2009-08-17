@@ -10,6 +10,7 @@
 		<fail unless="asdoc.exe">The "asdoc.exe" property must be set in ${build.dir}/build.properties.</fail>
 		<fail unless="compc.exe">The "compc.exe" property must be set in ${build.dir}/build.properties.</fail>
 		<fail unless="mxmlc.exe">The "mxmlc.exe" property must be set in ${build.dir}/build.properties.</fail>
+		<fail unless="flexunit.lib.dir">The "flexunit.lib.dir" property must be set in ${build.dir}/build.properties.</fail>		
 	</target>
 
 	<!-- Clean out a directory -->
@@ -54,6 +55,7 @@
 
 			<!-- Include the necessary framework libraries in the class path -->
 			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
+			<arg line="-compiler.library-path '${flexunit.lib.dir}'" />			
 			<arg line="-compiler.library-path '${lib.dir}'" />
 
 			<!-- Document all of the classes in the "src" tree -->
@@ -71,6 +73,12 @@
 		</exec>
 	</target>
 
+	<target name="test-unit" depends="check-properties">
+		<exec executable="${flashDebugPlayer.exe}" spawn="yes">
+			<arg line="'${debug.dir}/player.swf'" />
+		</exec>
+	</target>
+	
 	<target name="test-all">
 		<exec executable="${flashDebugPlayer.exe}" spawn="yes">
 			<arg line="'${debug.dir}/player.swf'" />
@@ -103,6 +111,7 @@
 
 			<!-- Include the necessary framework libraries in the class path -->
 			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
+			<arg line="-compiler.library-path '${flexunit.lib.dir}'" />	
 			<arg line="-compiler.library-path '${lib.dir}'" />
 
 			<!-- Include locale-specific items in the path -->
