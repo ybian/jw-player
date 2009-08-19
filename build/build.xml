@@ -100,6 +100,7 @@
 			<!-- Ignore missing type definitions -->
 			<arg line="-warnings=false" />
 		</exec>
+		<copy file="${test.dir}/PlayerTestLauncher-app.xml" tofile="${basedir}/bin-test/PlayerTestLauncher-app.xml" />
 	</target>
 
 	<target name="test-unit" depends="check-properties">
