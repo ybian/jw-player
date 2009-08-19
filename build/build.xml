@@ -76,10 +76,10 @@
 	<target name="build-test">
 		<exec executable="${amxmlc.exe}" dir="${basedir}">
 			<!-- Point to the main class .as file -->
-			<arg line="'${test.dir}/PlayerTestRunner.as'" />
+			<arg line="'${test.dir}/PlayerTestLauncher.as'" />
 
 			<!-- Place the built .swf file in the "bin" directory -->
-			<arg line="-output '${basedir}/bin-test/TestRunner.swf'" />
+			<arg line="-output '${basedir}/bin-test/PlayerTestLauncher.swf'" />
 
 			<!-- Define source directories for "src" and "tests" -->
 			<arg line="-compiler.source-path '${test.dir}'" />
@@ -104,7 +104,7 @@
 
 	<target name="test-unit" depends="check-properties">
 		<exec executable="${airDebugLauncher.exe}">
-			<arg line="'${basedir}/bin-test/TestRunner-app.xml'" />
+			<arg line="'${basedir}/bin-test/PlayerTestLauncher-app.xml'" />
 		</exec>
 	</target>
 	

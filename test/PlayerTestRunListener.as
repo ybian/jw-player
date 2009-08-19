@@ -18,8 +18,8 @@ package {
 		private var playerTestResultPrinter:PlayerTestResultPrinter;
 		
 		
-		public function PlayerTestRunListener(ptv:PlayerTestRunner, ptrp:PlayerTestResultPrinter) {
-			this.playerTestLauncher = ptv;
+		public function PlayerTestRunListener(ptl:PlayerTestLauncher, ptrp:PlayerTestResultPrinter) {
+			this.playerTestLauncher = ptl;
 			this.playerTestResultPrinter = ptrp;
 		}
 		

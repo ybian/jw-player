@@ -37,7 +37,7 @@ package {
 		}
 			
 		public function print():void {
-			var newFile:File = File.desktopDirectory.resolvePath("result.xml");
+			var newFile:File = File.documentsDirectory.resolvePath("result.xml");
 			var fileStream:FileStream = new FileStream();
 			fileStream.open(newFile, FileMode.WRITE);
 			fileStream.writeUTFBytes(output);
