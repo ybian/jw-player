@@ -1,0 +1,36 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<mx:WindowedApplication xmlns:mx = "http://www.adobe.com/2006/mxml"
+				layout = "absolute"
+				xmlns:flexui="org.flexunit.flexui.*"
+				invoke="handleOnInvoke(event)"
+				>
+	<mx:Script>
+		<![CDATA[
+			private function handleOnInvoke(event:InvokeEvent):void {
+				var nativePath:String = event.currentDirectory.nativePath;
+				var arguments:Object = buildArgumentObject(event.arguments);
+				var windowless:Boolean = (arguments['windowless']);
+				var path:String = (arguments['outputpath']);
+				if (windowless){
+					new PlayerTestLauncher(path);
+				} else {
+					new PlayerTestLauncher(path, visualRunner);
+				}
+			}
+			
+			private function buildArgumentObject(argumentArray:Array):Object{
+				var arguments:Object = {};
+				for (var i:Number=0;i<argumentArray.length;i++){
+					var arr:Array = argumentArray[i].split("=");
+					if (!arr[1]){
+						arguments[arr[0]] = true;
+					} else {
+						arguments[arr[0]] = arr[1];
+					}
+				}
+				return arguments;
+			}
+		]]>
+	</mx:Script>
+	<flexui:TestRunnerBase id="visualRunner" width="100%" height="100%" />
+</mx:WindowedApplication>

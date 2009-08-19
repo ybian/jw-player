@@ -1,5 +1,6 @@
 package {
 	import flexunit.framework.TestSuite;
+	
 	import tests.*;
 	
 	

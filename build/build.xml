@@ -76,7 +76,7 @@
 	<target name="build-test">
 		<exec executable="${amxmlc.exe}" dir="${basedir}">
 			<!-- Point to the main class .as file -->
-			<arg line="'${test.dir}/PlayerTestLauncher.as'" />
+			<arg line="'${test.dir}/PlayerTest.mxml'" />
 
 			<!-- Place the built .swf file in the "bin" directory -->
 			<arg line="-output '${basedir}/bin-test/PlayerTestLauncher.swf'" />
@@ -87,6 +87,7 @@
 
 			<!-- Include the necessary framework libraries in the class path -->
 			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
+			<arg line="-compiler.library-path '${airsdk.lib.dir}'" />
 			<arg line="-compiler.library-path '${flexunit.lib.dir}'" />	
 			<arg line="-compiler.library-path '${lib.dir}'" />
 
@@ -94,6 +95,9 @@
 			<arg line="-locale ${flexsdk.locale}" />
 			<arg line="-compiler.library-path '${flexsdk.locale.dir}'" />
 
+			<!-- Enable incremental compilation -->
+			<arg line="-incremental=true" />
+			
 			<!-- Compile with network sandbox -->
 			<arg line="-use-network=true" />
 
@@ -103,9 +107,28 @@
 		<copy file="${test.dir}/PlayerTestLauncher-app.xml" tofile="${basedir}/bin-test/PlayerTestLauncher-app.xml" />
 	</target>
 
-	<target name="test-unit" depends="check-properties">
+	<target name="test-unit-windowless" depends="check-properties,build-test">
+		<antcall target="test-unit">
+			<param name="windowless" value="true"/>
+			<param name="outputPath" value="${basedir}/bin-test/output.xml"/>
+		</antcall>
+	</target>
+	
+	<target name="test-unit" depends="check-properties,build-test">
+		<condition property="windowlessLine" value="-- windowless" else="">
+			<isset property="windowless" />
+		</condition>
+		<condition property="outputLine" value="-- 'outputpath=${outputPath}'" else="">
+			<isset property="outputPath" />
+		</condition>
 		<exec executable="${airDebugLauncher.exe}">
 			<arg line="'${basedir}/bin-test/PlayerTestLauncher-app.xml'" />
+			
+			<!-- Enable windowless run -->
+			<arg line="${windowlessLine}" />
+			
+			<!-- Set output path -->
+			<arg line="${outputLine}" />
 		</exec>
 	</target>
 	

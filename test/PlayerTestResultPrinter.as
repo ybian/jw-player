@@ -13,8 +13,10 @@ package {
 	 */
 	public class PlayerTestResultPrinter {
 		private var output:String;
-		
-		public function PlayerTestResultPrinter() {
+		private var outputPath:String;
+
+		public function PlayerTestResultPrinter(outputPath:String) {
+			this.outputPath = outputPath;
 			output = "";
 		}
 		
@@ -37,11 +39,13 @@ package {
 		}
 			
 		public function print():void {
-			var newFile:File = File.documentsDirectory.resolvePath("result.xml");
-			var fileStream:FileStream = new FileStream();
-			fileStream.open(newFile, FileMode.WRITE);
-			fileStream.writeUTFBytes(output);
-			fileStream.close();
+			if (outputPath){
+				var newFile:File = new File(outputPath);
+				var fileStream:FileStream = new FileStream();
+				fileStream.open(newFile, FileMode.WRITE);
+				fileStream.writeUTFBytes(output);
+				fileStream.close();
+			}
 		}
 	}
 }
