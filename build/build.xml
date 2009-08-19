@@ -72,10 +72,39 @@
 			<arg line="'file://${docs.dir}/index.html'" />
 		</exec>
 	</target>
+	
+	<target name="build-test">
+		<exec executable="${amxmlc.exe}" dir="${basedir}">
+			<!-- Point to the main class .as file -->
+			<arg line="'${test.dir}/PlayerTestRunner.as'" />
+
+			<!-- Place the built .swf file in the "bin" directory -->
+			<arg line="-output '${basedir}/bin-test/TestRunner.swf'" />
+
+			<!-- Define source directories for "src" and "tests" -->
+			<arg line="-compiler.source-path '${test.dir}'" />
+			<arg line="-compiler.source-path '${src.dir}'" />
+
+			<!-- Include the necessary framework libraries in the class path -->
+			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
+			<arg line="-compiler.library-path '${flexunit.lib.dir}'" />	
+			<arg line="-compiler.library-path '${lib.dir}'" />
+
+			<!-- Include locale-specific items in the path -->
+			<arg line="-locale ${flexsdk.locale}" />
+			<arg line="-compiler.library-path '${flexsdk.locale.dir}'" />
+
+			<!-- Compile with network sandbox -->
+			<arg line="-use-network=true" />
+
+			<!-- Ignore missing type definitions -->
+			<arg line="-warnings=false" />
+		</exec>
+	</target>
 
 	<target name="test-unit" depends="check-properties">
-		<exec executable="${flashDebugPlayer.exe}" spawn="yes">
-			<arg line="'${debug.dir}/player.swf'" />
+		<exec executable="${airDebugLauncher.exe}">
+			<arg line="'${basedir}/bin-test/TestRunner-app.xml'" />
 		</exec>
 	</target>
 	
