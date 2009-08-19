@@ -19,7 +19,7 @@ package com.longtailvideo.jwplayer.model {
 		public var title:String			= "";
 		public var type:String			= "";
 		
-		public function PlaylistItem(obj:Object) {
+		public function PlaylistItem(obj:Object = null) {
 			for (var itm:String in obj) {
 				if (this[itm] && typeof(this[itm]) == typeof(0)) {
 					this[itm] = Number(obj[itm]);

@@ -1,5 +1,4 @@
 package com.longtailvideo.jwplayer.player {
-	import com.jeroenwijering.events.AbstractView;
 	import com.longtailvideo.jwplayer.controller.Controller;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
@@ -12,16 +11,20 @@ package com.longtailvideo.jwplayer.player {
 	import flash.events.Event;
 	import flash.utils.setTimeout;
 	
+	/**
+	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
+	 *
+	 * @eventType com.longtailvideo.jwplayer.events.PlayerEvent.JWPLAYER_READY
+	 */
+	[Event(name="jwplayerReady", type = "com.longtailvideo.jwplayer.events.PlayerEvent")]
+
 
 	/**
 	 * Main class for JW Flash Media Player
 	 *
 	 * @author Pablo Schklowsky
-	 *
 	 */
 	public class Player extends Sprite {
-		private var zq:AbstractView;
-
 		private var model:Model;
 		private var view:View;
 		private var controller:Controller;
@@ -52,7 +55,7 @@ package com.longtailvideo.jwplayer.player {
 		}
 
 		/**
-		 * @return
+		 * The player's current configuration
 		 */
 		public function get config():PlayerConfig {
 			return model.config;
@@ -80,26 +83,30 @@ package com.longtailvideo.jwplayer.player {
 		}
 
 		/**
-		 *
+		 * Set to true when the player is blocking playback.
 		 */
 		public function get isBlocking():Boolean {
 			return false;
 		}
 
 		/**
-		 *
-		 * @param target
-		 * @return
-		 *
+		 * Request that the player block playback.  When the Player is blocking, the currently playing stream is 
+		 * paused, and no new playback-related commands will be honored until <code>unblockPlayback</code> is 
+		 * called. 
+		 * 
+		 * @param target Reference to plugin requesting playback blocking
+		 * @return <code>true</code>, if the blocking request is successful.  If another plugin is blocking,returns
+		 * <code>false</code>. 
 		 */
 		public function blockPlayback(target:IPlugin):Boolean {
 			return false;
 		}
 
 		/**
-		 *
-		 * @param target
-		 * @return
+		 * Unblocks the player.  If the player was buffering or playing when it was blocked, playback will resume.
+		 * 
+		 * @param target Reference to the requesting plugin. 
+		 * @return <code>true</code>, if <code>target</code> had previously requested player blocking.
 		 *
 		 */
 		public function unblockPlayback(target:IPlugin):Boolean {

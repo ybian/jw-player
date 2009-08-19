@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="jwplayer" basedir="../" default="build-debug-player">
+<project name="jwplayer" basedir="../" default="build-release-player">
 	<!-- Define variables/paths used in this build script -->
 	<property file="./build/build.properties" />
 
