@@ -1,5 +1,4 @@
 package {
-	import flexunit.framework.TestSuite;
 	
 	import tests.*;
 	
@@ -14,6 +13,7 @@ package {
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
 	public class PlayerTestSuite {
-		public var exampleTest:ExampleTest;
+		public var configSuite:ConfigSuite;
+		public var playlistSuite:PlaylistSuite;
 	}
 }

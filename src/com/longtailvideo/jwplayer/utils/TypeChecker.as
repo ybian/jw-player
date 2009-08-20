@@ -4,7 +4,12 @@ package com.longtailvideo.jwplayer.utils {
 	public class TypeChecker {
 		
 		public static function getType(object:Object, property:String):String {
-			return describeType(object).accessor.(@name == property).@type;
+			var description:XML = describeType(object);
+			if ((description.accessor as XMLList).length()) { 
+				return description.accessor.(@name == property).@type;
+			} else {
+				return description.variable.(@name == property).@type;
+			}
 		}
 		
 		public static function fromString(type:String, value:String):* {
@@ -13,7 +18,7 @@ package com.longtailvideo.jwplayer.utils {
 					return stringToColor(value);
 				case "number":
 					return Number(value);
-				case "Boolean":
+				case "boolean":
 					if (value.toLowerCase() == "true") return true;
 					else if (value == "1") return true;
 					else return false;

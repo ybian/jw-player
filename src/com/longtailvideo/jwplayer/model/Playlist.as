@@ -1,4 +1,6 @@
 package com.longtailvideo.jwplayer.model {
+	import com.longtailvideo.jwplayer.events.PlaylistEvent;
+	
 	import flash.events.EventDispatcher;
 
 	/**
@@ -45,6 +47,7 @@ package com.longtailvideo.jwplayer.model {
 		 * 
 		 */
 		public function load(newPlaylist:Object):void {
+			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED));
 			return; 
 		}
 
@@ -71,21 +74,32 @@ package com.longtailvideo.jwplayer.model {
 		 * 
 		 */
 		public function insertItem(itm:PlaylistItem, idx:Number=-1):void {
-			if (idx >= 0) {
+			if (idx >= 0 && idx < list.length) {
 				list.splice(idx, 0, itm);
 			} else {
 				list.push(itm);
 			}
+			
+			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED));
+			
+			if (index < 0) {
+				currentIndex = list.length - 1;
+			} 
 		}
 
 		/**
 		 * Removes an item at the requested index
 		 *  
-		 * @param idx
+		 * @param idx The index from which to remove the item
 		 */
 		public function removeItemAt(idx:Number):void {
 			if (idx >= 0 && idx < list.length && list.length > 0) {
 				list.splice(idx, 1);
+				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED));
+			}
+			
+			if (index >= list.length) {
+				currentIndex = list.length - 1;
 			}
 		}
 		
@@ -94,7 +108,14 @@ package com.longtailvideo.jwplayer.model {
 		}		
 		
 		public function set currentIndex(idx:Number):void {
-			index = idx;
+			if (idx != index && idx < list.length) {
+				if (idx >= 0) {
+					index = idx;
+					dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM));
+				} else {
+					index = -1;
+				}
+			}
 		} 
 		
 		public function get currentItem():PlaylistItem {

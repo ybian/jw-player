@@ -84,7 +84,11 @@ package com.longtailvideo.jwplayer.model {
 		
 		private function setProperty(name:String, value:String):void {
 			if (hasOwnProperty(name)) {
-				this[name] = TypeChecker.fromString(TypeChecker.getType(this, name), value);
+				try {
+					this[name] = TypeChecker.fromString(TypeChecker.getType(this, name), value);
+				} catch (e:Error) {
+					// 'name' was a read-only property
+				}
 			} else {
 				this[name] = value;
 			}
@@ -114,7 +118,7 @@ package com.longtailvideo.jwplayer.model {
 		public function get date():String { return playlistItem('date'); }
 
 		/** Text description of the file. **/
-		public function get text():String { return playlistItem('text'); }
+		public function get description():String { return playlistItem('description'); }
 
 		/** Duration of the file in seconds. **/
 		public function get duration():String { return playlistItem('duration'); }

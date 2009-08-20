@@ -3,6 +3,7 @@
 				layout = "absolute"
 				xmlns:flexui="org.flexunit.flexui.*"
 				invoke="handleOnInvoke(event)"
+				height="800" width="1024"
 				>
 	<mx:Script>
 		<![CDATA[
