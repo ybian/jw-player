@@ -40,11 +40,12 @@ package com.longtailvideo.jwplayer.player {
 			model = new Model();
 			view = new View();
 			controller = new Controller(this, model, view);
-			controller.setupPlayer();
 
 			model.addGlobalListener(forward);
 			view.addGlobalListener(forward);
 			controller.addGlobalListener(forward);
+
+			controller.setupPlayer();
 		}
 
 		/**

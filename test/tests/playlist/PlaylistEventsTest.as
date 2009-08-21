@@ -18,7 +18,6 @@ package tests.playlist {
 		public function testLoad():void {
 			list.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, testLoadResult);
 			list.load(null);
-			
 		}
 		
 		private function testLoadResult(evt:Event):void {

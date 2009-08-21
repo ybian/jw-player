@@ -4,7 +4,10 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.utils.Configger;
+	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.view.View;
+	
+	import flash.events.Event;
 
 	/**
 	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
@@ -31,19 +34,20 @@ package com.longtailvideo.jwplayer.controller {
 		private var _model:Model;
 		private var _view:View;
 		
-		private var configger:Configger;
-		
 		public function Controller(player:Player, model:Model, view:View) {
+			var rootRef:RootReference = new RootReference(player);
+						
 			_player = player;
 			_model = model;
 			_view = view;
 			
-			configger = new Configger(player);
 		}
 		
 		public function setupPlayer():void {
+			var configger:Configger = new Configger();
+			
 			try {
-				var flashVars:Object = configger.getFlashvars();
+				configger.getFlashvars();
 			} catch(e:Error) {
 				errorState();
 			}

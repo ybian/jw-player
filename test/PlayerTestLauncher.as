@@ -2,6 +2,7 @@ package {
 		import org.flexunit.flexui.TestRunnerBase;
 		import org.flexunit.listeners.UIListener;
 		import org.flexunit.runner.FlexUnitCore;
+		import org.flexunit.runner.notification.async.XMLListener;
 		import flash.desktop.NativeApplication;	
 
 	
@@ -24,6 +25,7 @@ package {
 				core.addListener(new UIListener(visualRunner));
 			}
 			core.addListener(new PlayerTestRunListener(this, new PlayerTestResultPrinter(outputPath)));
+			core.addListener(new XMLListener());
 			core.run(PlayerTestSuite);
 		}
 		

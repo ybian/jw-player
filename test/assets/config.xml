@@ -1,0 +1,35 @@
+<config>
+	<controlbar>bottom</controlbar>
+	<dock>false</dock>
+	<height>300</height>
+	<icons>true</icons>
+	<playlist>none</playlist>
+	<playlistsize>180</playlistsize>
+	<width>400</width>
+	<autostart>false</autostart>
+	<bufferlength>1</bufferlength>
+	<displayclick>play</displayclick>
+	<fullscreen>false</fullscreen>
+	<item>0</item>
+	<linktarget>_blank</linktarget>
+	<mute>false</mute>
+	<repeat>none</repeat>
+	<resizing>true</resizing>
+	<shuffle>false</shuffle>
+	<smoothing>true</smoothing>
+	<stretching>uniform</stretching>
+	<volume>90</volume>
+	<abouttext>JW Player</abouttext>
+	<aboutlink>http://www.longtailvideo.com/players/jw-flv-player/</aboutlink>
+	<debug>none</debug>
+	<version>5.0.1</version>
+	<hd.cookie>true</hd.cookie>
+	<pluginconfig>
+		<plugin name="hd">
+			<file>hdfile.flv</file>
+		</plugin>
+		<plugin name="gapro">
+			<id>abc123</id>
+		</plugin>
+	</pluginconfig>
+</config>

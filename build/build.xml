@@ -114,6 +114,9 @@
 			<arg line="-warnings=false" />
 		</exec>
 		<copy file="${test.src.dir}/PlayerTestLauncher-app.xml" tofile="${test.bin.dir}/PlayerTestLauncher-app.xml" />
+		<copy todir="${basedir}/bin-test/assets">
+			<fileset dir="${test.dir}/assets" />
+		</copy>
 	</target>
 
 	<target name="test-unit-windowless" depends="check-properties,build-test">
