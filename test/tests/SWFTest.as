@@ -1,6 +1,7 @@
 package tests {
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	
+	import flash.display.DisplayObject;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	
@@ -48,7 +49,7 @@ package tests {
 		 * @param evt Event containing the loaded SWF
 		 */
 		private function loadComplete(evt:Event):void {
-			var loadedSwf = evt.target.content;
+			var loadedSwf:DisplayObject = evt.target.content as DisplayObject;
 			RootReference.stage.addChild(loadedSwf);
 			Assert.assertTrue(true);
 		}

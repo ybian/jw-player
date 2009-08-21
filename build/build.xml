@@ -115,7 +115,7 @@
 		</exec>
 		<copy file="${test.src.dir}/PlayerTestLauncher-app.xml" tofile="${test.bin.dir}/PlayerTestLauncher-app.xml" />
 		<copy todir="${basedir}/bin-test/assets">
-			<fileset dir="${test.dir}/assets" />
+			<fileset dir="${test.src.dir}/assets" />
 		</copy>
 	</target>
 
@@ -126,7 +126,7 @@
 		</antcall>
 	</target>
 	
-	<target name="test-unit" depends="clean-test,check-properties,debug-swf,build-test">
+	<target name="test-unit" depends="clean-test,check-properties,build-debug-player,build-test">
 		<copy file="${debug.dir}/astaire.swf" tofile="${test.bin.dir}/player.swf" />
 		<condition property="windowlessLine" value="-- windowless" else="">
 			<isset property="windowless" />
