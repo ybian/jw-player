@@ -1,4 +1,5 @@
 package com.longtailvideo.jwplayer.model {
+	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	
 	import flash.events.EventDispatcher;
@@ -38,6 +39,8 @@ package com.longtailvideo.jwplayer.model {
 		private var _skin:String;
 		private var _width:Number = 280;
 		
+		private var _pluginConfig:Object = {};
+		
 		public function PlayerConfig(model:Model):void {
 			_model = model;
 		}
@@ -57,14 +60,27 @@ package com.longtailvideo.jwplayer.model {
 				if (newItem.hasOwnProperty(item.name())) {
 					newItem[item.name()] = item.toString();
 					playlistItems = true;
+				} else if (item.name().toString().indexOf(".") > 0) {
+					setPluginProperty(item.name().toString(), item.toString());
+				} else if (item.name() == "pluginconfig") {
+					xmlPluginConfig(item);
 				} else {
-					setProperty(item.name(), item.toString());
+					setProperty(item.name().toString(), item.toString());
 				}
 			}
 			if (playlistItems) {
 				_model.playlist.insertItem(newItem, 0);
 			}
 		}
+		
+		private function xmlPluginConfig(pluginconfig:XML):void {
+			for each(var plugin:XML in pluginconfig.plugin) {
+				for each(var item:XML in plugin) {
+					setPluginProperty(plugin.@name + "." + item.name(), item.toString());
+				}  
+			}
+		} 
+		
 		
 		private function objectConfig(config:Object):void {
 			var newItem:PlaylistItem = new PlaylistItem();
@@ -73,6 +89,8 @@ package com.longtailvideo.jwplayer.model {
 				if (newItem.hasOwnProperty(item)) {
 					newItem[item] = config[item];
 					playlistItems = true;
+				} else if (item.indexOf(".") > 0) {
+					setPluginProperty(item, config[item]);
 				} else {
 					setProperty(item, config[item]);
 				}
@@ -85,12 +103,29 @@ package com.longtailvideo.jwplayer.model {
 		private function setProperty(name:String, value:String):void {
 			if (hasOwnProperty(name)) {
 				try {
-					this[name] = TypeChecker.fromString(TypeChecker.getType(this, name), value);
+					this[name] = TypeChecker.fromString(value, TypeChecker.getType(this, name));
 				} catch (e:Error) {
 					// 'name' was a read-only property
 				}
 			} else {
 				this[name] = value;
+			}
+		}
+
+		/**
+		 * Sets the value of a plugin config property 
+		 * @param name The parameter name in the form "pluginname.propertyname"
+		 * @param value The value to set.
+		 */
+		private function setPluginProperty(name:String, value:String):void {
+			var pluginName:String = name.substring(0, name.indexOf(".")-1).toLowerCase();
+			var pluginProperty:String = name.substring(name.indexOf(".")+1, name.length-1).toLowerCase();
+
+			if(pluginName && pluginProperty && value) {
+				if (!_pluginConfig.hasOwnProperty(pluginName)) {
+					_pluginConfig[pluginName] = new PluginConfig(pluginName);
+				}
+				_pluginConfig[pluginName][pluginProperty] = TypeChecker.fromString(value);
 			}
 		}
 		

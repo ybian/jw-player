@@ -11,8 +11,24 @@ package com.longtailvideo.jwplayer.utils {
 				return description.variable.(@name == property).@type;
 			}
 		}
+
+		public static function guessType(value:String):String {
+			var bools:Array = ["true", "false", "t", "f"];
+			if (bools.indexOf(value.toLowerCase().replace(" ","")) >= 0) {
+				return "Boolean";
+			} else if ( value.search(/^(#|0x)\d{3,6}/) >= 0 ) {
+				return "uint";
+			} else if (!isNaN(Number(value)) ) {
+				return "Number";
+			} else {
+				return "String";
+			}
+		} 
 		
-		public static function fromString(type:String, value:String):* {
+		public static function fromString(value:String, type:String=null):* {
+			if (type == null) 
+				type = guessType(value);
+
 			switch(type.toLowerCase()) {
 				case "uint":
 					return stringToColor(value);
