@@ -7,7 +7,10 @@ package tests {
 	
 	import flexunit.framework.Assert;
 	
+	import mx.controls.Alert;
 	import mx.controls.SWFLoader;
+	
+	import org.flexunit.async.Async;
 	
 	/**
 	 * This is an example test class. It should be instantiated by a {@link org.flexunit.runners.Suite}. 
@@ -17,7 +20,7 @@ package tests {
 	 * @date 2009-08-18
 	 */
 	public class SWFTest {
-		[Test(async,timeout="2500")]
+		[Test(async)]
 		public function testSWF():void {
 			loadPlayer("file=test.mp4&plugins=blah1,blah2");
 		}
@@ -39,8 +42,12 @@ package tests {
 			loader.percentWidth = 100;
 			loader.percentHeight = 100;
 			loader.maintainAspectRatio = false;
-			loader.addEventListener(Event.COMPLETE, loadComplete);
-			loader.addEventListener(ErrorEvent.ERROR, loadError);
+			
+//			loader.addEventListener(Event.COMPLETE, loadComplete);
+//			loader.addEventListener(ErrorEvent.ERROR, loadError);
+			Async.handleEvent(this, loader, Event.COMPLETE, loadComplete, 5000);
+			Async.failOnEvent(this, loader, ErrorEvent.ERROR, 5000);
+			
 			loader.load(url);
 		}
 		
@@ -48,18 +55,14 @@ package tests {
 		 * Called when the SWF loads successfully
 		 * @param evt Event containing the loaded SWF
 		 */
-		private function loadComplete(evt:Event):void {
-			var loadedSwf:DisplayObject = evt.target.content as DisplayObject;
-			RootReference.stage.addChild(loadedSwf);
-			Assert.assertTrue(true);
+		private function loadComplete(evt:Event, params:*):void {
+			try {
+				var loadedSwf:DisplayObject = (evt.target as SWFLoader).content;
+				RootReference.stage.addChild(loadedSwf);
+			} catch (e:Error) {
+				Assert.fail(e.message);
+			}
 		}
-		
-		/**
-		 * Called when the SWF fails to load.
-		 * @param evt Error notification
-		 */ 
-		private function loadError(evt:ErrorEvent):void{
-			Assert.assertTrue(false);
-		}
+
 	}
 }

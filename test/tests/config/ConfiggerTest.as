@@ -30,7 +30,7 @@ package tests.config {
 			Assert.assertEquals("config", XML(configger.config).name());
 		}
 		
-		[Test(async,timeout="1000")]
+		[Test(async,timeout="2000")]
 		public function testFlashvars():void {
 			Async.handleEvent(this, configger, Event.COMPLETE, flashvarsSuccess);
 			Async.failOnEvent(this, configger, ErrorEvent.ERROR);

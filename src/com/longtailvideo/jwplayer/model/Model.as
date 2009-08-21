@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.media.MediaSource;
 	
 	/**
 	 * 
@@ -18,6 +19,8 @@ package com.longtailvideo.jwplayer.model {
 		public function Model() {
 			_playlist = new Playlist();
 			_config = new PlayerConfig(this);
+			
+			var media:MediaSource;
 		}
 		
 		/** The player config object **/ 

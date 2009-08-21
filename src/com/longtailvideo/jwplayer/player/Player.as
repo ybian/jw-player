@@ -114,6 +114,58 @@ package com.longtailvideo.jwplayer.player {
 		public function unblockPlayback(target:IPlugin):Boolean {
 			return false;
 		}
+		
+		public function volume(volume:Number):Boolean {
+			return false;
+		}
+		
+		public function mute(state:Boolean=null):Boolean {
+			return false;
+		}
+		
+		public function play():Boolean {
+			return false;
+		}
+
+		public function pause():Boolean {
+			return false;	
+		}
+		
+		public function stop():Boolean {
+			return false;
+		}
+		
+		public function seek(position:Number):Boolean {
+			return false;
+		}
+		
+		public function load(item:*):Boolean {
+			return false;
+		}
+		
+		public function playlistItem(index:Number):Boolean {
+			return false;
+		}
+		
+		public function playlistNext():Boolean {
+			return false;
+		}
+
+		public function playlistPrev():Boolean {
+			return false;
+		}
+		
+		public function redraw():Boolean {
+			return false;
+		}
+	
+		public function fullscreen(on:Boolean=true):Boolean {
+			return false;
+		}
+		
+		public function link(index:Number=NaN):Boolean {
+			return false;
+		}
 
 	}
 }
