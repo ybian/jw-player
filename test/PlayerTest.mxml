@@ -7,11 +7,14 @@
 				>
 	<mx:Script>
 		<![CDATA[
+			import com.longtailvideo.jwplayer.utils.RootReference;
+			
 			private function handleOnInvoke(event:InvokeEvent):void {
 				var nativePath:String = event.currentDirectory.nativePath;
 				var arguments:Object = buildArgumentObject(event.arguments);
 				var windowless:Boolean = (arguments['windowless']);
 				var path:String = (arguments['outputpath']);
+				new RootReference(this);
 				if (windowless){
 					new PlayerTestLauncher(path);
 				} else {

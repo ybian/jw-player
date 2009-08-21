@@ -27,6 +27,15 @@
 			<include name="*.swf" />
 		</delete>
 	</target>
+	
+	<!--
+		Clean out the test folder
+	-->
+	<target name="clean-test">
+		<delete dir="${test.bin.dir}">
+			<include name="*.swf" />
+		</delete>
+	</target>
 
 	<!--
 		Clean out the release folder
@@ -76,13 +85,13 @@
 	<target name="build-test">
 		<exec executable="${amxmlc.exe}" dir="${basedir}">
 			<!-- Point to the main class .as file -->
-			<arg line="'${test.dir}/PlayerTest.mxml'" />
+			<arg line="'${test.src.dir}/PlayerTest.mxml'" />
 
 			<!-- Place the built .swf file in the "bin" directory -->
-			<arg line="-output '${basedir}/bin-test/PlayerTestLauncher.swf'" />
+			<arg line="-output '${test.bin.dir}/PlayerTestLauncher.swf'" />
 
 			<!-- Define source directories for "src" and "tests" -->
-			<arg line="-compiler.source-path '${test.dir}'" />
+			<arg line="-compiler.source-path '${test.src.dir}'" />
 			<arg line="-compiler.source-path '${src.dir}'" />
 
 			<!-- Include the necessary framework libraries in the class path -->
@@ -104,17 +113,18 @@
 			<!-- Ignore missing type definitions -->
 			<arg line="-warnings=false" />
 		</exec>
-		<copy file="${test.dir}/PlayerTestLauncher-app.xml" tofile="${basedir}/bin-test/PlayerTestLauncher-app.xml" />
+		<copy file="${test.src.dir}/PlayerTestLauncher-app.xml" tofile="${test.bin.dir}/PlayerTestLauncher-app.xml" />
 	</target>
 
 	<target name="test-unit-windowless" depends="check-properties,build-test">
 		<antcall target="test-unit">
 			<param name="windowless" value="true"/>
-			<param name="outputPath" value="${basedir}/bin-test/output.xml"/>
+			<param name="outputPath" value="${test.bin.dir}/output.xml"/>
 		</antcall>
 	</target>
 	
-	<target name="test-unit" depends="check-properties,build-test">
+	<target name="test-unit" depends="clean-test,check-properties,debug-swf,build-test">
+		<copy file="${debug.dir}/astaire.swf" tofile="${test.bin.dir}/player.swf" />
 		<condition property="windowlessLine" value="-- windowless" else="">
 			<isset property="windowless" />
 		</condition>
@@ -122,7 +132,7 @@
 			<isset property="outputPath" />
 		</condition>
 		<exec executable="${airDebugLauncher.exe}">
-			<arg line="'${basedir}/bin-test/PlayerTestLauncher-app.xml'" />
+			<arg line="'${test.bin.dir}/PlayerTestLauncher-app.xml'" />
 			
 			<!-- Enable windowless run -->
 			<arg line="${windowlessLine}" />

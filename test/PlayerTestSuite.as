@@ -15,5 +15,6 @@ package {
 	public class PlayerTestSuite {
 		public var configSuite:ConfigSuite;
 		public var playlistSuite:PlaylistSuite;
+		public var swftest:SWFTest;
 	}
 }
