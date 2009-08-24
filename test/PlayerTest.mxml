@@ -15,11 +15,7 @@
 				var windowless:Boolean = (arguments['windowless']);
 				var path:String = (arguments['outputpath']);
 				new RootReference(this);
-				if (windowless){
-					new PlayerTestLauncher(path);
-				} else {
-					new PlayerTestLauncher(path, visualRunner);
-				}
+				new PlayerTestLauncher(path, visualRunner);
 			}
 			
 			private function buildArgumentObject(argumentArray:Array):Object{

@@ -21,17 +21,21 @@ package {
 		}
 		
 		public function logDescription(msg:String, description:IDescription):void {
-			log("");
-			log(msg);
-			log("All metadata: "+description.getAllMetadata().toXMLString());
-			log("Display name: "+description.displayName);
-			log("Suite: "+description.isSuite);
-			log("Test: "+description.isTest);
-			log("Test count: "+description.testCount);
-			log("Children: "+description.children.toString());				
-			log("Children: "+description.children.toArray().toString());
-			log("Empty: "+description.isEmpty);
-			log("");
+			try {
+				log("");
+				log(msg);
+				log("All metadata: "+description.getAllMetadata().toXMLString());
+				log("Display name: "+description.displayName);
+				log("Suite: "+description.isSuite);
+				log("Test: "+description.isTest);
+				log("Test count: "+description.testCount);
+				log("Children: "+description.children.toString());				
+				log("Children: "+description.children.toArray().toString());
+				log("Empty: "+description.isEmpty);
+				log("");
+			} catch (err:Error) {
+				log(err.toString());
+			}
 		}
 		
 		public function log(msg:String):void {

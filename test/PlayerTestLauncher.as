@@ -13,12 +13,13 @@ package {
 	 * @author zach@longtailvideo.com
 	 * @date 2009-08-18
 	 */
-	public class PlayerTestLauncher extends TestRunnerBase {
+	public class PlayerTestLauncher {
 		private var core:FlexUnitCore;			
 		private var visualRunner:TestRunnerBase;
+		private var outputPath:String;
 
 		public function PlayerTestLauncher(outputPath:String=null, visualRunner:TestRunnerBase=null) {
-			
+			this.outputPath = outputPath;
 			var core:FlexUnitCore = new FlexUnitCore();
 			if (visualRunner){
 				this.visualRunner = visualRunner;
@@ -34,7 +35,7 @@ package {
 		 * @param status The appropriate exit code.
 		 */
 		public function complete(status:Number):void {
-			if (!visualRunner){
+			if (outputPath){
 				visualRunner = null;
 				NativeApplication.nativeApplication.exit(status);
 			}

@@ -122,12 +122,12 @@
 	<target name="test-unit-windowless" depends="check-properties,build-test">
 		<antcall target="test-unit">
 			<param name="windowless" value="true"/>
-			<param name="outputPath" value="${test.bin.dir}/output.xml"/>
+			<param name="outputPath" value="${test.bin.dir}/test-results.xml"/>
 		</antcall>
 	</target>
 	
 	<target name="test-unit" depends="clean-test,check-properties,build-debug-player,build-test">
-		<copy file="${debug.dir}/astaire.swf" tofile="${test.bin.dir}/player.swf" />
+		<copy file="${debug.dir}/player.swf" tofile="${test.bin.dir}/player.swf" />
 		<condition property="windowlessLine" value="-- windowless" else="">
 			<isset property="windowless" />
 		</condition>
