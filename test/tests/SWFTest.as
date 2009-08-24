@@ -25,6 +25,11 @@ package tests {
 			loadPlayer("file=test.mp4&plugins=blah1,blah2");
 		}
 		
+		[Test(async)]
+		public function testXMLConfig():void {
+			loadPlayer("config=assets/config.xml&file=overwrite.flv");
+		}
+
 		/**
 		 * Loads an instance of the JW Player with the specified flashvars
 		 * @param flashvars

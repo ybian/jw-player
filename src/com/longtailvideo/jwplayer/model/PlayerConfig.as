@@ -3,6 +3,7 @@ package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	
 	import flash.events.EventDispatcher;
+	import flash.utils.getQualifiedClassName;
 
 	/**
 	 * Configuration data for the player
@@ -45,44 +46,10 @@ package com.longtailvideo.jwplayer.model {
 			_model = model;
 		}
 		
-		public function setConfig(cfg:Object):void {
-			if (cfg is XML) {
-				xmlConfig(cfg as XML);
-			} else {
-				objectConfig(cfg);
-			}
-		}
-		
-		private function xmlConfig(xml:XML):void {
-			var newItem:PlaylistItem = new PlaylistItem();
-			var playlistItems:Boolean = false;
-			for each(var item:XML in xml.children()) {
-				if (newItem.hasOwnProperty(item.name())) {
-					newItem[item.name()] = item.toString();
-					playlistItems = true;
-				} else if (item.name().toString().indexOf(".") > 0) {
-					setPluginProperty(item.name().toString(), item.toString());
-				} else if (item.name() == "pluginconfig") {
-					xmlPluginConfig(item);
-				} else {
-					setProperty(item.name().toString(), item.toString());
-				}
-			}
-			if (playlistItems) {
-				_model.playlist.insertItem(newItem, 0);
-			}
-		}
-		
-		private function xmlPluginConfig(pluginconfig:XML):void {
-			for each(var plugin:XML in pluginconfig.plugin) {
-				for each(var item:XML in plugin) {
-					setPluginProperty(plugin.@name + "." + item.name(), item.toString());
-				}  
-			}
-		} 
-		
-		
-		private function objectConfig(config:Object):void {
+		public function setConfig(config:Object):void {
+			if (getQualifiedClassName(config) != "Object")
+				return;
+				 
 			var newItem:PlaylistItem = new PlaylistItem();
 			var playlistItems:Boolean = false;
 			for (var item:String in config) {

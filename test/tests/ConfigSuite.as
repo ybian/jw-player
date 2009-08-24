@@ -10,8 +10,7 @@ package tests {
 	public class ConfigSuite {
 		public var t1:ConfigObjectTest;
 		public var t2:ConfigLoadObjectTest;
-		public var t3:ConfigLoadXMLTest;
-		public var t4:TypeCheckerTest;
-		public var t5:ConfiggerTest;
+		public var t3:TypeCheckerTest;
+		public var t4:ConfiggerTest;
 	}
 }

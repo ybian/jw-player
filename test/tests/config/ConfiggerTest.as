@@ -3,6 +3,7 @@ package tests.config {
 	
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
+	import flash.utils.getQualifiedClassName;
 	
 	import flexunit.framework.Assert;
 	
@@ -16,7 +17,7 @@ package tests.config {
 		public function setup():void {
 			configger = new Configger();
 		}
-		
+
 		[Test(async,timeout="1000")]
 		public function testXML():void {
 			Async.handleEvent(this, configger, Event.COMPLETE, xmlSuccess);
@@ -26,10 +27,9 @@ package tests.config {
 		
 		private function xmlSuccess(evt:Event, params:*):void {
 			Assert.assertNotNull(configger.config);
-			Assert.assertTrue(configger.config is XML);
-			Assert.assertEquals("config", XML(configger.config).name());
+			Assert.assertEquals(configger.config['hd.file'], 'hdfile.flv');
 		}
-		
+
 		[Test(async,timeout="2000")]
 		public function testFlashvars():void {
 			Async.handleEvent(this, configger, Event.COMPLETE, flashvarsSuccess);
@@ -38,8 +38,9 @@ package tests.config {
 		}
 
 		private function flashvarsSuccess(evt:Event, params:*):void {
+			Assert.assertEquals(configger.config['file'], "bunny.swf");
 			Assert.assertNotNull(configger.config);
-			Assert.assertTrue(configger.config is Object);
+			Assert.assertEquals(getQualifiedClassName(configger.config), "Object");
 		}
 
 	}

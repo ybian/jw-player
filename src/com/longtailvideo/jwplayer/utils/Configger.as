@@ -22,7 +22,7 @@ package com.longtailvideo.jwplayer.utils {
 	[Event(name="error", type = "flash.events.ErrorEvent")]
 
 	public class Configger extends EventDispatcher {
-		private var _config:Object;
+		private var _config:Object = {};
 
 		/** The loaded config object; can an XML object or a hash map. **/
 		public function get config():Object {
@@ -33,7 +33,7 @@ package com.longtailvideo.jwplayer.utils {
 		 * @return
 		 * @throws Error if something bad happens.
 		 */
-		public function getFlashvars():void {
+		public function loadConfig():void {
 			if (this.xmlConfig) {
 				loadXML(this.xmlConfig);
 			} else {
@@ -56,7 +56,6 @@ package com.longtailvideo.jwplayer.utils {
 			xmlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, xmlFail);
 			xmlLoader.addEventListener(Event.COMPLETE, loadComplete);
 			xmlLoader.load(new URLRequest(url));
-
 		}
 
 		/**
@@ -64,14 +63,10 @@ package com.longtailvideo.jwplayer.utils {
 		 * @param params Hash map containing key/value pairs
 		 */
 		public function loadFlashvars(params:Object):void {
-			var configBlock:Object = {};
 			try {
 				for (var param:String in params) {
-					if (!configBlock.hasOwnProperty(param)) {
-						configBlock[param.toLowerCase()] = params[param];
-					}
+					setConfigParam(param, params[param]);
 				}
-				_config = configBlock;
 				dispatchEvent(new Event(Event.COMPLETE));
 			} catch (e:Error) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
@@ -82,8 +77,8 @@ package com.longtailvideo.jwplayer.utils {
 		private function loadComplete(evt:Event):void {
 			var loadedXML:XML = XML((evt.target as URLLoader).data);
 			if (loadedXML.name().toString().toLowerCase() == "config" && loadedXML.children().length() > 0) {
-				_config = loadedXML;
-				dispatchEvent(new Event(Event.COMPLETE));
+				parseXML(loadedXML);
+				loadFlashvars(RootReference.root.loaderInfo.parameters);
 			} else {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, "Config was empty"));
 			}
@@ -92,6 +87,29 @@ package com.longtailvideo.jwplayer.utils {
 		private function xmlFail(evt:ErrorEvent):void {
 			dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, evt.text));
 		}
+
+		private function parseXML(xml:XML):void {
+			for each(var item:XML in xml.children()) {
+				if (item.name() == "pluginconfig") {
+					parsePluginConfig(item);
+				} else {
+					setConfigParam(item.name().toString(), item.toString());
+				}
+			}
+		}
+		
+		private function parsePluginConfig(pluginconfig:XML):void {
+			for each(var plugin:XML in pluginconfig.plugin) {
+				for each(var pluginParam:XML in plugin.children()) {
+					setConfigParam(plugin.@name + "." + pluginParam.name(), pluginParam.toString()); 
+				}  
+			}
+		}
+		
+		private function setConfigParam(name:String, value:String):void {
+			_config[name.toLowerCase()] = value;
+		}
+
 
 	}
 }

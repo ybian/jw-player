@@ -7,6 +7,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.view.View;
 	
+	import flash.events.ErrorEvent;
 	import flash.events.Event;
 
 	/**
@@ -45,12 +46,22 @@ package com.longtailvideo.jwplayer.controller {
 		
 		public function setupPlayer():void {
 			var configger:Configger = new Configger();
+			configger.addEventListener(Event.COMPLETE, configLoaded);
+			configger.addEventListener(ErrorEvent.ERROR, configFailed);
 			
 			try {
-				configger.getFlashvars();
+				configger.loadConfig();
 			} catch(e:Error) {
 				errorState();
 			}
+		}
+		
+		private function configLoaded(evt:Event):void {
+			
+		}
+
+		private function configFailed(evt:ErrorEvent):void {
+			
 		}
 		
 		private function errorState():void {

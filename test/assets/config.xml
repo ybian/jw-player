@@ -2,6 +2,7 @@
 	<controlbar>bottom</controlbar>
 	<dock>false</dock>
 	<height>300</height>
+	<file>configfile.flv</file>
 	<icons>true</icons>
 	<playlist>none</playlist>
 	<playlistsize>180</playlistsize>
