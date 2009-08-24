@@ -1,6 +1,5 @@
 package tests {
 	import tests.config.ConfigLoadObjectTest;
-	import tests.config.ConfigLoadXMLTest;
 	import tests.config.ConfigObjectTest;
 	import tests.config.ConfiggerTest;
 	import tests.config.TypeCheckerTest;
