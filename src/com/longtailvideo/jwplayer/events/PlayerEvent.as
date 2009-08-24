@@ -1,5 +1,7 @@
 package com.longtailvideo.jwplayer.events {
 	import flash.events.Event;
+	import flash.external.ExternalInterface;
+	import flash.system.Capabilities;
 
 	/**
 	 * Event class thrown by the Player
@@ -29,8 +31,19 @@ package com.longtailvideo.jwplayer.events {
 		 */
 		public static var JWPLAYER_ERROR:String = "jwplayerError";
 
+		public var id:String;
+		public var client:String;
+		public var version:String;
+
 		public function PlayerEvent(type:String) {
 			super(type, false, false);
+
+			try {
+				if (ExternalInterface.available) {
+					this.id = ExternalInterface.objectID;
+				}
+				this.client = "FLASH" + Capabilities.version;
+			} catch (e:Error) {}
 		}
 		
 	}

@@ -1,11 +1,11 @@
-package com.longtailvideo.jwplayer.model {
+package com.longtailvideo.jwplayer.media {
 
 	/**
 	 * Static typed list of all possible Model states
 	 * 
 	 * @see com.longtailvideo.jwplayer.model.Model
 	 */
-	public class ModelStates {
+	public class MediaState {
 
 		/** Nothing happening. No playback and no file in memory. **/
 		public static var IDLE:String = "IDLE";

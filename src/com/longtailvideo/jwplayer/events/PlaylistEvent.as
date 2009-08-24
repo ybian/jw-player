@@ -1,5 +1,5 @@
 package com.longtailvideo.jwplayer.events {
-	import flash.events.Event;
+	
 
 	/**
 	 * Event class thrown by the Playlist
@@ -7,7 +7,7 @@ package com.longtailvideo.jwplayer.events {
 	 * @see com.longtailvideo.jwplayer.model.Playlist
 	 * @author Pablo Schklowsky
 	 */
-	public class PlaylistEvent extends Event {
+	public class PlaylistEvent extends PlayerEvent {
 		
 		/**
 		 * The PlaylistEvent.JWPLAYER_PLAYLIST_LOADED constant defines the value of the
@@ -40,7 +40,7 @@ package com.longtailvideo.jwplayer.events {
 		public static var JWPLAYER_PLAYLIST_ITEM:String = "jwplayerPlaylistItem";
 
 		public function PlaylistEvent(type:String) {
-			super(type, false, false);
+			super(type);
 		}
 		
 	}

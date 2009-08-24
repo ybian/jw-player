@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.media.MediaSource;
+	import com.longtailvideo.jwplayer.media.MediaState;
 	
 	/**
 	 * 
@@ -11,34 +12,34 @@ package com.longtailvideo.jwplayer.model {
 		private var _config:PlayerConfig;
 		private var _playlist:Playlist;
 
-		private var _state:String;
 		private var _fullscreen:Boolean = false;
 		private var _mute:Boolean = false;
+		
+		private var _currentMedia:MediaSource;
 		
 		/** Constructor **/
 		public function Model() {
 			_playlist = new Playlist();
 			_config = new PlayerConfig(this);
-			
-			var media:MediaSource;
 		}
 		
 		/** The player config object **/ 
 		public function get config():PlayerConfig {
 			return _config;
 		}
+
+		/** The currently loaded MediaSource **/
+		public function get media():MediaSource {
+			return _currentMedia;
+		}
 		
 		/**
 		 * The current player state 
 		 */
 		public function get state():String {
-			return _state;
+			return _currentMedia ? _currentMedia.state : MediaState.IDLE;
 		}
 
-		private function set state(st:String):void {
-			_state = st;
-		}
-		
 		/**
 		 * The loaded playlist 
 		 */
@@ -54,7 +55,7 @@ package com.longtailvideo.jwplayer.model {
 			_fullscreen = b;
 		}
 
-		/** The current fullscreen state of the player **/
+		/** The current mute state of the player **/
 		public function get mute():Boolean {
 			return _mute;
 		}
