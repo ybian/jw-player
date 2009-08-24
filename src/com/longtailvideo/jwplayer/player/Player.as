@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.controller.Controller;
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.Playlist;
@@ -8,7 +9,6 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.utils.setTimeout;
 	
 	/**
@@ -25,6 +25,8 @@ package com.longtailvideo.jwplayer.player {
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
+		private var playerVersion:String = "5.0.1";
+		
 		private var model:Model;
 		private var view:View;
 		private var controller:Controller;
@@ -50,10 +52,10 @@ package com.longtailvideo.jwplayer.player {
 
 		/**
 		 * Forwards all MVC events to interested listeners. 
-		 * @param event
+		 * @param evt
 		 */
-		protected function forward(event:Event):void {
-			dispatchEvent(event);
+		protected function forward(evt:PlayerEvent):void {
+			dispatchEvent(evt);
 		}
 
 		/**
@@ -61,6 +63,13 @@ package com.longtailvideo.jwplayer.player {
 		 */
 		public function get config():PlayerConfig {
 			return model.config;
+		}
+
+		/**
+		 * Player version getter
+		 */
+		public function get version():String {
+			return this.playerVersion;
 		}
 
 		/**
@@ -119,7 +128,7 @@ package com.longtailvideo.jwplayer.player {
 			return false;
 		}
 		
-		public function mute(state:Boolean=null):Boolean {
+		public function mute(state:Boolean=true):Boolean {
 			return false;
 		}
 		
