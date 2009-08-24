@@ -5,8 +5,7 @@ package tests.config {
 	import flash.events.Event;
 	import flash.utils.getQualifiedClassName;
 	
-	import flexunit.framework.Assert;
-	
+	import org.flexunit.Assert;
 	import org.flexunit.async.Async;
 
 	public class ConfiggerTest {

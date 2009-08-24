@@ -5,7 +5,7 @@ package tests {
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	
-	import flexunit.framework.Assert;
+	import org.flexunit.Assert;
 	
 	import mx.controls.Alert;
 	import mx.controls.SWFLoader;

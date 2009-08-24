@@ -3,6 +3,7 @@ package com.longtailvideo.jwplayer.view {
 
 	public class View extends GlobalEventDispatcher {
 		private var _skin:ISkin; 
+		private var _fullscreen:Boolean = false;
 
 		public function View() {
 		}
@@ -14,5 +15,10 @@ package com.longtailvideo.jwplayer.view {
 		public function get skin():ISkin {
 			return _skin;
 		}
+		
+		public function goFullscreen(mode:Boolean=true):void {
+			
+		}
+
 	}
 }

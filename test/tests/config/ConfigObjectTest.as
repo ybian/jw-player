@@ -2,7 +2,7 @@ package tests.config {
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	
-	import flexunit.framework.Assert;
+	import org.flexunit.Assert;
 
 	public class ConfigObjectTest {
 		private var config:PlayerConfig;

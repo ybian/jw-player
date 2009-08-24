@@ -2,7 +2,7 @@ package tests.playlist {
 	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	
-	import flexunit.framework.Assert;
+	import org.flexunit.Assert;
 
 	public class PlaylistTest {
 

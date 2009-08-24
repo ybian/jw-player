@@ -1,7 +1,7 @@
 package tests.config {
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	
-	import flexunit.framework.Assert;
+	import org.flexunit.Assert;
 
 	public class TypeCheckerTest {
 		public var number:Number = 1;

@@ -4,7 +4,7 @@ package tests.playlist {
 	
 	import flash.events.Event;
 	
-	import flexunit.framework.Assert;
+	import org.flexunit.Assert;
 
 	public class PlaylistEventsTest {
 		private var list:Playlist;
