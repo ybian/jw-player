@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.utils {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
+	import flash.system.Security;
 
 	/**
 	 * Maintains a static reference to the stage and root of the application.
@@ -18,6 +19,7 @@ package com.longtailvideo.jwplayer.utils {
 		public function RootReference(displayObj:DisplayObject) {
 			RootReference.root = displayObj.root;
 			RootReference.stage = displayObj.stage;
+			Security.allowDomain("*");
 		}
 	}
 }
