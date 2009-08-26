@@ -83,7 +83,7 @@
 	</target>
 	
 	<target name="build-test">
-		<exec executable="${amxmlc.exe}" dir="${basedir}">
+		<exec executable="${amxmlc.exe}" dir="${basedir}"  failonerror="true">
 			<!-- Point to the main class .as file -->
 			<arg line="'${test.src.dir}/PlayerTest.mxml'" />
 
@@ -119,7 +119,7 @@
 		</copy>
 	</target>
 
-	<target name="test-unit-windowless" depends="check-properties,build-test">
+	<target name="test-unit-windowless">
 		<antcall target="test-unit">
 			<param name="windowless" value="true"/>
 			<param name="outputPath" value="${test.bin.dir}/test-results.xml"/>
@@ -134,7 +134,7 @@
 		<condition property="outputLine" value="-- 'outputpath=${outputPath}'" else="">
 			<isset property="outputPath" />
 		</condition>
-		<exec executable="${airDebugLauncher.exe}">
+		<exec executable="${airDebugLauncher.exe}" failonerror="true">
 			<arg line="'${test.bin.dir}/PlayerTestLauncher-app.xml'" />
 			
 			<!-- Enable windowless run -->
