@@ -25,7 +25,6 @@ package com.longtailvideo.jwplayer.utils {
 				} catch(e:Error) {
 					// This may not work in the AIR testing suite
 				}
-				}
 			}
 		}
 	}
