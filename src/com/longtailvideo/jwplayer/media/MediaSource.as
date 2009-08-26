@@ -2,11 +2,11 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.MediaStateEvent;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
-	
-	import flash.display.DisplayObject;
-	import flash.events.EventDispatcher;
 
-	public class MediaSource extends EventDispatcher {
+	import flash.display.DisplayObject;
+	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+
+	public class MediaSource extends GlobalEventDispatcher {
 		/** Reference to the currently active playlistitem. **/
 		protected var _item:PlaylistItem;
 		/** The current position inside the file. **/
@@ -17,11 +17,11 @@ package com.longtailvideo.jwplayer.media {
 		protected var _state:String;
 		/** Graphical representation of the currently playing media **/
 		protected var _media:DisplayObject;
-		
+
 		public function MediaSource() {
 			_state = MediaState.IDLE;
 		}
-		
+
 		/**
 		 * Load a new playlist item
 		 * @param itm The playlistItem to load
@@ -30,7 +30,7 @@ package com.longtailvideo.jwplayer.media {
 			_item = itm;
 			dispatchEvent(new MediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED));
 		}
-		
+
 		/** Pause playback of the item. **/
 		public function pause():void {
 			setState(MediaState.PAUSED);
@@ -65,30 +65,40 @@ package com.longtailvideo.jwplayer.media {
 		public function setVolume(vol:Number):void {
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME, 'volume', vol);
 		}
-		
+
+		/** Graphical representation of media **/
 		public function display():DisplayObject {
 			return _media;
 		}
-		
+
+		/**
+		 * Current state of the MediaSource.
+		 * @see MediaStates
+		 */
 		public function get state():String {
 			return _state;
 		}
 
+		/** Currently playing PlaylistItem **/
 		public function get item():PlaylistItem {
 			return _item;
 		}
 
+		/** Current position, in seconds **/
 		public function get position():Number {
 			return _position;
 		}
 
+		/**
+		 * The current volume of the playing media
+		 * <p>Range: 0-100</p> 
+		 */
 		public function get volume():Number {
 			return _volume;
 		}
-		
 
 		/**
-		 * Sets the current state to a new state and sends a MediaStateEvent 
+		 * Sets the current state to a new state and sends a MediaStateEvent
 		 * @param newState A state from ModelStates.
 		 */
 		protected function setState(newState:String):void {
@@ -98,7 +108,7 @@ package com.longtailvideo.jwplayer.media {
 		}
 
 		/**
-		 * Sends a MediaEvent, setting one value 
+		 * Sends a MediaEvent, simultaneously setting a property
 		 * @param type
 		 * @param property
 		 * @param value

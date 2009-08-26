@@ -17,9 +17,11 @@ package com.longtailvideo.jwplayer.utils {
 		public static var stage:Stage;
 
 		public function RootReference(displayObj:DisplayObject) {
-			RootReference.root = displayObj.root;
-			RootReference.stage = displayObj.stage;
-			Security.allowDomain("*");
+			if (!RootReference.root) {
+				RootReference.root = displayObj.root;
+				RootReference.stage = displayObj.stage;
+				Security.allowDomain("*");
+			}
 		}
 	}
 }

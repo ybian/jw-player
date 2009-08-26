@@ -16,8 +16,10 @@ package com.longtailvideo.jwplayer.view {
 			return _skin;
 		}
 		
-		public function goFullscreen(mode:Boolean=true):void {
-			
+		public function fullscreen(mode:Boolean=true):void {
+		}
+
+		public function redraw():void {
 		}
 
 	}

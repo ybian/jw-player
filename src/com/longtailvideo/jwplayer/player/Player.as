@@ -9,7 +9,6 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.display.Sprite;
-	import flash.utils.setTimeout;
 	
 	/**
 	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
@@ -33,12 +32,6 @@ package com.longtailvideo.jwplayer.player {
 
 		/** Player constructor **/
 		public function Player() {
-			// Small pause to allow Javascript to catch up
-			setTimeout(initializePlayer, 50);
-		}
-
-		/** Initialize the Player **/
-		protected function initializePlayer():void {
 			model = new Model();
 			view = new View();
 			controller = new Controller(this, model, view);
@@ -97,7 +90,7 @@ package com.longtailvideo.jwplayer.player {
 		 * Set to true when the player is blocking playback.
 		 */
 		public function get isBlocking():Boolean {
-			return false;
+			return controller.blocking;
 		}
 
 		/**
@@ -110,7 +103,7 @@ package com.longtailvideo.jwplayer.player {
 		 * <code>false</code>. 
 		 */
 		public function blockPlayback(target:IPlugin):Boolean {
-			return false;
+			return controller.blockPlayback(target);
 		}
 
 		/**
@@ -121,59 +114,60 @@ package com.longtailvideo.jwplayer.player {
 		 *
 		 */
 		public function unblockPlayback(target:IPlugin):Boolean {
-			return false;
+			return controller.unblockPlayback(target);
 		}
 		
 		public function volume(volume:Number):Boolean {
-			return false;
+			return controller.setVolume(volume);
 		}
 		
-		public function mute(state:Boolean=true):Boolean {
-			return false;
+		public function mute(state:Boolean):Boolean {
+			return controller.mute(state);
 		}
 		
 		public function play():Boolean {
-			return false;
+			return controller.play();
 		}
 
 		public function pause():Boolean {
-			return false;	
+			return controller.pause();	
 		}
 		
 		public function stop():Boolean {
-			return false;
+			return controller.stop();
 		}
 		
 		public function seek(position:Number):Boolean {
-			return false;
+			return controller.seek(position);
 		}
 		
 		public function load(item:*):Boolean {
-			return false;
+			return controller.load(item);
 		}
 		
 		public function playlistItem(index:Number):Boolean {
-			return false;
+			return controller.load(index);
 		}
 		
 		public function playlistNext():Boolean {
-			return false;
+			return controller.load(model.playlist.currentIndex+1);
 		}
 
 		public function playlistPrev():Boolean {
-			return false;
+			return controller.load(model.playlist.currentIndex-1);
 		}
 		
+		/** Force a redraw of the player **/
 		public function redraw():Boolean {
-			return false;
+			return controller.redraw();
 		}
 	
 		public function fullscreen(on:Boolean=true):Boolean {
-			return false;
+			return controller.fullscreen(on);
 		}
 		
 		public function link(index:Number=NaN):Boolean {
-			return false;
+			return controller.link(index);
 		}
 
 	}
