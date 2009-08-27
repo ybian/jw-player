@@ -20,7 +20,7 @@ package com.longtailvideo.jwplayer.model {
 		/** Constructor **/
 		public function Model() {
 			_playlist = new Playlist();
-			_config = new PlayerConfig(this);
+			_config = new PlayerConfig(_playlist);
 		}
 		
 		/** The player config object **/ 

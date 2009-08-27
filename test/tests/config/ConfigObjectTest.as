@@ -1,6 +1,6 @@
 package tests.config {
-	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
+	import com.longtailvideo.jwplayer.model.Playlist;
 	
 	import org.flexunit.Assert;
 
@@ -9,7 +9,7 @@ package tests.config {
 		
 		[Before]
 		public function setup():void {
-			config = new PlayerConfig(new Model());
+			config = new PlayerConfig(new Playlist());
 		} 
 		
 		[Test]

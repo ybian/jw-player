@@ -12,7 +12,7 @@ package com.longtailvideo.jwplayer.model {
 	 */
 	public dynamic class PlayerConfig extends EventDispatcher {
 		/** Internal playlist reference **/
-		private var _model:Model;
+		private var _list:Playlist;
 
 		private var _autostart:Boolean = false; 
 		private var _bufferlength:Number = 1; 
@@ -20,6 +20,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _displaytitle:Boolean = true; 
 		private var _item:Number = 0;
 		private var _linktarget:String = "_blank";
+		private var _mute:Boolean = false;
 		private var _repeat:String = "none"; 
 		private var _shuffle:Boolean = false; 
 		private var _smoothing:Boolean = false; 
@@ -42,8 +43,12 @@ package com.longtailvideo.jwplayer.model {
 		
 		private var _pluginConfig:Object = {};
 		
-		public function PlayerConfig(model:Model):void {
-			_model = model;
+		public function PlayerConfig(playlist:Playlist):void {
+			setPlaylist(playlist);
+		}
+		
+		public function setPlaylist(list:Playlist):void {
+			_list = list;
 		}
 		
 		public function setConfig(config:Object):void {
@@ -63,7 +68,7 @@ package com.longtailvideo.jwplayer.model {
 				}
 			}
 			if (playlistItems) {
-				_model.playlist.insertItem(newItem, 0);
+				_list.insertItem(newItem, 0);
 			}
 		}
 		
@@ -102,7 +107,7 @@ package com.longtailvideo.jwplayer.model {
 		 */
 		private function playlistItem(key:String):String {
 			try {
-				return _model.playlist.currentItem[key].toString();
+				return _list.currentItem[key].toString();
 			} catch (e:Error) {
 			}
 
@@ -247,9 +252,6 @@ package com.longtailvideo.jwplayer.model {
 		public function get displaytitle():Boolean { return _displaytitle; }
 		public function set displaytitle(x:Boolean):void { _displaytitle = x; }
 
-		/** Fullscreen state of the player. This is a read-only flashvar, useful for plugins. Available since 4.4. **/
-		public function get fullscreen():Boolean { return _model.fullscreen; }
-
 		/** PlaylistItem that should start to play. Use this to set a specific start-item. @default 0 **/
 		public function get item():Number { return _item; }
 		public function set item(x:Number):void { _item = x; }
@@ -259,8 +261,8 @@ package com.longtailvideo.jwplayer.model {
 		public function set linktarget(x:String):void { _linktarget = x; }
 		
 		/** Mute all sounds on startup. This value is set in a user cookie, and is retrieved the next time the player loads. **/
-		public function get mute():Boolean { return _model.mute; }
-		public function set mute(x:Boolean):void { _model.mute = x; }
+		public function get mute():Boolean { return _mute; }
+		public function set mute(x:Boolean):void { _mute = x; }
 
 		/** Set to list to play the entire playlist once, to always to continously play the song/video/playlist and to single to continue repeating the selected file in a playlist. @default none **/
 		public function get repeat():String { return _repeat; }
@@ -273,9 +275,6 @@ package com.longtailvideo.jwplayer.model {
 		/** this sets the smoothing of videos, so you won't see blocks when a video is upscaled. Set this to false to get performance improvements with old computers / big files. Available since 4.4. @default false **/
 		public function get smoothing():Boolean { return _smoothing; }
 		public function set smoothing(x:Boolean):void { _smoothing = x; }
-
-		/** Current playback state of the player. Can be IDLE (no file loaded), BUFFERING (loading a file), PLAYING (playing a file), PAUSED (pausing playback; loading continues), COMPLETED (same as IDLE, but the file is player and loaded completely) **/
-		public function get state():String { return _model.state; }
 
 		/** Defines how to resize images in the display. Can be none (no stretching), exactfit (disproportionate), uniform (stretch with black borders) or fill (uniform, but completely fill the display). @default uniform **/
 		public function get stretching():String{ return _stretching; }
