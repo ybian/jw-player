@@ -1,4 +1,6 @@
 package com.longtailvideo.jwplayer.events {
+	import com.longtailvideo.jwplayer.player.Player;
+	
 	import flash.events.Event;
 	import flash.external.ExternalInterface;
 	import flash.system.Capabilities;
@@ -43,6 +45,7 @@ package com.longtailvideo.jwplayer.events {
 					this.id = ExternalInterface.objectID;
 				}
 				this.client = "FLASH" + Capabilities.version;
+				this.version = Player.version;
 			} catch (e:Error) {}
 		}
 		

@@ -6,6 +6,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.view.ISkin;
+	import com.longtailvideo.jwplayer.view.PlayerComponents;
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.display.Sprite;
@@ -24,7 +25,7 @@ package com.longtailvideo.jwplayer.player {
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
-		private var playerVersion:String = "5.0.1";
+		private static var playerVersion:String = "5.0.1";
 		
 		private var model:Model;
 		private var view:View;
@@ -61,8 +62,8 @@ package com.longtailvideo.jwplayer.player {
 		/**
 		 * Player version getter
 		 */
-		public function get version():String {
-			return this.playerVersion;
+		public static function get version():String {
+			return playerVersion;
 		}
 
 		/**
@@ -168,6 +169,10 @@ package com.longtailvideo.jwplayer.player {
 		
 		public function link(index:Number=NaN):Boolean {
 			return controller.link(index);
+		}
+		
+		public function get uiComponents():PlayerComponents {
+			return view.components;
 		}
 
 	}
