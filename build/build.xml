@@ -49,11 +49,10 @@
 	-->
 	<target name="asdoc-all" depends="check-properties">
 		<!-- Clean out the contents of the doc directory, without delete "docs" -->
-		<!--
+
 		<delete includeemptydirs="true">
 			<fileset dir="${docs.dir}" includes="**/*" />
 		</delete>
-		-->
 
 		<exec executable="${asdoc.exe}" spawn="no">
 			<!-- Place the documentation in the "docs" directory -->
@@ -61,6 +60,7 @@
 
 			<!-- Specify the main source path as "src" -->
 			<arg line="-compiler.source-path '${src.dir}'" />
+			<arg line="-compiler.source-path '${test.src.dir}'" />
 
 			<!-- Include the necessary framework libraries in the class path -->
 			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
