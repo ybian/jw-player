@@ -8,6 +8,8 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
+	import com.longtailvideo.jwplayer.view.DefaultSkin;
+	import com.longtailvideo.jwplayer.view.ISkin;
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.events.ErrorEvent;
@@ -16,7 +18,7 @@ package com.longtailvideo.jwplayer.controller {
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.utils.Timer;
-
+	
 	/**
 	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
 	 *
@@ -37,6 +39,7 @@ package com.longtailvideo.jwplayer.controller {
 	 * @author Pablo Schklowsky
 	 */
 	public class Controller extends GlobalEventDispatcher {
+		
 		private var _player:Player;
 		private var _model:Model;
 		private var _view:View;
@@ -69,11 +72,17 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function configLoaded(evt:Event):void {
-
+			var confHash:Object = (evt.target as Configger).config;
+			_model.config.setConfig(confHash);
+			loadSkin();
 		}
 
 		private function configFailed(evt:ErrorEvent):void {
-
+			
+		}
+		
+		private function loadSkin():void {
+			var skin:ISkin = new DefaultSkin();
 		}
 
 		private function errorState():void {

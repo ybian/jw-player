@@ -1,10 +1,9 @@
 package tests.utils {
-	import com.jeroenwijering.events.PluginInterface;
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
 	
 	import flash.display.Sprite;
+	import flash.events.ErrorEvent;
 	import flash.events.Event;
-	import flash.utils.describeType;
 	
 	import org.flexunit.Assert;
 	import org.flexunit.async.Async;
@@ -17,9 +16,10 @@ package tests.utils {
 			loader = new AssetLoader();
 		}
 		
-		[Test(async,timeout="3000")]
+		[Test(async)]
 		public function testLoadSWF():void {
 			Async.handleEvent(this, loader, Event.COMPLETE, testLoadSWFComplete);
+			Async.failOnEvent(this, loader, ErrorEvent.ERROR);
 			loader.load("http://plugins.longtailvideo.com/viral.swf", Sprite);
 		}
 		

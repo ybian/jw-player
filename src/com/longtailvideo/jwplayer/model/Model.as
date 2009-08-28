@@ -27,6 +27,10 @@ package com.longtailvideo.jwplayer.model {
 		public function get config():PlayerConfig {
 			return _config;
 		}
+		
+		public function set config(conf:PlayerConfig):void {
+			_config = conf;
+		}
 
 		/** The currently loaded MediaSource **/
 		public function get media():MediaSource {

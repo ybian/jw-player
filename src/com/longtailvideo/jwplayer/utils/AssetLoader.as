@@ -50,10 +50,6 @@ package com.longtailvideo.jwplayer.utils {
 			loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadComplete);
 			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadError);
-			if (RootReference.stage.loaderInfo.url.indexOf('http') == 0) {
-				
-			}
-			
 			loader.load(new URLRequest(location));
 		}
 		

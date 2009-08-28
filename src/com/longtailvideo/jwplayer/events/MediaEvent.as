@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.events {
 	
 	
+	
 
 	public class MediaEvent extends PlayerEvent {
 
@@ -14,10 +15,12 @@ package com.longtailvideo.jwplayer.events {
 
 		public static var JWPLAYER_MEDIA_VOLUME:String = "jwplayerMediaVolume";
 		
-		public var metadata:Object = {};
-		public var message:String = "";
-		public var bufferPercent:Number = -1;
-		public var volume:Number = -1;
+		public var bufferPercent:Number 	= -1;
+		public var duration:Number 			= -1;
+		public var message:String 			= "";
+		public var metadata:Object 			= {};
+		public var position:Number 			= -1;
+		public var volume:Number 			= -1;
 	
 		public function MediaEvent(type:String) {
 			super(type);

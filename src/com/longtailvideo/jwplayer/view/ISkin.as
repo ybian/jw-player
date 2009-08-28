@@ -1,14 +1,27 @@
 package com.longtailvideo.jwplayer.view {
 	import flash.display.DisplayObject;
 
+	/**
+	 * Send when the skin is ready
+	 *
+	 * @eventType flash.events.Event.COMPLETE
+	 */
+	[Event(name="complete", type = "flash.events.Event")]
+
+	/**
+	 * Send when an error occurred loading the skin
+	 *
+	 * @eventType flash.events.ErrorEvent.ERROR
+	 */
+	[Event(name="error", type = "flash.events.ErrorEvent")]
+
 	public interface ISkin {
 		
 		/**
 		 * Instructs the skin to load its assets from a URL 
 		 * @param url The URL from which to load the assets
-		 * @return <code>true</code> when the URL passed is valid 
 		 */
-		function load(url:String):Boolean;
+		function load(url:String=null):void;
 		
 		/**
 		 * Returns the availability of skin elements for a given component.
@@ -29,6 +42,16 @@ package com.longtailvideo.jwplayer.view {
 		 * 
 		 */
 		function getSkinElement(component:String, element:String):DisplayObject;
+		
+		/**
+		 * Adds a skin element to the skin
+		 * 
+		 * @param name
+		 * @param element
+		 * @return 
+		 * 
+		 */
+		function addSkinElement(component:String, element:DisplayObject, name:String=null):void;
 		
 		/**
 		 * 

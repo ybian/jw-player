@@ -11,8 +11,8 @@ package com.longtailvideo.jwplayer.model {
 		public var description:String	= "";
 		public var duration:Number		= -1;
 		public var file:String			= "";
-		public var link:String			= "";
 		public var image:String			= "";
+		public var link:String			= "";
 		public var start:Number			= -1;
 		public var streamer:String		= "";
 		public var tags:String			= "";

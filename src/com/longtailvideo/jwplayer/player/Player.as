@@ -11,6 +11,7 @@ package com.longtailvideo.jwplayer.player {
 	
 	import flash.display.Sprite;
 	
+	
 	/**
 	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
 	 *
