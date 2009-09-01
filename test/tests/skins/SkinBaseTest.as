@@ -9,7 +9,7 @@ package tests.skins {
 
 	public class SkinBaseTest {
 		
-		private var skin:SkinBase;
+		protected var skin:SkinBase;
 		
 		[Before]
 		public function setup():void {

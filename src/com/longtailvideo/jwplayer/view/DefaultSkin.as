@@ -1,36 +1,45 @@
-package com.longtailvideo.jwplayer.view
-{
+package com.longtailvideo.jwplayer.view {
 	import flash.display.DisplayObject;
+	import flash.display.Loader;
+	import flash.display.LoaderInfo;
+	import flash.display.MovieClip;
+	import flash.events.ErrorEvent;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	
+	import mx.core.MovieClipLoaderAsset;
 
-	public class DefaultSkin extends SkinBase implements ISkin
-	{
-		[Embed(source="../../../../../assets/flash/skin/bluemetal.swf")]
+	public class DefaultSkin extends SWFSkin {
+		[Embed(source="../../../../../assets/flash/skin/player.swf")]
 		private var EmbeddedSkin:Class;
-		private var loadedSkin:ISkin;
 
-		public function DefaultSkin()
-		{
-			var skinObj:Object = new EmbeddedSkin();
+		public override function load(notUsed:String=""):void {
+			var skinObj:MovieClipLoaderAsset = new EmbeddedSkin() as MovieClipLoaderAsset;
 			try {
-				loadedSkin = new SWFSkin(skinObj as DisplayObject);
+				var embeddedLoader:Loader = Loader(skinObj.getChildAt(0));
+				embeddedLoader.contentLoaderInfo.addEventListener(Event.INIT, loadComplete);
+				embeddedLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadError);
 			} catch (e:Error) {
-				// Skin error
+				sendError(e.message);
 			}
 		}
 
-		public override function hasComponent(component:String):Boolean
-		{
-			return loadedSkin.hasComponent(component);
+		protected override function loadComplete(evt:Event):void {
+			try {
+				var loader:LoaderInfo = LoaderInfo(evt.target);
+				var skinClip:MovieClip = MovieClip(loader.content);
+				overwriteSkin(skinClip.getChildByName('player'));
+				loader.removeEventListener(Event.INIT, loadComplete);
+				loader.removeEventListener(IOErrorEvent.IO_ERROR, loadError);
+				dispatchEvent(new Event(Event.COMPLETE));
+			} catch (e:Error) {
+				sendError("DefaultSkin: " + e.message);
+			}
 		}
-		
-		public override function getSkinElement(component:String, element:String):DisplayObject
-		{
-			return loadedSkin.getSkinElement(component, element);
+
+		protected override function loadError(evt:ErrorEvent):void {
+			sendError("DefaultSkin: " + evt.text);
 		}
-		
-		public override function addSkinElement(component:String, element:DisplayObject, name:String=null):void {
-			return loadedSkin.addSkinElement(component, element, name);
-		}
-				
+
 	}
 }

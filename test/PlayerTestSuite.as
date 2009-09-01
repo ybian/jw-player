@@ -16,6 +16,8 @@ package {
 		public var configSuite:ConfigSuite;
 		public var playlistSuite:PlaylistSuite;
 		public var mediaSuite:MediaSuite;
+		public var utilsSuite:UtilsSuite;
+		public var skinSuite:SkinSuite;
 		public var swftest:SWFTest;
 	}
 }
