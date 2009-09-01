@@ -15,7 +15,7 @@ package tests.skins {
 			skin = new SWFSkin();
 		}
 
-		[Test(async,timeout="5000")]
+		[Test(async,timeout="15000")]
 		public override function testLoad():void {
 			Async.handleEvent(this, skin, Event.COMPLETE, skinLoaded);
 			Async.failOnEvent(this, skin, ErrorEvent.ERROR);
