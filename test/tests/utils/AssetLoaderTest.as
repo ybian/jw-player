@@ -16,7 +16,7 @@ package tests.utils {
 			loader = new AssetLoader();
 		}
 		
-		[Test(async)]
+		[Test(async,timeout="15000")]
 		public function testLoadSWF():void {
 			Async.handleEvent(this, loader, Event.COMPLETE, testLoadSWFComplete);
 			Async.failOnEvent(this, loader, ErrorEvent.ERROR);
