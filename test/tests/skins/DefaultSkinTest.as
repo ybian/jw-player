@@ -24,12 +24,6 @@ package tests.skins {
 		
 		public function defaultLoaded(evt:Event, params:*):void {
 			Assert.assertTrue("Testing for the existence of controlbar", skin.hasComponent('controlbar'));
-			
-			var chld:Object = skin.componentChildren('controlbar');
-			for (var nam:String in chld) {
-				trace(nam);	
-			}
-			
 			Assert.assertTrue("Testing Controlbar.playButton", skin.getSkinElement('controlbar','playButton') is DisplayObject);	
 			Assert.assertTrue("Testing Controlbar.muteButton", skin.getSkinElement('controlbar','muteButton') is DisplayObject);	
 			Assert.assertTrue("Testing Controlbar.linkButton", skin.getSkinElement('controlbar','linkButton') is DisplayObject);	

@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	
+	import flash.events.ErrorEvent;
 	import flash.events.EventDispatcher;
 
 	/**
@@ -24,6 +25,13 @@ package com.longtailvideo.jwplayer.model {
 	 */
 	[Event(name="jwplayerPlaylistItem", type = "com.longtailvideo.jwplayer.evets.PlaylistEvent")]
 
+	/**
+	 * Sent when an error ocurred when loading or parsing the playlist 
+	 *
+	 * @eventType flash.events.ErrorEvent.ERROR
+	 */
+	[Event(name="error", type = "flash.events.ErrorEvent")]
+
 	public class Playlist extends EventDispatcher {
 		
 		/** **/
@@ -41,12 +49,37 @@ package com.longtailvideo.jwplayer.model {
 		}
 
 		/**
-		 * Loads a new playlist
+		 * Replaces all playlist items
 		 *  
-		 * @param newPlaylist May be a String (in which case it loads playlist URL), an Array of PlaylistItems or structured Objects, or another Playlist 
+		 * @param newPlaylist May be an Array of PlaylistItems or structured Objects, or another Playlist 
 		 * 
 		 */
 		public function load(newPlaylist:Object):void {
+			var newList:Array = [];
+			if (newPlaylist is Array) {
+				for (var i:Number = 0; i < (newPlaylist as Array).length; i++) {
+					if (!(newPlaylist[i] is PlaylistItem)) {
+						var newItem:PlaylistItem = new PlaylistItem(newPlaylist[i]);
+						newPlaylist[i] = newItem;
+					}
+					try {
+						if ((newPlaylist[i] as PlaylistItem).file) {
+							newList.push(newPlaylist[i] as PlaylistItem);
+						}
+					} catch (e:Error) {}
+				}
+			} else if (newPlaylist is Playlist) {
+				for (i = 0; i < (newPlaylist as Playlist).length; i++) {
+					newList.push((newPlaylist as Playlist).getItemAt(i));
+				}
+			} else {
+				dispatchEvent(new ErrorEvent("Playlist could not be loaded: incorrect type"));
+				return;
+			}
+
+			list = newList;
+			index = newList.length > 0 ? 0 : -1;
+
 			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED));
 			return; 
 		}

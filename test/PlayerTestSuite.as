@@ -18,6 +18,6 @@ package {
 		public var mediaSuite:MediaSuite;
 		public var utilsSuite:UtilsSuite;
 		public var skinSuite:SkinSuite;
-		public var swftest:SWFTest;
+//		public var swftest:SWFTest;
 	}
 }

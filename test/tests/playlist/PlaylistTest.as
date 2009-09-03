@@ -1,8 +1,12 @@
 package tests.playlist {
+	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	
+	import flash.events.ErrorEvent;
+	
 	import org.flexunit.Assert;
+	import org.flexunit.async.Async;
 
 	public class PlaylistTest {
 
@@ -60,6 +64,50 @@ package tests.playlist {
 
 			list.removeItemAt(0);
 			Assert.assertEquals(list.currentIndex, 1);
+		}
+		
+		[Test(async,timeout="1000")]
+		public function testPlaylistLoad():void {
+			var newPlaylist:Playlist = new Playlist();
+			newPlaylist.insertItem(new PlaylistItem({file:"test1.flv"}));
+			newPlaylist.insertItem(new PlaylistItem({file:"test2.flv"}));
+			newPlaylist.insertItem(new PlaylistItem({file:"test3.flv"}));
+			Async.handleEvent(this, list, PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadComplete);
+			Async.failOnEvent(this, list, ErrorEvent.ERROR);
+			list.load(newPlaylist);
+		}
+		
+
+		[Test(async,timeout="1000")]
+		public function testObjectArrayLoad():void {
+			var newPlaylist:Array = [
+				{file:"test1.flv"},
+				{file:"test2.flv"},
+				{file:"test3.flv"}
+			];
+			Async.handleEvent(this, list, PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadComplete);
+			Async.failOnEvent(this, list, ErrorEvent.ERROR);
+			list.load(newPlaylist);
+		}
+
+
+		[Test(async,timeout="1000")]
+		public function testItemArrayLoad():void {
+			var newPlaylist:Array = [
+				new PlaylistItem({file:"test1.flv"}),
+				new PlaylistItem({file:"test2.flv"}),
+				new PlaylistItem({file:"test3.flv"})
+			];
+			Async.handleEvent(this, list, PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadComplete);
+			Async.failOnEvent(this, list, ErrorEvent.ERROR);
+			list.load(newPlaylist);
+		}
+
+		private function playlistLoadComplete(evt:PlaylistEvent, params:*):void {
+			Assert.assertEquals(3, list.length);
+			Assert.assertTrue("test1.flv", list.getItemAt(0).file);
+			Assert.assertTrue("test2.flv", list.getItemAt(1).file);
+			Assert.assertTrue("test3.flv", list.getItemAt(2).file);
 		}
 
 	}
