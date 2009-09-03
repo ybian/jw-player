@@ -18,6 +18,7 @@ package {
 		public var mediaSuite:MediaSuite;
 		public var utilsSuite:UtilsSuite;
 		public var skinSuite:SkinSuite;
+		public var parserSuite:ParserSuite;
 //		public var swftest:SWFTest;
 	}
 }
