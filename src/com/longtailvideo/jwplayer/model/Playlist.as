@@ -1,7 +1,11 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
+	import com.longtailvideo.jwplayer.parsers.IPlaylistParser;
+	import com.longtailvideo.jwplayer.parsers.ParserFactory;
+	import com.longtailvideo.jwplayer.utils.AssetLoader;
 	
 	import flash.events.ErrorEvent;
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 
 	/**
@@ -72,8 +76,14 @@ package com.longtailvideo.jwplayer.model {
 				for (i = 0; i < (newPlaylist as Playlist).length; i++) {
 					newList.push((newPlaylist as Playlist).getItemAt(i));
 				}
+			} else if (newPlaylist is String && newPlaylist != "") {
+				var playlistLoader:AssetLoader = new AssetLoader();
+				playlistLoader.addEventListener(Event.COMPLETE, playlistLoaded);
+				playlistLoader.addEventListener(ErrorEvent.ERROR, playlistLoadError);
+				playlistLoader.load(String(newPlaylist), XML);
+				return;
 			} else {
-				dispatchEvent(new ErrorEvent("Playlist could not be loaded: incorrect type"));
+				playlistError("Incorrect playlist type");
 				return;
 			}
 
@@ -83,6 +93,29 @@ package com.longtailvideo.jwplayer.model {
 			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED));
 			return; 
 		}
+
+		protected function playlistLoaded(evt:Event):void {
+			var loader:AssetLoader = evt.target as AssetLoader;
+			var loadedXML:XML = loader.loadedObject as XML;
+			
+			var parser:IPlaylistParser = ParserFactory.getParser(loadedXML);
+			var playlistItems:Array = parser.parse(loadedXML);
+			
+			if (playlistItems.length > 0) {
+				load(playlistItems);
+			} else {
+				playlistError("XML could not be parsed or playlist was empty");
+			}
+			
+		}
+		
+		protected function playlistLoadError(evt:ErrorEvent):void {
+			playlistError(evt.text);
+		}
+		
+		protected function playlistError(message:String):void {
+			dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, "Playlist could not be loaded: "  + message));
+		} 
 
 		/**
 		 * Gets a the PlaylistItem at the specified index.

@@ -5,7 +5,7 @@ package tests.parsers {
 	import org.flexunit.Assert;
 
 	public class ATOMParserTest  {
-		private var parser:ATOMParser;
+		private var parser:ATOMParser = new ATOMParser();
 		private var xml:XML = <feed xmlns='http://www.w3.org/2005/Atom' 
 			xmlns:media='http://search.yahoo.com/mrss/'  
 			xmlns:jwplayer='http://developer.longtailvideo.com/trac/wiki/FlashFormats'>
@@ -50,7 +50,7 @@ package tests.parsers {
 		
 		[Test]
 		public function testParse():void {
-			var list:Array = ATOMParser.parse(xml);
+			var list:Array = parser.parse(xml);
 			Assert.assertEquals(4, list.length);
 			Assert.assertTrue(list[0] is PlaylistItem);
 			Assert.assertTrue(list[1] is PlaylistItem);

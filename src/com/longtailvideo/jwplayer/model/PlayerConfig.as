@@ -14,32 +14,33 @@ package com.longtailvideo.jwplayer.model {
 		/** Internal playlist reference **/
 		private var _list:Playlist;
 
-		private var _autostart:Boolean = false; 
-		private var _bufferlength:Number = 1; 
-		private var _displayclick:String = "play"; 
-		private var _displaytitle:Boolean = true; 
-		private var _item:Number = 0;
-		private var _linktarget:String = "_blank";
-		private var _mute:Boolean = false;
-		private var _repeat:String = "none"; 
-		private var _shuffle:Boolean = false; 
-		private var _smoothing:Boolean = false; 
-		private var _stretching:String = "uniform"; 
-		private var _volume:Number = 90;
+		private var _autostart:Boolean 		= false; 
+		private var _bufferlength:Number 	= 1; 
+		private var _displayclick:String 	= "play"; 
+		private var _displaytitle:Boolean 	= true; 
+		private var _item:Number 			= 0;
+		private var _linktarget:String 		= "_blank";
+		private var _mute:Boolean 			= false;
+		private var _repeat:String 			= "none"; 
+		private var _shuffle:Boolean 		= false; 
+		private var _smoothing:Boolean 		= false; 
+		private var _stretching:String 		= "uniform"; 
+		private var _volume:Number 			= 90;
 
-		private var _backcolor:uint;
-		private var _frontcolor:uint;
-		private var _lightcolor:uint;
-		private var _screencolor:uint;
-		private var _controlbar:String = "none";
-		private var _dock:Boolean = false;
-		private var _height:Number = 400;
-		private var _icons:Boolean = true;
-		private var _logo:String;
-		private var _playlist:String = "none";
-		private var _playlistsize:Number = 180;
-		private var _skin:String;
-		private var _width:Number = 280;
+		private var _backcolor:uint			= 0x000000;
+		private var _frontcolor:uint		= 0xFFFFFF;
+		private var _lightcolor:uint		= 0xFFFFFF;
+		private var _screencolor:uint		= 0x000000;
+		
+		private var _controlbar:String 		= "none";
+		private var _dock:Boolean 			= false;
+		private var _height:Number 			= 400;
+		private var _icons:Boolean 			= true;
+		private var _logo:String 			= null;
+		private var _playlist:String 		= null;
+		private var _playlistsize:Number 	= 180;
+		private var _skin:String 			= null;
+		private var _width:Number 			= 280;
 		
 		private var _pluginConfig:Object = {};
 		

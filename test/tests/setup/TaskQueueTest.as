@@ -46,6 +46,7 @@ package tests.setup {
 		
 		private function task2():void {
 			Assert.assertTrue("Task 2 success", true);
+			tasker.success();
 			Assert.assertEquals("All tasks remaining", "task2,task3", remainingTasks.join(","));
 			remainingTasks.splice(remainingTasks.indexOf("task2"), 1);
 			Assert.assertEquals("Task 3 remaining", "task3", remainingTasks.join(","));

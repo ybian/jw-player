@@ -32,7 +32,6 @@ package com.longtailvideo.jwplayer.utils {
 		public var loadedObject:*;
 
 		protected var loaderExtensions:Array = ["swf", "png", "gif", "jpg", "jpeg"];
-		protected var urlLoaderExtensions:Array = ["zip", "xml", "txt"];
 
 		public function load(location:String, expectedClass:Class=null):void {
 			LoadedClass = expectedClass;
@@ -41,7 +40,7 @@ package com.longtailvideo.jwplayer.utils {
 
 			if (loaderExtensions.indexOf(ext.toLowerCase()) >= 0) {
 				useLoader(location);
-			} else if (urlLoaderExtensions.indexOf(ext.toLowerCase()) >= 0) {
+			} else {
 				useURLLoader(location);
 			}
 		}
@@ -75,7 +74,7 @@ package com.longtailvideo.jwplayer.utils {
 			urlLoader.addEventListener(Event.COMPLETE, urlLoadComplete);
 			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, loadError);
 			urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadError);
-			loader.load(new URLRequest(location));
+			urlLoader.load(new URLRequest(location));
 		}
 		
 		protected function urlLoadComplete(evt:Event):void {

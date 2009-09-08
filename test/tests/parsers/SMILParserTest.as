@@ -5,7 +5,7 @@ package tests.parsers {
 	import org.flexunit.Assert;
 
 	public class SMILParserTest {
-		private var parser:SMILParser;
+		private var parser:SMILParser = new SMILParser();
 		private var xml:XML = <smil xmlns="http://www.w3.org/2001/SMIL20/Language">
 			<head>
 				<meta name="title" content="Example SMIL playlist for the JW Player"/>
@@ -60,7 +60,7 @@ package tests.parsers {
 		
 		[Test]
 		public function testParse():void {
-			var list:Array = SMILParser.parse(xml);
+			var list:Array = parser.parse(xml);
 			Assert.assertEquals(4, list.length);
 			Assert.assertTrue(list[0] is PlaylistItem);
 			Assert.assertTrue(list[1] is PlaylistItem);

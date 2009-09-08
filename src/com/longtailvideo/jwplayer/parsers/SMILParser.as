@@ -6,37 +6,37 @@ package com.longtailvideo.jwplayer.parsers {
 	/**
 	 * Parse an SMIL feed and translate it to a feedarray.
 	 **/
-	public class SMILParser {
+	public class SMILParser implements IPlaylistParser {
 
 		/** Parse an SMIL playlist for feeditems. **/
-		public static function parse(dat:XML):Array {
+		public function parse(dat:XML):Array {
 			var arr:Array = new Array();
 			var elm:XML = dat.children()[1].children()[0];
 			if (elm.localName().toLowerCase() == 'seq') {
 				for each (var i:XML in elm.children()) {
-					arr.push(new PlaylistItem(SMILParser.parseSeq(i)));
+					arr.push(new PlaylistItem(parseSeq(i)));
 				}
 			} else {
-				arr.push(SMILParser.parseItem(elm));
+				arr.push(parseItem(elm));
 			}
 			return arr;
 		}
 		
-		public static function parseItem(obj:XML):PlaylistItem {
-			return new PlaylistItem(SMILParser.parsePar(obj));
+		public function parseItem(obj:XML):PlaylistItem {
+			return new PlaylistItem(parsePar(obj));
 		}
 
 		/** Translate SMIL sequence item to playlistitem. **/
-		public static function parseSeq(obj:XML):Object {
+		public function parseSeq(obj:XML):Object {
 			var itm:Object = new Object();
 			switch (obj.localName().toLowerCase()) {
 				case 'par':
-					itm = SMILParser.parsePar(obj);
+					itm = parsePar(obj);
 					break;
 				case 'img':
 				case 'video':
 				case 'audio':
-					itm = SMILParser.parseAttributes(obj, itm);
+					itm = parseAttributes(obj, itm);
 					break;
 				default:
 					break;
@@ -45,7 +45,7 @@ package com.longtailvideo.jwplayer.parsers {
 		}
 
 		/** Translate a SMIL par group to playlistitem **/
-		public static function parsePar(obj:XML):Object {
+		public function parsePar(obj:XML):Object {
 			var itm:Object = new Object();
 			for each (var i:XML in obj.children()) {
 				switch (i.localName().toLowerCase()) {
@@ -57,12 +57,12 @@ package com.longtailvideo.jwplayer.parsers {
 							itm['image'] = i.@src.toString();
 							break;
 						} else {
-							itm = SMILParser.parseAttributes(i, itm);
+							itm = parseAttributes(i, itm);
 						}
 						break;
 					case 'video':
 					case 'audio':
-						itm = SMILParser.parseAttributes(i, itm);
+						itm = parseAttributes(i, itm);
 						break;
 					default:
 						break;
@@ -73,7 +73,7 @@ package com.longtailvideo.jwplayer.parsers {
 		}
 
 		/** Get attributes from a SMIL element. **/
-		public static function parseAttributes(obj:Object, itm:Object):Object {
+		public function parseAttributes(obj:Object, itm:Object):Object {
 			for (var i:Number = 0; i < obj.attributes().length(); i++) {
 				var att:String = obj.attributes()[i].name().toString();
 				switch (att) {

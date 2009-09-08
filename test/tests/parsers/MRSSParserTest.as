@@ -5,7 +5,7 @@
 	import org.flexunit.Assert;
 
 	public class MRSSParserTest {
-		private var parser:RSSParser;
+		private var parser:RSSParser = new RSSParser();
 		private var xml:XML = <rss version="2.0" 
 			xmlns:media="http://search.yahoo.com/mrss/" 
 			xmlns:jwplayer="http://developer.longtailvideo.com/trac/wiki/FlashFormats">
@@ -59,7 +59,7 @@
 
 		[Test]
 		public function testParse():void {
-			var list:Array = RSSParser.parse(xml);
+			var list:Array = parser.parse(xml);
 			Assert.assertEquals(4, list.length);
 			Assert.assertTrue(list[0] is PlaylistItem);
 			Assert.assertTrue(list[1] is PlaylistItem);

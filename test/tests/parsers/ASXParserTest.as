@@ -6,7 +6,7 @@ package tests.parsers {
 	import org.flexunit.Assert;
 
 	public class ASXParserTest {
-		private var parser:ASXParser;
+		private var parser:ASXParser = new ASXParser();
 		private var xml:XML = <asx version="3.0">
 			<title>Example ASX playlist</title>
 		
@@ -47,7 +47,7 @@ package tests.parsers {
 		
 		[Test]
 		public function testParse():void {
-			var list:Array = ASXParser.parse(xml);
+			var list:Array = parser.parse(xml);
 			Assert.assertEquals(4, list.length);
 			Assert.assertTrue(list[0] is PlaylistItem);
 			Assert.assertTrue(list[1] is PlaylistItem);

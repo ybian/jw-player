@@ -5,7 +5,7 @@
 	import org.flexunit.Assert;
 
 	public class XSPFParserTest {
-		private var parser:XSPFParser;
+		private var parser:XSPFParser = new XSPFParser();
 		private var xml:XML = <playlist version="1" xmlns="http://xspf.org/ns/0/">
 			<title>Example XSPF playlist</title>
 			<tracklist>
@@ -49,7 +49,7 @@
 		
 		[Test]
 		public function testParse():void {
-			var list:Array = XSPFParser.parse(xml);
+			var list:Array = parser.parse(xml);
 			Assert.assertEquals(4, list.length);
 			Assert.assertTrue(list[0] is PlaylistItem);
 			Assert.assertTrue(list[1] is PlaylistItem);

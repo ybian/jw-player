@@ -55,7 +55,7 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 
-		public function success(event:Event):void {
+		public function success(event:Event=null):void {
 			var runSuccess:Function = taskSuccess[activeTask] as Function;
 			if (runSuccess != null) {
 				runSuccess(event);
@@ -87,9 +87,6 @@ package com.longtailvideo.jwplayer.controller {
 				activeTask = taskOrder.shift() as Function;
 				taskIndex++;
 				activeTask();
-				if (!taskSuccess[activeTask]) {
-					nextTask();
-				}
 			} else {
 				dispatchEvent(new Event(Event.COMPLETE));
 			}

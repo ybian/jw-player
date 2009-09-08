@@ -6,21 +6,21 @@ package com.longtailvideo.jwplayer.parsers {
 	/**
 	 * Parse an ASX feed and translate it to a feedarray.
 	 **/
-	public class ASXParser {
+	public class ASXParser implements IPlaylistParser {
 
 		/** Parse an ASX playlist for feeditems. **/
-		public static function parse(dat:XML):Array {
+		public function parse(dat:XML):Array {
 			var arr:Array = new Array();
 			for each (var i:XML in dat.children()) {
 				if (i.localName() == 'entry') {
-					arr.push(ASXParser.parseItem(i));
+					arr.push(parseItem(i));
 				}
 			}
 			return arr;
 		}
 
 		/** Translate ASX item to playlist item. **/
-		public static function parseItem(obj:XML):PlaylistItem {
+		public function parseItem(obj:XML):PlaylistItem {
 			var itm:Object = new Object();
 			for each (var i:XML in obj.children()) {
 				if (!i.localName()) {
