@@ -17,7 +17,6 @@ package com.longtailvideo.jwplayer.events {
 		
 		public var bufferPercent:Number 	= -1;
 		public var duration:Number 			= -1;
-		public var message:String 			= "";
 		public var metadata:Object 			= {};
 		public var position:Number 			= -1;
 		public var volume:Number 			= -1;

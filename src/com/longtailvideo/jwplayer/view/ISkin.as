@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.view {
 	import flash.display.DisplayObject;
+	import flash.events.IEventDispatcher;
 
 	/**
 	 * Send when the skin is ready
@@ -15,7 +16,7 @@ package com.longtailvideo.jwplayer.view {
 	 */
 	[Event(name="error", type = "flash.events.ErrorEvent")]
 
-	public interface ISkin {
+	public interface ISkin extends IEventDispatcher {
 		
 		/**
 		 * Instructs the skin to load its assets from a URL 

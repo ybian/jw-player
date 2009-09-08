@@ -3,6 +3,8 @@ package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.media.MediaSource;
 	import com.longtailvideo.jwplayer.media.MediaState;
 	
+	import flash.events.Event;
+	
 	/**
 	 * 
 	 * @author Pablo Schklowsky
@@ -17,10 +19,14 @@ package com.longtailvideo.jwplayer.model {
 		
 		private var _currentMedia:MediaSource;
 		
+		private var _mediaSources:Object;
+		
 		/** Constructor **/
 		public function Model() {
 			_playlist = new Playlist();
 			_config = new PlayerConfig(_playlist);
+			
+			setupMediaSources();
 		}
 		
 		/** The player config object **/ 
@@ -65,6 +71,44 @@ package com.longtailvideo.jwplayer.model {
 		}
 		public function set mute(b:Boolean):void {
 			_mute = b;
+		}
+		
+
+		private function setupMediaSources():void {
+			_mediaSources = {};
+		}
+		
+		/**
+		 * Whether the Model has a MediaSource handler for a given type.   
+		 */
+		public function hasMediaSource(type:String):Boolean {
+			return (_mediaSources[type] is MediaSource);
+		}
+		
+		/**
+		 * Add a MediaSource to the list of available sources. 
+		 */
+		public function setMediaSource(type:String, source:MediaSource):void {
+			if (!hasMediaSource(type)) {
+				_mediaSources[type] = source;
+			}
+		}
+		
+		public function setActiveMediaSource(type:String):Boolean {
+			if (!hasMediaSource(type)) type = "video";
+			
+			var newMedia:MediaSource = MediaSource(_mediaSources(type));
+			
+			if (_currentMedia != newMedia) {
+				_currentMedia.removeGlobalListener(forwardEvents);
+				newMedia.addGlobalListener(forwardEvents);
+			}
+			
+			return true;
+		}
+		
+		private function forwardEvents(evt:Event):void {
+			dispatchEvent(evt);
 		}
 
 	}

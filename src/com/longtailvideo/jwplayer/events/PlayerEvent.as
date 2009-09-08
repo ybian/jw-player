@@ -36,8 +36,10 @@ package com.longtailvideo.jwplayer.events {
 		public var id:String;
 		public var client:String;
 		public var version:String;
+		
+		public var message:String
 
-		public function PlayerEvent(type:String) {
+		public function PlayerEvent(type:String, msg:String=undefined) {
 			super(type, false, false);
 
 			try {
@@ -47,6 +49,7 @@ package com.longtailvideo.jwplayer.events {
 				this.client = "FLASH" + Capabilities.version;
 				this.version = Player.version;
 			} catch (e:Error) {}
+			this.message = msg;
 		}
 		
 	}
