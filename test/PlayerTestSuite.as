@@ -19,6 +19,7 @@ package {
 		public var utilsSuite:UtilsSuite;
 		public var skinSuite:SkinSuite;
 		public var parserSuite:ParserSuite;
+		public var setupSuite:SetupSuite;
 //		public var swftest:SWFTest;
 	}
 }
