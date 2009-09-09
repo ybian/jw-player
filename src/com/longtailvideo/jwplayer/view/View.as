@@ -1,5 +1,10 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
+	import flash.events.ErrorEvent;
 
 	
 
@@ -7,8 +12,11 @@ package com.longtailvideo.jwplayer.view {
 		private var _skin:ISkin; 
 		private var _components:PlayerComponents;
 		private var _fullscreen:Boolean = false;
+		
+		private var _plugins:Sprite;
 
 		public function View() {
+			_plugins = new Sprite();
 		}
 		
 		public function set skin(skn:ISkin):void {
@@ -44,6 +52,24 @@ package com.longtailvideo.jwplayer.view {
 			} else {
 				throw(new Error("Component must implement a component interface"));
 			}
+		}
+		
+		public function addPlugin(name:String, plugin:IPlugin):void {
+			try {
+				var plugDO:DisplayObject = plugin as DisplayObject;
+			
+				if (_plugins.getChildByName(name) == null && plugDO != null) {
+					plugDO.name = name;
+					_plugins.addChild(plugDO);
+					_plugins[name] = plugDO;					
+				}
+			} catch(e:Error) {
+				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
+			}
+		}
+
+		public function getPlugin(name:String):IPlugin {
+			return _plugins.getChildByName(name) as IPlugin;
 		}
 
 	}

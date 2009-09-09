@@ -8,7 +8,9 @@ package com.longtailvideo.jwplayer.utils {
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-	import flash.system.Security;
+	import flash.system.ApplicationDomain;
+	import flash.system.LoaderContext;
+	import flash.system.SecurityDomain;
 
 	/**
 	 * Sent when the loader has completed loading.  AssetLoader's <code>loadedObject</code> now contains the loaded content.
@@ -49,7 +51,13 @@ package com.longtailvideo.jwplayer.utils {
 			loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadComplete);
 			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadError);
-			loader.load(new URLRequest(location));
+	
+			if(RootReference.root.loaderInfo.url.indexOf('http') == 0) {
+				var context:LoaderContext = new LoaderContext(true,ApplicationDomain.currentDomain,SecurityDomain.currentDomain);
+				loader.load(new URLRequest(location),context);
+			} else {
+				loader.load(new URLRequest(location));
+			}
 		}
 		
 		protected function loadComplete(evt:Event):void {
@@ -66,7 +74,7 @@ package com.longtailvideo.jwplayer.utils {
 		}
 		
 		protected function loadError(evt:ErrorEvent):void {
-			dispatchEvent(evt);
+			dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, evt.text));
 		}
 		
 		protected function useURLLoader(location:String):void {

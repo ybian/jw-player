@@ -42,7 +42,8 @@ package com.longtailvideo.jwplayer.model {
 		private var _skin:String 			= null;
 		private var _width:Number 			= 280;
 		
-		private var _pluginConfig:Object = {};
+		private var _plugins:String 		= null
+		private var _pluginConfig:Object 	= {};
 		
 		public function PlayerConfig(playlist:Playlist):void {
 			setPlaylist(playlist);
@@ -285,6 +286,12 @@ package com.longtailvideo.jwplayer.model {
 		public function get volume():Number { return _volume; }
 		public function set volume(x:Number):void { _volume = x; }
 
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// PLUGINS
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		/** Which plugins to load **/		
+		public function get plugins():String { return _plugins; }
 
 	}
 }

@@ -117,7 +117,14 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function loadPlugins():void {
-			tasker.success();
+			if (_model.config.plugins) {
+				var loader:PluginLoader = new PluginLoader();
+				loader.addEventListener(Event.COMPLETE, tasker.success);
+				loader.addEventListener(ErrorEvent.ERROR, tasker.failure);
+				loader.loadPlugins(_model.config.plugins);
+			} else {
+				tasker.success();
+			}
 		}
 
 		private function loadPlaylist():void {
