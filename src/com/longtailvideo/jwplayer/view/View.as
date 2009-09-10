@@ -1,8 +1,10 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	import com.longtailvideo.jwplayer.utils.RootReference;
 	
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 
@@ -13,10 +15,15 @@ package com.longtailvideo.jwplayer.view {
 		private var _components:PlayerComponents;
 		private var _fullscreen:Boolean = false;
 		
-		private var _plugins:Sprite;
+		private var _plugins:MovieClip;
+		
+		private var stage:MovieClip;
 
 		public function View() {
-			_plugins = new Sprite();
+			stage = new MovieClip();
+			_plugins = new MovieClip();
+			_plugins.name = "plugins";
+			RootReference.stage.addChild(stage);
 		}
 		
 		public function set skin(skn:ISkin):void {
