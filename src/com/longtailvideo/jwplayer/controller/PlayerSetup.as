@@ -1,11 +1,16 @@
 package com.longtailvideo.jwplayer.controller {
+	import com.jeroenwijering.events.PluginInterface;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.model.Model;
+	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.view.DefaultSkin;
 	import com.longtailvideo.jwplayer.view.ISkin;
 	import com.longtailvideo.jwplayer.view.View;
 	
+	import flash.display.DisplayObject;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -37,13 +42,15 @@ package com.longtailvideo.jwplayer.controller {
 	public class PlayerSetup extends EventDispatcher {
 
 		/** MVC references **/
+		private var _player:Player;
 		private var _model:Model;
 		private var _view:View;
 		
 		/** TaskQueue **/
 		private var tasker:TaskQueue;
 		
-		public function PlayerSetup(model:Model, view:View) {
+		public function PlayerSetup(player:Player, model:Model, view:View) {
+			_player = player;
 			_model = model;
 			_view = view;
 		}
@@ -56,7 +63,7 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.queueTask(insertDelay);
 			tasker.queueTask(loadConfig, loadConfigComplete);
 			tasker.queueTask(loadSkin);
-			tasker.queueTask(loadPlugins);
+			tasker.queueTask(loadPlugins, loadPluginsComplete);
 			tasker.queueTask(loadPlaylist);
 			tasker.queueTask(loadMediaSources);
 			tasker.queueTask(initPlugins);
@@ -126,6 +133,20 @@ package com.longtailvideo.jwplayer.controller {
 				tasker.success();
 			}
 		}
+		
+		private function loadPluginsComplete(event:Event):void {
+			var loader:PluginLoader = event.target as PluginLoader;
+
+			for (var pluginName:String in loader.plugins) {
+				var plugin:DisplayObject = loader.plugins[pluginName] as DisplayObject;
+				if (plugin is IPlugin) {
+					_view.addPlugin(pluginName, plugin as IPlugin);
+				} else if (plugin is PluginInterface) {
+					_view.addPlugin(pluginName, new V4Plugin(plugin as PluginInterface));
+				}
+			}
+			
+		}
 
 		private function loadPlaylist():void {
 			if (_model.config.playlist) {
@@ -142,7 +163,15 @@ package com.longtailvideo.jwplayer.controller {
 		}
 		
 		private function initPlugins():void {
-			tasker.success();
+			try {
+				for each (var pluginName:String in _view.loadedPlugins().split(",")) {
+					var plugin:IPlugin = _view.getPlugin(pluginName);
+					plugin.initializePlugin(_player, _model.config.pluginConfig(pluginName));
+				}
+				tasker.success();
+			} catch (e:Error) {
+				tasker.failure(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
+			}
 		}
 
 		private function setupJS():void {

@@ -292,6 +292,20 @@ package com.longtailvideo.jwplayer.model {
 
 		/** Which plugins to load **/		
 		public function get plugins():String { return _plugins; }
+		public function set plugins(x:String):void { _plugins = x; }
+		
+		/**
+		 * Returns a PluginConfig containing plugin configuration information
+		 * 
+		 * @param pluginName Name of the plugin whose config to return.
+		 */
+		public function pluginConfig(pluginName:String):PluginConfig {
+			if (_pluginConfig.hasOwnProperty(pluginName)) {
+				return _pluginConfig[pluginName] as PluginConfig;
+			}
+			
+			return new PluginConfig(pluginName);
+		}
 
 	}
 }

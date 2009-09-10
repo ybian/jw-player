@@ -68,6 +68,16 @@ package com.longtailvideo.jwplayer.view {
 			}
 		}
 
+		public function loadedPlugins():String {
+			var list:Array = [];
+			for each (var plugin:DisplayObject in _plugins) {
+				if (plugin is IPlugin) {
+					list.push(plugin.name);
+				}
+			}
+			return list.join(",");
+		}
+
 		public function getPlugin(name:String):IPlugin {
 			return _plugins.getChildByName(name) as IPlugin;
 		}

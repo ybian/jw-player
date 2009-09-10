@@ -85,7 +85,7 @@ package com.longtailvideo.jwplayer.controller {
 		 * Otherwise, load the config from XML / flashvars.
 		 */
 		public function setupPlayer():void {
-			var setup:PlayerSetup = new PlayerSetup(_model, _view);
+			var setup:PlayerSetup = new PlayerSetup(_player, _model, _view);
 
 			setup.addEventListener(Event.COMPLETE, setupComplete);
 			setup.addEventListener(ErrorEvent.ERROR, errorHandler);

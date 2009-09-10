@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
+	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	
 	import flash.display.DisplayObject;
@@ -49,7 +50,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 		
 		private function loadLocalPlugin(plugin:String):void {
-			if (plugin.indexOf("/") >= 0) {
+			if (plugin.indexOf("/") >= 0 || RootReference.root.loaderInfo.url.indexOf("http") != 0) {
 				var loader:AssetLoader = new AssetLoader();
 				loader.addEventListener(Event.COMPLETE, loadSuccess);
 				loader.addEventListener(ErrorEvent.ERROR, loadLocalFailed);
