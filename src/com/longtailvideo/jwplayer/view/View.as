@@ -5,7 +5,7 @@ package com.longtailvideo.jwplayer.view {
 	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
-	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.ErrorEvent;
 
 	
@@ -17,13 +17,13 @@ package com.longtailvideo.jwplayer.view {
 		
 		private var _plugins:MovieClip;
 		
-		private var stage:MovieClip;
+		private var stage:Stage;
 
 		public function View() {
-			stage = new MovieClip();
+			stage = RootReference.stage;
 			_plugins = new MovieClip();
 			_plugins.name = "plugins";
-			RootReference.stage.addChild(stage);
+			stage.addChild(stage);
 		}
 		
 		public function set skin(skn:ISkin):void {

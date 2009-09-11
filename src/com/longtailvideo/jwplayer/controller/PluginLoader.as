@@ -75,8 +75,8 @@ package com.longtailvideo.jwplayer.controller {
 			
 			var split:Array = plugin.substr(plugin.lastIndexOf("/")+1).replace(/(.*)\.swf$/i, "$1").split("-");
 			var name:String = split[0];
-			var version:String = split.length > 1 ? split[1] : "";
-			var url:String = pluginRepository + name + "/" + name + "-" + version + ".swf";
+			var version:String = split.length > 1 ? ("-" + split[1]) : "";
+			var url:String = pluginRepository + "/5/" + name + "/" + name + version + ".swf";
 			
 			loaders[loader] = plugin;
 			loader.load(url);
@@ -118,8 +118,9 @@ package com.longtailvideo.jwplayer.controller {
 		private function checkComplete():void {
 			var waiting:Boolean = false;
 			for each(var remaining:String in loaders) {
-				trace("Still waiting for " + remaining);
+				// Still waiting for some plugins to load
 				waiting = true;
+				continue;
 			}
 			
 			if (!waiting) {
