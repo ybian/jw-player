@@ -17,16 +17,22 @@ package com.longtailvideo.jwplayer.model {
 		public var streamer:String		= "";
 		public var tags:String			= "";
 		public var title:String			= "";
-		public var type:String			= "";
+		public var provider:String		= "";
 		
 		public function PlaylistItem(obj:Object = null) {
 			for (var itm:String in obj) {
+				// For backwards compatibility
+				if (itm == "type") itm = "provider";
 				if (this[itm] && typeof(this[itm]) == typeof(0)) {
 					this[itm] = Number(obj[itm]);
 				} else {
 					this[itm] = obj[itm];
 				}
 			}
+		}
+		
+		public function get type():String {
+			return provider;
 		}
 	}
 }

@@ -64,7 +64,7 @@ package com.longtailvideo.jwplayer.model {
 					newItem[item] = config[item];
 					playlistItems = true;
 				} else if (item.indexOf(".") > 0) {
-					setPluginProperty(item, config[item]);
+						setPluginProperty(item, config[item]);
 				} else {
 					setProperty(item, config[item]);
 				}
@@ -166,7 +166,10 @@ package com.longtailvideo.jwplayer.model {
 		 * <li>rtmp: FLV/MP4/MP3 files played from an RTMP server.</li>
 		 * </ul> 
 		 **/
-		public function get type():String { return playlistItem('type'); }
+		public function get provider():String { return playlistItem('provider'); }
+
+		/** Deprecated.  Use "provider" flashvar. **/
+		public function get type():String { return playlistItem('provider'); }
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// LAYOUT PROPERTIES
