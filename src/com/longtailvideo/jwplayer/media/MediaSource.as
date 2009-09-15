@@ -3,6 +3,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.MediaStateEvent;
+	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	
 	import flash.display.DisplayObject;
@@ -45,7 +46,9 @@ package com.longtailvideo.jwplayer.media {
 	 */
 	[Event(name="jwplayerMediaState", type = "com.longtailvideo.jwplayer.events.MediaStateEvent")]
 
-	public class MediaSource extends Sprite implements IGlobalEventDispatcher {
+	public class MediaSource extends Sprite implements IGlobalEventDispatcher, IMediaSource {
+		/** Reference to the player configuration. **/
+		protected var _config:PlayerConfig;
 		/** Reference to the currently active playlistitem. **/
 		protected var _item:PlaylistItem;
 		/** The current position inside the file. **/
@@ -56,10 +59,13 @@ package com.longtailvideo.jwplayer.media {
 		protected var _state:String;
 		/** Graphical representation of the currently playing media **/
 		protected var _media:DisplayObject;
+		/** Most recent buffer data **/
+		protected var bufferPercent:Number;
 		/** Handles event dispatching **/
 		protected var _dispatcher:GlobalEventDispatcher;
 
-		public function MediaSource() {
+		public function MediaSource(cfg:PlayerConfig) {
+			_config = cfg;
 			_dispatcher = new GlobalEventDispatcher();
 			_state = MediaState.IDLE;
 		}
@@ -90,7 +96,7 @@ package com.longtailvideo.jwplayer.media {
 		 **/
 		public function seek(pos:Number):void {
 			_position = pos;
-			dispatchEvent(new MediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME));
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position});
 		}
 
 		/** Stop playing and loading the item. **/
@@ -105,7 +111,7 @@ package com.longtailvideo.jwplayer.media {
 		 * @param vol	The new volume (0 to 100).
 		 **/
 		public function setVolume(vol:Number):void {
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME, 'volume', vol);
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME, {'volume': vol});
 		}
 
 		/** Graphical representation of media **/
@@ -144,9 +150,11 @@ package com.longtailvideo.jwplayer.media {
 		 * @param newState A state from ModelStates.
 		 */
 		protected function setState(newState:String):void {
-			var evt:MediaStateEvent = new MediaStateEvent(MediaStateEvent.JWPLAYER_MEDIA_STATE, newState, this._state);
-			this._state = newState;
-			dispatchEvent(evt);
+			if (this._state != newState){
+				var evt:MediaStateEvent = new MediaStateEvent(MediaStateEvent.JWPLAYER_MEDIA_STATE, newState, this._state);
+				this._state = newState;
+				dispatchEvent(evt);
+			}
 		}
 
 		/**
@@ -155,12 +163,23 @@ package com.longtailvideo.jwplayer.media {
 		 * @param property
 		 * @param value
 		 */
-		protected function sendMediaEvent(type:String, property:String, value:*):void {
+		protected function sendMediaEvent(type:String, properties:Object=null):void {
 			var newEvent:MediaEvent = new MediaEvent(type);
-			if (newEvent.hasOwnProperty(property)) {
-				newEvent[property] = value;
+			for (var property:String in properties){
+				if (newEvent.hasOwnProperty(property)) {
+					newEvent[property] = properties[property];
+				}
 			}
 			dispatchEvent(newEvent);
+		}
+		
+		/** Dispatches buffer change notifications **/
+		public function sendBufferEvent(bufferPercent:Number):void {
+			// TODO: Do you send buffering events when in the playing state?
+			if (state == MediaState.BUFFERING && bufferPercent != this.bufferPercent) {
+				this.bufferPercent = bufferPercent;
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {'bufferPercent': this.bufferPercent});
+			}
 		}
 
 		///////////////////////////////////////////		
