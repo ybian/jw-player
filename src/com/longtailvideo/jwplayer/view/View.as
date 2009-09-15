@@ -23,7 +23,7 @@ package com.longtailvideo.jwplayer.view {
 			stage = RootReference.stage;
 			_plugins = new MovieClip();
 			_plugins.name = "plugins";
-			stage.addChild(stage);
+			stage.addChild(_plugins);
 		}
 		
 		public function set skin(skn:ISkin):void {

@@ -4,11 +4,41 @@ package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.media.MediaState;
 	
 	import flash.events.Event;
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_BUFFER
+	 */
+	[Event(name="jwplayerMediaBuffer", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_ERROR
+	 */
+	[Event(name="jwplayerMediaError", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_LOADED
+	 */
+	[Event(name="jwplayerMediaLoaded", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_TIME
+	 */
+	[Event(name="jwplayerMediaTime", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_VOLUME
+	 */
+	[Event(name="jwplayerMediaVolume", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaStateEvent.JWPLAYER_MEDIA_STATE
+	 */
+	[Event(name="jwplayerMediaState", type = "com.longtailvideo.jwplayer.events.MediaStateEvent")]
+
+
 	
 	/**
-	 * 
 	 * @author Pablo Schklowsky
-	 * 
 	 */
 	public class Model extends GlobalEventDispatcher {
 		private var _config:PlayerConfig;
@@ -25,6 +55,8 @@ package com.longtailvideo.jwplayer.model {
 		public function Model() {
 			_playlist = new Playlist();
 			_config = new PlayerConfig(_playlist);
+			
+			_playlist.addGlobalListener(forwardEvents);
 			
 			setupMediaSources();
 		}
@@ -75,14 +107,21 @@ package com.longtailvideo.jwplayer.model {
 		
 
 		private function setupMediaSources():void {
-			_mediaSources = {};
+			_mediaSources = {
+				'video':	new MediaSource(),
+				'http':		new MediaSource(),
+				'rtmp':		new MediaSource(),
+				'sound':	new MediaSource(),
+				'image':	new MediaSource(),
+				'youtube':	new MediaSource()
+			};
 		}
 		
 		/**
 		 * Whether the Model has a MediaSource handler for a given type.   
 		 */
 		public function hasMediaSource(type:String):Boolean {
-			return (_mediaSources[type] is MediaSource);
+			return (_mediaSources[type.toLowerCase()] is MediaSource);
 		}
 		
 		/**
@@ -90,14 +129,14 @@ package com.longtailvideo.jwplayer.model {
 		 */
 		public function setMediaSource(type:String, source:MediaSource):void {
 			if (!hasMediaSource(type)) {
-				_mediaSources[type] = source;
+				_mediaSources[type.toLowerCase()] = source;
 			}
 		}
 		
 		public function setActiveMediaSource(type:String):Boolean {
 			if (!hasMediaSource(type)) type = "video";
 			
-			var newMedia:MediaSource = MediaSource(_mediaSources(type));
+			var newMedia:MediaSource = _mediaSources[type.toLowerCase()] as MediaSource;
 			
 			if (_currentMedia != newMedia) {
 				_currentMedia.removeGlobalListener(forwardEvents);

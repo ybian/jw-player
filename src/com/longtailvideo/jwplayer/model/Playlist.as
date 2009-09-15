@@ -1,4 +1,5 @@
 package com.longtailvideo.jwplayer.model {
+	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.parsers.IPlaylistParser;
 	import com.longtailvideo.jwplayer.parsers.ParserFactory;
@@ -6,7 +7,6 @@ package com.longtailvideo.jwplayer.model {
 	
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
 
 	/**
 	 * Sent when a playlist has been loaded. 
@@ -36,7 +36,7 @@ package com.longtailvideo.jwplayer.model {
 	 */
 	[Event(name="error", type = "flash.events.ErrorEvent")]
 
-	public class Playlist extends EventDispatcher {
+	public class Playlist extends GlobalEventDispatcher {
 		
 		/** **/
 		private var list:Array;

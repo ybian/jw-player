@@ -1,12 +1,51 @@
 package com.longtailvideo.jwplayer.media {
+	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.MediaStateEvent;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
-
+	
 	import flash.display.DisplayObject;
-	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import flash.display.Sprite;
+	import flash.events.Event;
 
-	public class MediaSource extends GlobalEventDispatcher {
+	/**
+	 * Fired when a portion of the current media has been loaded into the buffer.
+	 * 
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_BUFFER
+	 */
+	[Event(name="jwplayerMediaBuffer", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * Fired if an error occurs in the course of media playback.
+	 * 
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_ERROR
+	 */
+	[Event(name="jwplayerMediaError", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * Fired after the MediaSource has loaded an item into memory.
+	 * 
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_LOADED
+	 */
+	[Event(name="jwplayerMediaLoaded", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_TIME
+	 */
+	[Event(name="jwplayerMediaTime", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_VOLUME
+	 */
+	[Event(name="jwplayerMediaVolume", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
+
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.MediaStateEvent.JWPLAYER_MEDIA_STATE
+	 */
+	[Event(name="jwplayerMediaState", type = "com.longtailvideo.jwplayer.events.MediaStateEvent")]
+
+	public class MediaSource extends Sprite implements IGlobalEventDispatcher {
 		/** Reference to the currently active playlistitem. **/
 		protected var _item:PlaylistItem;
 		/** The current position inside the file. **/
@@ -17,8 +56,11 @@ package com.longtailvideo.jwplayer.media {
 		protected var _state:String;
 		/** Graphical representation of the currently playing media **/
 		protected var _media:DisplayObject;
+		/** Handles event dispatching **/
+		protected var _dispatcher:GlobalEventDispatcher;
 
 		public function MediaSource() {
+			_dispatcher = new GlobalEventDispatcher();
 			_state = MediaState.IDLE;
 		}
 
@@ -119,6 +161,32 @@ package com.longtailvideo.jwplayer.media {
 				newEvent[property] = value;
 			}
 			dispatchEvent(newEvent);
+		}
+
+		///////////////////////////////////////////		
+		/// IGlobalEventDispatcher implementation
+		///////////////////////////////////////////		
+		
+		/**
+		 * @inheritDoc 
+		 */
+		public function addGlobalListener(listener:Function):void {
+			_dispatcher.addGlobalListener(listener);
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */
+		public function removeGlobalListener(listener:Function):void {
+			_dispatcher.removeGlobalListener(listener);
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */
+		public override function dispatchEvent(event:Event):Boolean {
+			_dispatcher.dispatchEvent(event);
+			return super.dispatchEvent(event);
 		}
 
 	}
