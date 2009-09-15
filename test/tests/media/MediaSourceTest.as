@@ -3,8 +3,10 @@ package tests.media {
 	import com.longtailvideo.jwplayer.events.MediaStateEvent;
 	import com.longtailvideo.jwplayer.media.MediaSource;
 	import com.longtailvideo.jwplayer.media.MediaState;
+	import com.longtailvideo.jwplayer.model.PlayerConfig;
+	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
-
+	
 	import org.flexunit.Assert;
 	import org.flexunit.async.Async;
 
@@ -13,7 +15,8 @@ package tests.media {
 
 		[Before]
 		public function setup():void {
-			source = new MediaSource();
+			var playerConfig:PlayerConfig = new PlayerConfig(new Playlist());
+			source = new MediaSource(playerConfig);
 		}
 
 		[Test(async, timeout = "1000")]
