@@ -108,12 +108,12 @@ package com.longtailvideo.jwplayer.model {
 
 		private function setupMediaSources():void {
 			_mediaSources = {
-				'video':	new MediaSource(),
-				'http':		new MediaSource(),
-				'rtmp':		new MediaSource(),
-				'sound':	new MediaSource(),
-				'image':	new MediaSource(),
-				'youtube':	new MediaSource()
+				'video':	new MediaSource(config),
+				'http':		new MediaSource(config),
+				'rtmp':		new MediaSource(config),
+				'sound':	new MediaSource(config),
+				'image':	new MediaSource(config),
+				'youtube':	new MediaSource(config)
 			};
 		}
 		
