@@ -65,7 +65,7 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.queueTask(loadSkin);
 			tasker.queueTask(loadPlugins, loadPluginsComplete);
 			tasker.queueTask(loadPlaylist);
-			tasker.queueTask(loadMediaSources);
+			tasker.queueTask(loadMediaProviders);
 			tasker.queueTask(initPlugins);
 			tasker.queueTask(setupJS);
 			tasker.queueTask(beginAutostart);
@@ -158,7 +158,7 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 
-		private function loadMediaSources():void {
+		private function loadMediaProviders():void {
 			tasker.success();
 		}
 		

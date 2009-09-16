@@ -1,7 +1,13 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
-	import com.longtailvideo.jwplayer.media.MediaSource;
+	import com.longtailvideo.jwplayer.media.HTTPMediaProvider;
+	import com.longtailvideo.jwplayer.media.ImageMediaProvider;
+	import com.longtailvideo.jwplayer.media.MediaProvider;
 	import com.longtailvideo.jwplayer.media.MediaState;
+	import com.longtailvideo.jwplayer.media.RTMPMediaProvider;
+	import com.longtailvideo.jwplayer.media.SoundMediaProvider;
+	import com.longtailvideo.jwplayer.media.VideoMediaProvider;
+	import com.longtailvideo.jwplayer.media.YouTubeMediaProvider;
 	
 	import flash.events.Event;
 
@@ -47,7 +53,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _fullscreen:Boolean = false;
 		private var _mute:Boolean = false;
 		
-		private var _currentMedia:MediaSource;
+		private var _currentMedia:MediaProvider;
 		
 		private var _mediaSources:Object;
 		
@@ -58,7 +64,7 @@ package com.longtailvideo.jwplayer.model {
 			
 			_playlist.addGlobalListener(forwardEvents);
 			
-			setupMediaSources();
+			setupMediaProviders();
 		}
 		
 		/** The player config object **/ 
@@ -70,8 +76,8 @@ package com.longtailvideo.jwplayer.model {
 			_config = conf;
 		}
 
-		/** The currently loaded MediaSource **/
-		public function get media():MediaSource {
+		/** The currently loaded MediaProvider **/
+		public function get media():MediaProvider {
 			return _currentMedia;
 		}
 		
@@ -106,37 +112,37 @@ package com.longtailvideo.jwplayer.model {
 		}
 		
 
-		private function setupMediaSources():void {
+		private function setupMediaProviders():void {
 			_mediaSources = {
-				'video':	new MediaSource(config),
-				'http':		new MediaSource(config),
-				'rtmp':		new MediaSource(config),
-				'sound':	new MediaSource(config),
-				'image':	new MediaSource(config),
-				'youtube':	new MediaSource(config)
+				'video':	new VideoMediaProvider(config),
+				'http':		new HTTPMediaProvider(config),
+				'rtmp':		new RTMPMediaProvider(config),
+				'sound':	new SoundMediaProvider(config),
+				'image':	new ImageMediaProvider(config),
+				'youtube':	new YouTubeMediaProvider(config)
 			};
 		}
 		
 		/**
-		 * Whether the Model has a MediaSource handler for a given type.   
+		 * Whether the Model has a MediaProvider handler for a given type.   
 		 */
-		public function hasMediaSource(type:String):Boolean {
-			return (_mediaSources[type.toLowerCase()] is MediaSource);
+		public function hasMediaProvider(type:String):Boolean {
+			return (_mediaSources[type.toLowerCase()] is MediaProvider);
 		}
 		
 		/**
-		 * Add a MediaSource to the list of available sources. 
+		 * Add a MediaProvider to the list of available sources. 
 		 */
-		public function setMediaSource(type:String, source:MediaSource):void {
-			if (!hasMediaSource(type)) {
+		public function setMediaProvider(type:String, source:MediaProvider):void {
+			if (!hasMediaProvider(type)) {
 				_mediaSources[type.toLowerCase()] = source;
 			}
 		}
 		
-		public function setActiveMediaSource(type:String):Boolean {
-			if (!hasMediaSource(type)) type = "video";
+		public function setActiveMediaProvider(type:String):Boolean {
+			if (!hasMediaProvider(type)) type = "video";
 			
-			var newMedia:MediaSource = _mediaSources[type.toLowerCase()] as MediaSource;
+			var newMedia:MediaProvider = _mediaSources[type.toLowerCase()] as MediaProvider;
 			
 			if (_currentMedia != newMedia) {
 				_currentMedia.removeGlobalListener(forwardEvents);

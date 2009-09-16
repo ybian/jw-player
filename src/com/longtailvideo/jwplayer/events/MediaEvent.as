@@ -3,7 +3,7 @@ package com.longtailvideo.jwplayer.events {
 	/**
 	 * The MediaEvent class represents events related to media playback.
 	 *  
-	 * @see com.longtailvideo.media.MediaSource 
+	 * @see com.longtailvideo.media.MediaProvider 
 	 */
 	public class MediaEvent extends PlayerEvent {
 
@@ -92,6 +92,8 @@ package com.longtailvideo.jwplayer.events {
 		 */
 		public static var JWPLAYER_MEDIA_VOLUME:String = "jwplayerMediaVolume";
 		
+		public static var JWPLAYER_MEDIA_META:String = "jwplayerMediaMeta";
+
 		public var bufferPercent:Number 	= -1;
 		public var duration:Number 			= -1;
 		public var metadata:Object 			= {};

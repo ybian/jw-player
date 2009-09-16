@@ -16,12 +16,12 @@ package com.longtailvideo.jwplayer.controller {
 	[Event(name="error", type = "flash.events.ErrorEvent")]
 
 	/**
-	 * This class loads external MediaSource swfs.  
+	 * This class loads external MediaProvider swfs.  
 	 */
-	public class MediaSourceLoader extends EventDispatcher {
+	public class MediaProviderLoader extends EventDispatcher {
 
 		/**
-		 * Loads a list of URLs to swf files containing MediaSource elements.
+		 * Loads a list of URLs to swf files containing MediaProvider elements.
 		 * @param sources An array of URLs, pointing to 
 		 */
 		public function loadSources(sources:Array):void {

@@ -129,6 +129,36 @@
 				return "";
 			}
 		}
+		
+		/**
+		 * Recursively creates a string representation of an object and its properties.
+		 * 
+		 * @param object The object to be converted to a string.
+		 */
+		public static function print_r(object:Object):String {
+			var result:String = "";
+			if (typeof(object) == "object") {
+				result += "{";
+			}
+			for (var property:Object in object) {
+				if (typeof(object[property]) == "object") {
+					result += property + ": ";
+				} else {
+					result += property + ": " + object[property];
+				}
+				result += print_r(object[property]) +  ", ";
+			}
+			
+			if (result != "{"){
+				result = result.substr(0, result.length - 2);
+			}
+			
+			if (typeof(object) == "object") {
+				result += "}";
+			}
+
+			return result;
+		}
 
 	}
 

@@ -111,9 +111,9 @@ package com.longtailvideo.jwplayer.controller {
 		
 		private function playlistLoadHandler(evt:PlaylistEvent):void {
 			for (var i:Number = 0; i < _model.playlist.length; i++) {
-				if (!_model.hasMediaSource(_model.playlist.getItemAt(i).type)) {
+				if (!_model.hasMediaProvider(_model.playlist.getItemAt(i).type)) {
 //					load the external media source					
-//					loadMediaSource(type);
+//					loadMediaProvider(type);
 				} 
 			}
 		}
@@ -260,7 +260,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function loadPlaylistItem(item:PlaylistItem):Boolean {
-			_model.setActiveMediaSource(item.type);
+			_model.setActiveMediaProvider(item.type);
 			_model.media.load(item);
 			return true;
 		}
@@ -269,7 +269,7 @@ package com.longtailvideo.jwplayer.controller {
 			var ext:String = Strings.extension(item);
 			if (EXTENSIONS.hasOwnProperty(ext)) {
 				var type:String = EXTENSIONS[ext];
-				_model.setActiveMediaSource(type);
+				_model.setActiveMediaProvider(type);
 				_model.media.load(new PlaylistItem({file:item}));
 			} else {
 				_model.playlist.load(item);
