@@ -11,7 +11,7 @@ package tests {
 	[RunWith("org.flexunit.runners.Suite")]
 	public class MediaSuite {
 		public var t0:BaseMediaProviderTest;
-		public var t1:VideoMediaProviderTest;
+		//public var t1:VideoMediaProviderTest;
 		//public var t2:HTTPMediaProviderTest;
 		//public var t3:SoundMediaProviderTest;
 		//public var t4:ImageMediaProviderTest;
