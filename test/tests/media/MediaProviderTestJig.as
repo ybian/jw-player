@@ -189,7 +189,6 @@ package tests.media {
 					}
 				}
 			}
-			trace(result);
 			return null;
 		}
 	}

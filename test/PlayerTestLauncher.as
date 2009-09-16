@@ -37,7 +37,7 @@ package {
 		 * @param status The appropriate exit code.
 		 */
 		public function complete(status:Number):void {
-			//flash.system.System.exit(status);
+			flash.system.System.exit(status);
 		}
 	}
 }
