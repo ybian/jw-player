@@ -2,6 +2,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.jeroenwijering.events.PluginInterface;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.model.Model;
+	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
@@ -65,7 +66,6 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.queueTask(loadSkin);
 			tasker.queueTask(loadPlugins, loadPluginsComplete);
 			tasker.queueTask(loadPlaylist);
-			tasker.queueTask(loadMediaProviders);
 			tasker.queueTask(initPlugins);
 			tasker.queueTask(setupJS);
 			tasker.queueTask(beginAutostart);
@@ -134,18 +134,19 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 		
-		private function loadPluginsComplete(event:Event):void {
-			var loader:PluginLoader = event.target as PluginLoader;
+		private function loadPluginsComplete(event:Event=null):void {
+			if (event) {
+				var loader:PluginLoader = event.target as PluginLoader;
 
-			for (var pluginName:String in loader.plugins) {
-				var plugin:DisplayObject = loader.plugins[pluginName] as DisplayObject;
-				if (plugin is IPlugin) {
-					_view.addPlugin(pluginName, plugin as IPlugin);
-				} else if (plugin is PluginInterface) {
-					_view.addPlugin(pluginName, new V4Plugin(plugin as PluginInterface));
+				for (var pluginName:String in loader.plugins) {
+					var plugin:DisplayObject = loader.plugins[pluginName] as DisplayObject;
+					if (plugin is IPlugin) {
+						_view.addPlugin(pluginName, plugin as IPlugin);
+					} else if (plugin is PluginInterface) {
+						_view.addPlugin(pluginName, new V4Plugin(plugin as PluginInterface));
+					}
 				}
 			}
-			
 		}
 
 		private function loadPlaylist():void {
@@ -158,10 +159,6 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 
-		private function loadMediaProviders():void {
-			tasker.success();
-		}
-		
 		private function initPlugins():void {
 			try {
 				for each (var pluginName:String in _view.loadedPlugins().split(",")) {

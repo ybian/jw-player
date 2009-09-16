@@ -127,33 +127,42 @@ package com.longtailvideo.jwplayer.model {
 		 * Whether the Model has a MediaProvider handler for a given type.   
 		 */
 		public function hasMediaProvider(type:String):Boolean {
-			return (_mediaSources[type.toLowerCase()] is MediaProvider);
+			return (_mediaSources[url2type(type)] is MediaProvider);
 		}
 		
 		/**
 		 * Add a MediaProvider to the list of available sources. 
 		 */
-		public function setMediaProvider(type:String, source:MediaProvider):void {
+		public function setMediaProvider(type:String, provider:MediaProvider):void {
 			if (!hasMediaProvider(type)) {
-				_mediaSources[type.toLowerCase()] = source;
+				_mediaSources[url2type(type)] = provider;
 			}
 		}
 		
 		public function setActiveMediaProvider(type:String):Boolean {
 			if (!hasMediaProvider(type)) type = "video";
-			
-			var newMedia:MediaProvider = _mediaSources[type.toLowerCase()] as MediaProvider;
+
+			var newMedia:MediaProvider = _mediaSources[url2type(type)] as MediaProvider;
 			
 			if (_currentMedia != newMedia) {
-				_currentMedia.removeGlobalListener(forwardEvents);
+				if (_currentMedia) { 
+					_currentMedia.removeGlobalListener(forwardEvents); 
+				}
 				newMedia.addGlobalListener(forwardEvents);
+				_currentMedia = newMedia;
 			}
+			
 			
 			return true;
 		}
 		
 		private function forwardEvents(evt:Event):void {
 			dispatchEvent(evt);
+		}
+		
+		/** e.g. http://providers.longtailvideo.com/5/myProvider.swf --> myprovider **/
+		private function url2type(type:String):String {
+			return type.substring(type.lastIndexOf("/")+1, type.length).replace(".swf","").toLowerCase();
 		}
 
 	}

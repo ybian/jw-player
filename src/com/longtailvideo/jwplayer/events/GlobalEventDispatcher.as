@@ -19,8 +19,11 @@ package com.longtailvideo.jwplayer.events {
 		}
 		
 		public override function dispatchEvent(event:Event) : Boolean {
-			for each (var listener:Function in _globalListeners) {
-				listener(event);
+			for (var l:* in _globalListeners) {
+				if (l is Function) {
+					var listener:Function = l as Function;
+					listener(event);
+				}
 			}
 			return super.dispatchEvent(event);
 		} 

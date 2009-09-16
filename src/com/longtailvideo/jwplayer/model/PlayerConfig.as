@@ -61,15 +61,19 @@ package com.longtailvideo.jwplayer.model {
 			var playlistItems:Boolean = false;
 			for (var item:String in config) {
 				if (newItem.hasOwnProperty(item)) {
-					newItem[item] = config[item];
-					playlistItems = true;
+					if (_list.length > 0) {
+						_list.currentItem[item] = config[item];
+					} else {
+						newItem[item] = config[item];
+						playlistItems = true;
+					}
 				} else if (item.indexOf(".") > 0) {
-						setPluginProperty(item, config[item]);
+					setPluginProperty(item, config[item]);
 				} else {
 					setProperty(item, config[item]);
 				}
 			}
-			if (playlistItems) {
+			if (playlistItems && _list.length == 0) {
 				_list.insertItem(newItem, 0);
 			}
 		}
@@ -92,8 +96,8 @@ package com.longtailvideo.jwplayer.model {
 		 * @param value The value to set.
 		 */
 		private function setPluginProperty(name:String, value:String):void {
-			var pluginName:String = name.substring(0, name.indexOf(".")-1).toLowerCase();
-			var pluginProperty:String = name.substring(name.indexOf(".")+1, name.length-1).toLowerCase();
+			var pluginName:String = name.substring(0, name.indexOf(".")).toLowerCase();
+			var pluginProperty:String = name.substring(name.indexOf(".")+1, name.length).toLowerCase();
 
 			if(pluginName && pluginProperty && value) {
 				if (!_pluginConfig.hasOwnProperty(pluginName)) {
