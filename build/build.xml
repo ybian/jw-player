@@ -83,7 +83,7 @@
 	</target>
 	
 	<target name="build-test">
-		<exec executable="${amxmlc.exe}" dir="${basedir}"  failonerror="true">
+		<exec executable="${mxmlc.exe}" dir="${basedir}"  failonerror="true">
 			<!-- Point to the main class .as file -->
 			<arg line="'${test.src.dir}/PlayerTest.mxml'" />
 
@@ -96,7 +96,6 @@
 
 			<!-- Include the necessary framework libraries in the class path -->
 			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
-			<arg line="-compiler.library-path '${airsdk.lib.dir}'" />
 			<arg line="-compiler.library-path '${flexunit.lib.dir}'" />	
 			<arg line="-compiler.library-path '${lib.dir}'" />
 
@@ -112,36 +111,19 @@
 
 			<!-- Ignore missing type definitions -->
 			<arg line="-warnings=false" />
+			
+			<!-- Enable debugging -->
+			<arg line="-debug=true" />
 		</exec>
-		<copy file="${test.src.dir}/PlayerTestLauncher-app.xml" tofile="${test.bin.dir}/PlayerTestLauncher-app.xml" />
 		<copy todir="${basedir}/bin-test/assets">
 			<fileset dir="${test.src.dir}/assets" />
 		</copy>
 	</target>
 
-	<target name="test-unit-windowless">
-		<antcall target="test-unit">
-			<param name="windowless" value="true"/>
-			<param name="outputPath" value="${test.bin.dir}/test-results.xml"/>
-		</antcall>
-	</target>
 	
 	<target name="test-unit" depends="clean-test,check-properties,build-debug-player,build-test">
-		<copy file="${debug.dir}/player.swf" tofile="${test.bin.dir}/player.swf" />
-		<condition property="windowlessLine" value="-- windowless" else="">
-			<isset property="windowless" />
-		</condition>
-		<condition property="outputLine" value="-- 'outputpath=${outputPath}'" else="">
-			<isset property="outputPath" />
-		</condition>
-		<exec executable="${airDebugLauncher.exe}" failonerror="true">
-			<arg line="'${test.bin.dir}/PlayerTestLauncher-app.xml'" />
-			
-			<!-- Enable windowless run -->
-			<arg line="${windowlessLine}" />
-			
-			<!-- Set output path -->
-			<arg line="${outputLine}" />
+		<exec executable="${flashDebugPlayer.exe}" failonerror="true">
+			<arg line="'${test.bin.dir}/PlayerTestLauncher.swf'" />
 		</exec>
 	</target>
 	
