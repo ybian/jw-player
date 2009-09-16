@@ -1,10 +1,10 @@
 package {
+		import flash.system.System;
+		
 		import org.flexunit.flexui.TestRunnerBase;
 		import org.flexunit.listeners.UIListener;
 		import org.flexunit.runner.FlexUnitCore;
 		import org.flexunit.runner.notification.async.XMLListener;
-		import flash.desktop.NativeApplication;	
-
 	
 	/**
 	 * The test launcher sets up the FlexUnit enviroment for testing, adds the test suites, and
@@ -14,20 +14,22 @@ package {
 	 * @date 2009-08-18
 	 */
 	public class PlayerTestLauncher {
-		private var core:FlexUnitCore;			
 		private var visualRunner:TestRunnerBase;
-		private var outputPath:String;
+		private var core:FlexUnitCore;			
 
-		public function PlayerTestLauncher(outputPath:String=null, visualRunner:TestRunnerBase=null) {
-			this.outputPath = outputPath;
-			var core:FlexUnitCore = new FlexUnitCore();
-			if (visualRunner){
-				this.visualRunner = visualRunner;
-				core.addListener(new UIListener(visualRunner));
+		public function PlayerTestLauncher(visualRunner:TestRunnerBase = null) {
+			try {
+				core = new FlexUnitCore();
+				if (visualRunner) {
+					this.visualRunner = visualRunner;
+					core.addListener(new UIListener(visualRunner));
+				}
+				core.addListener(new XMLListener("Astaire"));
+				core.addListener(new PlayerTestRunListener(this, new PlayerTestResultPrinter()));
+				core.run(PlayerTestSuite);
+			} catch (err:Error){
+				trace (err);
 			}
-			core.addListener(new PlayerTestRunListener(this, new PlayerTestResultPrinter(outputPath)));
-			core.addListener(new XMLListener());
-			core.run(PlayerTestSuite);
 		}
 		
 		/**
@@ -35,10 +37,7 @@ package {
 		 * @param status The appropriate exit code.
 		 */
 		public function complete(status:Number):void {
-			if (outputPath){
-				visualRunner = null;
-				NativeApplication.nativeApplication.exit(status);
-			}
+			//flash.system.System.exit(status);
 		}
 	}
 }

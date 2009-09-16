@@ -1,7 +1,7 @@
 package tests.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.MediaStateEvent;
-	import com.longtailvideo.jwplayer.media.MediaSource;
+	import com.longtailvideo.jwplayer.media.MediaProvider;
 	import com.longtailvideo.jwplayer.media.MediaState;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.Playlist;
@@ -10,13 +10,13 @@ package tests.media {
 	import org.flexunit.Assert;
 	import org.flexunit.async.Async;
 
-	public class MediaSourceTest {
-		protected var source:MediaSource;
+	public class MediaProviderTest {
+		protected var source:MediaProvider;
 
 		[Before]
 		public function setup():void {
 			var playerConfig:PlayerConfig = new PlayerConfig(new Playlist());
-			source = new MediaSource(playerConfig);
+			source = new MediaProvider(playerConfig);
 		}
 
 		[Test(async, timeout = "1000")]
@@ -27,7 +27,7 @@ package tests.media {
 		}
 
 		private function mediaLoaded(event:MediaEvent, params:*):void {
-			Assert.assertNotNull(event.target as MediaSource);
+			Assert.assertNotNull(event.target as MediaProvider);
 		}
 
 		[Test(async, timeout = "1000")]
@@ -38,7 +38,7 @@ package tests.media {
 		}
 
 		private function mediaPlaying(event:MediaStateEvent, params:*):void {
-			Assert.assertNotNull(event.target as MediaSource);
+			Assert.assertNotNull(event.target as MediaProvider);
 			Assert.assertEquals(MediaState.PLAYING, event.newstate);
 		}
 
