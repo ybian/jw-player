@@ -3,16 +3,17 @@ package tests.media {
 	import com.longtailvideo.jwplayer.events.MediaStateEvent;
 	import com.longtailvideo.jwplayer.media.MediaProvider;
 	import com.longtailvideo.jwplayer.media.MediaState;
+	import com.longtailvideo.jwplayer.model.PlayerConfig;
+	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	
 	import events.*;
 	
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.utils.setTimeout;
-	
-	import flexunit.framework.Assert;
 	
 	
 	public class MediaProviderTestJig extends EventDispatcher {
@@ -28,168 +29,176 @@ package tests.media {
 		[Event(name="testComplete", type="TestingEvent")]
 		[Event(name="testError", type="TestingEvent")]
 		/** The sequence of resulting events **/
-		public var testResults:Array;
-		public var source:MediaProvider;
-		public var playlistItem:PlaylistItem;
-		private var currentTestType:String;
-		private static var mediaEventDefaults:Object = {bufferPercent: -1, duration: -1, metadata: {}, position: -1, volume: -1};
-		private static var stateDefaults:Object = {oldstate: "", newstate: ""};
+		public static var MEDIAPROVIDER_PLAY:String = 'play';
+		public static var MEDIAPROVIDER_PAUSE:String = 'pause';
+		public static var MEDIAPROVIDER_LOAD:String = 'load';
+		public static var MEDIAPROVIDER_SEEK:String = 'seek';
+		public static var MEDIAPROVIDER_STOP:String = 'stop';
+		public static var MEDIAPROVIDER_SETVOLUME:String = 'setvolume';
+		protected static var mediaEventDefaults:Object = {bufferPercent: -1, duration: -1, metadata: {}, position: -1, volume: -1};
+		protected static var stateDefaults:Object = {oldstate: "", newstate: ""};
+		protected var _testDefinition:String;
+		protected var _provider:MediaProvider;
+		protected var _playlistItem:PlaylistItem;
+		protected var _testDefintion:MediaProviderTestDefinition;
+		protected var _currentState:Object;
+		protected var _lastTime:Number;
 		
 		
-		public function MediaProviderTestJig(source:MediaProvider, playlistItem:PlaylistItem, testType:String):void {
-			this.source = source;
-			this.playlistItem = playlistItem;
-			currentTestType = testType;
-			this.addListeners();
-			testResults = new Array();
+		public function MediaProviderTestJig(source:MediaProvider, playlistItem:PlaylistItem, testDefintion:MediaProviderTestDefinition):void {
+			_provider = source;
+			source.initializeMediaProvider(new PlayerConfig(new Playlist()));
+			_playlistItem = playlistItem;
+			_testDefintion = testDefintion;
+			_currentState = testDefinition.getState(MediaState.IDLE);
+			addListeners();
 		}
 		
 		
 		private function addListeners():void {
-			source.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, loadHandler);
-			source.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, eventHandler);
-			source.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, eventHandler);
-			source.addEventListener(MediaStateEvent.JWPLAYER_MEDIA_STATE, stateHandler);
-			source.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, eventHandler);
-			source.addEventListener(MediaEvent.JWPLAYER_MEDIA_META, eventHandler);
-			source.addEventListener(MediaEvent.JWPLAYER_MEDIA_ERROR, errorHandler);
+			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, loadHandler);
+			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, eventHandler);
+			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, eventHandler);
+			provider.addEventListener(MediaStateEvent.JWPLAYER_MEDIA_STATE, eventHandler);
+			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, eventHandler);
+			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_META, eventHandler);
+			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_ERROR, errorHandler);
+			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_COMPLETE, completeHandler);
 		}
 		
 		
 		public function load():void {
-			source.load(playlistItem);
+			provider.load(playlistItem);
 		}
 		
 		
 		private function loadHandler(evt:MediaEvent):void {
-			if (source.display()) {
-				RootReference.stage.addChild(source.display());
+			if (provider.display()) {
+				RootReference.stage.addChild(provider.display());
 			}
-			testResults.push({event: evt, time: new Date()});
-			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_READY, currentTestType));
+			eventHandler(evt);
+			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_READY, testDefinition.name));
 		}
 		
 		
-		public function testPlay():void {
+		public function run():void {
+			var operation:Object = testDefinition.getNextOperation();
+			while (operation) {
+				var operationType:String = operation['operation'] as String;
+				var time:Number = operation['time'] as Number;
+				var params:Object = operation['params'] as Object
+				switch (operationType) {
+					case MEDIAPROVIDER_PLAY:
+						setTimeout(provider.play, time);
+						break;
+					case MEDIAPROVIDER_PAUSE:
+						setTimeout(provider.pause, time);
+						break;
+					case MEDIAPROVIDER_STOP:
+						setTimeout(provider.stop, time);
+						break;
+					case MEDIAPROVIDER_SEEK:
+						setTimeout(provider.seek, time, params);
+						break;
+				}
+				operation = testDefinition.getNextOperation();
+			}
+			_currentState = testDefinition.getState(MediaState.IDLE);
 			dispatchTestBegin();
-			source.play();
-		}
-		
-		
-		public function testStop():void {
-			dispatchTestBegin();
-			source.play();
-			setTimeout(source.stop, 1000);
-			setTimeout(source.play, 2000);
-		}
-		
-		
-		public function testPause():void {
-			dispatchTestBegin();
-			source.play();
-			setTimeout(source.pause, 1000);
-			setTimeout(source.play, 2000);
-		}
-		
-		
-		public function testSeekBack():void {
-			dispatchTestBegin();
-			source.play();
-			setTimeout(source.seek, 1000, 0);
-		}
-		
-		
-		public function testSeekAhead():void {
-			dispatchTestBegin();
-			source.play();
-			setTimeout(source.seek, 4000, 10);
-		}
-		
-		
-		public function testSeekTooFar():void {
-			dispatchTestBegin();
-			source.play();
-			setTimeout(source.seek, playlistItem.duration + 1000, 10);
 		}
 		
 		
 		private function dispatchTestBegin():void {
-			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_BEGIN, currentTestType));
-		}
-		
-		
-		private function eventHandler(evt:MediaEvent):void {
-			testResults.push({event: evt, time: new Date()});
+			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_BEGIN, testDefinition.name));
 		}
 		
 		
 		private function errorHandler(evt:MediaEvent):void {
 			var result:Array = new Array();
 			result.push(evt);
-			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_ERROR, currentTestType));
+			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_ERROR, testDefinition.name));
 		}
 		
 		
-		private function stateHandler(evt:MediaStateEvent):void {
-			testResults.push({event: evt, time: new Date()});
-			if (evt.newstate == MediaState.COMPLETED) {
-				if (source.display()) {
-					source.display().visible = false;
-				}
-				this.dispatchEvent(new TestingEvent(TestingEvent.TEST_COMPLETE, currentTestType, validateResult()));
+		private function eventHandler(testEvent:MediaEvent):void {
+			var time:Date = new Date();
+			switch (testEvent.type) {
+				case MediaStateEvent.JWPLAYER_MEDIA_STATE:
+					var stateEvent:MediaStateEvent = (testEvent as MediaStateEvent);
+					if (testDefinition.validTrasition(stateEvent.oldstate, stateEvent.newstate)) {
+						trace(traceEvent(stateEvent, stateDefaults));
+						_currentState = testDefinition.getState(stateEvent.newstate);
+					} else {
+						dispatchErrorEvent("Invalid state transition while running '" + testDefinition.name + "': " + traceEvent(stateEvent, stateDefaults));
+					}
+					break;
+				default:
+					if (currentState != null) {
+						if (!testDefinition.validEvent(currentState['name'], testEvent.type)) {
+							dispatchErrorEvent("Invalid event thrown while running '" + testDefinition.name + "' in the " + currentState['name'] + " state: " + traceEvent(testEvent, mediaEventDefaults));
+						}
+					} else {
+						dispatchErrorEvent("Error: Recieved event while in an invalid state");
+					}
+					break;
+			}
+		}
+		
+		protected function completeHandler(evt:MediaEvent):void {
+			hideDisplay();
+			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_COMPLETE, testDefinition.name));
+		}
+		
+		
+		protected function dispatchErrorEvent(errorMessage:String):void {
+			hideDisplay();
+			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_COMPLETE, testDefinition.name, errorMessage));
+		}
+		
+		
+		protected function hideDisplay():void {
+			if (provider.display()) {
+				provider.display().visible = false;
 			}
 		}
 		
 		
-		private function validateResult():String {
-			var result:String;
-			for (var i:Number = 0; i < testResults.length; i++) {
-				var testMediaEvent:Object = testResults[i];
-				switch (testMediaEvent['event'].type) {
-					case 'jwplayerMediaState':
-						result = traceEvent(currentTestType, testMediaEvent, stateDefaults);
-						break;
-					case 'jwplayerMediaBuffer':
-						result = traceEvent(currentTestType, testMediaEvent, mediaEventDefaults);
-						break;
-					case 'jwplayerMediaLoaded':
-						result = traceEvent(currentTestType, testMediaEvent, mediaEventDefaults);
-						break;
-					case 'jwplayerMediaMeta':
-						result = traceEvent(currentTestType, testMediaEvent, mediaEventDefaults);
-						break;
-					case 'jwplayerMediaTime':
-						result = traceEvent(currentTestType, testMediaEvent, mediaEventDefaults);
-						break;
-					case 'jwplayerMediaError':
-						result = traceEvent(currentTestType, testMediaEvent, mediaEventDefaults);
-						break;
-					case 'jwplayerMediaVolume':
-						result = traceEvent(currentTestType, testMediaEvent, mediaEventDefaults);
-						break;
+		private function traceEvent(event:Event, defaults:Object):String {
+			var result:String = "[" + event.type + "] ";
+			for (var property:String in defaults) {
+				if (event[property] != defaults[property]) {
+					if (typeof(event[property]) == "object") {
+						var assignedValue:String = Strings.print_r(event[property]);
+						var defaultValue:String = Strings.print_r(defaults[property]);
+						if (defaultValue != assignedValue) {
+							result += " " + property + ": " + assignedValue;
+						}
+					} else {
+						result += " " + property + ": " + event[property];
+					}
 				}
 			}
 			return result;
 		}
 		
 		
-		private function traceEvent(testName:String, testMediaEvent:Object, defaults:Object):String {
-			var mediaEvent:MediaEvent = testMediaEvent['event'];
-			var result:String = "[" + (testMediaEvent['time'] as Date).time + "] " + testName + " " + mediaEvent.type;
-			for (var property:String in defaults) {
-				if (mediaEvent[property] != defaults[property]) {
-					if (typeof(mediaEvent[property]) == "object") {
-						var assignedValue:String = Strings.print_r(mediaEvent[property]);
-						var defaultValue:String = Strings.print_r(defaults[property]);
-						if (defaultValue != assignedValue) {
-							result += " " + property + ": " + assignedValue;
-						}
-					} else {
-						result += " " + property + ": " + mediaEvent[property];
-					}
-				}
-			}
-			return null;
+		protected function get provider():MediaProvider {
+			return _provider;
+		}
+		
+		
+		protected function get playlistItem():PlaylistItem {
+			return _playlistItem;
+		}
+		
+		
+		protected function get testDefinition():MediaProviderTestDefinition {
+			return _testDefintion;
+		}
+		
+		
+		protected function get currentState():Object {
+			return _currentState;
 		}
 	}
 }

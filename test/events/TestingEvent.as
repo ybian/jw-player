@@ -52,12 +52,12 @@ package events {
 		/** The type of test that was run **/
 		public var testType:String;
 		/** Whether the test was successful **/
-		public var testResult:String;
+		public var message:String;
 		
-		public function TestingEvent(type:String, testType:String, testResult:String = null) {
+		public function TestingEvent(type:String, testType:String, message:String = null) {
 			super(type, false, false);
 			this.testType = testType;
-			this.testResult = testResult;
+			this.message = message;
 		}
 	}
 }

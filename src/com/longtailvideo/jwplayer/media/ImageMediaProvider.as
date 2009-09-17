@@ -21,8 +21,12 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Constructor; sets up listeners **/
-		public function ImageMediaProvider(cfg:PlayerConfig):void {
-			super(cfg, 'image');
+		public function ImageMediaProvider() {
+		}
+
+		public override function initializeMediaProvider(cfg:PlayerConfig):void {
+			super.initializeMediaProvider(cfg);
+			_provider = 'image';
 			loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
 			loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, progressHandler);
@@ -81,7 +85,8 @@ package com.longtailvideo.jwplayer.media {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration});
 			} else if (_item.duration > 0) {
 				pause();
-				setState(MediaState.COMPLETED);
+				setState(MediaState.IDLE);
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}
 		

@@ -5,8 +5,8 @@ package tests.media {
 	
 	
 	
-	public class YouTubeMediaProviderTest extends BaseMediaProviderTest {
-		private var _mediaSources:Array = [new YouTubeMediaProvider(new PlayerConfig(new Playlist()))];
+	public class YouTubeMediaProviderTest extends MediaProviderTest {
+		private var _mediaSources:Array = [new YouTubeMediaProvider()];
 		private var _playlist:Array = [{'duration':33, 'file':'http://youtube.com/watch?v=IBTE-RoMsvw'}];
 			
 		protected override function get mediaSources():Array {

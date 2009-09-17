@@ -31,7 +31,10 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Constructor; sets up the connection and display. **/
-		public function SegmentMediaProvider(cfg:PlayerConfig):void {
+		public function SegmentMediaProvider():void {
+		}
+		
+		public override function initializeMediaProvider(cfg:PlayerConfig, provider:String):void {
 			super(cfg);
 			connection = new NetConnection();
 			connection.connect(null);

@@ -5,6 +5,8 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.MediaStateEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.utils.Strings;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -63,8 +65,10 @@ package com.longtailvideo.jwplayer.media {
 		protected var _dispatcher:GlobalEventDispatcher;
 		
 		
-		public function MediaProvider(cfg:PlayerConfig, provider:String) {
-			_provider = name;
+		public function MediaProvider(){		
+		}
+		
+		public function initializeMediaProvider(cfg:PlayerConfig):void {
 			_config = cfg;
 			_dispatcher = new GlobalEventDispatcher();
 			_state = MediaState.IDLE;
@@ -168,9 +172,10 @@ package com.longtailvideo.jwplayer.media {
 		 * @param newState A state from ModelStates.
 		 */
 		protected function setState(newState:String):void {
-			if (this._state != newState) {
-				var evt:MediaStateEvent = new MediaStateEvent(MediaStateEvent.JWPLAYER_MEDIA_STATE, newState, this._state);
-				this._state = newState;
+			//TODO: Validate states
+			if (state != newState) {
+				var evt:MediaStateEvent = new MediaStateEvent(MediaStateEvent.JWPLAYER_MEDIA_STATE, newState, state);
+				_state = newState;
 				dispatchEvent(evt);
 			}
 		}

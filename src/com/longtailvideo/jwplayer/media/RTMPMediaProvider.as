@@ -39,9 +39,13 @@ package com.longtailvideo.jwplayer.media {
 		protected var unpublished:Boolean;
 		
 		
+		public function RTMPMediaProvider() {
+		}
+		
 		/** Constructor; sets up the connection and display. **/
-		public function RTMPMediaProvider(cfg:PlayerConfig):void {
-			super(cfg, 'rtmp');
+		public override function initializeMediaProvider(cfg:PlayerConfig):void {
+			super.initializeMediaProvider(cfg);
+			_provider = 'rtmp';
 			connection = new NetConnection();
 			connection.addEventListener(NetStatusEvent.NET_STATUS, statusHandler);
 			connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
@@ -113,7 +117,8 @@ package com.longtailvideo.jwplayer.media {
 			}
 			if (dat.type == 'complete') {
 				clearInterval(interval);
-				setState(MediaState.COMPLETED);
+				setState(MediaState.IDLE);
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			} else if (dat.type == 'close') {
 				stop();
 			}
@@ -171,7 +176,8 @@ package com.longtailvideo.jwplayer.media {
 				if (started && item.duration == 0) {
 					stop();
 				}
-				setState(MediaState.COMPLETED);
+				setState(MediaState.IDLE);
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}
 		

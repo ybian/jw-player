@@ -28,8 +28,13 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Constructor; sets up the connection and display. **/
-		public function SoundMediaProvider(cfg:PlayerConfig):void {
-			super(cfg, 'sound');
+		public function SoundMediaProvider() {
+		
+		}
+		
+		public override function initializeMediaProvider(cfg:PlayerConfig):void {
+			super.initializeMediaProvider(cfg);
+			_provider = 'sound';
 			transformer = new SoundTransform();
 			context = new SoundLoaderContext(_config.bufferlength * 1000, true);
 		}
@@ -38,7 +43,8 @@ package com.longtailvideo.jwplayer.media {
 		/** Sound completed; send event. **/
 		private function completeHandler(evt:Event):void {
 			clearInterval(interval);
-			setState(MediaState.COMPLETED);
+			setState(MediaState.IDLE);
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 		}
 		
 		
@@ -127,7 +133,8 @@ package com.longtailvideo.jwplayer.media {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {_position: _position, duration: _item.duration});
 			} else if (_item.duration > 0) {
 				pause();
-				setState(MediaState.COMPLETED);
+				setState(MediaState.IDLE);
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}
 		

@@ -3,8 +3,8 @@ package tests.media {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.Playlist;
 
-	public class ImageMediaProviderTest extends BaseMediaProviderTest {
-		private var _mediaSources:Array = [new ImageMediaProvider(new PlayerConfig(new Playlist()))];
+	public class ImageMediaProviderTest extends MediaProviderTest {
+		private var _mediaSources:Array = [new ImageMediaProvider()];
 		private var _playlist:Array = [{'duration': 5, 'file':'http://developer.longtailvideo.com/svn/testing/files/bunny.jpg'},
 			{'duration': 5, 'file':'http://developer.longtailvideo.com/svn/testing/files/bunny.png'}];
 			

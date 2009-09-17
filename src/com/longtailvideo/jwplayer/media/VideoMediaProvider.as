@@ -30,8 +30,12 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Constructor; sets up the connection and display. **/
-		public function VideoMediaProvider(cfg:PlayerConfig):void {
-			super(cfg, 'video');
+		public function VideoMediaProvider() {
+		}
+		
+		public override function initializeMediaProvider(cfg:PlayerConfig):void {
+			super.initializeMediaProvider(cfg);
+			_provider = 'video';
 			connection = new NetConnection();
 			connection.connect(null);
 			stream = new NetStream(connection);
@@ -149,7 +153,8 @@ package com.longtailvideo.jwplayer.media {
 			} else if (item.duration > 0) {
 				stream.pause();
 				clearInterval(interval);
-				setState(MediaState.COMPLETED);
+				setState(MediaState.IDLE);
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}
 		
@@ -169,7 +174,8 @@ package com.longtailvideo.jwplayer.media {
 				case "NetStream.Play.Stop":
 					if (position > 1) {
 						clearInterval(interval);
-						setState(MediaState.COMPLETED);
+						setState(MediaState.IDLE);
+						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 					}
 					break;
 				case "NetStream.Play.StreamNotFound":

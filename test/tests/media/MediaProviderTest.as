@@ -1,46 +1,187 @@
 package tests.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.events.MediaStateEvent;
 	import com.longtailvideo.jwplayer.media.MediaProvider;
 	import com.longtailvideo.jwplayer.media.MediaState;
-	import com.longtailvideo.jwplayer.model.PlayerConfig;
-	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	
-	import org.flexunit.Assert;
+	import events.*;
+	
+	import flexunit.framework.Assert;
+	
 	import org.flexunit.async.Async;
-
+	
 	public class MediaProviderTest {
-		protected var source:MediaProvider;
+		public var tester:MediaProviderTestJig;
+		private var _mediaSources:Array = [];
+		private var _playlist:Array = [];
+		
+		protected function getPlayTest():MediaProviderTestDefinition {
+			var testDefinition:MediaProviderTestDefinition = new MediaProviderTestDefinition('play');
 
-		[Before]
-		public function setup():void {
-			var playerConfig:PlayerConfig = new PlayerConfig(new Playlist());
-			source = new MediaProvider(playerConfig);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,0);
+
+			testDefinition.addState(MediaState.IDLE,
+				[MediaState.PLAYING,MediaState.BUFFERING],
+				[MediaEvent.JWPLAYER_MEDIA_VOLUME, MediaEvent.JWPLAYER_MEDIA_LOADED,MediaEvent.JWPLAYER_MEDIA_META]);
+
+			testDefinition.addState(MediaState.BUFFERING,
+				[MediaState.PLAYING],
+				[MediaEvent.JWPLAYER_MEDIA_BUFFER,MediaEvent.JWPLAYER_MEDIA_META]);
+
+			testDefinition.addState(MediaState.PLAYING,
+				[MediaState.BUFFERING,MediaState.IDLE],
+				[MediaEvent.JWPLAYER_MEDIA_TIME,MediaEvent.JWPLAYER_MEDIA_META,MediaEvent.JWPLAYER_MEDIA_COMPLETE]);
+				
+			return testDefinition;
+		}
+		
+		protected function getStopTest():MediaProviderTestDefinition {
+			var testDefinition:MediaProviderTestDefinition = new MediaProviderTestDefinition('stop');
+			
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,0);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_STOP,2000);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,4000);
+			
+			testDefinition.addState(MediaState.IDLE,
+				[MediaState.PLAYING,MediaState.BUFFERING],
+				[MediaEvent.JWPLAYER_MEDIA_VOLUME, MediaEvent.JWPLAYER_MEDIA_LOADED,MediaEvent.JWPLAYER_MEDIA_META]);
+			
+			testDefinition.addState(MediaState.BUFFERING,
+				[MediaState.PLAYING],
+				[MediaEvent.JWPLAYER_MEDIA_BUFFER,MediaEvent.JWPLAYER_MEDIA_META]);
+			
+			testDefinition.addState(MediaState.PLAYING,
+				[MediaState.BUFFERING,MediaState.IDLE],
+				[MediaEvent.JWPLAYER_MEDIA_TIME,MediaEvent.JWPLAYER_MEDIA_META,MediaEvent.JWPLAYER_MEDIA_COMPLETE]);
+			
+			return testDefinition;
+		}
+		
+		protected function getSeekBackTest():MediaProviderTestDefinition {			
+			var testDefinition:MediaProviderTestDefinition = new MediaProviderTestDefinition('seekback');
+			
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,0);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_SEEK,2000,0);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,4000);
+			
+			testDefinition.addState(MediaState.IDLE,
+				[MediaState.PLAYING,MediaState.BUFFERING],
+				[MediaEvent.JWPLAYER_MEDIA_VOLUME, MediaEvent.JWPLAYER_MEDIA_LOADED,MediaEvent.JWPLAYER_MEDIA_META]);
+			
+			testDefinition.addState(MediaState.BUFFERING,
+				[MediaState.PLAYING],
+				[MediaEvent.JWPLAYER_MEDIA_BUFFER,MediaEvent.JWPLAYER_MEDIA_META]);
+			
+			testDefinition.addState(MediaState.PLAYING,
+				[MediaState.BUFFERING,MediaState.IDLE],
+				[MediaEvent.JWPLAYER_MEDIA_TIME,MediaEvent.JWPLAYER_MEDIA_META,MediaEvent.JWPLAYER_MEDIA_COMPLETE]);
+				
+			return testDefinition;
 		}
 
-		[Test(async, timeout = "1000")]
-		public function testMediaLoad():void {
-			Async.handleEvent(this, source, MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
-			Async.failOnEvent(this, source, MediaEvent.JWPLAYER_MEDIA_ERROR);
-			source.load(new PlaylistItem());
+		
+		protected function getSeekAheadTest():MediaProviderTestDefinition {
+			var testDefinition:MediaProviderTestDefinition = new MediaProviderTestDefinition('seekahead');
+			
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,0);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_SEEK,2000,10000);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,4000);
+			
+			testDefinition.addState(MediaState.IDLE,
+				[MediaState.PLAYING,MediaState.BUFFERING],
+				[MediaEvent.JWPLAYER_MEDIA_VOLUME, MediaEvent.JWPLAYER_MEDIA_LOADED,MediaEvent.JWPLAYER_MEDIA_META]);
+				
+			testDefinition.addState(MediaState.BUFFERING,
+				[MediaState.PLAYING],
+				[MediaEvent.JWPLAYER_MEDIA_BUFFER,MediaEvent.JWPLAYER_MEDIA_META]);
+				
+			testDefinition.addState(MediaState.PLAYING,
+				[MediaState.BUFFERING,MediaState.IDLE],
+				[MediaEvent.JWPLAYER_MEDIA_TIME,MediaEvent.JWPLAYER_MEDIA_META,MediaEvent.JWPLAYER_MEDIA_COMPLETE]);
+			
+			return testDefinition;
 		}
+		
+		protected function getPauseTest():MediaProviderTestDefinition {
+			var testDefinition:MediaProviderTestDefinition = new MediaProviderTestDefinition('pause');
+			
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,0);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PAUSE,2000);
+			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,4000);
 
-		private function mediaLoaded(event:MediaEvent, params:*):void {
-			Assert.assertNotNull(event.target as MediaProvider);
+			testDefinition.addState(MediaState.IDLE,
+				[MediaState.PLAYING,MediaState.BUFFERING],
+				[MediaEvent.JWPLAYER_MEDIA_VOLUME, MediaEvent.JWPLAYER_MEDIA_LOADED,MediaEvent.JWPLAYER_MEDIA_META]);
+
+			testDefinition.addState(MediaState.PAUSED,
+				[MediaState.PLAYING,MediaState.BUFFERING],
+				[MediaEvent.JWPLAYER_MEDIA_META]);
+
+			testDefinition.addState(MediaState.BUFFERING,
+				[MediaState.PLAYING,MediaState.PAUSED],
+				[MediaEvent.JWPLAYER_MEDIA_BUFFER,MediaEvent.JWPLAYER_MEDIA_META]);
+
+			testDefinition.addState(MediaState.PLAYING,
+				[MediaState.BUFFERING,MediaState.IDLE,MediaState.PAUSED],
+				[MediaEvent.JWPLAYER_MEDIA_TIME,MediaEvent.JWPLAYER_MEDIA_META,MediaEvent.JWPLAYER_MEDIA_COMPLETE]);
+				
+			return testDefinition;
+		}	
+				
+		[Test(async,timeout="100000")]
+		public function testMediaProvidersPlay():void {
+			runTests(getPlayTest());
 		}
-
-		[Test(async, timeout = "1000")]
-		public function testMediaPlay():void {
-			Async.handleEvent(this, source, MediaStateEvent.JWPLAYER_MEDIA_STATE, mediaPlaying);
-			Async.failOnEvent(this, source, MediaEvent.JWPLAYER_MEDIA_ERROR);
-			source.play();
+		
+		[Test(async,timeout="40000")]
+		public function testMediaProvidersPause():void {
+			runTests(getPauseTest());
 		}
-
-		private function mediaPlaying(event:MediaStateEvent, params:*):void {
-			Assert.assertNotNull(event.target as MediaProvider);
-			Assert.assertEquals(MediaState.PLAYING, event.newstate);
+		
+		[Test(async,timeout="40000")]
+		public function testMediaProvidersStop():void {			
+			runTests(getStopTest());
 		}
-
+		
+		[Test(async,timeout="40000")]
+		public function testMediaProvidersSeekBack():void {
+			runTests(getSeekBackTest());
+		}
+				
+		[Test(async,timeout="40000")]
+		public function testMediaProvidersSeekAhead():void {				
+			runTests(getSeekAheadTest());
+		}
+		
+		private function runTests(testDefinition:MediaProviderTestDefinition):void {
+			for each (var mediaSource:MediaProvider in mediaSources){
+				for each (var playlistObject:Object in playlist){
+					tester = new MediaProviderTestJig(mediaSource, new PlaylistItem(playlistObject), testDefinition);
+					var timeout:Number = playlistObject['duration']*1000+5000;
+					Async.handleEvent(this, tester, TestingEvent.TEST_READY, runTest, timeout);
+					Async.proceedOnEvent(this, tester, TestingEvent.TEST_BEGIN, timeout);
+					Async.handleEvent(this, tester, TestingEvent.TEST_COMPLETE, handleComplete, timeout);
+					Async.failOnEvent(this, tester, TestingEvent.TEST_ERROR, timeout);
+					tester.load();
+					Assert.assertTrue(true);
+				}
+			}
+		}
+		
+		private function runTest(evt:TestingEvent, param2:*):void {
+			tester.run();
+		}
+		
+		private function handleComplete(evt:TestingEvent, param2:*):void {
+			Assert.assertNull(evt.message);
+		}
+		
+		protected function get mediaSources():Array {
+			return _mediaSources;
+		}
+		
+		protected function get playlist():Array {
+			return _playlist;
+		}
 	}
 }

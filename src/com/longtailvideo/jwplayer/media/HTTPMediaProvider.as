@@ -6,6 +6,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.utils.NetClient;
+	
 	import flash.events.*;
 	import flash.media.*;
 	import flash.net.*;
@@ -44,8 +45,12 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Constructor; sets up the connection and display. **/
-		public function HTTPMediaProvider(cfg:PlayerConfig):void {
-			super(cfg, 'http');
+		public function HTTPMediaProvider() {	
+		}
+		
+		public override function initializeMediaProvider(cfg:PlayerConfig):void {
+			super.initializeMediaProvider(cfg);
+			_provider = 'http';
 			connection = new NetConnection();
 			connection.connect(null);
 			stream = new NetStream(connection);
@@ -251,9 +256,11 @@ package com.longtailvideo.jwplayer.media {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 				}
 			} else if (item.duration > 0) {
+				// Playback completed
 				stream.pause();
 				clearInterval(interval);
-				setState(MediaState.COMPLETED);
+				setState(MediaState.IDLE);
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}
 		
@@ -286,9 +293,10 @@ package com.longtailvideo.jwplayer.media {
 		protected function statusHandler(evt:NetStatusEvent):void {
 			switch (evt.info.code) {
 				case "NetStream.Play.Stop":
-					if (state != MediaState.COMPLETED && state != MediaState.BUFFERING) {
+					if (state != MediaState.BUFFERING) {
 						clearInterval(interval);
-						setState(MediaState.COMPLETED);
+						setState(MediaState.IDLE);
+						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 					}
 					break;
 				case "NetStream.Play.StreamNotFound":

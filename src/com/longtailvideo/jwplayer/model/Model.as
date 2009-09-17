@@ -111,16 +111,15 @@ package com.longtailvideo.jwplayer.model {
 			_mute = b;
 		}
 		
-
+		
 		private function setupMediaProviders():void {
-			_mediaSources = {
-				'video':	new VideoMediaProvider(config),
-				'http':		new HTTPMediaProvider(config),
-				'rtmp':		new RTMPMediaProvider(config),
-				'sound':	new SoundMediaProvider(config),
-				'image':	new ImageMediaProvider(config),
-				'youtube':	new YouTubeMediaProvider(config)
-			};
+			_mediaSources = {};
+			setMediaProvider('video', new VideoMediaProvider());
+			setMediaProvider('http', new HTTPMediaProvider());
+			setMediaProvider('rtmp', new RTMPMediaProvider());
+			setMediaProvider('sound', new SoundMediaProvider());
+			setMediaProvider('image', new ImageMediaProvider());
+			setMediaProvider('youtube', new YouTubeMediaProvider());
 		}
 		
 		/**
@@ -136,6 +135,7 @@ package com.longtailvideo.jwplayer.model {
 		public function setMediaProvider(type:String, provider:MediaProvider):void {
 			if (!hasMediaProvider(type)) {
 				_mediaSources[url2type(type)] = provider;
+				provider.initializeMediaProvider(config);
 			}
 		}
 		

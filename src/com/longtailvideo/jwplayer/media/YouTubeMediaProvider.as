@@ -34,8 +34,12 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Setup YouTube connections and load proxy. **/
-		public function YouTubeMediaProvider(cfg:PlayerConfig):void {
-			super(cfg, 'youtube');
+		public function YouTubeMediaProvider(){
+		}
+		
+		public override function initializeMediaProvider(cfg:PlayerConfig):void {
+			super.initializeMediaProvider(cfg);
+			_provider = 'youtube';
 			Security.allowDomain('*');
 			var url:String = RootReference.root.loaderInfo.url;
 			if (url.indexOf('http://') == 0) {
@@ -153,7 +157,8 @@ package com.longtailvideo.jwplayer.media {
 					break;
 				case 0:
 					if (_config.state != MediaState.BUFFERING && _config.state != MediaState.IDLE) {
-						setState(MediaState.COMPLETED);
+						setState(MediaState.IDLE);
+						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 					}
 					break;
 				case 1:
