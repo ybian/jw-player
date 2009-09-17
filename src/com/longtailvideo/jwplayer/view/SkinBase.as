@@ -23,6 +23,10 @@ package com.longtailvideo.jwplayer.view {
 	public class SkinBase extends EventDispatcher implements ISkin {
 		protected var _skin:Sprite;
 
+		public function SkinBase() {
+			_skin = new Sprite();
+		}
+
 		public function load(url:String=null):void {
 			dispatchEvent(new Event(Event.COMPLETE));
 		}
@@ -64,11 +68,9 @@ package com.longtailvideo.jwplayer.view {
 			}
 
 			if (comp.getChildByName(element.name)) {
-				delete comp[element.name];
 				comp.removeChild(comp.getChildByName(element.name));
 			}
 			comp.addChild(element);
-			comp[element.name] = element;
 		}
 
 		public function getSkinProperties():SkinProperties {

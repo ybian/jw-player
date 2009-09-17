@@ -1,0 +1,67 @@
+<skin>
+
+	<config>
+		<backcolor>0x008800</backcolor>
+		<frontcolor>0x880000</frontcolor>
+		<lightcolor>0x000088</lightcolor>
+		<screencolor>0x880088</screencolor>
+	</config>
+
+	<components>
+		<component name="controlbar">
+			<config>
+				<margin>50</margin>
+			</config>
+
+			<elements>
+				<element name="back" src="smiley.png" />
+				<element name="shade" src="smiley.png" />
+				<element name="playButtonBack" src="smiley.png" />
+				<element name="playButton" src="smiley.png" />
+				<element name="playButtonOver" src="smiley.png" />
+			</elements>
+		</component>
+
+		<component name="display">
+			<elements>
+				<element name="back" src="smiley.png" />
+				<element name="playIcon" src="smiley.png" />
+				<element name="muteIcon" src="smiley.png" />
+				<element name="errorIcon" src="smiley.png" />
+				<element name="bufferIcon" src="smiley.png" />
+			</elements>
+		</component>
+
+		<component name="dock">
+			<elements>
+				<element name="buttonBack" src="smiley.png" />
+				<element name="buttonShade" src="smiley.png" />
+			</elements>
+		</component>
+
+		<component name="playlist">
+			<elements>
+				<element name="itemBack" src="smiley.png" />
+				<element name="itemShade" src="smiley.png" />
+				<element name="rail" src="smiley.png" />
+				<element name="slider" src="smiley.png" />
+				<element name="sliderBack" src="smiley.png" />
+				<element name="sliderOver" src="smiley.png" />
+			</elements>
+		</component>
+
+		<component name="hd">
+			<elements>
+				<element name="onButton" src="smiley.png" />
+				<element name="onButtonOver" src="smiley.png" />
+				<element name="onDock" src="smiley.png" />
+				<element name="onDockOver" src="smiley.png" />
+				<element name="offButton" src="smiley.png" />
+				<element name="offButtonOver" src="smiley.png" />
+				<element name="offDock" src="smiley.png" />
+				<element name="offDockOver" src="smiley.png" />
+			</elements>
+		</component>
+	</components>
+
+</skin>
