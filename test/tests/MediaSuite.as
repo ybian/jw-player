@@ -1,5 +1,5 @@
 package tests {
-	import tests.media.BaseMediaProviderTest;
+	import tests.media.MediaProviderTest;
 	import tests.media.HTTPMediaProviderTest;
 	import tests.media.ImageMediaProviderTest;
 	import tests.media.RTMPMediaProviderTest;
@@ -10,7 +10,7 @@ package tests {
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
 	public class MediaSuite {
-		public var t0:BaseMediaProviderTest;
+		public var t0:MediaProviderTest;
 		//public var t1:VideoMediaProviderTest;
 		//public var t2:HTTPMediaProviderTest;
 		//public var t3:SoundMediaProviderTest;
