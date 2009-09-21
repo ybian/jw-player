@@ -2,6 +2,7 @@ package com.longtailvideo.jwplayer.view {
 
 	public class PlayerComponents {
 		private var _controlbar:IControlbarComponent;
+		private var _display:IDisplayComponent;
 		private var _dock:IDockComponent;
 		private var _playlist:IPlaylistComponent;
 		
