@@ -2,7 +2,6 @@ package com.longtailvideo.jwplayer.view {
 
 	public class PlayerComponents {
 		private var _controlbar:IControlbarComponent;
-		private var _display:IDisplayComponent;
 		private var _dock:IDockComponent;
 		private var _playlist:IPlaylistComponent;
 		
@@ -10,7 +9,6 @@ package com.longtailvideo.jwplayer.view {
 		
 		public function PlayerComponents(skin:ISkin) {
 			_controlbar = new ControlBarComponent();
-			_display = new DisplayComponent();
 		}
 		
 		public function get controlbar():IControlbarComponent {
