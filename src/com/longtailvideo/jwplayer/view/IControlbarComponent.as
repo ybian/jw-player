@@ -38,13 +38,6 @@ package com.longtailvideo.jwplayer.view {
 	[Event(name="jwPlayerViewPrev", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
 	/**
-	 * Sent when the user interface requests that the player navigate to the playlist item's <code>link</code> property
-	 *
-	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_LINK
-	 */
-	[Event(name="jwPlayerViewLink", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
-
-	/**
 	 * Sent when the user reuquests the player set its mute state to the given value
 	 *
 	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_MUTE
@@ -73,30 +66,14 @@ package com.longtailvideo.jwplayer.view {
 	[Event(name="jwPlayerViewVolume", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
 	/**
-	 * Sent when the user wishes to load a new item into the playlist, or replace the playlist
-	 *
-	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_LOAD
-	 */
-	[Event(name="jwPlayerViewLoad", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
-
-	/**
-	 * User request to redraw the player
-	 *
-	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_REDRAW
-	 */
-	[Event(name="jwPlayerViewRedraw", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
-
-	/**
 	 * User request to seek to the given playback location, in seconds.
 	 *
 	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_SEEK
 	 */
 	[Event(name="jwPlayerViewSeek", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
-	public interface IControlbarComponent extends IEventDispatcher {
-
-		function addButton(icon:DisplayObject, clickHandler:Function):void;
-		function hide(state:Boolean):void;
-
+	public interface IControlbarComponent {
+		function addButton(name:String, icon:DisplayObject, clickHandler:Function):void;
+		function removeButton(name:String):void;
 	}
 }

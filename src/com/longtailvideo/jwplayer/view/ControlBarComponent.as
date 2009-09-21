@@ -1,10 +1,8 @@
 package com.longtailvideo.jwplayer.view {
-	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
-	
-	import flash.display.DisplayObject;
 	import flash.events.Event;
-
-	/**
+	import flash.display.DisplayObject;
+	
+		/**
 	 * Sent when the user interface requests that the player play the currently loaded media
 	 *
 	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_PLAY
@@ -73,17 +71,22 @@ package com.longtailvideo.jwplayer.view {
 	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_SEEK
 	 */
 	[Event(name="jwPlayerViewSeek", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
-
-
-	public class ControlBarComponent extends GlobalEventDispatcher implements IControlbarComponent {
+	
+	
+	public class ControlBarComponent extends CoreComponent implements IControlbarComponent {
 		public function ControlBarComponent() {
+			//TODO: implement function
+			super();
 		}
-
-		public function addButton(icon:DisplayObject, clickHandler:Function):void {
+		
+		
+		public function addButton(name:String, icon:DisplayObject, clickHandler:Function):void {
+			//TODO: implement function
 		}
-
-		public function hide(state:Boolean):void {
+		
+		
+		public function removeButton(name:String):void {
+			//TODO: implement function
 		}
-
 	}
 }

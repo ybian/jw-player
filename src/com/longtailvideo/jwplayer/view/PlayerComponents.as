@@ -9,6 +9,8 @@ package com.longtailvideo.jwplayer.view {
 		private var _skin:ISkin;
 		
 		public function PlayerComponents(skin:ISkin) {
+			_controlbar = new ControlBarComponent();
+			_display = new DisplayComponent();
 		}
 		
 		public function get controlbar():IControlbarComponent {
