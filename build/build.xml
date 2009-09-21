@@ -82,13 +82,13 @@
 		</exec>
 	</target>
 	
-	<target name="build-test">
+	<target name="build-test-unit">
 		<exec executable="${mxmlc.exe}" dir="${basedir}"  failonerror="true">
 			<!-- Point to the main class .as file -->
-			<arg line="'${test.src.dir}/PlayerTest.mxml'" />
+			<arg line="'${test.src.dir}/${class}'" />
 
 			<!-- Place the built .swf file in the "bin" directory -->
-			<arg line="-output '${test.bin.dir}/PlayerTestLauncher.swf'" />
+			<arg line="-output '${test.bin.dir}/${swf}'" />
 
 			<!-- Define source directories for "src" and "tests" -->
 			<arg line="-compiler.source-path '${test.src.dir}'" />
@@ -120,10 +120,29 @@
 		</copy>
 	</target>
 
+	<target name="build-test-unit-windowed">
+		<antcall target="build-test-unit">
+			<param name="swf" value="UnitTestWindowed.swf" />
+			<param name="class" value="PlayerTest.mxml" />
+		</antcall>
+	</target>
+
+	<target name="build-test-unit-windowless">
+		<antcall target="build-test-unit">
+			<param name="swf" value="UnitTestWindowless.swf" />
+			<param name="class" value="PlayerTest.mxml" />
+		</antcall>
+	</target>
 	
-	<target name="test-unit" depends="clean-test,check-properties,build-debug-player,build-test">
+	<target name="test-unit-windowed" depends="clean-test,check-properties,build-debug-player,build-test-unit-windowed">
 		<exec executable="${flashDebugPlayer.exe}" failonerror="true">
-			<arg line="'${test.bin.dir}/PlayerTestLauncher.swf'" />
+			<arg line="'${test.bin.dir}/UnitTestWindowed.swf'" />
+		</exec>
+	</target>
+
+	<target name="test-unit-windowless" depends="clean-test,check-properties,build-debug-player,build-test-unit-windowless">
+		<exec executable="${flashDebugPlayer.exe}" failonerror="true">
+			<arg line="'${test.bin.dir}/UnitTestWindowless.swf'" />
 		</exec>
 	</target>
 	

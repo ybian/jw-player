@@ -1,4 +1,6 @@
 package {
+		import com.longtailvideo.jwplayer.utils.RootReference;
+		
 		import flash.system.System;
 		
 		import org.flexunit.flexui.TestRunnerBase;
@@ -17,7 +19,7 @@ package {
 		private var visualRunner:TestRunnerBase;
 		private var core:FlexUnitCore;			
 
-		public function PlayerTestLauncher(visualRunner:TestRunnerBase = null) {
+		public function PlayerTestLauncher(visualRunner:TestRunnerBase) {
 			try {
 				core = new FlexUnitCore();
 				if (visualRunner) {
@@ -37,7 +39,9 @@ package {
 		 * @param status The appropriate exit code.
 		 */
 		public function complete(status:Number):void {
-			flash.system.System.exit(status);
+			if (RootReference.root.loaderInfo.url.indexOf("Windowless.swf") >=0) {
+				flash.system.System.exit(status);
+			}
 		}
 	}
 }
