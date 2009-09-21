@@ -93,6 +93,15 @@ package com.longtailvideo.jwplayer.events {
 		public static var JWPLAYER_VIEW_LOAD:String = "jwPlayerViewLoad";
 
 		/**
+		 * The ViewEvent.JWPLAYER_VIEW_REDRAW constant defines the value of the
+		 * <code>type</code> property of the event object
+		 * for a <code>jwplayerReady</code> event.
+		 *
+		 * @eventType jwPlayerViewRedraw
+		 */
+		public static var JWPLAYER_VIEW_REDRAW:String = "jwPlayerViewRedraw";
+
+		/**
 		 * The ViewEvent.JWPLAYER_VIEW_SEEK constant defines the value of the
 		 * <code>type</code> property of the event object
 		 * for a <code>jwplayerReady</code> event.
