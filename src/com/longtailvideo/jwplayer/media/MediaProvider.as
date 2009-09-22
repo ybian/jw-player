@@ -2,10 +2,10 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.events.MediaStateEvent;
+	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
-	import com.longtailvideo.jwplayer.utils.Strings;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -39,9 +39,9 @@ package com.longtailvideo.jwplayer.media {
 	 */
 	[Event(name="jwplayerMediaVolume", type="com.longtailvideo.jwplayer.events.MediaEvent")]
 	/**
-	 * @eventType com.longtailvideo.jwplayer.events.MediaStateEvent.JWPLAYER_MEDIA_STATE
+	 * @eventType com.longtailvideo.jwplayer.events.MediaStateEvent.JWPLAYER_PLAYER_STATE
 	 */
-	[Event(name="jwplayerMediaState", type="com.longtailvideo.jwplayer.events.MediaStateEvent")]
+	[Event(name="jwplayerPlayerState", type="com.longtailvideo.jwplayer.events.PlayerStateEvent")]
 
 
 	public class MediaProvider extends Sprite implements IGlobalEventDispatcher {
@@ -71,7 +71,7 @@ package com.longtailvideo.jwplayer.media {
 		public function initializeMediaProvider(cfg:PlayerConfig):void {
 			_config = cfg;
 			_dispatcher = new GlobalEventDispatcher();
-			_state = MediaState.IDLE;
+			_state = PlayerState.IDLE;
 		}
 		
 		
@@ -87,13 +87,13 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Pause playback of the item. **/
 		public function pause():void {
-			setState(MediaState.PAUSED);
+			setState(PlayerState.PAUSED);
 		}
 		
 		
 		/** Resume playback of the item. **/
 		public function play():void {
-			setState(MediaState.PLAYING);
+			setState(PlayerState.PLAYING);
 		}
 		
 		
@@ -111,7 +111,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Stop playing and loading the item. **/
 		public function stop():void {
 			_position = 0;
-			setState(MediaState.IDLE);
+			setState(PlayerState.IDLE);
 		}
 		
 		
@@ -139,7 +139,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/**
 		 * Current state of the MediaProvider.
-		 * @see MediaStates
+		 * @see PlayerStates
 		 */
 		public function get state():String {
 			return _state;
@@ -174,7 +174,7 @@ package com.longtailvideo.jwplayer.media {
 		protected function setState(newState:String):void {
 			//TODO: Validate states
 			if (state != newState) {
-				var evt:MediaStateEvent = new MediaStateEvent(MediaStateEvent.JWPLAYER_MEDIA_STATE, newState, state);
+				var evt:PlayerStateEvent = new PlayerStateEvent(PlayerStateEvent.JWPLAYER_PLAYER_STATE, newState, state);
 				_state = newState;
 				dispatchEvent(evt);
 			}
@@ -201,7 +201,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Dispatches buffer change notifications **/
 		public function sendBufferEvent(bufferPercent:Number):void {
 			// TODO: Do you send buffering events when in the playing state?
-			if (state == MediaState.BUFFERING && bufferPercent != this.bufferPercent) {
+			if (state == PlayerState.BUFFERING && bufferPercent != this.bufferPercent) {
 				this.bufferPercent = bufferPercent;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {'bufferPercent': this.bufferPercent});
 			}

@@ -1,5 +1,5 @@
 package tests.media {
-	import com.longtailvideo.jwplayer.media.MediaState;
+	import com.longtailvideo.jwplayer.media.PlayerState;
 	
 	
 	

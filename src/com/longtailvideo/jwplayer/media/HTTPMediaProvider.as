@@ -5,6 +5,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
 	
 	import flash.events.*;
@@ -154,7 +155,7 @@ package com.longtailvideo.jwplayer.media {
 			clearInterval(loadinterval);
 			loadinterval = setInterval(loadHandler, 200);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			setState(MediaState.BUFFERING);
+			setState(PlayerState.BUFFERING);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			sendBufferEvent(0);
 		}
@@ -243,23 +244,23 @@ package com.longtailvideo.jwplayer.media {
 			var bfr:Number = Math.round(stream.bufferLength / stream.bufferTime * 100);
 			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
 				stream.pause();
-				if (state == MediaState.PLAYING && bfr < 25) {
-					setState(MediaState.BUFFERING);
+				if (state == PlayerState.PLAYING && bfr < 25) {
+					setState(PlayerState.BUFFERING);
 				}
 				sendBufferEvent(bfr);
-			} else if (bfr > 95 && state == MediaState.BUFFERING) {
+			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
 				super.play();
 				stream.resume();
 			}
 			if (position < item.duration) {
-				if (state == MediaState.PLAYING && position >= 0) {
+				if (state == PlayerState.PLAYING && position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 				}
 			} else if (item.duration > 0) {
 				// Playback completed
 				stream.pause();
 				clearInterval(interval);
-				setState(MediaState.IDLE);
+				setState(PlayerState.IDLE);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}
@@ -275,7 +276,7 @@ package com.longtailvideo.jwplayer.media {
 				byteoffset = off;
 				load(item);
 			} else {
-				if (state == MediaState.PAUSED) {
+				if (state == PlayerState.PAUSED) {
 					stream.resume();
 				}
 				_position = pos;
@@ -293,9 +294,9 @@ package com.longtailvideo.jwplayer.media {
 		protected function statusHandler(evt:NetStatusEvent):void {
 			switch (evt.info.code) {
 				case "NetStream.Play.Stop":
-					if (state != MediaState.BUFFERING) {
+					if (state != PlayerState.BUFFERING) {
 						clearInterval(interval);
-						setState(MediaState.IDLE);
+						setState(PlayerState.IDLE);
 						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 					}
 					break;

@@ -1,13 +1,16 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.events.MediaEvent;
+	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.media.HTTPMediaProvider;
 	import com.longtailvideo.jwplayer.media.ImageMediaProvider;
 	import com.longtailvideo.jwplayer.media.MediaProvider;
-	import com.longtailvideo.jwplayer.media.MediaState;
 	import com.longtailvideo.jwplayer.media.RTMPMediaProvider;
 	import com.longtailvideo.jwplayer.media.SoundMediaProvider;
 	import com.longtailvideo.jwplayer.media.VideoMediaProvider;
 	import com.longtailvideo.jwplayer.media.YouTubeMediaProvider;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	
 	import flash.events.Event;
 
@@ -15,11 +18,6 @@ package com.longtailvideo.jwplayer.model {
 	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_BUFFER
 	 */
 	[Event(name="jwplayerMediaBuffer", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
-
-	/**
-	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_ERROR
-	 */
-	[Event(name="jwplayerMediaError", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
 
 	/**
 	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_LOADED
@@ -37,12 +35,15 @@ package com.longtailvideo.jwplayer.model {
 	[Event(name="jwplayerMediaVolume", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
 
 	/**
-	 * @eventType com.longtailvideo.jwplayer.events.MediaStateEvent.JWPLAYER_MEDIA_STATE
+	 * @eventType com.longtailvideo.jwplayer.events.MediaStateEvent.JWPLAYER_PLAYER_STATE
 	 */
-	[Event(name="jwplayerMediaState", type = "com.longtailvideo.jwplayer.events.MediaStateEvent")]
+	[Event(name="jwplayerPlayerState", type = "com.longtailvideo.jwplayer.events.PlayerStateEvent")]
 
+	/**
+	 * @eventType com.longtailvideo.jwplayer.events.PlayerEvent.JWPLAYER_ERROR
+	 */
+	[Event(name="jwplayerError", type = "com.longtailvideo.jwplayer.events.PlayerEvent")]
 
-	
 	/**
 	 * @author Pablo Schklowsky
 	 */
@@ -56,7 +57,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _currentMedia:MediaProvider;
 		
 		private var _mediaSources:Object;
-		
+
 		/** Constructor **/
 		public function Model() {
 			_playlist = new Playlist();
@@ -85,7 +86,7 @@ package com.longtailvideo.jwplayer.model {
 		 * The current player state 
 		 */
 		public function get state():String {
-			return _currentMedia ? _currentMedia.state : MediaState.IDLE;
+			return _currentMedia ? _currentMedia.state : PlayerState.IDLE;
 		}
 
 		/**
@@ -157,7 +158,12 @@ package com.longtailvideo.jwplayer.model {
 		}
 		
 		private function forwardEvents(evt:Event):void {
-			dispatchEvent(evt);
+			if (evt.type == MediaEvent.JWPLAYER_MEDIA_ERROR) {
+				// Translate media error into player error.
+				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, (evt as MediaEvent).message));
+			} else {
+				dispatchEvent(evt);
+			}
 		}
 		
 		/** e.g. http://providers.longtailvideo.com/5/myProvider.swf --> myprovider **/

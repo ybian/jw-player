@@ -2,10 +2,10 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
-	import com.longtailvideo.jwplayer.media.MediaState;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
@@ -222,8 +222,8 @@ package com.longtailvideo.jwplayer.controller {
 				return false;
 
 			switch (_model.media.state) {
-				case MediaState.PLAYING:
-				case MediaState.BUFFERING:
+				case PlayerState.PLAYING:
+				case PlayerState.BUFFERING:
 					return false;
 					break;
 				default:
@@ -239,8 +239,8 @@ package com.longtailvideo.jwplayer.controller {
 				return false;
 
 			switch (_model.media.state) {
-				case MediaState.PLAYING:
-				case MediaState.BUFFERING:
+				case PlayerState.PLAYING:
+				case PlayerState.BUFFERING:
 					_model.media.pause();
 					return true;
 					break;
@@ -254,9 +254,9 @@ package com.longtailvideo.jwplayer.controller {
 				return false;
 
 			switch (_model.media.state) {
-				case MediaState.PLAYING:
-				case MediaState.BUFFERING:
-				case MediaState.PAUSED:
+				case PlayerState.PLAYING:
+				case PlayerState.BUFFERING:
+				case PlayerState.PAUSED:
 					_model.media.stop();
 					return true;
 					break;
@@ -270,9 +270,9 @@ package com.longtailvideo.jwplayer.controller {
 				return false;
 
 			switch (_model.media.state) {
-				case MediaState.PLAYING:
-				case MediaState.BUFFERING:
-				case MediaState.PAUSED:
+				case PlayerState.PLAYING:
+				case PlayerState.BUFFERING:
+				case PlayerState.PAUSED:
 					_model.media.seek(pos);
 					return true;
 					break;

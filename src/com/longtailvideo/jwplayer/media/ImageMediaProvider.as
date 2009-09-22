@@ -6,6 +6,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	import flash.display.*;
 	import flash.events.*;
 	import flash.net.URLRequest;
@@ -39,7 +40,7 @@ package com.longtailvideo.jwplayer.media {
 			_item = itm;
 			_position = 0;
 			loader.load(new URLRequest(_item.file), new LoaderContext(true));
-			setState(MediaState.BUFFERING);
+			setState(PlayerState.BUFFERING);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {bufferPercent: 0});
 		}
 		
@@ -85,7 +86,7 @@ package com.longtailvideo.jwplayer.media {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration});
 			} else if (_item.duration > 0) {
 				pause();
-				setState(MediaState.IDLE);
+				setState(PlayerState.IDLE);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}

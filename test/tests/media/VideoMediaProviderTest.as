@@ -1,6 +1,6 @@
 package tests.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.media.MediaState;
+	import com.longtailvideo.jwplayer.media.PlayerState;
 	import com.longtailvideo.jwplayer.media.VideoMediaProvider;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.Playlist;
@@ -24,20 +24,20 @@ package tests.media {
 			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_SEEK,2000,10000);
 			testDefinition.addOperation(MediaProviderTestJig.MEDIAPROVIDER_PLAY,4000);
 			
-			testDefinition.addState(MediaState.IDLE,
-				[MediaState.PLAYING,MediaState.BUFFERING],
+			testDefinition.addState(PlayerState.IDLE,
+				[PlayerState.PLAYING,PlayerState.BUFFERING],
 				[MediaEvent.JWPLAYER_MEDIA_VOLUME, MediaEvent.JWPLAYER_MEDIA_LOADED,MediaEvent.JWPLAYER_MEDIA_META]);
 				
-			testDefinition.addState(MediaState.BUFFERING,
-				[MediaState.PLAYING],
+			testDefinition.addState(PlayerState.BUFFERING,
+				[PlayerState.PLAYING],
 				[MediaEvent.JWPLAYER_MEDIA_BUFFER,MediaEvent.JWPLAYER_MEDIA_META]);
 				
-			testDefinition.addState(MediaState.PLAYING,
-				[MediaState.BUFFERING,MediaState.IDLE],
+			testDefinition.addState(PlayerState.PLAYING,
+				[PlayerState.BUFFERING,PlayerState.IDLE],
 				[MediaEvent.JWPLAYER_MEDIA_TIME,MediaEvent.JWPLAYER_MEDIA_META]);
 			
-			testDefinition.addState(MediaState.IDLE,
-				[MediaState.BUFFERING,MediaState.PLAYING],
+			testDefinition.addState(PlayerState.IDLE,
+				[PlayerState.BUFFERING,PlayerState.PLAYING],
 				[MediaEvent.JWPLAYER_MEDIA_META,MediaEvent.JWPLAYER_MEDIA_COMPLETE]);
 			
 			return testDefinition;

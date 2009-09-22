@@ -1,8 +1,8 @@
 package tests.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.events.MediaStateEvent;
+	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.media.MediaProvider;
-	import com.longtailvideo.jwplayer.media.MediaState;
+	import com.longtailvideo.jwplayer.media.PlayerState;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
@@ -50,7 +50,7 @@ package tests.media {
 			source.initializeMediaProvider(new PlayerConfig(new Playlist()));
 			_playlistItem = playlistItem;
 			_testDefintion = testDefintion;
-			_currentState = testDefinition.getState(MediaState.IDLE);
+			_currentState = testDefinition.getState(PlayerState.IDLE);
 			addListeners();
 		}
 		
@@ -59,7 +59,7 @@ package tests.media {
 			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, loadHandler);
 			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, eventHandler);
 			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, eventHandler);
-			provider.addEventListener(MediaStateEvent.JWPLAYER_MEDIA_STATE, eventHandler);
+			provider.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, eventHandler);
 			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, eventHandler);
 			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_META, eventHandler);
 			provider.addEventListener(MediaEvent.JWPLAYER_MEDIA_ERROR, errorHandler);
@@ -103,7 +103,7 @@ package tests.media {
 				}
 				operation = testDefinition.getNextOperation();
 			}
-			_currentState = testDefinition.getState(MediaState.IDLE);
+			_currentState = testDefinition.getState(PlayerState.IDLE);
 			dispatchTestBegin();
 		}
 		
@@ -123,8 +123,8 @@ package tests.media {
 		private function eventHandler(testEvent:MediaEvent):void {
 			var time:Date = new Date();
 			switch (testEvent.type) {
-				case MediaStateEvent.JWPLAYER_MEDIA_STATE:
-					var stateEvent:MediaStateEvent = (testEvent as MediaStateEvent);
+				case PlayerStateEvent.JWPLAYER_PLAYER_STATE:
+					var stateEvent:PlayerStateEvent = (testEvent as PlayerStateEvent);
 					if (testDefinition.validTrasition(stateEvent.oldstate, stateEvent.newstate)) {
 						trace(traceEvent(stateEvent, stateDefaults));
 						_currentState = testDefinition.getState(stateEvent.newstate);

@@ -1,17 +1,18 @@
-<skin>
+<?xml version="1.0"?>
+<skin version="1.0" name="Happy Faces" author="Leonardo Da Vinci">
 
-	<config>
-		<backcolor>0x008800</backcolor>
-		<frontcolor>0x880000</frontcolor>
-		<lightcolor>0x000088</lightcolor>
-		<screencolor>0x880088</screencolor>
-	</config>
+	<settings>
+		<setting name="backcolor" value="0x008800" />
+		<setting name="frontcolor" value="0x880000" />
+		<setting name="lightcolor" value="0x000088" />
+		<setting name="screencolor" value="0x880088" />
+	</settings>
 
 	<components>
 		<component name="controlbar">
-			<config>
-				<margin>50</margin>
-			</config>
+			<settings>
+				<setting name="margin" value="50" />
+			</settings>
 
 			<elements>
 				<element name="back" src="smiley.png" />

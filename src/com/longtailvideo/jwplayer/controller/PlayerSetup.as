@@ -2,13 +2,16 @@ package com.longtailvideo.jwplayer.controller {
 	import com.jeroenwijering.events.PluginInterface;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.model.Model;
-	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Configger;
+	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.DefaultSkin;
 	import com.longtailvideo.jwplayer.view.ISkin;
+	import com.longtailvideo.jwplayer.view.PNGSkin;
+	import com.longtailvideo.jwplayer.view.SWFSkin;
+	import com.longtailvideo.jwplayer.view.SkinProperties;
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.display.DisplayObject;
@@ -50,6 +53,9 @@ package com.longtailvideo.jwplayer.controller {
 		/** TaskQueue **/
 		private var tasker:TaskQueue;
 		
+		/** User-defined configuration **/
+		private var confHash:Object;
+		
 		public function PlayerSetup(player:Player, model:Model, view:View) {
 			_player = player;
 			_model = model;
@@ -63,7 +69,7 @@ package com.longtailvideo.jwplayer.controller {
 			
 			tasker.queueTask(insertDelay);
 			tasker.queueTask(loadConfig, loadConfigComplete);
-			tasker.queueTask(loadSkin);
+			tasker.queueTask(loadSkin, loadSkinComplete);
 			tasker.queueTask(loadPlugins, loadPluginsComplete);
 			tasker.queueTask(loadPlaylist);
 			tasker.queueTask(initPlugins);
@@ -112,15 +118,34 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function loadConfigComplete(evt:Event):void {
-			var confHash:Object = (evt.target as Configger).config;
-			_model.config.setConfig(confHash);
+			confHash = (evt.target as Configger).config;
 		}
 
 		private function loadSkin():void {
-			var skin:ISkin = new DefaultSkin();
+			var skin:ISkin;
+			if (confHash && confHash['skin']) {
+				if (Strings.extension(confHash['skin']) == "swf") {
+					skin = new SWFSkin();
+				} else {
+					skin = new PNGSkin();
+				}
+			} else {
+				skin = new DefaultSkin();
+			}
 			skin.addEventListener(Event.COMPLETE, tasker.success);
 			skin.addEventListener(ErrorEvent.ERROR, tasker.failure);
-			skin.load();
+			skin.load(confHash['skin']);
+		}
+		
+		private function loadSkinComplete(event:Event=null):void {
+			if (event) {
+				var skin:ISkin = event.target as ISkin;
+				var props:SkinProperties = skin.getSkinProperties();
+				_model.config.setConfig(props);
+			}
+			
+			_model.config.setConfig(confHash);
+			
 		}
 
 		private function loadPlugins():void {

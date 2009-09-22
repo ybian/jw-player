@@ -5,6 +5,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
 	import flash.events.*;
 	import flash.media.*;
@@ -69,7 +70,7 @@ package com.longtailvideo.jwplayer.media {
 			// TODO: Moved up load event
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
-			setState(MediaState.BUFFERING);
+			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
 		}
 		
@@ -136,24 +137,24 @@ package com.longtailvideo.jwplayer.media {
 			// Why does the buffer percentage matter?
 			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
 				//TODO: Swaped sending event and setting state
-				//TODO: state == MediaState.PLAYING - other states needed? 
-				if (state == MediaState.PLAYING && bfr < 25) {
-					setState(MediaState.BUFFERING);
+				//TODO: state == PlayerState.PLAYING - other states needed? 
+				if (state == PlayerState.PLAYING && bfr < 25) {
+					setState(PlayerState.BUFFERING);
 				}
 				sendBufferEvent(bfr);
-					//TODO: state == MediaState.BUFFERING - other states needed? 
-			} else if (bfr > 95 && state == MediaState.BUFFERING) {
+					//TODO: state == PlayerState.BUFFERING - other states needed? 
+			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
 				super.play();
 			}
-			// TODO: (state == MediaState.PLAYING)
+			// TODO: (state == PlayerState.PLAYING)
 			if (position < item.duration) {
-				if (state == MediaState.PLAYING && position >= 0) {
+				if (state == PlayerState.PLAYING && position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 				}
 			} else if (item.duration > 0) {
 				stream.pause();
 				clearInterval(interval);
-				setState(MediaState.IDLE);
+				setState(PlayerState.IDLE);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}
@@ -174,7 +175,7 @@ package com.longtailvideo.jwplayer.media {
 				case "NetStream.Play.Stop":
 					if (position > 1) {
 						clearInterval(interval);
-						setState(MediaState.IDLE);
+						setState(PlayerState.IDLE);
 						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 					}
 					break;

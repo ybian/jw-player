@@ -68,7 +68,7 @@ package com.longtailvideo.jwplayer.media {
 			interval = setInterval(positionInterval, 100);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {percentage: 0});
-			setState(MediaState.BUFFERING);
+			setState(PlayerState.BUFFERING);
 		}
 		
 		
@@ -104,7 +104,7 @@ package com.longtailvideo.jwplayer.media {
 				_position = segment * increment + Math.round(stream.time * 10) / 10;
 			}
 			var bfr:Number = Math.round(stream.bufferLength / stream.bufferTime * 100);
-			if (bfr > 95 && _config.state != MediaState.PLAYING) {
+			if (bfr > 95 && _config.state != PlayerState.PLAYING) {
 				super.play();
 			}
 			if (_position < _item.duration) {
@@ -112,7 +112,7 @@ package com.longtailvideo.jwplayer.media {
 			} else if (_item.duration > 0) {
 				stream.pause();
 				clearInterval(interval);
-				setState(MediaState.COMPLETED);
+				setState(PlayerState.COMPLETED);
 			}
 		}
 		
@@ -123,7 +123,7 @@ package com.longtailvideo.jwplayer.media {
 			clearInterval(interval);
 			queue();
 			interval = setInterval(positionInterval, 100);
-			setState(MediaState.BUFFERING);
+			setState(PlayerState.BUFFERING);
 		}
 		
 		
@@ -133,7 +133,7 @@ package com.longtailvideo.jwplayer.media {
 				case "NetStream.Play.Stop":
 					if (_position > _item.duration - increment / 2) {
 						clearInterval(interval);
-						setState(MediaState.COMPLETED);
+						setState(PlayerState.COMPLETED);
 					} else {
 						queue();
 					}

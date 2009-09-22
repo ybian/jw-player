@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.media {
+package com.longtailvideo.jwplayer.player {
 	
 	
 	/**
@@ -6,7 +6,7 @@ package com.longtailvideo.jwplayer.media {
 	 *
 	 * @see com.longtailvideo.jwplayer.model.Model
 	 */
-	public class MediaState {
+	public class PlayerState {
 		/** Nothing happening. No playback and no file in memory. **/
 		public static var IDLE:String = "IDLE";
 		/** Buffering; will start to play when the buffer is full. **/
@@ -15,7 +15,5 @@ package com.longtailvideo.jwplayer.media {
 		public static var PLAYING:String = "PLAYING";
 		/** Playback is paused. **/
 		public static var PAUSED:String = "PAUSED";
-		/** The file being played back has caused an error. **/
-		public static var ERROR:String = "ERROR";
 	}
 }

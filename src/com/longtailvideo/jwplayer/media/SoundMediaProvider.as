@@ -6,6 +6,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	import flash.events.*;
 	import flash.media.*;
 	import flash.net.URLRequest;
@@ -43,7 +44,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Sound completed; send event. **/
 		private function completeHandler(evt:Event):void {
 			clearInterval(interval);
-			setState(MediaState.IDLE);
+			setState(PlayerState.IDLE);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 		}
 		
@@ -80,7 +81,7 @@ package com.longtailvideo.jwplayer.media {
 			}
 			loadinterval = setInterval(loadHandler, 200);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
-			setState(MediaState.BUFFERING);
+			setState(PlayerState.BUFFERING);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {percentage: 0});
 		}
 		
@@ -120,20 +121,20 @@ package com.longtailvideo.jwplayer.media {
 		protected function positionInterval():void {
 			_position = Math.round(channel.position / 100) / 10;
 			if (sound.isBuffering == true && sound.bytesTotal > sound.bytesLoaded) {
-				if (_config.state != MediaState.BUFFERING) {
-					setState(MediaState.BUFFERING);
+				if (_config.state != PlayerState.BUFFERING) {
+					setState(PlayerState.BUFFERING);
 				} else {
 					var pct:Number = Math.floor(sound.length / (channel.position + _config.bufferlength * 1000) * 100);
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {percentage: pct});
 				}
-			} else if (_config.state == MediaState.BUFFERING && sound.isBuffering == false) {
+			} else if (_config.state == PlayerState.BUFFERING && sound.isBuffering == false) {
 				super.play();
 			}
 			if (_position < _item.duration) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {_position: _position, duration: _item.duration});
 			} else if (_item.duration > 0) {
 				pause();
-				setState(MediaState.IDLE);
+				setState(PlayerState.IDLE);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}

@@ -10,6 +10,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
 	import com.longtailvideo.jwplayer.utils.TEA;
 	import flash.events.*;
@@ -117,7 +118,7 @@ package com.longtailvideo.jwplayer.media {
 			}
 			if (dat.type == 'complete') {
 				clearInterval(interval);
-				setState(MediaState.IDLE);
+				setState(PlayerState.IDLE);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			} else if (dat.type == 'close') {
 				stop();
@@ -153,21 +154,21 @@ package com.longtailvideo.jwplayer.media {
 			var bfr:Number = Math.round(stream.bufferLength / stream.bufferTime * 100);
 			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
 				//TODO: Swapped
-				if (state == MediaState.PLAYING && bfr < 20) {
+				if (state == PlayerState.PLAYING && bfr < 20) {
 					stream.pause();
-					setState(MediaState.BUFFERING);
+					setState(PlayerState.BUFFERING);
 					stream.bufferTime = _config.bufferlength;
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: _config.bufferlength}});
 				}
 				sendBufferEvent(bfr);
-			} else if (bfr > 95 && state == MediaState.BUFFERING) {
+			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
 				super.play();
 				stream.resume();
 				stream.bufferTime = _config.bufferlength * 4;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: _config.bufferlength * 4}});
 			}
 			if (position < item.duration) {
-				if (state == MediaState.PLAYING && position >= 0) {
+				if (state == PlayerState.PLAYING && position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 				}
 			} else if (!isNaN(position) && item.duration > 0) {
@@ -176,7 +177,7 @@ package com.longtailvideo.jwplayer.media {
 				if (started && item.duration == 0) {
 					stop();
 				}
-				setState(MediaState.IDLE);
+				setState(PlayerState.IDLE);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
 		}
@@ -207,7 +208,7 @@ package com.longtailvideo.jwplayer.media {
 			stream.play(getID(item.file));
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
-			setState(MediaState.BUFFERING);
+			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
 		}
 		

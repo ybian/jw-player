@@ -46,6 +46,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _pluginConfig:Object 	= {};
 		
 		public function PlayerConfig(playlist:Playlist):void {
+			getCookiedParams();
 			setPlaylist(playlist);
 		}
 		
@@ -54,9 +55,6 @@ package com.longtailvideo.jwplayer.model {
 		}
 		
 		public function setConfig(config:Object):void {
-			if (getQualifiedClassName(config) != "Object")
-				return;
-				 
 			var newItem:PlaylistItem = new PlaylistItem();
 			var playlistItems:Boolean = false;
 			for (var item:String in config) {
@@ -69,7 +67,7 @@ package com.longtailvideo.jwplayer.model {
 					}
 				} else if (item.indexOf(".") > 0) {
 					setPluginProperty(item, config[item]);
-				} else {
+				} else if (config[item]) {
 					setProperty(item, config[item]);
 				}
 			}
@@ -105,6 +103,15 @@ package com.longtailvideo.jwplayer.model {
 				}
 				_pluginConfig[pluginName][pluginProperty] = TypeChecker.fromString(value);
 			}
+		}
+		
+		
+		/**
+		 * Loads cookied values and overwrites default properties.  
+		 */
+		private function getCookiedParams():void {
+			// TODO: Implement
+			return;
 		}
 		
 		/**

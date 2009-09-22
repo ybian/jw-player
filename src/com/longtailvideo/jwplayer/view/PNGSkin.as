@@ -30,6 +30,9 @@ package com.longtailvideo.jwplayer.view {
 		
 		private var errorState:Boolean = false;
 
+		public namespace skinNS = "http://developer.longtailvideo.com/trac/wiki/Skinning";
+		use namespace skinNS;
+
 		public override function load(url:String=null):void {
 			if (url.substr(url.length-4,4).toLowerCase() == ".xml" ) {
 				urlPrefix = url.substring(0, url.lastIndexOf('/')+1);
@@ -58,23 +61,32 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		protected function parseSkin():void {
+//			use namespace skinNS;
+	
 			if (skinXML.localName() != "skin") {
 				sendError("PNG skin descriptor file not correctly formatted");
 				return;
 			}
 			
-			parseConfig(skinXML.config);
+			parseConfig(skinXML.settings);
 			
 			for each (var comp:XML in skinXML.components.component) {
-				parseConfig(comp.config, comp.@name.toString());
+				parseConfig(comp.settings, comp.@name.toString());
 				loadElements(comp.@name.toString(), comp..element);
 			}
 			
 		}
 
-		protected function parseConfig(config:XMLList, component:String=""):void {
-			for each(var i:XML in config) {
-				props[(component ? component + "." : "") + i.localName()] = i.toString();
+		
+		protected function parseConfig(settings:XMLList, component:String=""):void {
+			for each(var setting:XML in settings.setting) {
+				if (component) {
+					props[component + "." + setting.@name.toString()] = setting.@value.toString();
+				} else {
+					if (props.hasOwnProperty(setting.@name.toString())) {
+						props[setting.@name.toString()] = setting.@value.toString();
+					}
+				}
 			}
 		}
 		
