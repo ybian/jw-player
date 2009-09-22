@@ -1,9 +1,7 @@
 package tests.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.media.PlayerState;
 	import com.longtailvideo.jwplayer.media.VideoMediaProvider;
-	import com.longtailvideo.jwplayer.model.PlayerConfig;
-	import com.longtailvideo.jwplayer.model.Playlist;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	
 	public class VideoMediaProviderTest extends MediaProviderTest {
 		private var _mediaSources:Array = [new VideoMediaProvider()];
