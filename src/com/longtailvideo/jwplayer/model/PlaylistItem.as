@@ -13,6 +13,7 @@ package com.longtailvideo.jwplayer.model {
 		public var file:String			= "";
 		public var image:String			= "";
 		public var link:String			= "";
+		public var mediaid:String		= "";
 		public var start:Number			= -1;
 		public var streamer:String		= "";
 		public var tags:String			= "";
@@ -34,5 +35,6 @@ package com.longtailvideo.jwplayer.model {
 		public function get type():String {
 			return provider;
 		}
+		
 	}
 }

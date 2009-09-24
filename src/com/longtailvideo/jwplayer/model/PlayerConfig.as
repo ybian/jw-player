@@ -3,7 +3,6 @@ package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	
 	import flash.events.EventDispatcher;
-	import flash.utils.getQualifiedClassName;
 
 	/**
 	 * Configuration data for the player
@@ -18,7 +17,8 @@ package com.longtailvideo.jwplayer.model {
 		private var _bufferlength:Number 	= 1; 
 		private var _displayclick:String 	= "play"; 
 		private var _displaytitle:Boolean 	= true; 
-		private var _item:Number 			= 0;
+		private var _fullscreen:Boolean 	= false;
+		private var _item:Number			= 0;
 		private var _linktarget:String 		= "_blank";
 		private var _mute:Boolean 			= false;
 		private var _repeat:String 			= "none"; 
@@ -95,25 +95,24 @@ package com.longtailvideo.jwplayer.model {
 		 */
 		private function setPluginProperty(name:String, value:String):void {
 			var pluginName:String = name.substring(0, name.indexOf(".")).toLowerCase();
-			var pluginProperty:String = name.substring(name.indexOf(".")+1, name.length).toLowerCase();
+			var pluginProperty:String = name.substring(name.indexOf(".") + 1, name.length).toLowerCase();
 
-			if(pluginName && pluginProperty && value) {
+			if (pluginName && pluginProperty && value) {
 				if (!_pluginConfig.hasOwnProperty(pluginName)) {
 					_pluginConfig[pluginName] = new PluginConfig(pluginName);
 				}
 				_pluginConfig[pluginName][pluginProperty] = TypeChecker.fromString(value);
 			}
 		}
-		
-		
+
 		/**
-		 * Loads cookied values and overwrites default properties.  
+		 * Loads cookied values and overwrites default properties.
 		 */
 		private function getCookiedParams():void {
-			// TODO: Implement
+			// TODO: Implement flash cookies
 			return;
 		}
-		
+
 		/**
 		 * Returns a string representation of the playlist's current PlaylistItem property.
 		 * @param key The requested PlaylistItem property
@@ -152,7 +151,7 @@ package com.longtailvideo.jwplayer.model {
 		/** URL to an external page the display, controlbar and playlist can link to. **/
 		public function get link():String { return playlistItem('link'); }
 
-		/** Position in seconds where playback has to start. Won't work for regular (progressive) videos, but only for streaming (HTTP / RTMP). **/
+		/** Unique identifier. **/		public function get mediaid():String {			return playlistItem('mediaid');		}		/** Position in seconds where playback has to start. Won't work for regular (progressive) videos, but only for streaming (HTTP / RTMP). **/
 		public function get start():String { return playlistItem('start'); }
 		
 		/** Location of an rtmp/http server instance to use for streaming. Can be an RTMP application or external PHP/ASP file. **/
@@ -164,10 +163,10 @@ package com.longtailvideo.jwplayer.model {
 		/** Title of the video, shown in the display or playlist. **/
 		public function get title():String { return playlistItem('title'); }
 
-		/** 
-		 * By default, the type is detected by the player based upon the file extension. If there's no suitable 
-		 * extension or the player detects the type wrong, it can be manually set. The following default types are 
-		 * supported: 
+		/**
+		 * By default, the type is detected by the player based upon the file extension. If there's no suitable
+		 * extension or the player detects the type wrong, it can be manually set. The following default types are
+		 * supported:
 		 * <ul>
 		 * <li>video: progressively downloaded FLV / MP4 video, but also AAC audio.</li>
 		 * <li>sound: progressively downloaded MP3 files.</li>
@@ -175,7 +174,7 @@ package com.longtailvideo.jwplayer.model {
 		 * <li>youtube: videos from Youtube.</li>
 		 * <li>http: FLV/MP4 videos played as http speudo-streaming.</li>
 		 * <li>rtmp: FLV/MP4/MP3 files played from an RTMP server.</li>
-		 * </ul> 
+		 * </ul>
 		 **/
 		public function get provider():String { return playlistItem('provider'); }
 
@@ -268,6 +267,10 @@ package com.longtailvideo.jwplayer.model {
 		public function get displaytitle():Boolean { return _displaytitle; }
 		public function set displaytitle(x:Boolean):void { _displaytitle = x; }
 
+		/** Current fullscreen state **/		
+		public function get fullscreen():Boolean { return _fullscreen; }
+		public function set fullscreen(x:Boolean):void { _fullscreen = x; }		
+		
 		/** PlaylistItem that should start to play. Use this to set a specific start-item. @default 0 **/
 		public function get item():Number { return _item; }
 		public function set item(x:Number):void { _item = x; }
