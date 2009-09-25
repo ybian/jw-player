@@ -13,7 +13,6 @@ package com.longtailvideo.jwplayer.utils {
 	 * <li>The tracing sstem built into the debugging players.</li>
 	 * </ul>
 	 *
-	 * @todo implement log levels.
 	 **/
 	public class Logger {
 		/** Constant defining the Arthropod output type. **/

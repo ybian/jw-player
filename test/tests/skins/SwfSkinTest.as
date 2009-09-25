@@ -15,10 +15,10 @@ package tests.skins {
 			skin = new SWFSkin();
 		}
 
-		[Test(async,timeout="15000")]
+		[Test(async)]
 		public override function testLoad():void {
-			Async.handleEvent(this, skin, Event.COMPLETE, skinLoaded);
-			Async.failOnEvent(this, skin, ErrorEvent.ERROR);
+			Async.handleEvent(this, skin, Event.COMPLETE, skinLoaded, 15000);
+			Async.failOnEvent(this, skin, ErrorEvent.ERROR, 15000);
 			skin.load("http://developer.longtailvideo.com/svn/skins/modieus/modieus.swf");
 		}
 		

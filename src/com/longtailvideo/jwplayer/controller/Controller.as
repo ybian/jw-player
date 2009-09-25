@@ -6,6 +6,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.player.PlayerV4Emulation;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
@@ -332,6 +333,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		public function redraw():Boolean {
 			_view.redraw();
+			PlayerV4Emulation.getInstance().resize(_model.config.width, _model.config.height);
 			return true;
 		}
 

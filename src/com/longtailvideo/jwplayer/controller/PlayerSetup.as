@@ -140,6 +140,8 @@ package com.longtailvideo.jwplayer.controller {
 		private function loadSkinComplete(event:Event=null):void {
 			if (event) {
 				var skin:ISkin = event.target as ISkin;
+				_view.skin = skin;
+				
 				var props:SkinProperties = skin.getSkinProperties();
 				_model.config.setConfig(props);
 			}
@@ -168,7 +170,7 @@ package com.longtailvideo.jwplayer.controller {
 					if (plugin is IPlugin) {
 						_view.addPlugin(pluginName, plugin as IPlugin);
 					} else if (plugin is PluginInterface) {
-						_view.addPlugin(pluginName, new V4Plugin(plugin as PluginInterface));
+						_view.addPlugin(pluginName, new V4Plugin(plugin as PluginInterface, pluginName));
 					}
 				}
 			}

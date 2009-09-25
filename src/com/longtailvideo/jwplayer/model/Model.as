@@ -51,7 +51,6 @@ package com.longtailvideo.jwplayer.model {
 		private var _config:PlayerConfig;
 		private var _playlist:Playlist;
 
-		private var _fullscreen:Boolean = false;
 		private var _mute:Boolean = false;
 		
 		private var _currentMedia:MediaProvider;
@@ -98,10 +97,10 @@ package com.longtailvideo.jwplayer.model {
 
 		/** The current fullscreen state of the player **/
 		public function get fullscreen():Boolean {
-			return _fullscreen;
+			return config.fullscreen;
 		}
 		public function set fullscreen(b:Boolean):void {
-			_fullscreen = b;
+			config.fullscreen = b;
 		}
 
 		/** The current mute state of the player **/

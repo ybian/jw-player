@@ -35,12 +35,15 @@ package com.longtailvideo.jwplayer.player {
 		/** Player constructor **/
 		public function Player() {
 			model = new Model();
-			view = new View();
+			view = new View(this);
 			controller = new Controller(this, model, view);
 
 			model.addGlobalListener(forward);
 			view.addGlobalListener(forward);
 			controller.addGlobalListener(forward);
+
+			// Initialize V4 "simulator" singleton
+			new PlayerV4Emulation(this);
 
 			controller.setupPlayer();
 		}
@@ -164,7 +167,7 @@ package com.longtailvideo.jwplayer.player {
 			return controller.redraw();
 		}
 	
-		public function fullscreen(on:Boolean=true):Boolean {
+		public function fullscreen(on:Boolean):Boolean {
 			return controller.fullscreen(on);
 		}
 		

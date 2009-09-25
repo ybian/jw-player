@@ -1,6 +1,8 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	
 	import flash.display.DisplayObject;
@@ -17,9 +19,11 @@ package com.longtailvideo.jwplayer.view {
 		
 		private var _plugins:MovieClip;
 		
+		private var _player:Player;
+		
 		private var stage:Stage;
 
-		public function View() {
+		public function View(player:Player) {
 			stage = RootReference.stage;
 			_plugins = new MovieClip();
 			_plugins.name = "plugins";
@@ -41,6 +45,13 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		public function redraw():void {
+			for (var i:Number=0; i < _plugins.numChildren; i++) {
+				var plug:IPlugin = _plugins.getChildAt(i) as IPlugin;
+				if (plug) { 
+					var cfg:PluginConfig = _player.config.pluginConfig((plug as DisplayObject).name);
+					plug.resize(cfg.width, cfg.height);
+				}
+			}
 		}
 		
 		public function get components():PlayerComponents {
@@ -88,6 +99,6 @@ package com.longtailvideo.jwplayer.view {
 		public function getPlugin(name:String):IPlugin {
 			return _plugins.getChildByName(name) as IPlugin;
 		}
-
+		
 	}
 }
