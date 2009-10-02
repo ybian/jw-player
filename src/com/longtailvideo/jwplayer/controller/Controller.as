@@ -81,12 +81,9 @@ package com.longtailvideo.jwplayer.controller {
 		};
 
 		public function Controller(player:Player, model:Model, view:View) {
-			var rootRef:RootReference = new RootReference(player);
-
 			_player = player;
 			_model = model;
 			_view = view;
-
 		}
 
 		/**
@@ -118,6 +115,8 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function setupComplete(evt:Event):void {
 			trace("Setup complete");
+			RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
+			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, "There was an error!"));
 		}
 
 		private function playlistLoadHandler(evt:PlaylistEvent):void {

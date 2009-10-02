@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.view {
+	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
+	
 	import flash.display.DisplayObject;
-	import flash.events.IEventDispatcher;
 
 	/**
 	 * Sent when the user interface requests that the player play the currently loaded media
@@ -52,13 +53,6 @@ package com.longtailvideo.jwplayer.view {
 	[Event(name="jwPlayerViewFullscreen", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
 	/**
-	 * Sent when the user requests the player skip to the given playlist index
-	 *
-	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_ITEM
-	 */
-	[Event(name="jwPlayerViewItem", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
-
-	/**
 	 * Sent when the user requests that the player change the playback volume.
 	 *
 	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_VOLUME
@@ -72,8 +66,12 @@ package com.longtailvideo.jwplayer.view {
 	 */
 	[Event(name="jwPlayerViewSeek", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
-	public interface IControlbarComponent {
-		function addButton(name:String, icon:DisplayObject, clickHandler:Function):void;
+	public interface IControlbarComponent extends IGlobalEventDispatcher {
+		function addButton(name:String, icon:DisplayObject):void;
 		function removeButton(name:String):void;
+		function resize(width:Number, height:Number):void;
+		function show():void;
+		function hide():void;
+		function getButton(buttonName:String):DisplayObject;
 	}
 }

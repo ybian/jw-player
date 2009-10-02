@@ -1,4 +1,6 @@
 package com.longtailvideo.jwplayer.view {
+	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
+	
 
 	/**
 	 * Sent when the user interface requests that the player play the next item in its playlist
@@ -21,6 +23,9 @@ package com.longtailvideo.jwplayer.view {
 	 */
 	[Event(name="jwPlayerViewItem", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
-	public interface IPlaylistComponent {		
+	public interface IPlaylistComponent extends IGlobalEventDispatcher {
+		function resize(width:Number, height:Number):void;
+		function show():void;
+		function hide():void;
 	}
 }

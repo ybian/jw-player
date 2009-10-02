@@ -1,4 +1,6 @@
 package com.longtailvideo.jwplayer.view {
+	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
+	
 	import flash.display.DisplayObject;
 	
 
@@ -23,8 +25,9 @@ package com.longtailvideo.jwplayer.view {
 	 */
 	[Event(name="jwPlayerViewClick", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
-	public interface IDisplayComponent {
+	public interface IDisplayComponent extends IGlobalEventDispatcher {
 		function setIcon(displayIcon:DisplayObject):void;
 		function setText(displayText:String):void;
+		function resize(width:Number, height:Number):void;
 	}
 }

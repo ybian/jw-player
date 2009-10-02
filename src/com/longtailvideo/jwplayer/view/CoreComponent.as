@@ -1,47 +1,34 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.player.Player;
 	
 	import flash.display.MovieClip;
 	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 
 	public class CoreComponent extends MovieClip implements IGlobalEventDispatcher {
 
 		private var _dispatcher:IGlobalEventDispatcher;
+		protected var _player:Player;
 
-		public function CoreComponent() {
+		public function CoreComponent(player:Player) {
 			_dispatcher = new GlobalEventDispatcher();
+			_player = player;
 			super();
 		}
 		
-		public function resize(width:Number, height:Number):void {
-			return;
-		}
-		
 		public function hide():void {
-			return;
+			this.visible = false;
 		}
 		
 		public function show():void {
-			return;
+			this.visible = true;
 		}
 		
-		public function block(name:String, timeout:Number):void {
-			return;
+		protected function get player():Player {
+			return _player;
 		}
-		
-		public function unblock(name:String, timeout:Number):void {
-			return;
-		}
-		
-		public function lock(name:String, timeout:Number):void {
-			return;
-		}
-		
-		public function unlock(name:String, timeout:Number):void {
-			return;
-		}
+
 		
 		///////////////////////////////////////////		
 		/// IGlobalEventDispatcher implementation

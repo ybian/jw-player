@@ -3,6 +3,7 @@ package com.longtailvideo.jwplayer.view {
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
@@ -47,6 +48,63 @@ package com.longtailvideo.jwplayer.view {
 
 		public override function getSkinProperties():SkinProperties {
 			return null;
+		}
+		
+		public override function getSkinElement(component:String, element:String):DisplayObject {
+			var result:DisplayObject = super.getSkinElement(component, element);
+			switch (component) {
+				case 'controlbar':
+					var buttonStart:Number = element.indexOf('Button');
+					var sliderStart:Number = element.indexOf('Slider');
+					if (buttonStart > 0) {
+						var buttonElement:String = element.substr(buttonStart, element.length);
+						var buttonName:String = element.substr(0,buttonStart+6);
+						switch (buttonElement) {
+							case 'Button':
+								result = super.getSkinElement(component, buttonName)['icon'];
+								break;
+							case 'ButtonBack':
+								result = super.getSkinElement(component, buttonName);
+								//result = button.removeChild(button.getChildByName("icon"));
+								break;
+						}
+					} else if (sliderStart > 0) {
+						var sliderElement:String = element.substr(sliderStart, element.length);
+						var sliderName:String = element.substr(0,sliderStart+6);
+						switch (sliderElement) {
+							case 'SliderRail':
+								result = super.getSkinElement(component, sliderName)['rail'];
+								break;
+							case 'SliderBuffer':
+								if (element == "volumeSliderBuffer"){
+									//result = super.getSkinElement(component, sliderName)['mark'];
+								} else {
+									result = super.getSkinElement(component, sliderName)['mark'];
+								}
+								break;
+							case 'SliderProgress':
+								if (element == "volumeSliderProgress"){
+									//result = super.getSkinElement(component, sliderName)['mark'];
+								} else {
+									result = super.getSkinElement(component, sliderName)['done'];
+								}
+								break;
+							case 'SliderThumb':
+								result = super.getSkinElement(component, sliderName)['icon'];
+								break;
+						}
+					}
+					break;
+				case 'display':
+					switch (element) {
+						case 'errorIcon':
+							if (result['icn']) {
+								result = result['icn'];
+							}
+							break;
+					}
+			}
+			return result;
 		}
 
 	}

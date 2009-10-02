@@ -5,11 +5,13 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.view.ISkin;
 	import com.longtailvideo.jwplayer.view.PlayerComponents;
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	
 	
 	/**
@@ -34,6 +36,20 @@ package com.longtailvideo.jwplayer.player {
 
 		/** Player constructor **/
 		public function Player() {
+			new RootReference(this);
+			
+			try {
+				this.addEventListener(Event.ADDED_TO_STAGE, setupPlayer);
+			} catch (err:Error) {
+				setupPlayer();
+			}
+		}
+		
+		private function setupPlayer(event:Event = null):void {
+			try {
+				this.removeEventListener(Event.ADDED_TO_STAGE, setupPlayer);
+			} catch (err:Error) {
+			}
 			model = new Model();
 			view = new View(this);
 			controller = new Controller(this, model, view);
