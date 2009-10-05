@@ -7,6 +7,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
+	
 	import flash.events.*;
 	import flash.media.*;
 	import flash.net.*;
@@ -65,6 +66,7 @@ package com.longtailvideo.jwplayer.media {
 			_media = video;
 			stream.checkPolicyFile = true;
 			stream.play(item.file);
+			//stream.pause();
 			interval = setInterval(positionInterval, 100);
 			loadinterval = setInterval(loadHandler, 200);
 			// TODO: Moved up load event
@@ -134,19 +136,15 @@ package com.longtailvideo.jwplayer.media {
 		protected function positionInterval():void {
 			_position = Math.round(stream.time * 10) / 10;
 			var bfr:Number = Math.round(stream.bufferLength / stream.bufferTime * 100);
-			// Why does the buffer percentage matter?
 			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
-				//TODO: Swaped sending event and setting state
-				//TODO: state == PlayerState.PLAYING - other states needed? 
 				if (state == PlayerState.PLAYING && bfr < 25) {
 					setState(PlayerState.BUFFERING);
 				}
 				sendBufferEvent(bfr);
-					//TODO: state == PlayerState.BUFFERING - other states needed? 
 			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
 				super.play();
 			}
-			// TODO: (state == PlayerState.PLAYING)
+
 			if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
@@ -157,6 +155,14 @@ package com.longtailvideo.jwplayer.media {
 				setState(PlayerState.IDLE);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			}
+		}
+
+		protected function bufferUnderrun(bufferPercent:Number):Boolean {
+			return (state == PlayerState.PLAYING && bufferPercent < 25 && (bufferPercent < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)));
+		}
+		
+		protected function bufferFull(bufferPercent:Number):Boolean {
+			return (bufferPercent > 95 && state == PlayerState.BUFFERING);
 		}
 		
 		

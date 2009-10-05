@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
@@ -32,8 +33,13 @@ package com.longtailvideo.jwplayer.view {
 			RootReference.stage.stage.align = StageAlign.TOP_LEFT;
 			RootReference.stage.addEventListener(Event.FULLSCREEN, resizeHandler);
 			RootReference.stage.addEventListener(Event.RESIZE, resizeHandler);
+			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistHandler);
 		}
 		
+		
+		private function playlistHandler(evt:PlaylistEvent):void {
+
+		}
 		
 		private function setupLayers():void {
 			_backgroundLayer = setupLayer("background", 0);

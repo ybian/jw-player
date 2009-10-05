@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.view {
 	import flash.display.DisplayObject;
 	import flash.events.IEventDispatcher;
+	import flash.display.Sprite;
 
 	/**
 	 * Send when the skin is ready
@@ -43,6 +44,13 @@ package com.longtailvideo.jwplayer.view {
 		 * 
 		 */
 		function getSkinElement(component:String, element:String):DisplayObject;
+		
+		/**
+		 * Returns a reference to the loaded SWFSkin.
+		 * @return SWFSkin If the current skin is not a SWF skin, returns null.
+		 * 
+		 */
+		function getSWFSkin():Sprite;
 		
 		/**
 		 * Adds a skin element to the skin

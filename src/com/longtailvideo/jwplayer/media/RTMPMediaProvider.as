@@ -13,6 +13,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
 	import com.longtailvideo.jwplayer.utils.TEA;
+	
 	import flash.events.*;
 	import flash.media.*;
 	import flash.net.*;

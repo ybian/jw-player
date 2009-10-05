@@ -2,12 +2,13 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.Player;
+	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.geom.ColorTransform;
-	import flash.text.Font;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 	
 	
 	/**
@@ -81,9 +82,14 @@ package com.longtailvideo.jwplayer.view {
 			_layoutManager = new ControlbarLayoutManager(this);
 			setupBackground();
 			setupDefaultButtons();
+			temp();
 			addEventListeners();
 		}
 		
+		private function temp():void {
+			(_buttons['volume'] as Slider).setProgress(player.config.volume);
+			(_buttons['time'] as Slider).setProgress(25);
+		}
 		
 		private function addEventListeners():void {
 			player.addEventListener(ViewEvent.JWPLAYER_VIEW_PLAY, viewHandler);
@@ -121,7 +127,7 @@ package com.longtailvideo.jwplayer.view {
 					volume.setProgress(evt.data);
 					break;
 				default:
-					var scrubber:Slider = getButton('scrubber') as Slider;
+					var scrubber:Slider = getButton('time') as Slider;
 					scrubber.reset();
 					break;
 			}
@@ -138,7 +144,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		private function mediaHandler(evt:MediaEvent):void {
-			var scrubber:Slider = getButton('scrubber') as Slider;
+			var scrubber:Slider = getButton('time') as Slider;
 			switch (evt.type) {
 				case MediaEvent.JWPLAYER_MEDIA_BUFFER:
 					scrubber.setProgress(evt.position);
@@ -157,9 +163,8 @@ package com.longtailvideo.jwplayer.view {
 		
 		private function setupBackground():void {
 			var background:MovieClip;
-			if (player.skin.getSkinElement("controlbar", "back")) {
-				background = player.skin.getSkinElement("controlbar", "back") as MovieClip;
-					//background.name = "background";
+			if (getSkinElement("controlbar", "back")) {
+				background = getSkinElement("controlbar", "back") as MovieClip;
 			} else {
 				background = new MovieClip();
 				background.name = "background";
@@ -176,8 +181,8 @@ package com.longtailvideo.jwplayer.view {
 			background.x = 0;
 			background.y = 0;
 			addChildAt(background, 0);
-			if (player.skin.getSkinElement("controlbar", "shade")) {
-				var shade:DisplayObject = player.skin.getSkinElement("controlbar", "shade");
+			if (getSkinElement("controlbar", "shade")) {
+				var shade:DisplayObject = getSkinElement("controlbar", "shade");
 				shade.x = 0;
 				shade.y = 0;
 				addChildAt(shade, 1);
@@ -196,32 +201,39 @@ package com.longtailvideo.jwplayer.view {
 			addComponentButton('unmute', 'Mute', ViewEvent.JWPLAYER_VIEW_MUTE, true);
 			addComponentButton('mute', 'Unmute', ViewEvent.JWPLAYER_VIEW_MUTE, false);
 			addSlider('time', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
-			(_buttons['time'] as Slider).setProgress(25);
 			addSlider('volume', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
-			(_buttons['volume'] as Slider).setProgress(player.config.volume);
-			addButton('elapsed', new TextField());
-			(_buttons['elapsed'] as TextField).selectable = false;
-			(_buttons['elapsed'] as TextField).autoSize = TextFieldAutoSize.LEFT;
-			(_buttons['elapsed'] as TextField).text = '00:00';
-			addButton('duration', new TextField());
-			(_buttons['duration'] as TextField).selectable = false;
-			(_buttons['duration'] as TextField).autoSize = TextFieldAutoSize.LEFT;
-			(_buttons['duration'] as TextField).text = '00:00';
-			addButton('divider', player.skin.getSkinElement("controlbar", "divider"));
+			addTextField('elapsed', (getSkinElement("controlbar","elapsedText") as TextField).getTextFormat().font);
+			addTextField('duration', (getSkinElement("controlbar","totalText") as TextField).getTextFormat().font);
+			addButton('divider', getSkinElement("controlbar", "divider"));
 		}
 		
 		
 		private function addComponentButton(name:String, text:String, event:String, eventData:* = null):void {
-			var button:ComponentButton = new ComponentButton(player.skin.getSkinElement("controlbar", name + "ButtonBack"), player.skin.getSkinElement("controlbar", name + "Button"), player.config.lightcolor, player.config.backcolor, player.skin.getSkinElement("controlbar", name + "ButtonOver"), text, event, eventData);
-			button.addEventListener(event, forward);
-			addButton(name, button);
+			var outIcon:DisplayObject = getSkinElement("controlbar", name + "Button");
+			if (outIcon) {
+				var button:ComponentButton = new ComponentButton(outIcon, event, eventData, player.config.lightcolor, player.config.backcolor, getSkinElement("controlbar", name + "ButtonBack"), getSkinElement("controlbar", name + "ButtonOver"), text);
+				button.addEventListener(event, forward);
+				addButton(name, button);
+			}
 		}
 		
 		
 		private function addSlider(name:String, orientation:String, event:String, callback:Function):void {
-			var slider:Slider = new Slider(player.skin.getSkinElement("controlbar", name + "SliderRail"), player.skin.getSkinElement("controlbar", name + "SliderBuffer"), player.skin.getSkinElement("controlbar", name + "SliderProgress"), player.skin.getSkinElement("controlbar", name + "SliderThumb"), orientation);
+			var slider:Slider = new Slider(getSkinElement("controlbar", name + "SliderRail"), getSkinElement("controlbar", name + "SliderBuffer"), getSkinElement("controlbar", name + "SliderProgress"), getSkinElement("controlbar", name + "SliderThumb"), orientation);
 			slider.addEventListener(event, callback);
 			addButton(name, slider);
+		}
+		
+		private function addTextField(name:String, font:String):void {
+			var textField:TextField =  new TextField();
+			textField.text = '00:00';
+			var textFormat:TextFormat = new TextFormat();
+			textFormat.font = font;
+			textFormat.size = 8;
+			textField.setTextFormat(textFormat);
+			textField.selectable = false;
+			textField.autoSize = TextFieldAutoSize.LEFT;
+			addButton(name, textField);
 		}
 		
 		
@@ -246,7 +258,8 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		
-		public function addButton(name:String, icon:DisplayObject):void {
+		public function addButton(name:String, icon:DisplayObject, handler:Function = null):void {
+			//TODO: Add button + handler
 			if (icon) {
 				icon.name = name;
 				_buttons[name] = icon;
@@ -274,6 +287,10 @@ package com.longtailvideo.jwplayer.view {
 		
 		public function get layout():String {
 			return _layout;
+		}
+		
+		private function getSkinElement(component:String, element:String):DisplayObject {
+			return player.skin.getSkinElement(component,element);
 		}
 	}
 }

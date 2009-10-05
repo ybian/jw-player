@@ -8,6 +8,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.RootReference;
+	
 	import flash.display.Loader;
 	import flash.events.*;
 	import flash.net.LocalConnection;
@@ -193,7 +194,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Resize the YT player. **/
-		public function resize(wid:Number, hei:Number):void {
+		public override function resize(wid:Number, hei:Number):void {
 			outgoing.send('AS3_' + unique, "setSize", wid, hei);
 		}
 		

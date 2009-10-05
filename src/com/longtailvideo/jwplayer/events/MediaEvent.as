@@ -23,6 +23,23 @@ package com.longtailvideo.jwplayer.events {
 	     *  @eventType jwplayerMediaBuffer
 		 */
 		public static var JWPLAYER_MEDIA_BUFFER:String = "jwplayerMediaBuffer";
+		
+		/**
+	     *  The <code>MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL</code> constant defines the value of the 
+     	 *  <code>type</code> property of the event object for a <code>jwplayerMediaBufferFull</code> event.
+     	 * 
+		 * <p>The properties of the event object have the following values:</p>
+	     * <table class="innertable">
+     	 *		<tr><th>Property</th><th>Value</th></tr>
+	     *		<tr><td><code>id</code></td><td>ID of the player in the HTML DOM. Used by javascript to reference the player.</td></tr>
+	     *		<tr><td><code>client</code></td><td>A string representing the client the player runs in (e.g. FLASH WIN 9,0,115,0).</td></tr>
+  	     * 		<tr><td><code>version</code></td><td>A string representing the major version, minor version and revision number of the player (e.g. 5.0.395).</td></tr>
+	     *		<tr><td><code>buffer</code></td><td>The percent of the media buffered into memory</td></tr>
+	     *  </table>
+	     *
+	     *  @eventType jwplayerMediaBufferFull
+		 */
+		public static var JWPLAYER_MEDIA_BUFFER_FULL:String = "jwplayerMediaBufferFull";
 
 		/**
 	     *  The <code>MediaEvent.JWPLAYER_MEDIA_ERROR</code> constant defines the value of the 

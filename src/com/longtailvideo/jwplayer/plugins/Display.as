@@ -1,6 +1,6 @@
 package com.longtailvideo.jwplayer.plugins {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.events.MediaStateEvent;
+	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.player.Player;
 	

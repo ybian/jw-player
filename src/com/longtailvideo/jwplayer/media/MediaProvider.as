@@ -5,11 +5,11 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
-	import com.longtailvideo.jwplayer.player.PlayerState;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	
 	
 	/**
@@ -18,6 +18,12 @@ package com.longtailvideo.jwplayer.media {
 	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_BUFFER
 	 */
 	[Event(name="jwplayerMediaBuffer", type="com.longtailvideo.jwplayer.events.MediaEvent")]
+	/**
+	 * Fired when the buffer is full.
+	 *
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_BUFFER
+	 */
+	[Event(name="jwplayerMediaBufferFull", type="com.longtailvideo.jwplayer.events.MediaEvent")]
 	/**
 	 * Fired if an error occurs in the course of media playback.
 	 *
@@ -39,7 +45,7 @@ package com.longtailvideo.jwplayer.media {
 	 */
 	[Event(name="jwplayerMediaVolume", type="com.longtailvideo.jwplayer.events.MediaEvent")]
 	/**
-	 * @eventType com.longtailvideo.jwplayer.events.MediaStateEvent.JWPLAYER_PLAYER_STATE
+	 * @eventType com.longtailvideo.jwplayer.events.PlayerStateEvent.JWPLAYER_PLAYER_STATE
 	 */
 	[Event(name="jwplayerPlayerState", type="com.longtailvideo.jwplayer.events.PlayerStateEvent")]
 
@@ -123,7 +129,18 @@ package com.longtailvideo.jwplayer.media {
 		public function setVolume(vol:Number):void {
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME, {'volume': vol});
 		}
-		
+
+
+		/**
+		 * Changes the mute state of the item.
+		 * 
+		 * @param mute	The new mute state.
+		 **/
+		 public function mute(mute:Boolean):void {
+		 	mute == true ? setVolume(0) : setVolume(_config.volume);
+		 	sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_MUTE, {'mute': mute});
+		 }
+		 
 		
 		/** Graphical representation of media **/
 		public function display():DisplayObject {
@@ -166,9 +183,21 @@ package com.longtailvideo.jwplayer.media {
 			return _volume;
 		}
 		
+		/**
+		 * Resizes the display.
+		 * 
+		 * @param width		The new width of the display.
+		 * @param height	The new height of the display.
+		 **/
+		 
+		 public function resize(width:Number, height:Number):void {
+		 	_media.width = width;
+		 	_media.height = height;
+		 }
+		
 		
 		/**
-		 * Sets the current state to a new state and sends a MediaStateEvent
+		 * Sets the current state to a new state and sends a PlayerStateEvent
 		 * @param newState A state from ModelStates.
 		 */
 		protected function setState(newState:String):void {
@@ -179,7 +208,7 @@ package com.longtailvideo.jwplayer.media {
 				dispatchEvent(evt);
 			}
 		}
-		
+
 		
 		/**
 		 * Sends a MediaEvent, simultaneously setting a property

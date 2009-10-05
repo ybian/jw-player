@@ -1,8 +1,8 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
+	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.media.HTTPMediaProvider;
 	import com.longtailvideo.jwplayer.media.ImageMediaProvider;
 	import com.longtailvideo.jwplayer.media.MediaProvider;
@@ -35,7 +35,7 @@ package com.longtailvideo.jwplayer.model {
 	[Event(name="jwplayerMediaVolume", type = "com.longtailvideo.jwplayer.events.MediaEvent")]
 
 	/**
-	 * @eventType com.longtailvideo.jwplayer.events.MediaStateEvent.JWPLAYER_PLAYER_STATE
+	 * @eventType com.longtailvideo.jwplayer.events.PlayerStateEvent.JWPLAYER_PLAYER_STATE
 	 */
 	[Event(name="jwplayerPlayerState", type = "com.longtailvideo.jwplayer.events.PlayerStateEvent")]
 

@@ -2,8 +2,8 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
-	import com.longtailvideo.jwplayer.media.MediaState;
 	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
@@ -93,14 +93,14 @@ package com.longtailvideo.jwplayer.view {
 		
 		protected function stateHandler(event:PlayerEvent):void {
 			switch (event.type) {
-				case MediaState.BUFFERING:
-					setDisplay(player.skin.getSkinElement('display', 'bufferIcon'));
+				case PlayerState.BUFFERING:
+					setDisplay(getSkinElement('display', 'bufferIcon'));
 					break;
-				case MediaState.PAUSED:
-					setDisplay(player.skin.getSkinElement('display', 'playIcon'));
+				case PlayerState.PAUSED:
+					setDisplay(getSkinElement('display', 'playIcon'));
 					break;
-				case MediaState.IDLE:
-					setDisplay(player.skin.getSkinElement('display', 'playIcon'));
+				case PlayerState.IDLE:
+					setDisplay(getSkinElement('display', 'playIcon'));
 					break;
 				default:
 					clearDisplay();
@@ -109,14 +109,14 @@ package com.longtailvideo.jwplayer.view {
 		
 		protected function muteHandler(event:MediaEvent):void {
 			if (event.mute) {
-				setDisplay(player.skin.getSkinElement('display', 'muteIcon'));
+				setDisplay(getSkinElement('display', 'muteIcon'));
 			} else {
 				clearDisplay();
 			}
 		}
 
 		protected function errorHandler(event:PlayerEvent):void {
-			setDisplay(player.skin.getSkinElement('display', 'errorIcon'), event.message);
+			setDisplay(getSkinElement('display', 'errorIcon'), event.message);
 		}
 		
 		protected function clickHandler(event:MouseEvent):void {
@@ -133,6 +133,10 @@ package com.longtailvideo.jwplayer.view {
 		
 		protected function get background():MovieClip {
 			return _background;
+		}
+		
+		private function getSkinElement(component:String, element:String):DisplayObject {
+			return player.skin.getSkinElement(component,element);
 		}
 	}
 }

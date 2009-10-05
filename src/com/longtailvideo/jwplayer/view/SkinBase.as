@@ -1,10 +1,13 @@
 package com.longtailvideo.jwplayer.view {
+	import com.longtailvideo.jwplayer.utils.Draw;
+	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.text.TextField;
 
 	/**
 	 * Send when the skin is ready
@@ -54,6 +57,17 @@ package com.longtailvideo.jwplayer.view {
 			var comp:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
 			return comp.getChildByName(element);
 		}
+		
+		
+		public function getClonedSkinElement(component:String, element:String):DisplayObject {
+			var result:DisplayObject;
+			var comp:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
+			result = comp.getChildByName(element);
+			if (result && !(result is TextField)){
+				result = Draw.clone(result as Sprite);
+			}
+			return result;
+		}
 
 		public function addSkinElement(component:String, element:DisplayObject, name:String=null):void {
 			if (name)
@@ -83,6 +97,10 @@ package com.longtailvideo.jwplayer.view {
 		 */
 		protected function sendError(message:String):void {
 			dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, message));
+		}
+		
+		public function getSWFSkin():Sprite {
+			return null;
 		}
 
 	}

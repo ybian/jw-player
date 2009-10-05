@@ -17,7 +17,7 @@ package com.longtailvideo.jwplayer.view {
 		protected var _clickEventType:String;
 		protected var _clickEventData:*;
 		
-		public function ComponentButton(background:DisplayObject, outIcon:DisplayObject, outShade:uint, overShade:uint, overIcon:DisplayObject = null, text:String = null, clickEventType:String = null, clickEventData:* = null) {
+		public function ComponentButton(outIcon:DisplayObject, clickEventType:String = null, clickEventData:* = null, outShade:uint = 0, overShade:uint = 0, background:DisplayObject = null, overIcon:DisplayObject = null, text:String = null) {
 			if (background) {
 				background.x = 0;
 				background.y = 0;

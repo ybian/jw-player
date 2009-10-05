@@ -14,7 +14,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _list:Playlist;
 
 		private var _autostart:Boolean 		= false; 
-		private var _bufferlength:Number 	= 1; 
+		private var _bufferlength:Number 	= 5; 
 		private var _displayclick:String 	= "play"; 
 		private var _displaytitle:Boolean 	= true; 
 		private var _fullscreen:Boolean 	= false;
@@ -28,8 +28,8 @@ package com.longtailvideo.jwplayer.model {
 		private var _volume:Number 			= 90;
 
 		private var _backcolor:uint			= 0x000000;
-		private var _frontcolor:uint		= 0xFFFFFF;
-		private var _lightcolor:uint		= 0xFFFFFF;
+		private var _frontcolor:uint		= 0x000000;
+		private var _lightcolor:uint		= 0x000000;
 		private var _screencolor:uint		= 0x000000;
 		
 		private var _controlbar:String 		= "none";

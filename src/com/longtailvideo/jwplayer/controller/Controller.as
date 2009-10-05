@@ -16,6 +16,7 @@ package com.longtailvideo.jwplayer.controller {
 	import flash.events.Event;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
+	import com.longtailvideo.jwplayer.events.MediaEvent;
 
 	/**
 	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
@@ -116,7 +117,6 @@ package com.longtailvideo.jwplayer.controller {
 		private function setupComplete(evt:Event):void {
 			trace("Setup complete");
 			RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
-			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, "There was an error!"));
 		}
 
 		private function playlistLoadHandler(evt:PlaylistEvent):void {
@@ -142,13 +142,13 @@ package com.longtailvideo.jwplayer.controller {
 				}
 			}
 			
-			loadPlaylistItem(_model.playlist.currentItem);
+			load(_model.playlist.currentItem);
 		}
 		
 		private function mediaSourceLoaded(evt:Event):void {
 			var loader:MediaProviderLoader = evt.target as MediaProviderLoader;
 			_model.setMediaProvider(_model.playlist.currentItem.provider, loader.loadedSource);
-			loadPlaylistItem(_model.playlist.currentItem);
+			load(_model.playlist.currentItem);
 		}
 		
 		private function errorHandler(evt:ErrorEvent):void {
@@ -206,11 +206,11 @@ package com.longtailvideo.jwplayer.controller {
 		public function mute(muted:Boolean):Boolean {
 			if (muted && !_model.mute) {
 				_model.mute = true;
-				_model.media.setVolume(0);
+				_model.media.mute(true);
 				return true;
 			} else if (!muted && _model.mute) {
 				_model.mute = false;
-				_model.media.setVolume(_model.config.volume);
+				_model.media.mute(false);
 				return true;
 			}
 
@@ -298,6 +298,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function loadPlaylistItem(item:PlaylistItem):Boolean {
 			_model.setActiveMediaProvider(item.provider);
+			_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
 			_model.media.load(item);
 			return true;
 		}
@@ -307,6 +308,7 @@ package com.longtailvideo.jwplayer.controller {
 			if (extensions.hasOwnProperty(ext)) {
 				var type:String = extensions[ext];
 				_model.setActiveMediaProvider(type);
+				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
 				_model.media.load(new PlaylistItem({file:item}));
 			} else {
 				_model.playlist.load(item);
@@ -316,6 +318,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function loadNumber(item:Number):Boolean {
 			if (item >= 0 && item < _model.playlist.length) {
+				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
 				_model.media.load(_model.playlist.getItemAt(item));
 				return true;
 			}
@@ -324,10 +327,15 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function loadObject(item:Object):Boolean {
 			if (Object(item).hasOwnProperty('file')) {
+				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
 				_model.media.load(new PlaylistItem(item));
 				return true;
 			}
 			return false;
+		}
+		
+		private function lockHandler(evt:MediaEvent):void {
+			_model.media.play();
 		}
 
 		public function redraw():Boolean {

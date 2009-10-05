@@ -13,7 +13,11 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		public function PlayerComponents(player:Player) {
-			_controlbar = new ControlBarComponent(player);
+			if (player.skin is SWFSkin) {
+				_controlbar = new V4ControlBarComponent(player);
+			} else {
+				_controlbar = new ControlBarComponent(player);
+			}
 			_display = new DisplayComponent(player);
 		}
 		

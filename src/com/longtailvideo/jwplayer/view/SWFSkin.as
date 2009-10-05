@@ -52,6 +52,11 @@ package com.longtailvideo.jwplayer.view {
 		
 		public override function getSkinElement(component:String, element:String):DisplayObject {
 			var result:DisplayObject = super.getSkinElement(component, element);
+			return result;
+		}
+		
+		public function getTranslatedSkinElement(component:String, element:String):DisplayObject {
+			var result:DisplayObject = super.getSkinElement(component, element);
 			switch (component) {
 				case 'controlbar':
 					var buttonStart:Number = element.indexOf('Button');
@@ -61,38 +66,44 @@ package com.longtailvideo.jwplayer.view {
 						var buttonName:String = element.substr(0,buttonStart+6);
 						switch (buttonElement) {
 							case 'Button':
-								result = super.getSkinElement(component, buttonName)['icon'];
+								result = getSubElement('icon', result);
 								break;
 							case 'ButtonBack':
-								result = super.getSkinElement(component, buttonName);
-								//result = button.removeChild(button.getChildByName("icon"));
+								var button:MovieClip = super.getSkinElement(component, buttonName) as MovieClip;
+								if (button) {
+									(button.getChildByName("icon") as DisplayObject).alpha = 0;
+									result = button;
+								}
 								break;
 						}
 					} else if (sliderStart > 0) {
 						var sliderElement:String = element.substr(sliderStart, element.length);
 						var sliderName:String = element.substr(0,sliderStart+6);
+						result = super.getSkinElement(component, sliderName);
 						switch (sliderElement) {
 							case 'SliderRail':
-								result = super.getSkinElement(component, sliderName)['rail'];
+								result = getSubElement('rail', result);
 								break;
 							case 'SliderBuffer':
 								if (element == "volumeSliderBuffer"){
-									//result = super.getSkinElement(component, sliderName)['mark'];
+									result = null;
 								} else {
-									result = super.getSkinElement(component, sliderName)['mark'];
+									result = getSubElement('mark', result);
 								}
 								break;
 							case 'SliderProgress':
 								if (element == "volumeSliderProgress"){
-									//result = super.getSkinElement(component, sliderName)['mark'];
+									result = null;
 								} else {
-									result = super.getSkinElement(component, sliderName)['done'];
+									result = getSubElement('done', result);
 								}
 								break;
 							case 'SliderThumb':
-								result = super.getSkinElement(component, sliderName)['icon'];
+								result = getSubElement('icon', result);
 								break;
 						}
+					} else if (element == 'back' || element == 'shade') {
+						super.getSkinElement(component, element);
 					}
 					break;
 				case 'display':
@@ -105,6 +116,18 @@ package com.longtailvideo.jwplayer.view {
 					}
 			}
 			return result;
+		}
+		
+		private function getSubElement(subElement:String, element:DisplayObject):DisplayObject {
+			var result:DisplayObject;
+			if (element) {
+				result = element[subElement];
+			}
+			return result;
+		}
+		
+		public override function getSWFSkin():Sprite {
+			return _skin;
 		}
 
 	}
