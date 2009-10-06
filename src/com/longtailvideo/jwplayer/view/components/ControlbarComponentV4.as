@@ -332,8 +332,8 @@ package com.longtailvideo.jwplayer.view.components {
 		private function setButtons():void {
  			for (var btn:String in BUTTONS) {
 				if (getSkinElement("controlbar", btn)) {
-					(getSkinElement("controlbar", btn) as MovieClip).mouseChildren = false;
-					(getSkinElement("controlbar", btn) as MovieClip).buttonMode = true;
+					getSkinElement("controlbar", btn).mouseChildren = false;
+					getSkinElement("controlbar", btn).buttonMode = true;
 					getSkinElement("controlbar", btn).addEventListener(MouseEvent.CLICK, clickHandler);
 					getSkinElement("controlbar", btn).addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 					getSkinElement("controlbar", btn).addEventListener(MouseEvent.MOUSE_OUT, outHandler);
@@ -341,8 +341,8 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			for (var sld:String in SLIDERS) {
 				if (getSkinElement("controlbar", sld)) {
-					(getSkinElement("controlbar", sld) as MovieClip).mouseChildren = false;
-					(getSkinElement("controlbar", sld) as MovieClip).buttonMode = true;
+					getSkinElement("controlbar", sld).mouseChildren = false;
+					getSkinElement("controlbar", sld).buttonMode = true;
 					getSkinElement("controlbar", sld).addEventListener(MouseEvent.MOUSE_DOWN, downHandler);
 					getSkinElement("controlbar", sld).addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 					getSkinElement("controlbar", sld).addEventListener(MouseEvent.MOUSE_OUT, outHandler);
@@ -443,7 +443,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (evt) {
 				dur = evt.duration;
 				pos = evt.position;
-			} else if (player.playlist.length > 0) {
+			} else if (player.playlist.length > 0 && player.playlist.currentItem) {
 				dur = player.playlist.currentItem.duration;
 				pos = 0;
 			}

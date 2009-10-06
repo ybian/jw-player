@@ -112,6 +112,9 @@ package com.longtailvideo.jwplayer.media {
 				video.width = dat.width;
 				video.height = dat.height;
 			}
+			if (dat.duration) {
+				_item.duration = dat.duration;
+			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: dat});
 		}
 		
