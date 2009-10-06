@@ -10,6 +10,8 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponentV4;
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
 	import com.longtailvideo.jwplayer.view.components.DisplayComponent;
+	import com.longtailvideo.jwplayer.view.components.PlaylistComponent;
+	import com.longtailvideo.jwplayer.view.components.DockComponent;
 	
 	
 	public class PlayerComponents {
@@ -28,6 +30,8 @@ package com.longtailvideo.jwplayer.view {
 				_controlbar = new ControlbarComponent(player);
 			}
 			_display = new DisplayComponent(player);
+			_playlist = new PlaylistComponent(player);
+			_dock = new DockComponent(player);
 		}
 		
 		
