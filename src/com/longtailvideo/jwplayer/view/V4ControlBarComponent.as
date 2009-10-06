@@ -48,7 +48,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		public function V4ControlBarComponent(player:Player) {
 			super(player);
-
+			// TODO: Remove Link button
  			BUTTONS = {
  				playButton: ViewEvent.JWPLAYER_VIEW_PLAY, 
  				pauseButton: ViewEvent.JWPLAYER_VIEW_PAUSE, 
@@ -61,7 +61,6 @@ package com.longtailvideo.jwplayer.view {
  				muteButton: ViewEvent.JWPLAYER_VIEW_MUTE, 
  				unmuteButton: ViewEvent.JWPLAYER_VIEW_MUTE
  			};
-
 			var temp:Sprite = player.skin.getSWFSkin();
 			skin = player.skin.getSWFSkin().getChildByName('controlbar') as Sprite;
 			skin.x = 0;
@@ -95,7 +94,7 @@ package com.longtailvideo.jwplayer.view {
 		   getSkinElement("controlbar", '* @param hdl	The function to call when clicking the Button').
 		 **/
 		public function addButton(name:String, icon:DisplayObject, handler:Function = null):void {
-			if (getSkinElement("controlbar", 'linkButton') && getSkinElement("controlbar", 'linkButton')['back']) {
+			if (getSkinElement("controlbar", 'linkButton') && getSkinElement("controlbar", 'linkButton').getChildByName('back')) {
 				var btn:* = Draw.clone(getSkinElement("controlbar", 'linkButton') as Sprite);
 				btn.name = name + 'Button';
 				btn.visible = true;
@@ -205,12 +204,12 @@ package com.longtailvideo.jwplayer.view {
 			try {
 				var scp:Number = getSkinElement("controlbar", 'timeSlider').scaleX;
 				getSkinElement("controlbar", 'timeSlider').scaleX = 1;
-				getSkinElement("controlbar", 'timeSlider')['icon'].x = scp * getSkinElement("controlbar", 'timeSlider')['icon'].x;
-				getSkinElement("controlbar", 'timeSlider')['mark'].x = scp * getSkinElement("controlbar", 'timeSlider')['mark'].x;
-				getSkinElement("controlbar", 'timeSlider')['mark'].width = scp * getSkinElement("controlbar", 'timeSlider')['mark'].width;
-				getSkinElement("controlbar", 'timeSlider')['rail'].width = scp * getSkinElement("controlbar", 'timeSlider')['rail'].width;
-				getSkinElement("controlbar", 'timeSlider')['done'].x = scp * getSkinElement("controlbar", 'timeSlider')['done'].x;
-				getSkinElement("controlbar", 'timeSlider')['done'].width = scp * getSkinElement("controlbar", 'timeSlider')['done'].width;
+				getSkinElement("controlbar", 'timeSlider').getChildByName('icon').x = scp * getSkinElement("controlbar", 'timeSlider').getChildByName('icon').x;
+				getSkinElement("controlbar", 'timeSlider').getChildByName('mark').x = scp * getSkinElement("controlbar", 'timeSlider').getChildByName('mark').x;
+				getSkinElement("controlbar", 'timeSlider').getChildByName('mark').width = scp * getSkinElement("controlbar", 'timeSlider').getChildByName('mark').width;
+				getSkinElement("controlbar", 'timeSlider').getChildByName('rail').width = scp * getSkinElement("controlbar", 'timeSlider').getChildByName('rail').width;
+				getSkinElement("controlbar", 'timeSlider').getChildByName('done').x = scp * getSkinElement("controlbar", 'timeSlider').getChildByName('done').x;
+				getSkinElement("controlbar", 'timeSlider').getChildByName('done').width = scp * getSkinElement("controlbar", 'timeSlider').getChildByName('done').width;
 			} catch (err:Error) {
 			}
 		}
@@ -227,7 +226,7 @@ package com.longtailvideo.jwplayer.view {
 			} catch (err:Error) {
 			}
 			try {
-				if (player.playlist && player.playlist[player.config.item]['link']) {
+				if (player.playlist && player.playlist.currentItem.link) {
 					getSkinElement("controlbar", 'linkButton').visible = true;
 				} else {
 					getSkinElement("controlbar", 'linkButton').visible = false;
@@ -244,10 +243,10 @@ package com.longtailvideo.jwplayer.view {
 		/** Process bytesloaded updates given by the model. **/
 		private function loadedHandler(evt:MediaEvent = null):void {
 			try {
-				var wid:Number = getSkinElement("controlbar", 'timeSlider')['rail'].width;
-				getSkinElement("controlbar", 'timeSlider')['mark'].x = evt.position * wid;
-				getSkinElement("controlbar", 'timeSlider')['mark'].width = evt.bufferPercent * wid;
-				var icw:Number = getSkinElement("controlbar", 'timeSlider')['icon'].x + getSkinElement("controlbar", 'timeSlider')['icon'].width;
+				var wid:Number = getSkinElement("controlbar", 'timeSlider').getChildByName('rail').width;
+				getSkinElement("controlbar", 'timeSlider').getChildByName('mark').x = evt.position * wid;
+				getSkinElement("controlbar", 'timeSlider').getChildByName('mark').width = evt.bufferPercent * wid;
+				var icw:Number = getSkinElement("controlbar", 'timeSlider').getChildByName('icon').x + getSkinElement("controlbar", 'timeSlider').getChildByName('icon').width;
 			} catch (err:Error) {
 			}
 		}
@@ -283,8 +282,8 @@ package com.longtailvideo.jwplayer.view {
 				} catch (err:Error) {
 				}
 				try {
-					getSkinElement("controlbar", 'volumeSlider')['mark'].visible = false;
-					getSkinElement("controlbar", 'volumeSlider')['icon'].x = getSkinElement("controlbar", 'volumeSlider')['rail'].x;
+					getSkinElement("controlbar", 'volumeSlider').getChildByName('mark').visible = false;
+					getSkinElement("controlbar", 'volumeSlider').getChildByName('icon').x = getSkinElement("controlbar", 'volumeSlider').getChildByName('rail').x;
 				} catch (err:Error) {
 				}
 			} else {
@@ -294,7 +293,7 @@ package com.longtailvideo.jwplayer.view {
 				} catch (err:Error) {
 				}
 				try {
-					getSkinElement("controlbar", 'volumeSlider')['mark'].visible = true;
+					getSkinElement("controlbar", 'volumeSlider').getChildByName('mark').visible = true;
 					volumeHandler();
 				} catch (err:Error) {
 				}
@@ -347,7 +346,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Init the colors. **/
 		private function setColors():void {
-			if (player.config.backcolor && getSkinElement("controlbar", 'playButton')['icon']) {
+			if (player.config.backcolor && getSkinElement("controlbar", 'playButton').getChildByName('icon')) {
 				var clr:ColorTransform = new ColorTransform();
 				clr.color = player.config.backcolor;
 				getSkinElement("controlbar", 'back').transform.colorTransform = clr;
@@ -358,14 +357,14 @@ package com.longtailvideo.jwplayer.view {
 					front.color = player.config.frontcolor;
 					for (var btn:String in BUTTONS) {
 						if (getSkinElement("controlbar", btn)) {
-							getSkinElement("controlbar", btn)['icon'].transform.colorTransform = front;
+							getSkinElement("controlbar", btn).getChildByName('icon').transform.colorTransform = front;
 						}
 					}
 					for (var sld:String in SLIDERS) {
 						if (getSkinElement("controlbar", sld)) {
-							getSkinElement("controlbar", sld)['icon'].transform.colorTransform = front;
-							getSkinElement("controlbar", sld)['mark'].transform.colorTransform = front;
-							getSkinElement("controlbar", sld)['rail'].transform.colorTransform = front;
+							getSkinElement("controlbar", sld).getChildByName('icon').transform.colorTransform = front;
+							getSkinElement("controlbar", sld).getChildByName('mark').transform.colorTransform = front;
+							getSkinElement("controlbar", sld).getChildByName('rail').transform.colorTransform = front;
 						}
 					}
 					(getSkinElement("controlbar", 'elapsedText') as TextField).textColor = front.color;
@@ -381,8 +380,8 @@ package com.longtailvideo.jwplayer.view {
 			}
 			if (light) {
 				try {
-					getSkinElement("controlbar", 'timeSlider')['done'].transform.colorTransform = light;
-					getSkinElement("controlbar", 'volumeSlider')['mark'].transform.colorTransform = light;
+					getSkinElement("controlbar", 'timeSlider').getChildByName('done').transform.colorTransform = light;
+					getSkinElement("controlbar", 'volumeSlider').getChildByName('mark').transform.colorTransform = light;
 				} catch (err:Error) {
 				}
 			}
@@ -438,7 +437,7 @@ package com.longtailvideo.jwplayer.view {
 				dur = evt.duration;
 				pos = evt.position;
 			} else if (player.playlist.length > 0) {
-				dur = player.playlist.getItemAt(player.config.item).duration;
+				dur = player.playlist.currentItem.duration;
 				pos = 0;
 			}
 			var pct:Number = pos / dur;
@@ -454,17 +453,17 @@ package com.longtailvideo.jwplayer.view {
 				var tsl:MovieClip = getSkinElement("controlbar", 'timeSlider') as MovieClip;
 				var xps:Number = Math.round(pct * (tsl.rail.width - tsl.icon.width));
 				if (dur > 0) {
-					getSkinElement("controlbar", 'timeSlider')['icon'].visible = true;
-					getSkinElement("controlbar", 'timeSlider')['mark'].visible = true;
+					getSkinElement("controlbar", 'timeSlider').getChildByName('icon').visible = true;
+					getSkinElement("controlbar", 'timeSlider').getChildByName('mark').visible = true;
 					if (!scrubber) {
-						getSkinElement("controlbar", 'timeSlider')['icon'].x = xps;
-						getSkinElement("controlbar", 'timeSlider')['done'].width = xps;
+						getSkinElement("controlbar", 'timeSlider').getChildByName('icon').x = xps;
+						getSkinElement("controlbar", 'timeSlider').getChildByName('done').width = xps;
 					}
-					getSkinElement("controlbar", 'timeSlider')['done'].visible = true;
+					getSkinElement("controlbar", 'timeSlider').getChildByName('done').visible = true;
 				} else {
-					getSkinElement("controlbar", 'timeSlider')['icon'].visible = false;
-					getSkinElement("controlbar", 'timeSlider')['mark'].visible = false;
-					getSkinElement("controlbar", 'timeSlider')['done'].visible = false;
+					getSkinElement("controlbar", 'timeSlider').getChildByName('icon').visible = false;
+					getSkinElement("controlbar", 'timeSlider').getChildByName('mark').visible = false;
+					getSkinElement("controlbar", 'timeSlider').getChildByName('done').visible = false;
 				}
 			} catch (err:Error) {
 			}
@@ -477,7 +476,7 @@ package com.longtailvideo.jwplayer.view {
 			stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler);
 			scrubber.icon.stopDrag();
 			if (scrubber.name == 'timeSlider' && player.playlist) {
-				mpl = player.playlist.getItemAt(player.config.item).duration;
+				mpl = player.playlist.currentItem.duration;
 			} else if (scrubber.name == 'volumeSlider') {
 				mpl = 100;
 			}
@@ -497,8 +496,8 @@ package com.longtailvideo.jwplayer.view {
 			}
 		}
 		
-		private function getSkinElement(component:String, element:String):DisplayObject {
-			return skin.getChildByName(element);
+		private function getSkinElement(component:String, element:String):MovieClip {
+			return skin.getChildByName(element) as MovieClip;
 		}
 	}
 }
