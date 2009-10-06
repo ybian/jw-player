@@ -145,7 +145,7 @@ package com.longtailvideo.jwplayer.player {
 			return {error:'This function is no longer supported.'}
 		}
 		
-		private function sendEvent(type:String, data:Object):void {
+		private function sendEvent(type:String, data:Object = null):void {
 			_emu.sendEvent(type.toUpperCase(), data);
 		}
 		
