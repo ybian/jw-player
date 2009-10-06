@@ -32,30 +32,32 @@ package com.longtailvideo.jwplayer.player {
 			var newEvt:PlayerEvent = new PlayerEvent("");
 			
 			var callbacks:String = _player.config.playerready ? _player.config.playerready + "," + "playerReady" : "playerReady";  
-			
-			for each (var callback:String in callbacks.replace(/\s/,"").split(",")) {
-				ExternalInterface.call(callback,{
-					id:newEvt.id,
-					client:newEvt.client,
-					version:newEvt.version
-				});
-			}
 
-			
+			if (ExternalInterface.available) {
+				for each (var callback:String in callbacks.replace(/\s/,"").split(",")) {
+					ExternalInterface.call(callback,{
+						id:newEvt.id,
+						client:newEvt.client,
+						version:newEvt.version
+					});
+				}
+			}			
 		}
 		
 		private function setupListeners():void {
-			ExternalInterface.addCallback("addControllerListener",addJSControllerListener);
-			ExternalInterface.addCallback("addModelListener",addJSModelListener);
-			ExternalInterface.addCallback("addViewListener",addJSViewListener);
-			ExternalInterface.addCallback("removeControllerListener",removeJSControllerListener);
-			ExternalInterface.addCallback("removeModelListener",removeJSModelListener);
-			ExternalInterface.addCallback("removeViewListener",removeJSViewListener);
-			ExternalInterface.addCallback("getConfig",getConfig);
-			ExternalInterface.addCallback("getPlaylist",getPlaylist);
-			ExternalInterface.addCallback("getPluginConfig",getJSPluginConfig);
-			ExternalInterface.addCallback("loadPlugin",loadPlugin);
-			ExternalInterface.addCallback("sendEvent",sendEvent);
+			if (ExternalInterface.available) {
+				ExternalInterface.addCallback("addControllerListener",addJSControllerListener);
+				ExternalInterface.addCallback("addModelListener",addJSModelListener);
+				ExternalInterface.addCallback("addViewListener",addJSViewListener);
+				ExternalInterface.addCallback("removeControllerListener",removeJSControllerListener);
+				ExternalInterface.addCallback("removeModelListener",removeJSModelListener);
+				ExternalInterface.addCallback("removeViewListener",removeJSViewListener);
+				ExternalInterface.addCallback("getConfig",getConfig);
+				ExternalInterface.addCallback("getPlaylist",getPlaylist);
+				ExternalInterface.addCallback("getPluginConfig",getJSPluginConfig);
+				ExternalInterface.addCallback("loadPlugin",loadPlugin);
+				ExternalInterface.addCallback("sendEvent",sendEvent);
+			}
 		}
 		
 
@@ -150,7 +152,9 @@ package com.longtailvideo.jwplayer.player {
 		private function forwardControllerEvents(evt:ControllerEvent):void {
 			if (controllerCallbacks.hasOwnProperty(evt.type)) {
 				for each (var callback:String in controllerCallbacks[evt.type]) {
-					ExternalInterface.call(callback, evt.data);
+					if (ExternalInterface.available) {
+						ExternalInterface.call(callback, evt.data);
+					}
 				}
 			}
 		}
@@ -158,7 +162,9 @@ package com.longtailvideo.jwplayer.player {
 		private function forwardModelEvents(evt:ModelEvent):void {
 			if (modelCallbacks.hasOwnProperty(evt.type)) {
 				for each (var callback:String in modelCallbacks[evt.type]) {
-					ExternalInterface.call(callback, evt.data);
+					if (ExternalInterface.available) {
+						ExternalInterface.call(callback, evt.data);
+					}
 				}
 			}
 		}
@@ -166,7 +172,9 @@ package com.longtailvideo.jwplayer.player {
 		private function forwardViewEvents(evt:ViewEvent):void {
 			if (viewCallbacks.hasOwnProperty(evt.type)) {
 				for each (var callback:String in viewCallbacks[evt.type]) {
-					ExternalInterface.call(callback, evt.data);
+					if (ExternalInterface.available) {
+						ExternalInterface.call(callback, evt.data);
+					}
 				}
 			}
 		}

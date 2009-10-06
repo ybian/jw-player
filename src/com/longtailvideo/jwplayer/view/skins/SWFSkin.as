@@ -1,5 +1,6 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.skins {
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -51,8 +52,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		public override function getSkinElement(component:String, element:String):DisplayObject {
-			var result:DisplayObject = super.getSkinElement(component, element);
-			return result;
+			return super.getSkinElement(component, element);
 		}
 		
 		public function getTranslatedSkinElement(component:String, element:String):DisplayObject {

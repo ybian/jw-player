@@ -1,6 +1,15 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
+	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
+	import com.longtailvideo.jwplayer.view.components.ControlbarComponentV4;
+	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
+	import com.longtailvideo.jwplayer.view.components.DisplayComponent;
 	
 	
 	public class PlayerComponents {
@@ -14,9 +23,9 @@ package com.longtailvideo.jwplayer.view {
 		
 		public function PlayerComponents(player:Player) {
 			if (player.skin is SWFSkin) {
-				_controlbar = new V4ControlBarComponent(player);
+				_controlbar = new ControlbarComponentV4(player);
 			} else {
-				_controlbar = new ControlBarComponent(player);
+				_controlbar = new ControlbarComponent(player);
 			}
 			_display = new DisplayComponent(player);
 		}

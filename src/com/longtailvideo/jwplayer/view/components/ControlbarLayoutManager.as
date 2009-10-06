@@ -1,15 +1,18 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.components {
+	import com.longtailvideo.jwplayer.view.components.ComponentButton;
+	import com.longtailvideo.jwplayer.view.components.Slider;
+	
 	import flash.display.DisplayObject;
 	import flash.text.TextField;
 	
 	
 	public class ControlbarLayoutManager {
-		protected var _controlbar:ControlBarComponent;
+		protected var _controlbar:ControlbarComponent;
 		protected var _currentLeft:Number;
 		protected var _currentRight:Number;
 		
 		
-		public function ControlbarLayoutManager(controlbar:ControlBarComponent) {
+		public function ControlbarLayoutManager(controlbar:ControlbarComponent) {
 			_controlbar = controlbar;
 		}
 		

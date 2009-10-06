@@ -7,11 +7,11 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Strings;
-	import com.longtailvideo.jwplayer.view.DefaultSkin;
-	import com.longtailvideo.jwplayer.view.ISkin;
-	import com.longtailvideo.jwplayer.view.PNGSkin;
-	import com.longtailvideo.jwplayer.view.SWFSkin;
-	import com.longtailvideo.jwplayer.view.SkinProperties;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
+	import com.longtailvideo.jwplayer.view.skins.DefaultSkin;
+	import com.longtailvideo.jwplayer.view.skins.PNGSkin;
+	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
+	import com.longtailvideo.jwplayer.view.skins.SkinProperties;
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.display.DisplayObject;
@@ -20,6 +20,7 @@ package com.longtailvideo.jwplayer.controller {
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 
 	/**
 	 * Sent when the all of the setup steps have successfully completed.

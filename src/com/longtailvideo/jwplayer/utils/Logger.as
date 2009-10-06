@@ -91,7 +91,9 @@ package com.longtailvideo.jwplayer.utils {
 					CONNECTION.send(CONNECTION_NAME, 'debug', 'CDC309AF', text,	0xCCCCCC);
 					break;
 				case CONSOLE:
-					ExternalInterface.call('console.log', text);
+					if (ExternalInterface.available) {
+						ExternalInterface.call('console.log', text);
+					}
 					break;
 				case TRACE:
 					trace(text);
@@ -99,7 +101,9 @@ package com.longtailvideo.jwplayer.utils {
 				case NONE:
 					break;
 				default:
-					ExternalInterface.call(Logger._output, text);
+					if (ExternalInterface.available) {
+						ExternalInterface.call(Logger._output, text);
+					}
 					break;
 			}
 		}

@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.utils {
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	

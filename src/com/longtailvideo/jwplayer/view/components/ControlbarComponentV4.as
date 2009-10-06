@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
@@ -6,7 +6,10 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Draw;
+	import com.longtailvideo.jwplayer.utils.Stacker;
 	import com.longtailvideo.jwplayer.utils.Strings;
+	import com.longtailvideo.jwplayer.view.components.CoreComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	import flash.accessibility.AccessibilityProperties;
 	import flash.display.DisplayObject;
@@ -21,9 +24,10 @@ package com.longtailvideo.jwplayer.view {
 	import flash.utils.setTimeout;
 	
 	import mx.effects.Fade;
+	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	
-	public class V4ControlBarComponent extends CoreComponent implements IControlbarComponent {
+	public class ControlbarComponentV4 extends CoreComponent implements IControlbarComponent {
 		/** Reference to the original skin **/
 		private var skin:Sprite;
 		/** A list with all controls. **/
@@ -39,14 +43,17 @@ package com.longtailvideo.jwplayer.view {
 		/** The actions for all controlbar buttons. **/
 		private var BUTTONS:Object;
 		/** The actions for all sliders **/
-		private var SLIDERS:Object = {timeSlider: ViewEvent.JWPLAYER_VIEW_SEEK, volumeSlider: ViewEvent.JWPLAYER_VIEW_VOLUME}
+		private var SLIDERS:Object = {
+			timeSlider: ViewEvent.JWPLAYER_VIEW_SEEK, 
+			volumeSlider: ViewEvent.JWPLAYER_VIEW_VOLUME
+		};
 		/** The button to clone for all custom buttons. **/
 		private var clonee:MovieClip;
 		/** Saving the block state of the controlbar. **/
 		private var blocking:Boolean;
 		
 		
-		public function V4ControlBarComponent(player:Player) {
+		public function ControlbarComponentV4(player:Player) {
 			super(player);
 			// TODO: Remove Link button
  			BUTTONS = {

@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.interfaces {
 	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
 	
 

@@ -1,5 +1,6 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.skins {
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	import flash.display.Bitmap;
 	import flash.display.Sprite;

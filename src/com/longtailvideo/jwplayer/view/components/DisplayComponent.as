@@ -1,9 +1,11 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.view.components.CoreComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;

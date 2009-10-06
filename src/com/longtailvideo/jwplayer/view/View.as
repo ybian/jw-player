@@ -11,7 +11,12 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Stretcher;
-	
+	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
+		
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.MovieClip;

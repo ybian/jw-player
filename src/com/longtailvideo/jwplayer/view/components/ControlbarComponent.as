@@ -1,7 +1,11 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.view.components.CoreComponent;
+	import com.longtailvideo.jwplayer.view.components.ComponentButton;
+	import com.longtailvideo.jwplayer.view.components.Slider;
+	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
@@ -9,6 +13,7 @@ package com.longtailvideo.jwplayer.view {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	
 	/**
@@ -71,13 +76,13 @@ package com.longtailvideo.jwplayer.view {
 	 * @eventType com.longtailvideo.jwplayer.events.ViewEvent.JWPLAYER_VIEW_SEEK
 	 */
 	[Event(name="jwPlayerViewSeek", type="com.longtailvideo.jwplayer.events.ViewEvent")]
-	public class ControlBarComponent extends CoreComponent implements IControlbarComponent {
+	public class ControlbarComponent extends CoreComponent implements IControlbarComponent {
 		protected var _buttons:Object = {};
 		protected var _layout:String = "[play|stop|prev|next|elapsed][time][duration|fullscreen|mute volume]";
 		protected var _layoutManager:ControlbarLayoutManager;
 		
 		
-		public function ControlBarComponent(player:Player) {
+		public function ControlbarComponent(player:Player) {
 			super(player);
 			_layoutManager = new ControlbarLayoutManager(this);
 			setupBackground();

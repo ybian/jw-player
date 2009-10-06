@@ -1,7 +1,9 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.interfaces {
+	import com.longtailvideo.jwplayer.view.skins.SkinProperties;
+	
 	import flash.display.DisplayObject;
-	import flash.events.IEventDispatcher;
 	import flash.display.Sprite;
+	import flash.events.IEventDispatcher;
 
 	/**
 	 * Send when the skin is ready

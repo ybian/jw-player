@@ -1,5 +1,6 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.skins {
 	import com.longtailvideo.jwplayer.utils.Draw;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -54,12 +55,6 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		public function getSkinElement(component:String, element:String):DisplayObject {
-			var comp:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
-			return comp.getChildByName(element);
-		}
-		
-		
-		public function getClonedSkinElement(component:String, element:String):DisplayObject {
 			var result:DisplayObject;
 			var comp:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
 			result = comp.getChildByName(element);

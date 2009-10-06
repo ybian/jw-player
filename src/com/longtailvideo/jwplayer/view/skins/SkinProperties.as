@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.skins {
 	/**
 	 * Typed public vars for skin-specific player options 
  	 */

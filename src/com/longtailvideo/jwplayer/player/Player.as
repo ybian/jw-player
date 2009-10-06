@@ -7,12 +7,13 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
-	import com.longtailvideo.jwplayer.view.ISkin;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	import com.longtailvideo.jwplayer.view.PlayerComponents;
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	
 	/**

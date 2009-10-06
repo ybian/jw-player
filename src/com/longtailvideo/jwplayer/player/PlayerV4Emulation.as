@@ -15,11 +15,12 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
-	import com.longtailvideo.jwplayer.view.ControlBarComponent;
+	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
 	
 	import flash.display.DisplayObject;
 	import flash.events.EventDispatcher;
 	import flash.utils.describeType;
+	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
 
 	/**
 	 * This singleton class acts as a wrapper between the Player and plugins or javascripts that were
@@ -73,7 +74,7 @@ package com.longtailvideo.jwplayer.player {
 		private function setupListeners():void {
 			
 			var m:Model;
-			var v:ControlBarComponent;
+			var v:ControlbarComponent;
 			var c:Controller
 			
 			_player.addEventListener(PlayerEvent.JWPLAYER_ERROR, errorHandler);

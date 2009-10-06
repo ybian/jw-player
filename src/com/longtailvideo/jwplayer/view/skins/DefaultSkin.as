@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.skins {
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
@@ -10,7 +10,7 @@ package com.longtailvideo.jwplayer.view {
 	import mx.core.MovieClipLoaderAsset;
 
 	public class DefaultSkin extends SWFSkin {
-		[Embed(source="../../../../../assets/flash/skin/player.swf")]
+		[Embed(source="../../../../../../assets/flash/skin/player.swf")]
 		private var EmbeddedSkin:Class;
 
 		public override function load(notUsed:String=""):void {

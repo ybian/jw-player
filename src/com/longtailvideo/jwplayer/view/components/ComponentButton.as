@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.view {
+package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	
 	import flash.display.DisplayObject;
