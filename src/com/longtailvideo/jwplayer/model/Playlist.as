@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.parsers.IPlaylistParser;
 	import com.longtailvideo.jwplayer.parsers.ParserFactory;
@@ -89,8 +90,14 @@ package com.longtailvideo.jwplayer.model {
 
 			list = newList;
 			index = newList.length > 0 ? 0 : -1;
-
-			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED));
+	
+			if (index >= 0) {
+				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED));
+				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM));
+			} else {
+				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, "Loaded playlist is empty"));
+			}
+			
 			return; 
 		}
 
@@ -185,7 +192,7 @@ package com.longtailvideo.jwplayer.model {
 		} 
 		
 		public function get currentItem():PlaylistItem {
-			return getItemAt(index);
+			return index >= 0 ? getItemAt(index) : null;
 		}
 		
 		public function get length():Number {

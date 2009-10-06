@@ -74,7 +74,6 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.queueTask(loadPlaylist);
 			tasker.queueTask(initPlugins);
 			tasker.queueTask(setupJS);
-			tasker.queueTask(beginAutostart);
 			
 			tasker.runTasks();
 		}
@@ -202,10 +201,5 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.success();
 		}
 
-		private function beginAutostart():void {
-			tasker.success();
-		}
-		
-		
 	}
 }

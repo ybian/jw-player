@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
+	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	
 	import flash.events.EventDispatcher;
@@ -45,6 +46,8 @@ package com.longtailvideo.jwplayer.model {
 		private var _plugins:String 		= null
 		private var _pluginConfig:Object 	= {};
 		
+		private var _playerready:String		= "";
+		
 		public function PlayerConfig(playlist:Playlist):void {
 			getCookiedParams();
 			setPlaylist(playlist);
@@ -59,7 +62,9 @@ package com.longtailvideo.jwplayer.model {
 			var playlistItems:Boolean = false;
 			for (var item:String in config) {
 				if (newItem.hasOwnProperty(item)) {
-					if (_list.length > 0) {
+					if (item == "file" && Strings.extension(config[item]) == "xml") {
+						setProperty("playlist", config[item]);					
+					} else if (_list.length > 0) {
 						_list.currentItem[item] = config[item];
 					} else {
 						newItem[item] = config[item];
@@ -310,6 +315,10 @@ package com.longtailvideo.jwplayer.model {
 		/** Which plugins to load **/		
 		public function get plugins():String { return _plugins; }
 		public function set plugins(x:String):void { _plugins = x; }
+
+		/** Javascript player ready callback handlers **/		
+		public function get playerready():String { return _playerready; }
+		public function set playerready(x:String):void { _playerready = x; }
 		
 		/**
 		 * Returns a PluginConfig containing plugin configuration information

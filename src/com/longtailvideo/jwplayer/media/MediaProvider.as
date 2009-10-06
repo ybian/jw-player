@@ -2,15 +2,19 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.utils.Stretcher;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import com.longtailvideo.jwplayer.player.PlayerState;
-	
+	import flash.events.IOErrorEvent;
+	import flash.net.URLRequest;
 	
 	/**
 	 * Fired when a portion of the current media has been loaded into the buffer.
@@ -21,7 +25,7 @@ package com.longtailvideo.jwplayer.media {
 	/**
 	 * Fired when the buffer is full.
 	 *
-	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_BUFFER
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL
 	 */
 	[Event(name="jwplayerMediaBufferFull", type="com.longtailvideo.jwplayer.events.MediaEvent")]
 	/**
@@ -70,16 +74,14 @@ package com.longtailvideo.jwplayer.media {
 		/** Handles event dispatching **/
 		protected var _dispatcher:GlobalEventDispatcher;
 		
-		
-		public function MediaProvider(){		
+		public function MediaProvider(){
+			_dispatcher = new GlobalEventDispatcher();
 		}
 		
 		public function initializeMediaProvider(cfg:PlayerConfig):void {
 			_config = cfg;
-			_dispatcher = new GlobalEventDispatcher();
 			_state = PlayerState.IDLE;
 		}
-		
 		
 		/**
 		 * Load a new playlist item
@@ -143,7 +145,7 @@ package com.longtailvideo.jwplayer.media {
 		 
 		
 		/** Graphical representation of media **/
-		public function display():DisplayObject {
+		public function get display():DisplayObject {
 			return _media;
 		}
 		
@@ -189,10 +191,11 @@ package com.longtailvideo.jwplayer.media {
 		 * @param width		The new width of the display.
 		 * @param height	The new height of the display.
 		 **/
-		 
 		 public function resize(width:Number, height:Number):void {
-		 	_media.width = width;
-		 	_media.height = height;
+		 	if (_media) {
+		 		Stretcher.stretch(_media, width, height, _config.stretching);
+		 	}
+		 	
 		 }
 		
 		
@@ -208,7 +211,6 @@ package com.longtailvideo.jwplayer.media {
 				dispatchEvent(evt);
 			}
 		}
-
 		
 		/**
 		 * Sends a MediaEvent, simultaneously setting a property
@@ -273,5 +275,6 @@ package com.longtailvideo.jwplayer.media {
 			_dispatcher.dispatchEvent(event);
 			return super.dispatchEvent(event);
 		}
+		
 	}
 }

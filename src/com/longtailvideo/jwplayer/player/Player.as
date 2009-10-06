@@ -5,6 +5,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.view.ISkin;
 	import com.longtailvideo.jwplayer.view.PlayerComponents;
@@ -51,7 +52,7 @@ package com.longtailvideo.jwplayer.player {
 			} catch (err:Error) {
 			}
 			model = new Model();
-			view = new View(this);
+			view = new View(this, model);
 			controller = new Controller(this, model, view);
 
 			model.addGlobalListener(forward);
@@ -59,7 +60,10 @@ package com.longtailvideo.jwplayer.player {
 			controller.addGlobalListener(forward);
 
 			// Initialize V4 "simulator" singleton
-			new PlayerV4Emulation(this);
+			var emu:PlayerV4Emulation = new PlayerV4Emulation(this);
+			var jsAPI:JavascriptAPI = new JavascriptAPI(this);
+
+			Logger.output = Logger.CONSOLE;
 
 			controller.setupPlayer();
 		}
@@ -69,6 +73,7 @@ package com.longtailvideo.jwplayer.player {
 		 * @param evt
 		 */
 		protected function forward(evt:PlayerEvent):void {
+			Logger.log(evt.toString(), evt.type);
 			dispatchEvent(evt);
 		}
 

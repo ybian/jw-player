@@ -86,5 +86,19 @@ package com.longtailvideo.jwplayer.events {
 			this.message = msg;
 		}
 		
+		public override function toString():String {
+			var superString:String = super.toString();
+			return superString.substr(0, superString.length-1) 
+				+ " id=" + id 
+				+ " client=" + client 
+				+ " version=" + version
+				+ " message=" + message
+				+ "]";
+		} 
+		
+		public override function clone():Event {
+			return new PlayerEvent(this.type, this.message);
+		}
+		
 	}
 }

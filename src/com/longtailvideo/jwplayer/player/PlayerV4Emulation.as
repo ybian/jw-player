@@ -45,9 +45,14 @@ package com.longtailvideo.jwplayer.player {
 		public function PlayerV4Emulation(player:Player) {
 			if (!initialized) {
 				initialized = true;
+				
+				viewEventDispatcher = new EventDispatcher();
+				modelEventDispatcher = new EventDispatcher();
+				controllerEventDispatcher = new EventDispatcher();
+				
 				_player = player;
 				_player.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
-				instance = new PlayerV4Emulation(player);
+				instance = this;
 			}
 		}
 		
@@ -71,6 +76,8 @@ package com.longtailvideo.jwplayer.player {
 			var v:ControlBarComponent;
 			var c:Controller
 			
+			_player.addEventListener(PlayerEvent.JWPLAYER_ERROR, errorHandler);
+			
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, mediaBuffer);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_ERROR, mediaError);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
@@ -92,6 +99,12 @@ package com.longtailvideo.jwplayer.player {
 			
 			_player.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItem);
 			_player.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoad);
+		}
+		
+		// Player Event Handlers
+		
+		private function errorHandler(evt:PlayerEvent):void {
+			controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.ERROR, {message:evt.message, id:id, client:client, version:version}));
 		}
 		
 		// Media Event Handlers

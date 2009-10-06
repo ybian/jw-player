@@ -73,8 +73,8 @@ package tests.media {
 		
 		
 		private function loadHandler(evt:MediaEvent):void {
-			if (provider.display()) {
-				RootReference.stage.addChild(provider.display());
+			if (provider.display) {
+				RootReference.stage.addChild(provider.display);
 			}
 			eventHandler(evt);
 			this.dispatchEvent(new TestingEvent(TestingEvent.TEST_READY, testDefinition.name));
@@ -157,8 +157,8 @@ package tests.media {
 		
 		
 		protected function hideDisplay():void {
-			if (provider.display()) {
-				provider.display().visible = false;
+			if (provider.display) {
+				provider.display.visible = false;
 			}
 		}
 		

@@ -1,4 +1,5 @@
 package com.longtailvideo.jwplayer.events {
+	import flash.events.Event;
 
 	public class ViewEvent extends PlayerEvent {
 		
@@ -126,6 +127,10 @@ package com.longtailvideo.jwplayer.events {
 			super(type);
 			
 			this.data = data;
+		}
+		
+		public override function clone():Event {
+			return new ViewEvent(this.type, this.data);
 		}
 		
 	}

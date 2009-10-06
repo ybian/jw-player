@@ -1,7 +1,9 @@
 package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
+	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.Player;
@@ -16,7 +18,6 @@ package com.longtailvideo.jwplayer.controller {
 	import flash.events.Event;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
-	import com.longtailvideo.jwplayer.events.MediaEvent;
 
 	/**
 	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
@@ -49,37 +50,37 @@ package com.longtailvideo.jwplayer.controller {
 
 		/** File extensions of all supported mediatypes. **/
 		private var extensions:Object = {
-			'3g2':'video',
-			'3gp':'video',
-			'aac':'video',
-			'f4b':'video',
-			'f4p':'video',
-			'f4v':'video',
-			'flv':'video',
-			'gif':'image',
-			'jpg':'image',
-			'jpeg':'image',
-			'm4a':'video',
-			'm4v':'video',
-			'mov':'video',
-			'mp3':'sound',
-			'mp4':'video',
-			'png':'image',
-			'rbs':'sound',
-			'sdp':'video',
-			'swf':'image',
-			'vp6':'video'
-		};
+				'3g2':'video',
+				'3gp':'video',
+				'aac':'video',
+				'f4b':'video',
+				'f4p':'video',
+				'f4v':'video',
+				'flv':'video',
+				'gif':'image',
+				'jpg':'image',
+				'jpeg':'image',
+				'm4a':'video',
+				'm4v':'video',
+				'mov':'video',
+				'mp3':'sound',
+				'mp4':'video',
+				'png':'image',
+				'rbs':'sound',
+				'sdp':'video',
+				'swf':'image',
+				'vp6':'video'
+			};
 
 		/** A list with legacy CDN classes that are now redirected to buit-in ones. **/
 		private var cdns:Object = {
-			bitgravity:	{'http.startparam':'starttime', provider:'http'},
-			edgecast:	{'http.startparam':'ec_seek', 	provider:'http'},
-			flvseek:	{'http.startparam':'fs', 		provider:'http'},
-			highwinds:	{'rtmp.loadbalance':true, 		provider:'rtmp'},
-			lighttpd:	{'http.startparam':'start', 	provider:'http'},
-			vdox:		{'rtmp.loadbalance':true, 		provider:'rtmp'}
-		};
+				bitgravity:{'http.startparam':'starttime', provider:'http'},
+				edgecast:{'http.startparam':'ec_seek', provider:'http'},
+				flvseek:{'http.startparam':'fs', provider:'http'},
+				highwinds:{'rtmp.loadbalance':true, provider:'rtmp'},
+				lighttpd:{'http.startparam':'start', provider:'http'},
+				vdox:{'rtmp.loadbalance':true, provider:'rtmp'}
+			};
 
 		public function Controller(player:Player, model:Model, view:View) {
 			_player = player;
@@ -105,7 +106,30 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function addViewListeners():void {
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PLAY, playHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_STOP, stopHandler);
+		}
 
+		private function playHandler(evt:Event):void {
+			if (_model.playlist.currentItem) {
+				switch (_player.state) {
+					case PlayerState.IDLE:
+						load(_model.playlist.currentItem);
+						break;
+					case PlayerState.PAUSED:
+						_model.media.play();
+						break;
+				}
+			}
+		}
+
+		private function stopHandler(evt:ViewEvent):void {
+			switch (_player.state) {
+				case PlayerState.BUFFERING:
+				case PlayerState.PLAYING:
+					_model.media.stop();
+					break;
+			}
 		}
 
 		private function addModelListeners():void {
@@ -115,23 +139,24 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function setupComplete(evt:Event):void {
-			trace("Setup complete");
+			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_READY));
 			RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
+			loadFirstItem();
 		}
 
 		private function playlistLoadHandler(evt:PlaylistEvent):void {
 			// This stuff moved to playlist item handler
 		}
-		
+
 		private function playlistItemHandler(evt:PlaylistEvent):void {
 			var item:PlaylistItem = _model.playlist.currentItem;
 			if (item.provider) {
-				
+
 				// Backwards compatibility for CDNs in the 'type' flashvar.
 				if (cdns.hasOwnProperty(item.provider)) {
 					_model.config.setConfig(cdns[item.provider]);
 				}
-					
+
 				// If the model doesn't have an instance of the provider, load & instantiate it
 				if (!_model.hasMediaProvider(item.provider)) {
 					var mediaLoader:MediaProviderLoader = new MediaProviderLoader();
@@ -140,17 +165,22 @@ package com.longtailvideo.jwplayer.controller {
 					mediaLoader.loadSource(item.provider);
 					return;
 				}
+				
+				_model.setActiveMediaProvider(item.provider);
 			}
-			
-			load(_model.playlist.currentItem);
+
+			if (_player.config.autostart) { 
+				load(_model.playlist.currentItem); 
+			}
 		}
-		
+
 		private function mediaSourceLoaded(evt:Event):void {
 			var loader:MediaProviderLoader = evt.target as MediaProviderLoader;
 			_model.setMediaProvider(_model.playlist.currentItem.provider, loader.loadedSource);
+			_model.setActiveMediaProvider(_model.playlist.currentItem.provider);
 			load(_model.playlist.currentItem);
 		}
-		
+
 		private function errorHandler(evt:ErrorEvent):void {
 			errorState(evt.text);
 		}
@@ -333,7 +363,7 @@ package com.longtailvideo.jwplayer.controller {
 			}
 			return false;
 		}
-		
+
 		private function lockHandler(evt:MediaEvent):void {
 			_model.media.play();
 		}
@@ -360,6 +390,13 @@ package com.longtailvideo.jwplayer.controller {
 
 			return false;
 		}
+		
+		private function loadFirstItem():void {
+//			if (_model.playlist.currentItem) {
+//				load(_model.playlist.currentItem);
+//			}	
+		}
+		
 
 	}
 }

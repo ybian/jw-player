@@ -1,4 +1,5 @@
 package com.longtailvideo.jwplayer.events {
+	import flash.events.Event;
 	
 
 	/**
@@ -41,6 +42,10 @@ package com.longtailvideo.jwplayer.events {
 
 		public function PlaylistEvent(type:String) {
 			super(type);
+		}
+		
+		public override function clone() : Event {
+			return new PlaylistEvent(this.type);
 		}
 		
 	}

@@ -47,7 +47,7 @@ package com.longtailvideo.jwplayer.utils {
 			} else {
 				Logger.object(message, type);
 			}
-		};
+		}
 		
 		
 		/** Explode an object for logging. **/
@@ -56,7 +56,7 @@ package com.longtailvideo.jwplayer.utils {
 			Strings.print_r(message);
 			txt += ')';
 			Logger.send(txt);
-		};
+		}
 		
 		
 		/**
@@ -69,9 +69,9 @@ package com.longtailvideo.jwplayer.utils {
 				CONNECTION.allowInsecureDomain('*');
 				CONNECTION.addEventListener(StatusEvent.STATUS, Logger.status);
 			}
-			SharedObject.getLocal('com.jeroenwijering', '/').data['debug'] = put;
+			SharedObject.getLocal('com.longtailvideo.jwplayer', '/').data['debug'] = put;
 			Logger._output = put;
-		};
+		}
 		
 		
 		/**
@@ -81,7 +81,7 @@ package com.longtailvideo.jwplayer.utils {
 		 **/
 		public static function get output():String {
 			return Logger._output;
-		};
+		}
 		
 		
 		/** Send the messages to the output system. **/
@@ -102,11 +102,11 @@ package com.longtailvideo.jwplayer.utils {
 					ExternalInterface.call(Logger._output, text);
 					break;
 			}
-		};
+		}
 		
 		
 		/** Manage the status call of localconnection. **/
 		private static function status(evt:StatusEvent):void {
-		};
+		}
 	}
 }

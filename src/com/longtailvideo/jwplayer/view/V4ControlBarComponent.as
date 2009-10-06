@@ -37,7 +37,7 @@ package com.longtailvideo.jwplayer.view {
 		/** Color object for lightcolor. **/
 		private var light:ColorTransform;
 		/** The actions for all controlbar buttons. **/
-		private var BUTTONS:Object = {playButton: 'PLAY', pauseButton: 'PLAY', stopButton: 'STOP', prevButton: 'PREV', nextButton: 'NEXT', linkButton: 'LINK', fullscreenButton: 'FULLSCREEN', normalscreenButton: 'FULLSCREEN', muteButton: 'MUTE', unmuteButton: 'MUTE'}
+		private var BUTTONS:Object;
 		/** The actions for all sliders **/
 		private var SLIDERS:Object = {timeSlider: ViewEvent.JWPLAYER_VIEW_SEEK, volumeSlider: ViewEvent.JWPLAYER_VIEW_VOLUME}
 		/** The button to clone for all custom buttons. **/
@@ -48,6 +48,20 @@ package com.longtailvideo.jwplayer.view {
 		
 		public function V4ControlBarComponent(player:Player) {
 			super(player);
+
+ 			BUTTONS = {
+ 				playButton: ViewEvent.JWPLAYER_VIEW_PLAY, 
+ 				pauseButton: ViewEvent.JWPLAYER_VIEW_PAUSE, 
+ 				stopButton: ViewEvent.JWPLAYER_VIEW_STOP, 
+ 				prevButton: ViewEvent.JWPLAYER_VIEW_PREV, 
+ 				nextButton: ViewEvent.JWPLAYER_VIEW_NEXT, 
+ 				linkButton: 'LINK', 
+ 				fullscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN, 
+ 				normalscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN, 
+ 				muteButton: ViewEvent.JWPLAYER_VIEW_MUTE, 
+ 				unmuteButton: ViewEvent.JWPLAYER_VIEW_MUTE
+ 			};
+
 			var temp:Sprite = player.skin.getSWFSkin();
 			skin = player.skin.getSWFSkin().getChildByName('controlbar') as Sprite;
 			skin.x = 0;
@@ -157,8 +171,18 @@ package com.longtailvideo.jwplayer.view {
 		/** Handle clicks from all buttons. **/
 		private function clickHandler(evt:MouseEvent):void {
 			var act:String = BUTTONS[evt.target.name];
+			var data:Object = null;
 			if (blocking != true || act == "FULLSCREEN" || act == "MUTE") {
-				dispatchEvent(new ViewEvent(act));
+				switch (act) {
+					case ViewEvent.JWPLAYER_VIEW_PLAY:
+					case ViewEvent.JWPLAYER_VIEW_PAUSE:
+						data = Boolean(_player.state == PlayerState.IDLE || _player.state == PlayerState.PAUSED);
+						break;
+					case ViewEvent.JWPLAYER_VIEW_MUTE:
+						data = Boolean(!_player.config.mute);
+						break;
+				}
+				dispatchEvent(new ViewEvent(act, data));
 			}
 		}
 		
@@ -300,7 +324,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Clickhandler for all buttons. **/
 		private function setButtons():void {
-			for (var btn:String in BUTTONS) {
+ 			for (var btn:String in BUTTONS) {
 				if (getSkinElement("controlbar", btn)) {
 					(getSkinElement("controlbar", btn) as MovieClip).mouseChildren = false;
 					(getSkinElement("controlbar", btn) as MovieClip).buttonMode = true;
@@ -414,7 +438,7 @@ package com.longtailvideo.jwplayer.view {
 				dur = evt.duration;
 				pos = evt.position;
 			} else if (player.playlist.length > 0) {
-				dur = player.playlist[player.config.item]['duration'];
+				dur = player.playlist.getItemAt(player.config.item).duration;
 				pos = 0;
 			}
 			var pct:Number = pos / dur;
@@ -453,7 +477,7 @@ package com.longtailvideo.jwplayer.view {
 			stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler);
 			scrubber.icon.stopDrag();
 			if (scrubber.name == 'timeSlider' && player.playlist) {
-				mpl = player.playlist[player.config.item]['duration'];
+				mpl = player.playlist.getItemAt(player.config.item).duration;
 			} else if (scrubber.name == 'volumeSlider') {
 				mpl = 100;
 			}

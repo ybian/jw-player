@@ -1,4 +1,5 @@
 package com.longtailvideo.jwplayer.events {
+	import flash.events.Event;
 
 	/**
 	 * The MediaEvent class represents events related to media playback.
@@ -168,6 +169,17 @@ package com.longtailvideo.jwplayer.events {
 	
 		public function MediaEvent(type:String) {
 			super(type);
+		}
+		
+		public override function clone():Event {
+			var evt:MediaEvent = new MediaEvent(this.type);
+			evt.bufferPercent = this.bufferPercent;
+			evt.duration = this.duration;
+			evt.metadata = this.metadata;
+			evt.position = this.position;
+			evt.volume = this.volume;
+			evt.mute = this.mute;
+			return evt;
 		}
 	}
 }

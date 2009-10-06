@@ -1,11 +1,8 @@
 package com.longtailvideo.jwplayer.plugins {
-	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
-	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.player.Player;
 	
-	import flash.events.Event;
 	import flash.display.DisplayObject;
+	import flash.events.Event;
 	
 	
 	public class Display extends BasePlugin {
