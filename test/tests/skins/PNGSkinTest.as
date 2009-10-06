@@ -1,5 +1,5 @@
 package tests.skins {
-	import com.longtailvideo.jwplayer.view.PNGSkin;
+	import com.longtailvideo.jwplayer.view.skins.PNGSkin;
 	
 	import flash.display.DisplayObject;
 	import flash.events.ErrorEvent;
