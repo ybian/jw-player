@@ -1,10 +1,9 @@
 package com.longtailvideo.jwplayer.view.components {
+	import com.jeroenwijering.events.ControllerEvent;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.Player;
-	import com.longtailvideo.jwplayer.view.components.CoreComponent;
-	import com.longtailvideo.jwplayer.view.components.ComponentButton;
-	import com.longtailvideo.jwplayer.view.components.Slider;
+	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	import flash.display.DisplayObject;
@@ -13,7 +12,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	
 	/**
@@ -78,7 +76,8 @@ package com.longtailvideo.jwplayer.view.components {
 	[Event(name="jwPlayerViewSeek", type="com.longtailvideo.jwplayer.events.ViewEvent")]
 	public class ControlbarComponent extends CoreComponent implements IControlbarComponent {
 		protected var _buttons:Object = {};
-		protected var _layout:String = "[play|stop|prev|next|elapsed][time][duration|fullscreen|mute volume]";
+		protected var _defaultLayout:String = "[play|stop|prev|next|elapsed][time][duration|fullscreen|mute volume]";
+		protected var _currentLayout:String;
 		protected var _layoutManager:ControlbarLayoutManager;
 		
 		
@@ -89,6 +88,7 @@ package com.longtailvideo.jwplayer.view.components {
 			setupDefaultButtons();
 			temp();
 			addEventListeners();
+			updateControlbarState()
 		}
 		
 		private function temp():void {
@@ -97,45 +97,58 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		private function addEventListeners():void {
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_PLAY, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_PAUSE, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_NEXT, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_PREV, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_STOP, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_MUTE, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_VOLUME, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_ITEM, viewHandler);
-			player.addEventListener(ViewEvent.JWPLAYER_VIEW_LOAD, viewHandler);
+			player.addEventListener(ControllerEvent.PLAY, controllerHandler);
+			player.addEventListener(ControllerEvent.ITEM, controllerHandler);
+			player.addEventListener(ControllerEvent.STOP, controllerHandler);
+			player.addEventListener(ControllerEvent.MUTE, controllerHandler);
+			player.addEventListener(ControllerEvent.VOLUME, controllerHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, mediaHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, mediaHandler);
-			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_ERROR, mediaHandler);
 		}
 		
 		
-		private function viewHandler(evt:ViewEvent):void {
+		private function controllerHandler(evt:ControllerEvent):void {
 			switch (evt.type) {
-				case ViewEvent.JWPLAYER_VIEW_PLAY:
-					swapButtons('play', 'pause');
-					break;
-				case ViewEvent.JWPLAYER_VIEW_PAUSE:
-					swapButtons('play', 'pause');
-					break;
-				case ViewEvent.JWPLAYER_VIEW_FULLSCREEN:
-					swapButtons('fullscreen', 'normalscreen');
-					break;
-				case ViewEvent.JWPLAYER_VIEW_MUTE:
-					swapButtons('mute', 'unmute');
-					break;
 				case ViewEvent.JWPLAYER_VIEW_VOLUME:
 					var volume:Slider = getButton('volume') as Slider;
-					volume.setProgress(evt.data);
+					volume.setProgress(evt.data as Number);
+					break;
+				case ControllerEvent.ITEM:
+					resetSlider();
+					break;
+				case ControllerEvent.STOP:
+					resetSlider();
 					break;
 				default:
-					var scrubber:Slider = getButton('time') as Slider;
-					scrubber.reset();
+					updateControlbarState();
 					break;
 			}
+		}
+		
+		private function resetSlider():void {
+			var scrubber:Slider = getButton('time') as Slider;
+			scrubber.reset();
+		}
+		
+		private function updateControlbarState():void {
+			var newLayout:String = _defaultLayout;
+			if (player.state == PlayerState.PAUSED){
+				newLayout = newLayout.replace('play', 'pause');
+			}
+			
+			if (player.playlist.length <= 1){
+				newLayout = newLayout.replace("|prev|next", "");
+			}
+			
+			if (player.config.mute) {
+				newLayout = newLayout.replace("mute", "unmute");
+			}
+			
+			if (player.config.fullscreen){
+				newLayout = newLayout.replace("fullscreen", "normalscreen");
+			}
+			_currentLayout = newLayout;
+			resize(width, height);
 		}
 		
 		
@@ -291,7 +304,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		public function get layout():String {
-			return _layout;
+			return _currentLayout;
 		}
 		
 		private function getSkinElement(component:String, element:String):DisplayObject {
