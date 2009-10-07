@@ -14,6 +14,8 @@ package com.longtailvideo.jwplayer.model {
 		/** Internal playlist reference **/
 		private var _list:Playlist;
 
+		private var _playlistfile:String	= null;
+
 		private var _autostart:Boolean 		= false; 
 		private var _bufferlength:Number 	= 5; 
 		private var _displayclick:String 	= "play"; 
@@ -33,12 +35,12 @@ package com.longtailvideo.jwplayer.model {
 		private var _lightcolor:uint		= 0x000000;
 		private var _screencolor:uint		= 0x000000;
 		
-		private var _controlbar:String 		= "none";
+		private var _controlbar:String 		= "bottom";
 		private var _dock:Boolean 			= false;
 		private var _height:Number 			= 400;
 		private var _icons:Boolean 			= true;
 		private var _logo:String 			= null;
-		private var _playlist:String 		= null;
+		private var _playlist:String 		= "none";
 		private var _playlistsize:Number 	= 180;
 		private var _skin:String 			= null;
 		private var _width:Number 			= 280;
@@ -48,9 +50,12 @@ package com.longtailvideo.jwplayer.model {
 		
 		private var _playerready:String		= "";
 		
-		public function PlayerConfig(playlist:Playlist):void {
+		public function PlayerConfig(newlist:Playlist):void {
 			getCookiedParams();
-			setPlaylist(playlist);
+			controlbar = _controlbar;
+			playlist = _playlist;
+			playlistsize = _playlistsize;
+			setPlaylist(newlist);
 		}
 		
 		public function setPlaylist(list:Playlist):void {
@@ -63,7 +68,7 @@ package com.longtailvideo.jwplayer.model {
 			for (var item:String in config) {
 				if (newItem.hasOwnProperty(item)) {
 					if (item == "file" && Strings.extension(config[item]) == "xml") {
-						setProperty("playlist", config[item]);					
+						setProperty("playlistfile", config[item]);					
 					} else if (_list.length > 0) {
 						_list.currentItem[item] = config[item];
 					} else {
@@ -134,6 +139,11 @@ package com.longtailvideo.jwplayer.model {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// PLAYLIST PROPERTIES
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		/** Location of xml playlist file to load **/
+		public function get playlistfile():String { return _playlistfile; }
+		public function set playlistfile(x:String):void { _playlistfile = x; }
+
 
 		/** Author of the video, shown in the display or playlist. **/
 		public function get author():String { return playlistItem('author'); }
@@ -156,7 +166,10 @@ package com.longtailvideo.jwplayer.model {
 		/** URL to an external page the display, controlbar and playlist can link to. **/
 		public function get link():String { return playlistItem('link'); }
 
-		/** Unique identifier. **/		public function get mediaid():String {			return playlistItem('mediaid');		}		/** Position in seconds where playback has to start. Won't work for regular (progressive) videos, but only for streaming (HTTP / RTMP). **/
+		/** Unique identifier. **/		
+		public function get mediaid():String {			return playlistItem('mediaid');		}		
+		
+		/** Position in seconds where playback has to start. Won't work for regular (progressive) videos, but only for streaming (HTTP / RTMP). **/
 		public function get start():String { return playlistItem('start'); }
 		
 		/** Location of an rtmp/http server instance to use for streaming. Can be an RTMP application or external PHP/ASP file. **/
@@ -207,8 +220,14 @@ package com.longtailvideo.jwplayer.model {
 		public function set screencolor(x:uint):void { _screencolor= x; }
 
 		/** Position of the controlbar. Can be set to top, bottom, over and none.  @default bottom **/
-		public function get controlbar():String { return _controlbar; }
-		public function set controlbar(x:String):void { _controlbar= x; }
+		public function get controlbar():String { 
+			if (pluginConfig('controlbar').hasOwnProperty('position'))
+				return pluginConfig('controlbar')['position'];
+			else return _controlbar;
+		}
+		public function set controlbar(x:String):void { 
+			setPluginProperty('controlbar.position', x); 
+		}
 
 		/** Set this to true to show the dock with large buttons in the top right of the player. Available since 4.5.  @default true **/
 		public function get dock():Boolean { return _dock; }
@@ -227,8 +246,14 @@ package com.longtailvideo.jwplayer.model {
 		public function set logo(x:String):void { _logo = x; }
 
 		/** Position of the playlist. Can be set to bottom, over, right or none. @default none **/
-		public function get playlist():String { return _playlist; }
-		public function set playlist(x:String):void { _playlist = x; }
+		public function get playlist():String { 
+			if (pluginConfig('playlist').hasOwnProperty('position'))
+				return pluginConfig('playlist')['position'];
+			else return _playlist;
+		}
+		public function set playlist(x:String):void { 
+			setPluginProperty('playlist.position', x); 
+		}
 
 		/** When below this refers to the height, when right this refers to the width of the playlist. @default 180 **/
 		public function get playlistsize():Number { return _playlistsize; }
@@ -328,9 +353,24 @@ package com.longtailvideo.jwplayer.model {
 		public function pluginConfig(pluginName:String):PluginConfig {
 			if (_pluginConfig.hasOwnProperty(pluginName)) {
 				return _pluginConfig[pluginName] as PluginConfig;
+			} else {
+				var newConfig:PluginConfig = new PluginConfig(pluginName);
+				_pluginConfig[pluginName] = newConfig;
+				return newConfig;
 			}
-			
-			return new PluginConfig(pluginName);
+		}
+		
+		/**
+		 * A list of available pluginConfig keys. 
+		 */
+		public function get pluginNames():Array {
+			var names:Array = [];
+			for (var plug:String in _pluginConfig) {
+				if ( (['controlbar','playlist','dock','display']).indexOf(plug) == -1 ) {
+					names.push(plug);
+				}
+			}
+			return names;
 		}
 
 	}

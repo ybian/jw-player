@@ -140,7 +140,6 @@ package com.longtailvideo.jwplayer.controller {
 		private function loadSkinComplete(event:Event=null):void {
 			if (event) {
 				var skin:ISkin = event.target as ISkin;
-
 				_view.skin = skin;
 				var props:SkinProperties = skin.getSkinProperties();
 				_model.config.setConfig(props);
@@ -177,10 +176,10 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function loadPlaylist():void {
-			if (_model.config.playlist) {
+			if (_model.config.playlistfile) {
 				_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, tasker.success);
 				_model.playlist.addEventListener(ErrorEvent.ERROR, tasker.failure);
-				_model.playlist.load(_model.config.playlist);
+				_model.playlist.load(_model.config.playlistfile);
 			} else {
 				tasker.success();
 			}

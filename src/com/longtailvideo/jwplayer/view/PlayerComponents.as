@@ -1,20 +1,24 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
+	import com.longtailvideo.jwplayer.view.components.ControlbarComponentV4;
+	import com.longtailvideo.jwplayer.view.components.DisplayComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
-	import com.longtailvideo.jwplayer.view.components.ControlbarComponentV4;
-	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
-	import com.longtailvideo.jwplayer.view.components.DisplayComponent;
+	
+	import flash.display.DisplayObject;
 	import com.longtailvideo.jwplayer.view.components.PlaylistComponent;
 	import com.longtailvideo.jwplayer.view.components.DockComponent;
 	
 	
 	public class PlayerComponents {
+		private var _player:Player;
+		
 		private var _controlbar:IControlbarComponent;
 		private var _display:IDisplayComponent;
 		private var _dock:IDockComponent;
@@ -24,6 +28,8 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		public function PlayerComponents(player:Player) {
+			_player = player;
+			
 			if (player.skin is SWFSkin) {
 				_controlbar = new ControlbarComponentV4(player);
 			} else {
@@ -61,8 +67,15 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		public function resize(width:Number, height:Number):void {
-			display.resize(width, height);
+			_display.resize(width, height);
+			_display.x = Number(_player.config.pluginConfig('display')['x']);
+			_display.y = Number(_player.config.pluginConfig('display')['y']);
+			
 			_controlbar.resize(width, height);
+			_controlbar.x = Number(_player.config.pluginConfig('controlbar')['x']);
+			_controlbar.y = Number(_player.config.pluginConfig('controlbar')['y']);
+			
+			
 		}
 	}
 }

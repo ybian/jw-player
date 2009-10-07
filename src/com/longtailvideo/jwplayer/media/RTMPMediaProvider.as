@@ -95,7 +95,7 @@ package com.longtailvideo.jwplayer.media {
 				smil = item.file;
 				loader.load(new URLRequest(smil));
 			} else {
-				_media = video;
+				media = video;
 				connection.connect(item.streamer);
 			}
 		}
@@ -106,7 +106,7 @@ package com.longtailvideo.jwplayer.media {
 			var xml:XML = XML(evt.currentTarget.data);
 			item.streamer = xml.children()[0].children()[0].@base.toString();
 			item.file = xml.children()[1].children()[0].@src.toString();
-			_media = video;
+			media = video;
 			connection.connect(item.streamer);
 		}
 		

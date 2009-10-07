@@ -147,7 +147,7 @@ package com.longtailvideo.jwplayer.media {
 			if (stream.bytesLoaded + byteoffset < stream.bytesTotal) {
 				stream.close();
 			}
-			_media = video;
+			media = video;
 			stream.play(getURL());
 			iterator = 0;
 			clearInterval(interval);

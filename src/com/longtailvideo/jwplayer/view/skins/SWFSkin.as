@@ -10,8 +10,13 @@ package com.longtailvideo.jwplayer.view.skins {
 	import flash.events.Event;
 
 	public class SWFSkin extends SkinBase implements ISkin {
+		
+		private var props:SkinProperties;
+
 
 		public function SWFSkin(loadedSkin:DisplayObject=null) {
+			props = new SkinProperties();
+			
 			if (loadedSkin) {
 				overwriteSkin(loadedSkin);
 			}
@@ -24,6 +29,9 @@ package com.longtailvideo.jwplayer.view.skins {
 				_skin = new Sprite();
 				_skin.addChild(newSkin);
 			}
+			if (_skin.getChildByName('controlbar')) {
+				props['controlbar.size'] = _skin.getChildByName('controlbar').height;
+			} 
 		}
 
 		public override function load(url:String=null):void {
@@ -48,7 +56,7 @@ package com.longtailvideo.jwplayer.view.skins {
 		}
 
 		public override function getSkinProperties():SkinProperties {
-			return null;
+			return props;
 		}
 		
 		public override function getSkinElement(component:String, element:String):DisplayObject {

@@ -55,7 +55,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Load and place the image on stage. **/
 		private function loaderHandler(evt:Event):void {
-			_media = loader;
+			media = loader;
 			try {
 				Bitmap(loader.content).smoothing = true;
 			} catch (err:Error) {

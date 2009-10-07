@@ -103,6 +103,7 @@ package com.longtailvideo.jwplayer.controller {
 		private function loadV4Failed(evt:ErrorEvent):void {
 			var loader:AssetLoader = evt.target as AssetLoader;
 			delete loaders[loader];
+			checkComplete();
 		}
 
 		private function loadSuccess(evt:Event):void {

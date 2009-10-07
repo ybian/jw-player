@@ -197,7 +197,7 @@ package com.longtailvideo.jwplayer.player {
 			return controller.link(index);
 		}
 		
-		public function get uiComponents():PlayerComponents {
+		public function get controls():PlayerComponents {
 			return view.components;
 		}
 

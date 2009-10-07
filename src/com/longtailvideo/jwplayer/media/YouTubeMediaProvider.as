@@ -103,7 +103,7 @@ package com.longtailvideo.jwplayer.media {
 					var gid:String = getID(_item.file);
 					resize(_config.width, _config.width / 4 * 3);
 					outgoing.send('AS3_' + unique, "loadVideoById", gid, _item.start);
-					_media = loader;
+					media = loader;
 				}
 			} else {
 				inbound.connect('AS2_' + unique);

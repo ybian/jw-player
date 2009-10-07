@@ -2,7 +2,6 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
-	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
@@ -10,11 +9,8 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.utils.Stretcher;
 	
 	import flash.display.DisplayObject;
-	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.IOErrorEvent;
-	import flash.net.URLRequest;
 	
 	/**
 	 * Fired when a portion of the current media has been loaded into the buffer.
@@ -68,11 +64,14 @@ package com.longtailvideo.jwplayer.media {
 		/** The playback state for the currently loaded media.  @see com.longtailvideo.jwplayer.model.ModelStates **/
 		protected var _state:String;
 		/** Graphical representation of the currently playing media **/
-		protected var _media:DisplayObject;
+		private var _media:DisplayObject;
 		/** Most recent buffer data **/
 		protected var bufferPercent:Number;
 		/** Handles event dispatching **/
 		protected var _dispatcher:GlobalEventDispatcher;
+
+		protected var _width:Number;
+		protected var _height:Number;
 		
 		public function MediaProvider(){
 			_dispatcher = new GlobalEventDispatcher();
@@ -192,10 +191,11 @@ package com.longtailvideo.jwplayer.media {
 		 * @param height	The new height of the display.
 		 **/
 		 public function resize(width:Number, height:Number):void {
+		 	_width = width;
+		 	_height = height;
 		 	if (_media) {
 		 		Stretcher.stretch(_media, width, height, _config.stretching);
-		 	}
-		 	
+		 	} 
 		 }
 		
 		
@@ -274,6 +274,17 @@ package com.longtailvideo.jwplayer.media {
 		public override function dispatchEvent(event:Event):Boolean {
 			_dispatcher.dispatchEvent(event);
 			return super.dispatchEvent(event);
+		}
+		
+		protected function set media(m:DisplayObject):void {
+			_media = m;
+			if (m && _width * _height > 0) {
+				Stretcher.stretch(m, _width, _height, _config.stretching);
+			}
+		}
+		
+		protected function get media():DisplayObject {
+			return _media;
 		}
 		
 	}

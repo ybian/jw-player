@@ -63,7 +63,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Load content. **/
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
-			_media = video;
+			media = video;
 			stream.checkPolicyFile = true;
 			stream.play(item.file);
 			//stream.pause();

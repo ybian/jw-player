@@ -14,9 +14,10 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
-		
+	
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.MovieClip;
@@ -96,20 +97,24 @@ package com.longtailvideo.jwplayer.view {
 			_backgroundLayer.getChildByName("background").width = width;
 			_backgroundLayer.getChildByName("background").height = height;
 
-			_components.resize(width, height);
-			
-			_player.config.width = width;
-			_player.config.height = height;
-			
+			var layoutManager:PlayerLayoutManager = new PlayerLayoutManager(_player);
+			layoutManager.resize(width, height);
+
+			_components.resize(_player.config.width, _player.config.height);
+	
 			if (_imageLayer.numChildren) {
-				Stretcher.stretch(_image, width, height, _player.config.stretching);
+				_imageLayer.x = _components.display.x;
+				_imageLayer.y = _components.display.y;
+				Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
 			}
 
 			if (_mediaLayer.numChildren) {
-				_model.media.resize(width, height);
+				_mediaLayer.x = _components.display.x;
+				_mediaLayer.y = _components.display.y;
+				_model.media.resize(_player.config.width, _player.config.height);
 			}
+
 		}
-		
 		
 		public function set skin(skn:ISkin):void {
 			_skin = skn;
@@ -160,7 +165,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		
-		public function overrideComponent(newComponent:*):void {
+		public function overrideComponent(newComponent:IPlayerComponent):void {
 			if (newComponent is IControlbarComponent) {
 				// Replace controlbar
 			} else if (newComponent is IDisplayComponent) {
@@ -208,8 +213,11 @@ package com.longtailvideo.jwplayer.view {
 			while (_mediaLayer.numChildren) {
 				_mediaLayer.removeChildAt(0);
 			}
-			_mediaLayer.addChild(_model.media.display);
 			_model.media.resize(_player.config.width, _player.config.height);
+			
+			_mediaLayer.x = _components.display.x;
+			_mediaLayer.y = _components.display.y;
+			_mediaLayer.addChild(_model.media.display);
 		}
 		
 		private function itemHandler(evt:PlaylistEvent):void {
@@ -225,6 +233,8 @@ package com.longtailvideo.jwplayer.view {
 		private function imageComplete(evt:Event):void {
 			while (_imageLayer.numChildren) { _imageLayer.removeChildAt(0); }
 			_imageLayer.addChild(_image);
+			_imageLayer.x = _components.display.x;
+			_imageLayer.y = _components.display.y;
 			Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
 		}
 		

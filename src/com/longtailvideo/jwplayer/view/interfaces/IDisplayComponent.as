@@ -25,9 +25,8 @@ package com.longtailvideo.jwplayer.view.interfaces {
 	 */
 	[Event(name="jwPlayerViewClick", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
-	public interface IDisplayComponent extends IGlobalEventDispatcher {
+	public interface IDisplayComponent extends IPlayerComponent {
 		function setIcon(displayIcon:DisplayObject):void;
 		function setText(displayText:String):void;
-		function resize(width:Number, height:Number):void;
 	}
 }
