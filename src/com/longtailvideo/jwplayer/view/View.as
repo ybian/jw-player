@@ -7,6 +7,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.player.PlayerV4Emulation;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.RootReference;
@@ -157,6 +158,7 @@ package com.longtailvideo.jwplayer.view {
 					plug.resize(cfg.width, cfg.height);
 				}
 			}
+			PlayerV4Emulation.getInstance().resize(_player.config.width, _player.config.height);
 		}
 		
 		

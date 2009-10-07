@@ -85,8 +85,8 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		protected function setDisplay(displayIcon:DisplayObject, displayText:String = null):void {
-			setIcon(displayIcon);
-			setText(displayText);
+			if (displayIcon) setIcon(displayIcon);
+			if (displayText) setText(displayText);
 		}
 		
 		protected function clearDisplay():void {

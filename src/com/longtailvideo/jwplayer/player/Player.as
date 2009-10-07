@@ -177,11 +177,11 @@ package com.longtailvideo.jwplayer.player {
 		}
 		
 		public function playlistNext():Boolean {
-			return controller.load(model.playlist.currentIndex+1);
+			return controller.next();
 		}
 
 		public function playlistPrev():Boolean {
-			return controller.load(model.playlist.currentIndex-1);
+			return controller.previous();
 		}
 		
 		/** Force a redraw of the player **/

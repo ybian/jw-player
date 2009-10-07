@@ -107,30 +107,31 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function addViewListeners():void {
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PLAY, playHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PAUSE, pauseHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_STOP, stopHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_ITEM, itemHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_NEXT, nextHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PREV, prevHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_SEEK, seekHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_MUTE, muteHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_VOLUME, volumeHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, fullscreenHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_LOAD, loadHandler);
+			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_REDRAW, redrawHandler);
 		}
 
-		private function playHandler(evt:Event):void {
-			if (_model.playlist.currentItem) {
-				switch (_player.state) {
-					case PlayerState.IDLE:
-						load(_model.playlist.currentItem);
-						break;
-					case PlayerState.PAUSED:
-						_model.media.play();
-						break;
-				}
-			}
-		}
-
-		private function stopHandler(evt:ViewEvent):void {
-			switch (_player.state) {
-				case PlayerState.BUFFERING:
-				case PlayerState.PLAYING:
-					_model.media.stop();
-					break;
-			}
-		}
+		private function playHandler(evt:ViewEvent):void { play(); }
+		private function stopHandler(evt:ViewEvent):void { stop(); }
+		private function pauseHandler(evt:ViewEvent):void { pause(); }
+		private function itemHandler(evt:ViewEvent):void { loadNumber(evt.data); }
+		private function nextHandler(evt:ViewEvent):void { next(); }
+		private function prevHandler(evt:ViewEvent):void { previous(); }
+		private function seekHandler(evt:ViewEvent):void { seek(evt.data); }
+		private function muteHandler(evt:ViewEvent):void { mute(evt.data); }
+		private function volumeHandler(evt:ViewEvent):void { setVolume(evt.data); }
+		private function fullscreenHandler(evt:ViewEvent):void { fullscreen(evt.data); }
+		private function loadHandler(evt:ViewEvent):void { load(evt.data); }
+		private function redrawHandler(evt:ViewEvent):void { redraw(); }
 
 		private function addModelListeners():void {
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadHandler);
@@ -248,19 +249,16 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function play():Boolean {
-			if (!_model.media)
-				return false;
-
-			switch (_model.media.state) {
-				case PlayerState.PLAYING:
-				case PlayerState.BUFFERING:
-					return false;
-					break;
-				default:
-					_model.media.play();
-					break;
+			if (_model.playlist.currentItem) {
+				switch (_player.state) {
+					case PlayerState.IDLE:
+						load(_model.playlist.currentItem);
+						break;
+					case PlayerState.PAUSED:
+						_model.media.play();
+						break;
+				}
 			}
-
 			return true;
 		}
 
@@ -293,6 +291,24 @@ package com.longtailvideo.jwplayer.controller {
 			}
 
 			return false;
+		}
+
+		public function next():Boolean {
+			if (_model.playlist.currentIndex == _model.playlist.length-1) { 
+				return false;
+			} else {
+				loadNumber(_model.playlist.currentIndex+1);
+				return true;
+			} 
+		}
+		
+		public function previous():Boolean {
+			if (_model.playlist.currentIndex <= 0) {
+				return false;
+			} else {
+				loadNumber(_model.playlist.currentIndex-1);
+				return true;
+			}
 		}
 
 		public function seek(pos:Number):Boolean {
@@ -370,7 +386,6 @@ package com.longtailvideo.jwplayer.controller {
 
 		public function redraw():Boolean {
 			_view.redraw();
-			PlayerV4Emulation.getInstance().resize(_model.config.width, _model.config.height);
 			return true;
 		}
 
