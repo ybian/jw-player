@@ -138,19 +138,20 @@ package com.longtailvideo.jwplayer.media {
 		/** Interval for the position progress **/
 		protected function positionInterval():void {
 			_position = Math.round(stream.time * 10) / 10;
-			var bfr:Number = Math.round(stream.bytesLoaded / stream.bytesTotal * 100);
-			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
-				if (state == PlayerState.PLAYING && bfr < 25) {
+			var bufferPercent:Number = Math.round(stream.bytesLoaded / stream.bytesTotal * 100);
+			var bufferFill:Number = Math.round(stream.bufferTime / stream.bufferLength * 100);
+			if (bufferFill < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
+				if (state == PlayerState.PLAYING && bufferFill < 25) {
 					setState(PlayerState.BUFFERING);
 				}
-				sendBufferEvent(bfr);
-			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
+				sendBufferEvent(bufferPercent);
+			} else if (bufferFill > 95 && state == PlayerState.BUFFERING) {
 				super.play();
 			}
 
 			if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bfr});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
 				}
 			} else if (item.duration > 0) {
 				stream.pause();

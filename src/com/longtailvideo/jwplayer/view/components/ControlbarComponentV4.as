@@ -24,9 +24,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.ui.Mouse;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
-	
-	import mx.effects.Fade;
-	
+		
 	
 	public class ControlbarComponentV4 extends CoreComponent implements IControlbarComponent {
 		/** Reference to the original skin **/
@@ -67,7 +65,6 @@ package com.longtailvideo.jwplayer.view.components {
 				normalscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN, 
 				muteButton: ViewEvent.JWPLAYER_VIEW_MUTE, 
 				unmuteButton: ViewEvent.JWPLAYER_VIEW_MUTE};
-			var temp:Sprite = player.skin.getSWFSkin();
 			skin = player.skin.getSWFSkin().getChildByName('controlbar') as Sprite;
 			skin.x = 0;
 			skin.y = 0;
@@ -155,6 +152,7 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			stacker.rearrange(width);
 			stateHandler();
+			fixTime();
 			Mouse.show();
 		}
 		
@@ -217,15 +215,16 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			timeHandler();
 			stacker.rearrange();
+			fixTime();
 		}
 		
 		
 		/** Show above controlbar on mousemove. **/
 		private function moveHandler(evt:MouseEvent = null):void {
 			if (alpha == 0) {
-				var fade:Fade = new Fade(this);
+				/*var fade:Fade = new Fade(this);
 				fade.alphaTo = 1;
-				fade.play();
+				fade.play();*/
 			}
 			clearTimeout(hiding);
 			hiding = setTimeout(moveTimeout, 2000);
@@ -427,11 +426,17 @@ package com.longtailvideo.jwplayer.view.components {
 		private function timeHandler(evt:MediaEvent = null):void {
 			var dur:Number = 0;
 			var pos:Number = 0;
-			if (evt && (evt.position >= 0 || evt.duration >=0)) {
-				dur = evt.duration;
-				pos = evt.position;
+			if (evt) {
+				if (evt.duration >= 0){
+					dur = evt.duration;
+				}
+				if (evt.position >= 0){
+					pos = evt.position;
+				}
 			} else if (player.playlist.length > 0 && player.playlist.currentItem) {
-				dur = player.playlist.currentItem.duration;
+				if (player.playlist.currentItem.duration >= 0){
+					dur = player.playlist.currentItem.duration;
+				}
 				pos = 0;
 			}
 			var pct:Number = pos / dur;
@@ -439,7 +444,6 @@ package com.longtailvideo.jwplayer.view.components {
 				pct = 1;
 			}
 			try {
-				var temp:DisplayObject = skin.getChildByName('elapsedText');
 				(getSkinElement('elapsedText') as TextField).text = Strings.digits(pos);
 				(getSkinElement('totalText') as TextField).text = Strings.digits(dur);
 			} catch (err:Error) {
@@ -450,23 +454,36 @@ package com.longtailvideo.jwplayer.view.components {
 				if (dur > 0) {
 					getSkinElementChild('timeSlider', 'icon').visible = true;
 					getSkinElementChild('timeSlider', 'mark').visible = true;
-					if (!scrubber) {
+					if(!scrubber) {
 						getSkinElementChild('timeSlider', 'icon').x = xps;
-						getSkinElementChild('timeSlider', 'icon').scaleX  = 1 / getSkinElement('timeSlider').scaleX;
-						//getSkinElementChild('timeSlider','icon'). = 1;
 						getSkinElementChild('timeSlider', 'done').width = xps;
-						var bufferPercent:Number = evt.bufferPercent / 100;
-						var wid:Number = getSkinElementChild('timeSlider','rail').width;
-						getSkinElementChild('timeSlider','mark').x = 0;
-						getSkinElementChild('timeSlider','mark').width = bufferPercent / 100 * getSkinElementChild('timeSlider', 'rail').width;
-						getSkinElementChild('timeSlider','mark').scaleX = getSkinElementChild('timeSlider', 'rail').scaleX;
+						getSkinElementChild('timeSlider', 'mark').x = xps;
+						getSkinElementChild('timeSlider', 'mark').width = Math.round(evt.bufferPercent / 100 * (getSkinElementChild('timeSlider', 'rail').width - xps));
 					}
 					getSkinElementChild('timeSlider', 'done').visible = true;
 				} else {
-					getSkinElementChild('timeSlider', 'icon').visible = false;
-					getSkinElementChild('timeSlider', 'mark').visible = false;
-					getSkinElementChild('timeSlider', 'done').visible = false;
+					if (player.state != PlayerState.PLAYING){
+						getSkinElementChild('timeSlider', 'icon').visible = false;
+						getSkinElementChild('timeSlider', 'mark').visible = false;
+						getSkinElementChild('timeSlider', 'done').visible = false;
+					}
 				}
+			} catch (err:Error) {
+			}
+		}
+		
+		
+		/** Fix the timeline display. **/
+		private function fixTime():void {
+			try {
+				var scp:Number = getSkinElement('timeSlider').scaleX;
+				getSkinElement('timeSlider').scaleX = 1;
+				getSkinElementChild('timeSlider', 'icon').x = scp * getSkinElementChild('timeSlider', 'icon').x;
+				getSkinElementChild('timeSlider', 'mark').x = scp * getSkinElementChild('timeSlider', 'mark').x;
+				getSkinElementChild('timeSlider', 'mark').width = scp * getSkinElementChild('timeSlider', 'mark').width;
+				getSkinElementChild('timeSlider', 'rail').width = scp * getSkinElementChild('timeSlider', 'rail').width;
+				getSkinElementChild('timeSlider', 'done').x = scp * getSkinElementChild('timeSlider', 'done').x;
+				getSkinElementChild('timeSlider', 'done').width = scp * getSkinElementChild('timeSlider', 'done').width;
 			} catch (err:Error) {
 			}
 		}
