@@ -7,13 +7,12 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
-	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	import com.longtailvideo.jwplayer.view.PlayerComponents;
 	import com.longtailvideo.jwplayer.view.View;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	
 	/**
@@ -30,7 +29,7 @@ package com.longtailvideo.jwplayer.player {
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
-		private static var playerVersion:String = "5.0.1";
+		private static var playerVersion:String = "5.α.416";
 		
 		private var model:Model;
 		private var view:View;
@@ -193,8 +192,12 @@ package com.longtailvideo.jwplayer.player {
 			return controller.redraw();
 		}
 	
-		public function fullscreen(on:Boolean):Boolean {
-			return controller.fullscreen(on);
+		public function get fullscreen():Boolean {
+			return model.fullscreen;
+		}
+		
+		public function set fullscreen(on:Boolean):void {
+			controller.fullscreen(on);
 		}
 		
 		public function link(index:Number=NaN):Boolean {

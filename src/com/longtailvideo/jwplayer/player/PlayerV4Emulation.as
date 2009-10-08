@@ -233,7 +233,7 @@ package com.longtailvideo.jwplayer.player {
 		public override function sendEvent(typ:String, prm:Object=undefined) : void {
 			switch (typ) {
 				case com.jeroenwijering.events.ViewEvent.FULLSCREEN:
-					_player.fullscreen(prm['state']);
+					_player.fullscreen = prm['state'];
 					break;
 				case com.jeroenwijering.events.ViewEvent.ITEM:
 					_player.playlist.currentIndex = prm['index'];
@@ -282,6 +282,7 @@ package com.longtailvideo.jwplayer.player {
 			} 
 
 			cfg['state'] = _player.state;
+			cfg['mute'] = _player.mute;
 			
 			return cfg;
 		} 

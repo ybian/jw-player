@@ -65,6 +65,8 @@ package com.longtailvideo.jwplayer.model {
 			_playlist.addGlobalListener(forwardEvents);
 
 			setupMediaProviders();
+			
+			//TODO: Set initial mute state based on user configuration
 		}
 
 		/** The player config object **/
@@ -163,11 +165,13 @@ package com.longtailvideo.jwplayer.model {
 
 		
 		private function forwardEvents(evt:Event):void {
-			if (evt.type == MediaEvent.JWPLAYER_MEDIA_ERROR) {
-				// Translate media error into player error.
-				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, (evt as MediaEvent).message));
-			} else {
-				dispatchEvent(evt);
+			if (evt is PlayerEvent) {
+				if (evt.type == MediaEvent.JWPLAYER_MEDIA_ERROR) {
+					// Translate media error into player error.
+					dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, (evt as MediaEvent).message));
+				} else {
+					dispatchEvent(evt);
+				}
 			}
 		}
 

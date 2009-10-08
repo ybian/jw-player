@@ -4,6 +4,8 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponentV4;
 	import com.longtailvideo.jwplayer.view.components.DisplayComponent;
+	import com.longtailvideo.jwplayer.view.components.DockComponent;
+	import com.longtailvideo.jwplayer.view.components.PlaylistComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
@@ -11,14 +13,8 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
-	import flash.display.DisplayObject;
-	import com.longtailvideo.jwplayer.view.components.PlaylistComponent;
-	import com.longtailvideo.jwplayer.view.components.DockComponent;
-	
 	
 	public class PlayerComponents {
-		private var _player:Player;
-		
 		private var _controlbar:IControlbarComponent;
 		private var _display:IDisplayComponent;
 		private var _dock:IDockComponent;
@@ -26,18 +22,22 @@ package com.longtailvideo.jwplayer.view {
 		private var _config:PlayerConfig;
 		private var _skin:ISkin;
 		
+		private var _player:Player;
+		
 		
 		public function PlayerComponents(player:Player) {
 			_player = player;
+			_skin = player.skin;
+			_config = player.config;
 			
-			if (player.skin is SWFSkin) {
-				_controlbar = new ControlbarComponentV4(player);
+			if (_skin is SWFSkin) {
+				_controlbar = new ControlbarComponentV4(_player);
 			} else {
-				_controlbar = new ControlbarComponent(player);
+				_controlbar = new ControlbarComponent(_player);
 			}
-			_display = new DisplayComponent(player);
-			_playlist = new PlaylistComponent(player);
-			_dock = new DockComponent(player);
+			_display = new DisplayComponent(_player);
+			_playlist = new PlaylistComponent(_player);
+			_dock = new DockComponent(_player);
 		}
 		
 		

@@ -24,14 +24,13 @@ package com.longtailvideo.jwplayer.view {
 	import flash.display.MovieClip;
 	import flash.display.Stage;
 	import flash.display.StageAlign;
+	import flash.display.StageDisplayState;
 	import flash.display.StageScaleMode;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.net.URLRequest;
-	import flash.display.StageDisplayState;
-	
-	
+
 	public class View extends GlobalEventDispatcher {
 		private var _player:Player;
 		private var _model:Model;
@@ -40,18 +39,23 @@ package com.longtailvideo.jwplayer.view {
 		private var _fullscreen:Boolean = false;
 		private var stage:Stage;
 
+		private var _root:MovieClip;
+
 		private var _backgroundLayer:MovieClip;
 		private var _mediaLayer:MovieClip;
 		private var _imageLayer:MovieClip;
 		private var _componentsLayer:MovieClip;
-		private var _pluginsLayer:MovieClip;		
-		
+		private var _pluginsLayer:MovieClip;
+
 		private var _image:Loader;
-		
+
 		public function View(player:Player, model:Model) {
 			_player = player;
 			_model = model;
-			
+
+			_root = new MovieClip();
+			RootReference.stage.addChildAt(_root, 0);
+
 			setupLayers();
 			RootReference.stage.scaleMode = StageScaleMode.NO_SCALE;
 			RootReference.stage.stage.align = StageAlign.TOP_LEFT;
@@ -60,21 +64,23 @@ package com.longtailvideo.jwplayer.view {
 			_model.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			_model.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
+			
+			var menu:RightclickMenu = new RightclickMenu(model, _root);
+			menu.addGlobalListener(forward);
 		}
-		
-		
+
 		private function setupLayers():void {
 			_backgroundLayer = setupLayer("background", 0);
 			var background:MovieClip = new MovieClip();
 			background.name = "background";
 			_backgroundLayer.addChildAt(background, 0);
 			background.graphics.beginFill(_player.config.backcolor, 1);
-			background.graphics.drawRect(0,0,1,1);
+			background.graphics.drawRect(0, 0, 1, 1);
 			background.graphics.endFill();
 
-			_mediaLayer = setupLayer("media", 1);			
+			_mediaLayer = setupLayer("media", 1);
 
-			_imageLayer = setupLayer("image", 2);			
+			_imageLayer = setupLayer("image", 2);
 			_image = new Loader();
 			_image.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, imageError);
 			_image.contentLoaderInfo.addEventListener(Event.COMPLETE, imageComplete);
@@ -82,19 +88,17 @@ package com.longtailvideo.jwplayer.view {
 			_componentsLayer = setupLayer("components", 3);
 			_pluginsLayer = setupLayer("plugins", 4);
 		}
-		
+
 		private function setupLayer(name:String, index:Number):MovieClip {
 			var layer:MovieClip = new MovieClip();
-			RootReference.stage.addChildAt(layer, index);
+			_root.addChildAt(layer, index);
 			layer.name = name;
 			layer.x = 0;
 			layer.y = 0;
 			return layer;
 		}
 
-
-		private function resizeHandler(event:Event):void{
-			_model.fullscreen = RootReference.stage.displayState == StageDisplayState.FULL_SCREEN ? true : false;
+		private function resizeHandler(event:Event):void {
 			var width:Number = RootReference.stage.stageWidth;
 			var height:Number = RootReference.stage.stageHeight;
 			_backgroundLayer.getChildByName("background").width = width;
@@ -104,7 +108,7 @@ package com.longtailvideo.jwplayer.view {
 			layoutManager.resize(width, height);
 
 			_components.resize(_player.config.width, _player.config.height);
-	
+
 			if (_imageLayer.numChildren) {
 				_imageLayer.x = _components.display.x;
 				_imageLayer.y = _components.display.y;
@@ -118,58 +122,53 @@ package com.longtailvideo.jwplayer.view {
 			}
 
 		}
-		
+
 		public function set skin(skn:ISkin):void {
 			_skin = skn;
 			if (!_components) {
 				setupComponents();
 			}
 		}
-		
+
 		//TODO: I think plugins and components have to go on the same level, otherwise the component layer will simply go over 
 		private function setupComponents():void {
 			_components = new PlayerComponents(_player);
-			
+
 			_components.controlbar.addGlobalListener(forward);
-			
+			_components.display.addGlobalListener(forward);
+
 			_componentsLayer.addChildAt(_components.display as MovieClip, 0);
 			_componentsLayer.addChildAt(_components.controlbar as MovieClip, 1);
-			
-			
-			
+
 			//addToLayer(_playerComponents.controlbar as MovieClip, _components);
 			//addToStage(_playerComponents.dock, _player.config.width, _player.config.height);
 			//addToStage(_playerComponents.playlist, _player.config.width, _player.config.height);
 		}
-		
-		
+
 		public function get skin():ISkin {
 			return _skin;
 		}
-		
-		
-		public function fullscreen(mode:Boolean = true):void {
+
+		public function fullscreen(mode:Boolean=true):void {
 			RootReference.stage.displayState = mode ? StageDisplayState.FULL_SCREEN : StageDisplayState.NORMAL;
 		}
-		
+
 		/** Redraws the plugins **/
 		public function redraw():void {
-			for (var i:Number=0; i < _pluginsLayer.numChildren; i++) {
+			for (var i:Number = 0; i < _pluginsLayer.numChildren; i++) {
 				var plug:IPlugin = _pluginsLayer.getChildAt(i) as IPlugin;
-				if (plug) { 
+				if (plug) {
 					var cfg:PluginConfig = _player.config.pluginConfig((plug as DisplayObject).name);
 					plug.resize(cfg.width, cfg.height);
 				}
 			}
 			PlayerV4Emulation.getInstance().resize(_player.config.width, _player.config.height);
 		}
-		
-		
+
 		public function get components():PlayerComponents {
 			return _components;
 		}
-		
-		
+
 		public function overrideComponent(newComponent:IPlayerComponent):void {
 			if (newComponent is IControlbarComponent) {
 				// Replace controlbar
@@ -183,8 +182,7 @@ package com.longtailvideo.jwplayer.view {
 				throw(new Error("Component must implement a component interface"));
 			}
 		}
-		
-		
+
 		public function addPlugin(name:String, plugin:IPlugin):void {
 			try {
 				var plugDO:DisplayObject = plugin as DisplayObject;
@@ -197,8 +195,7 @@ package com.longtailvideo.jwplayer.view {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
 			}
 		}
-		
-		
+
 		public function loadedPlugins():Array {
 			var list:Array = [];
 			for each (var plugin:DisplayObject in _pluginsLayer) {
@@ -208,23 +205,22 @@ package com.longtailvideo.jwplayer.view {
 			}
 			return list;
 		}
-		
-		
+
 		public function getPlugin(name:String):IPlugin {
 			return _pluginsLayer.getChildByName(name) as IPlugin;
 		}
-		
+
 		private function mediaLoaded(evt:MediaEvent):void {
 			while (_mediaLayer.numChildren) {
 				_mediaLayer.removeChildAt(0);
 			}
 			_model.media.resize(_player.config.width, _player.config.height);
-			
+
 			_mediaLayer.x = _components.display.x;
 			_mediaLayer.y = _components.display.y;
 			_mediaLayer.addChild(_model.media.display);
 		}
-		
+
 		private function itemHandler(evt:PlaylistEvent):void {
 			if (_model.playlist.currentItem && _model.playlist.currentItem.image) {
 				loadImage(_model.playlist.currentItem.image);
@@ -234,18 +230,20 @@ package com.longtailvideo.jwplayer.view {
 		private function loadImage(url:String):void {
 			_image.load(new URLRequest(url));
 		}
-		
+
 		private function imageComplete(evt:Event):void {
-			while (_imageLayer.numChildren) { _imageLayer.removeChildAt(0); }
+			while (_imageLayer.numChildren) {
+				_imageLayer.removeChildAt(0);
+			}
 			_imageLayer.addChild(_image);
 			_imageLayer.x = _components.display.x;
 			_imageLayer.y = _components.display.y;
 			Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
 		}
-		
+
 		private function imageError(evt:IOErrorEvent):void {
 			_image = null;
-			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, evt.text));	
+			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, evt.text));
 		}
 
 		private function stateHandler(evt:PlayerStateEvent):void {
@@ -260,9 +258,9 @@ package com.longtailvideo.jwplayer.view {
 					break;
 			}
 		}
-		
+
 		private function forward(evt:Event):void {
-			dispatchEvent(evt);
+			if (evt is PlayerEvent) dispatchEvent(evt);
 		}
 
 	}
