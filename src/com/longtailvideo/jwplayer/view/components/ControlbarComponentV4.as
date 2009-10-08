@@ -76,7 +76,7 @@ package com.longtailvideo.jwplayer.view.components {
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, timeHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, muteHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, volumeHandler);
-			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, loadedHandler);
+			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, timeHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, itemHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, itemHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
@@ -84,7 +84,6 @@ package com.longtailvideo.jwplayer.view.components {
 			setButtons();
 			setColors();
 			itemHandler();
-			loadedHandler();
 			muteHandler();
 			stateHandler();
 			timeHandler();
@@ -156,7 +155,6 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			stacker.rearrange(width);
 			stateHandler();
-			fixTime();
 			Mouse.show();
 		}
 		
@@ -207,23 +205,6 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 		}
 		
-		
-		/** Fix the timeline display. **/
-		private function fixTime():void {
-			try {
-				var scp:Number = getSkinElement('timeSlider').scaleX;
-				getSkinElement('timeSlider').scaleX = 1;
-				getSkinElementChild('timeSlider', 'icon').x = scp * getSkinElementChild('timeSlider', 'icon').x;
-				getSkinElementChild('timeSlider', 'mark').x = scp * getSkinElementChild('timeSlider', 'mark').x;
-				getSkinElementChild('timeSlider', 'mark').width = scp * getSkinElementChild('timeSlider', 'mark').width;
-				getSkinElementChild('timeSlider', 'rail').width = scp * getSkinElementChild('timeSlider', 'rail').width;
-				getSkinElementChild('timeSlider', 'done').x = scp * getSkinElementChild('timeSlider', 'done').x;
-				getSkinElementChild('timeSlider', 'done').width = scp * getSkinElementChild('timeSlider', 'done').width;
-			} catch (err:Error) {
-			}
-		}
-		
-		
 		/** Handle a change in the current item **/
 		private function itemHandler(evt:PlaylistEvent = null):void {
 			try {
@@ -236,21 +217,6 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			timeHandler();
 			stacker.rearrange();
-			fixTime();
-			loadedHandler();
-		}
-		
-		
-		/** Process bytesloaded updates given by the model. **/
-		private function loadedHandler(evt:MediaEvent = null):void {
-			try {
-				var wid:Number = getSkinElementChild('timeSlider', 'rail').width;
-				//getSkinElement('timeSlider').getChildByName('mark').x = evt.position / evt.duration * wid;
-				var icw:Number = getSkinElementChild('timeSlider', 'icon').x + getSkinElementChild('timeSlider', 'icon').width;
-				var markWidth:Number = ((evt.bufferPercent / 100) * player.config.bufferlength) / evt.duration * wid + icw;
-				getSkinElementChild('timeSlider', 'mark').width = Math.abs(markWidth);
-			} catch (err:Error) {
-			}
 		}
 		
 		
@@ -269,9 +235,9 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Hide above controlbar again when move has timed out. **/
 		private function moveTimeout():void {
-			var fade:Fade = new Fade(this);
+			/*var fade:Fade = new Fade(this);
 			fade.alphaTo = 0;
-			fade.play();
+			fade.play();*/
 		}
 		
 		
@@ -461,7 +427,7 @@ package com.longtailvideo.jwplayer.view.components {
 		private function timeHandler(evt:MediaEvent = null):void {
 			var dur:Number = 0;
 			var pos:Number = 0;
-			if (evt) {
+			if (evt && (evt.position >= 0 || evt.duration >=0)) {
 				dur = evt.duration;
 				pos = evt.position;
 			} else if (player.playlist.length > 0 && player.playlist.currentItem) {
@@ -480,14 +446,20 @@ package com.longtailvideo.jwplayer.view.components {
 				Logger.log(err);
 			}
 			try {
-				var tsl:MovieClip = getSkinElement('timeSlider') as MovieClip;
-				var xps:Number = Math.round(pct * (tsl.rail.width - tsl.icon.width));
+				var xps:Number = Math.round(pct * (getSkinElementChild('timeSlider', 'rail').width - getSkinElementChild('timeSlider', 'icon').width));
 				if (dur > 0) {
 					getSkinElementChild('timeSlider', 'icon').visible = true;
 					getSkinElementChild('timeSlider', 'mark').visible = true;
 					if (!scrubber) {
 						getSkinElementChild('timeSlider', 'icon').x = xps;
+						getSkinElementChild('timeSlider', 'icon').scaleX  = 1 / getSkinElement('timeSlider').scaleX;
+						//getSkinElementChild('timeSlider','icon'). = 1;
 						getSkinElementChild('timeSlider', 'done').width = xps;
+						var bufferPercent:Number = evt.bufferPercent / 100;
+						var wid:Number = getSkinElementChild('timeSlider','rail').width;
+						getSkinElementChild('timeSlider','mark').x = 0;
+						getSkinElementChild('timeSlider','mark').width = bufferPercent / 100 * getSkinElementChild('timeSlider', 'rail').width;
+						getSkinElementChild('timeSlider','mark').scaleX = getSkinElementChild('timeSlider', 'rail').scaleX;
 					}
 					getSkinElementChild('timeSlider', 'done').visible = true;
 				} else {
