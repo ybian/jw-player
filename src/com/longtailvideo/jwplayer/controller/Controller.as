@@ -237,11 +237,9 @@ package com.longtailvideo.jwplayer.controller {
 		public function mute(muted:Boolean):Boolean {
 			if (muted && !_model.mute) {
 				_model.mute = true;
-				_model.media.mute(true);
 				return true;
 			} else if (!muted && _model.mute) {
 				_model.mute = false;
-				_model.media.mute(false);
 				return true;
 			}
 

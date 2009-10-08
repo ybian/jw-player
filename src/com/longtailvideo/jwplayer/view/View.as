@@ -29,6 +29,7 @@ package com.longtailvideo.jwplayer.view {
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.net.URLRequest;
+	import flash.display.StageDisplayState;
 	
 	
 	public class View extends GlobalEventDispatcher {
@@ -147,6 +148,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		public function fullscreen(mode:Boolean = true):void {
+			RootReference.stage.displayState = mode ? StageDisplayState.FULL_SCREEN : StageDisplayState.NORMAL;
 		}
 		
 		/** Redraws the plugins **/

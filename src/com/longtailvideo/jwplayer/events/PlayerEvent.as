@@ -48,7 +48,7 @@ package com.longtailvideo.jwplayer.events {
 		 * @eventType jwplayerError
 		 */
 		public static var JWPLAYER_ERROR:String = "jwplayerError";
-		
+
 		public var id:String;
 		public var client:String;
 		public var version:String;

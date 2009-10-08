@@ -13,8 +13,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.geom.ColorTransform;
 	import flash.text.GridFitType;
 	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	
+	import flash.text.TextFieldAutoSize;	
 	
 	public class DisplayComponent extends CoreComponent implements IDisplayComponent {
 		protected var _icon:DisplayObject;

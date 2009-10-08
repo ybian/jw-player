@@ -12,7 +12,7 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		
-		public function addButton(name:String, icon:DisplayObject, clickHandler:Function):void {
+		public function addButton(icon:DisplayObject, text:String, clickHandler:Function):void {
 			//TODO: implement function
 		}
 		

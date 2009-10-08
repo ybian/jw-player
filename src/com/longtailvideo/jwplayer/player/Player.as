@@ -148,8 +148,12 @@ package com.longtailvideo.jwplayer.player {
 			return controller.setVolume(volume);
 		}
 		
-		public function mute(state:Boolean):Boolean {
-			return controller.mute(state);
+		public function get mute():Boolean{
+			return model.mute;
+		}
+		
+		public function set mute(state:Boolean):void {
+			controller.mute(state);
 		}
 		
 		public function play():Boolean {

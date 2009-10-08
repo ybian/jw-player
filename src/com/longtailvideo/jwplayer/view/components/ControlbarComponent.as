@@ -12,6 +12,8 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	import flash.display.Sprite;
+	import com.longtailvideo.jwplayer.utils.Strings;
 	
 	
 	/**
@@ -86,17 +88,12 @@ package com.longtailvideo.jwplayer.view.components {
 			_layoutManager = new ControlbarLayoutManager(this);
 			setupBackground();
 			setupDefaultButtons();
-			temp();
 			addEventListeners();
-			updateControlbarState()
-		}
-		
-		private function temp():void {
-			(_buttons['volume'] as Slider).setProgress(player.config.volume);
-			(_buttons['time'] as Slider).setProgress(25);
+			updateControlbarState();
 		}
 		
 		private function addEventListeners():void {
+			player.addEventListener(ControllerEvent.PLAYLIST, controllerHandler);
 			player.addEventListener(ControllerEvent.PLAY, controllerHandler);
 			player.addEventListener(ControllerEvent.ITEM, controllerHandler);
 			player.addEventListener(ControllerEvent.STOP, controllerHandler);
@@ -140,7 +137,7 @@ package com.longtailvideo.jwplayer.view.components {
 				newLayout = newLayout.replace("|prev|next", "");
 			}
 			
-			if (player.config.mute) {
+			if (player.mute) {
 				newLayout = newLayout.replace("mute", "unmute");
 			}
 			
@@ -162,13 +159,15 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		private function mediaHandler(evt:MediaEvent):void {
-			var scrubber:Slider = getButton('time') as Slider;
+			var scrubber:Slider = getButton('time') as Slider;		
 			switch (evt.type) {
 				case MediaEvent.JWPLAYER_MEDIA_BUFFER:
+					setTime(evt.position, evt.duration);
 					scrubber.setProgress(evt.position);
 					scrubber.setBuffer(evt.bufferPercent);
 					break;
 				case MediaEvent.JWPLAYER_MEDIA_TIME:
+					setTime(evt.position, evt.duration);
 					scrubber.setProgress(evt.position);
 					scrubber.setBuffer(evt.bufferPercent);
 					break;
@@ -178,17 +177,24 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 		}
 		
+		private function setTime(position:Number, duration:Number):void {
+			if (duration >= 0){
+				var elapsedText:TextField = getButton('elapsed') as TextField;
+				var durationField:TextField = getButton('duration') as TextField;	
+				elapsedText.text = Strings.digits(position);
+				durationField.text = Strings.digits(duration);
+			}
+		}
 		
 		private function setupBackground():void {
-			var background:MovieClip;
-			if (getSkinElement("controlbar", "back")) {
-				background = getSkinElement("controlbar", "back") as MovieClip;
-			} else {
-				background = new MovieClip();
-				background.name = "background";
-				background.graphics.beginFill(0, 1);
-				background.graphics.drawRect(0, 0, 1, 1);
-				background.graphics.endFill();
+			var background:DisplayObject = getSkinElement("controlbar", "back");
+			if (!background) {
+				var newBackground:MovieClip = new MovieClip();
+				newBackground.name = "background";
+				newBackground.graphics.beginFill(0, 1);
+				newBackground.graphics.drawRect(0, 0, 1, 1);
+				newBackground.graphics.endFill();
+				background = newBackground as DisplayObject;
 			}
 
 			if (player.config.backcolor) {
@@ -220,8 +226,8 @@ package com.longtailvideo.jwplayer.view.components {
 			addComponentButton('mute', 'Unmute', ViewEvent.JWPLAYER_VIEW_MUTE, false);
 			addSlider('time', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
 			addSlider('volume', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
-			addTextField('elapsed', (getSkinElement("controlbar","elapsedText") as TextField).getTextFormat().font);
-			addTextField('duration', (getSkinElement("controlbar","totalText") as TextField).getTextFormat().font);
+			addTextField('elapsed', getFont(getSkinElement("controlbar","elapsedText") as TextField));
+			addTextField('duration', getFont(getSkinElement("controlbar","totalText") as TextField));
 			addButton('divider', getSkinElement("controlbar", "divider"));
 		}
 		
@@ -309,6 +315,14 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		private function getSkinElement(component:String, element:String):DisplayObject {
 			return player.skin.getSkinElement(component,element);
+		}
+		
+		private function getFont(textField:TextField):String {
+			var result:String;
+			if (textField) {
+				textField.getTextFormat().font;
+			}
+			return result;
 		}
 	}
 }

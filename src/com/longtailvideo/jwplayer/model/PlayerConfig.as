@@ -311,7 +311,7 @@ package com.longtailvideo.jwplayer.model {
 		
 		/** Mute all sounds on startup. This value is set in a user cookie, and is retrieved the next time the player loads. **/
 		public function get mute():Boolean { return _mute; }
-		public function set mute(x:Boolean):void { _mute = x; }
+		private function set mute(x:Boolean):void { _mute = x; }
 
 		/** Set to list to play the entire playlist once, to always to continously play the song/video/playlist and to single to continue repeating the selected file in a playlist. @default none **/
 		public function get repeat():String { return _repeat; }

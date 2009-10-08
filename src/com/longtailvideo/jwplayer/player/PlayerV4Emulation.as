@@ -245,7 +245,7 @@ package com.longtailvideo.jwplayer.player {
 					_player.load(prm['object']);
 					break;
 				case com.jeroenwijering.events.ViewEvent.MUTE:
-					_player.mute(prm['state']);
+					_player.mute = prm['state'];
 					break;
 				case com.jeroenwijering.events.ViewEvent.NEXT:
 					_player.playlist.currentIndex++;

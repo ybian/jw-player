@@ -9,6 +9,7 @@ package com.longtailvideo.jwplayer.view.skins {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.text.TextField;
+	import flash.display.MovieClip;
 
 	/**
 	 * Send when the skin is ready

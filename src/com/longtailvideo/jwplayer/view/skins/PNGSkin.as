@@ -7,6 +7,9 @@ package com.longtailvideo.jwplayer.view.skins {
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.utils.Dictionary;
+	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 
 	/**
 	 * Send when the skin is ready
@@ -150,6 +153,16 @@ package com.longtailvideo.jwplayer.view.skins {
 		public override function getSkinProperties():SkinProperties {
 			return props; 
 		}
-
+		
+		public override function getSkinElement(component:String, element:String):DisplayObject {
+			var result:Bitmap;
+			var original:DisplayObject = (_skin.getChildByName(component) as DisplayObjectContainer).getChildByName(element);
+			if (original){
+				var resultData:BitmapData = new BitmapData(original.width, original.height,true);
+				resultData.draw(original);
+				result = new Bitmap(resultData);
+			}
+			return result;
+		}
 	}
 }

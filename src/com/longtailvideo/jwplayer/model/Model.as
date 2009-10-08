@@ -56,7 +56,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _currentMedia:MediaProvider;
 
 		private var _mediaSources:Object;
-
+		
 		/** Constructor **/
 		public function Model() {
 			_playlist = new Playlist();
@@ -111,6 +111,7 @@ package com.longtailvideo.jwplayer.model {
 
 		public function set mute(b:Boolean):void {
 			_mute = b;
+			_currentMedia.mute(b);
 		}
 
 		private function setupMediaProviders():void {
@@ -122,6 +123,7 @@ package com.longtailvideo.jwplayer.model {
 			setMediaProvider('sound', new SoundMediaProvider());
 			setMediaProvider('image', new ImageMediaProvider());
 			setMediaProvider('youtube', new YouTubeMediaProvider());
+
 			setActiveMediaProvider('default');
 		}
 
@@ -159,6 +161,7 @@ package com.longtailvideo.jwplayer.model {
 			return true;
 		}
 
+		
 		private function forwardEvents(evt:Event):void {
 			if (evt.type == MediaEvent.JWPLAYER_MEDIA_ERROR) {
 				// Translate media error into player error.

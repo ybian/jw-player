@@ -15,7 +15,7 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _rail:DisplayObject;
 		protected var _buffer:DisplayObject;
 		protected var _progress:DisplayObject;
-		protected var _slider:DisplayObject;
+		protected var _thumb:DisplayObject;
 		protected var _orientation:String;
 		protected var _currentSlider:Number = 0;
 		protected var _currentProgress:Number = 0;
@@ -26,7 +26,7 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _light:ColorTransform;
 
 		
-		public function Slider(rail:DisplayObject, buffer:DisplayObject, progress:DisplayObject, slider:DisplayObject, orientation:String) {
+		public function Slider(rail:DisplayObject, buffer:DisplayObject, progress:DisplayObject, thumb:DisplayObject, orientation:String) {
 			super();
 			addEventListener(MouseEvent.MOUSE_DOWN, downHandler);
 			//TODO: Add color transform stuff for mouseover
@@ -38,23 +38,21 @@ package com.longtailvideo.jwplayer.view.components {
 			addElement(_buffer, "buffer", 2);
 			_progress = progress;
 			addElement(_progress, "progress", 3);
-			_slider = slider;
-			addElement(_slider, "slider", 4);
+			_thumb = thumb;
+			addElement(_thumb, "thumb", 4);
 			_orientation = orientation;
 		}
 		
 		private function addElement(element:DisplayObject, name:String, index:Number, visible:Boolean = false):void {
 			if (element) {
-				//element.name = name;
-				//addChildAt(element,index);
 				element.visible = visible;
 				addChild(element);
 			}
 		}
 		
 		public function setSlider(progress:Number):void {
-			if (_slider) {
-				_slider.visible = true;
+			if (_thumb) {
+				_thumb.visible = true;
 			}
 			_currentSlider = progress;
 			resize(width,height);
@@ -79,10 +77,10 @@ package com.longtailvideo.jwplayer.view.components {
 		public function resize(width:Number, height:Number):void {
 			resizeElement(_rail, width, height);
 			resizeElement(_buffer, width * _currentBuffer / 100, height);
-			resizeElement(_progress, width * _currentProgress / 100, height);
-			if (_slider){
-				_slider.x = width * _currentSlider / 100;
-				_slider.width = _slider.width;
+			resizeElement(_progress,  width * _currentProgress / 100, height);
+			if (_thumb){
+				_thumb.x = width * _currentSlider / 100;
+				//_thumb.width = _thumb.width;
 			}
 		}
 		
@@ -95,9 +93,9 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Handle mouse downs. **/
 		private function downHandler(evt:MouseEvent):void {
-			if (_slider){
-				var rct:Rectangle = new Rectangle(_rail.x,_slider.y,_rail.width-_slider.width,0);
-				(_slider as MovieClip).startDrag(true,rct);
+			if (_thumb){
+				var rct:Rectangle = new Rectangle(_rail.x,_thumb.y,_rail.width-_thumb.width,0);
+				(_thumb as MovieClip).startDrag(true,rct);
 				RootReference.stage.addEventListener(MouseEvent.MOUSE_UP,upHandler);
 			}
 		}
@@ -105,8 +103,8 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Handle mouse releases. **/
 		private function upHandler(evt:MouseEvent):void {
 			RootReference.stage.removeEventListener(MouseEvent.MOUSE_UP,upHandler);
-			(_slider as MovieClip).stopDrag();
-			var percent:Number = (_slider.x-_rail.x) / (_rail.width-_slider.width);
+			(_thumb as MovieClip).stopDrag();
+			var percent:Number = (_thumb.x-_rail.x) / (_rail.width-_thumb.width);
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_CLICK, percent));
 			setSlider(percent*100);
 		}
