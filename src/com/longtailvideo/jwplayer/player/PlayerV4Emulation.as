@@ -177,7 +177,7 @@ package com.longtailvideo.jwplayer.player {
 		
 		private function viewRedraw(width:Number, height:Number):void {
 			viewEventDispatcher.dispatchEvent(new com.jeroenwijering.events.ViewEvent(com.jeroenwijering.events.ViewEvent.REDRAW, {id:id, client:client, version:version}));
-			controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.RESIZE, {width:width, height:height, fullscreen:_player.config.fullscreen, client:client, version:version}));
+			controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.RESIZE, {width:width, height:height, fullscreen:_player.fullscreen, client:client, version:version}));
 		}
 
 		private function viewSeek(evt:ViewEvent):void {

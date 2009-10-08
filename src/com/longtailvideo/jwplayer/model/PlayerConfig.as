@@ -302,7 +302,7 @@ package com.longtailvideo.jwplayer.model {
 
 		/** Current fullscreen state **/		
 		public function get fullscreen():Boolean { return _fullscreen; }
-		public function set fullscreen(x:Boolean):void { _fullscreen = x; }		
+		private function set fullscreen(x:Boolean):void { _fullscreen = x; }		
 		
 		/** PlaylistItem that should start to play. Use this to set a specific start-item. @default 0 **/
 		public function get item():Number { return _item; }
@@ -374,6 +374,10 @@ package com.longtailvideo.jwplayer.model {
 				}
 			}
 			return names;
+		}
+		
+		public function setCookie(name:String, value:String):void {
+			
 		}
 
 	}

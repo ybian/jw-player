@@ -4,6 +4,7 @@ package com.longtailvideo.jwplayer.utils {
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.net.SharedObject;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 
@@ -67,12 +68,33 @@ package com.longtailvideo.jwplayer.utils {
 				for (var param:String in params) {
 					setConfigParam(param, params[param]);
 				}
+//				loadCookies();
 				dispatchEvent(new Event(Event.COMPLETE));
 			} catch (e:Error) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
 
 			}
 		}
+
+/*
+		private function loadCookies():void {
+			var cookie:SharedObject = SharedObject.getLocal('com.jeroenwijering','/');
+			compareWrite(cookie.data);
+			var xml:String = reference.root.loaderInfo.parameters['config'];
+			if(xml) {
+				loadXML(Strings.decode(xml));
+			} else {
+				loadFlashvars();
+			}
+		}
+
+		/** Compare and save new items in config. 
+		private function compareWrite(obj:Object):void {
+			for (var cfv:String in obj) {
+				config[cfv.toLowerCase()] = Strings.serialize(obj[cfv.toLowerCase()]);
+			}
+		}
+*/
 
 		private function loadComplete(evt:Event):void {
 			var loadedXML:XML = XML((evt.target as URLLoader).data);

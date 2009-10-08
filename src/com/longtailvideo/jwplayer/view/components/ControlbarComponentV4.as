@@ -134,7 +134,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		public function resize(width:Number, height:Number):void {
 			var wid:Number = width;
-			if (controlbarConfig['position'] == 'over' || player.config.fullscreen == true) {
+			if (controlbarConfig['position'] == 'over' || player.fullscreen == true) {
 				//x = player.config.x + player.config.margin;
 				//y = player.config.y + player.config.height - player.config.margin - player.config.size;
 				wid = width - 2 * controlbarConfig['margin'];
@@ -143,7 +143,7 @@ package com.longtailvideo.jwplayer.view.components {
 				getSkinElement('fullscreenButton').visible = false;
 				getSkinElement('normalscreenButton').visible = false;
 				if (stage['displayState'] && player.config.height > 40) {
-					if (player.config.fullscreen) {
+					if (player.fullscreen) {
 						getSkinElement('fullscreenButton').visible = false;
 						getSkinElement('normalscreenButton').visible = true;
 					} else {
@@ -178,7 +178,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (blocking != true || act == ViewEvent.JWPLAYER_VIEW_FULLSCREEN || act == ViewEvent.JWPLAYER_VIEW_MUTE) {
 				switch (act) {
 					case ViewEvent.JWPLAYER_VIEW_FULLSCREEN:
-						data = Boolean(!player.config.fullscreen);
+						data = Boolean(!player.fullscreen);
 						break;
 					case ViewEvent.JWPLAYER_VIEW_PAUSE:
 						data = Boolean(_player.state == PlayerState.IDLE || _player.state == PlayerState.PAUSED);

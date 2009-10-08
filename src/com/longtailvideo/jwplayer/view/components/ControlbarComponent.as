@@ -141,7 +141,7 @@ package com.longtailvideo.jwplayer.view.components {
 				newLayout = newLayout.replace("mute", "unmute");
 			}
 			
-			if (player.config.fullscreen){
+			if (player.fullscreen){
 				newLayout = newLayout.replace("fullscreen", "normalscreen");
 			}
 			_currentLayout = newLayout;

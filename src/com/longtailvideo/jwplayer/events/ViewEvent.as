@@ -133,5 +133,16 @@ package com.longtailvideo.jwplayer.events {
 			return new ViewEvent(this.type, this.data);
 		}
 		
+		public override function toString():String {
+			
+			return '[ViewEvent type="' + type + '"'
+				+ ' data="' + data + '"'
+				+ " id=" + id 
+				+ " client=" + client 
+				+ " version=" + version
+				+ "]";
+
+		}
+		
 	}
 }

@@ -4,6 +4,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
+	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
@@ -107,20 +108,12 @@ package com.longtailvideo.jwplayer.view {
 			var layoutManager:PlayerLayoutManager = new PlayerLayoutManager(_player);
 			layoutManager.resize(width, height);
 
-			_components.resize(_player.config.width, _player.config.height);
+			redraw();
 
-			if (_imageLayer.numChildren) {
-				_imageLayer.x = _components.display.x;
-				_imageLayer.y = _components.display.y;
-				Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
+			var currentFSMode:Boolean = (RootReference.stage.displayState == StageDisplayState.FULL_SCREEN);
+			if (_model.fullscreen != currentFSMode) {
+				dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, currentFSMode));
 			}
-
-			if (_mediaLayer.numChildren) {
-				_mediaLayer.x = _components.display.x;
-				_mediaLayer.y = _components.display.y;
-				_model.media.resize(_player.config.width, _player.config.height);
-			}
-
 		}
 
 		public function set skin(skn:ISkin):void {
@@ -155,6 +148,20 @@ package com.longtailvideo.jwplayer.view {
 
 		/** Redraws the plugins **/
 		public function redraw():void {
+			_components.resize(_player.config.width, _player.config.height);
+
+			if (_imageLayer.numChildren) {
+				_imageLayer.x = _components.display.x;
+				_imageLayer.y = _components.display.y;
+				Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
+			}
+
+			if (_mediaLayer.numChildren) {
+				_mediaLayer.x = _components.display.x;
+				_mediaLayer.y = _components.display.y;
+				_model.media.resize(_player.config.width, _player.config.height);
+			}
+			
 			for (var i:Number = 0; i < _pluginsLayer.numChildren; i++) {
 				var plug:IPlugin = _pluginsLayer.getChildAt(i) as IPlugin;
 				if (plug) {
