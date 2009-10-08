@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
+	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.Player;
@@ -8,7 +9,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Stacker;
 	import com.longtailvideo.jwplayer.utils.Strings;
-	import com.longtailvideo.jwplayer.view.components.CoreComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	import flash.accessibility.AccessibilityProperties;
@@ -24,7 +24,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.utils.setTimeout;
 	
 	import mx.effects.Fade;
-	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	
 	public class ControlbarComponentV4 extends CoreComponent implements IControlbarComponent {
@@ -73,7 +72,7 @@ package com.longtailvideo.jwplayer.view.components {
 			skin.x = 0;
 			skin.y = 0;
 			addChild(skin);
-			player.addEventListener(PlayerEvent.JWPLAYER_STATE, stateHandler);
+			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, timeHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, muteHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, volumeHandler);
@@ -403,7 +402,7 @@ package com.longtailvideo.jwplayer.view.components {
 				var dps:String = stage['displayState'];
 			} catch (err:Error) {
 			}
-			switch (player.config.state) {
+			switch (player.state) {
 				case PlayerState.PLAYING:
 				case PlayerState.BUFFERING:
 					try {

@@ -1,10 +1,10 @@
 package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
+	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	import com.longtailvideo.jwplayer.view.components.CoreComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	
 	import flash.display.DisplayObject;
@@ -29,7 +29,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		private function addListeners():void {
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, muteHandler);
-			player.addEventListener(PlayerEvent.JWPLAYER_STATE, stateHandler);
+			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 			player.addEventListener(PlayerEvent.JWPLAYER_ERROR, errorHandler);
 			addEventListener(MouseEvent.CLICK, clickHandler);
 		}
@@ -93,8 +93,8 @@ package com.longtailvideo.jwplayer.view.components {
 			setDisplay(null,null);
 		}
 		
-		protected function stateHandler(event:PlayerEvent):void {
-			switch (event.type) {
+		protected function stateHandler(event:PlayerStateEvent):void {
+			switch (event.newstate) {
 				case PlayerState.BUFFERING:
 					setDisplay(getSkinElement('display', 'bufferIcon'));
 					break;
