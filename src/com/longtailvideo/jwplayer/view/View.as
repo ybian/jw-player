@@ -94,6 +94,7 @@ package com.longtailvideo.jwplayer.view {
 
 
 		private function resizeHandler(event:Event):void{
+			_model.fullscreen = RootReference.stage.displayState == StageDisplayState.FULL_SCREEN ? true : false;
 			var width:Number = RootReference.stage.stageWidth;
 			var height:Number = RootReference.stage.stageHeight;
 			_backgroundLayer.getChildByName("background").width = width;

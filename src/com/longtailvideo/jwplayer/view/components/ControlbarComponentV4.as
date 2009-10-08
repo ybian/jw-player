@@ -25,6 +25,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.jeroenwijering.events.ControllerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	
 	
 	public class ControlbarComponentV4 extends CoreComponent implements IControlbarComponent {
@@ -179,7 +180,8 @@ package com.longtailvideo.jwplayer.view.components {
 			if (blocking != true || act == ViewEvent.JWPLAYER_VIEW_FULLSCREEN || act == ViewEvent.JWPLAYER_VIEW_MUTE) {
 				switch (act) {
 					case ViewEvent.JWPLAYER_VIEW_FULLSCREEN:
-						data = !player.config.fullscreen;
+						data = Boolean(!player.config.fullscreen);
+						break;
 					case ViewEvent.JWPLAYER_VIEW_PAUSE:
 						data = Boolean(_player.state == PlayerState.IDLE || _player.state == PlayerState.PAUSED);
 						break;
@@ -187,7 +189,8 @@ package com.longtailvideo.jwplayer.view.components {
 						data = Boolean(!player.mute);
 						break;
 				}
-				dispatchEvent(new ViewEvent(act, data));
+				var event:ViewEvent = new ViewEvent(act, data);
+				dispatchEvent(event);
 			}
 		}
 		
@@ -228,14 +231,6 @@ package com.longtailvideo.jwplayer.view.components {
 					getSkinElement('prevButton').visible = getSkinElement('nextButton').visible = true;
 				} else {
 					getSkinElement('prevButton').visible = getSkinElement('nextButton').visible = false;
-				}
-			} catch (err:Error) {
-			}
-			try {
-				if (player.playlist && player.playlist.currentItem.link) {
-					getSkinElement('linkButton').visible = true;
-				} else {
-					getSkinElement('linkButton').visible = false;
 				}
 			} catch (err:Error) {
 			}
@@ -482,7 +477,7 @@ package com.longtailvideo.jwplayer.view.components {
 				(getSkinElement('elapsedText') as TextField).text = Strings.digits(pos);
 				(getSkinElement('totalText') as TextField).text = Strings.digits(dur);
 			} catch (err:Error) {
-				trace(err);
+				Logger.log(err);
 			}
 			try {
 				var tsl:MovieClip = getSkinElement('timeSlider') as MovieClip;
