@@ -52,26 +52,26 @@ package com.longtailvideo.jwplayer.model {
 		private var _playlist:Playlist;
 
 		private var _mute:Boolean = false;
-		
+
 		private var _currentMedia:MediaProvider;
-		
+
 		private var _mediaSources:Object;
 
 		/** Constructor **/
 		public function Model() {
 			_playlist = new Playlist();
 			_config = new PlayerConfig(_playlist);
-			
+
 			_playlist.addGlobalListener(forwardEvents);
-			
+
 			setupMediaProviders();
 		}
-		
-		/** The player config object **/ 
+
+		/** The player config object **/
 		public function get config():PlayerConfig {
 			return _config;
 		}
-		
+
 		public function set config(conf:PlayerConfig):void {
 			_config = conf;
 		}
@@ -80,16 +80,16 @@ package com.longtailvideo.jwplayer.model {
 		public function get media():MediaProvider {
 			return _currentMedia;
 		}
-		
+
 		/**
-		 * The current player state 
+		 * The current player state
 		 */
 		public function get state():String {
 			return _currentMedia ? _currentMedia.state : PlayerState.IDLE;
 		}
 
 		/**
-		 * The loaded playlist 
+		 * The loaded playlist
 		 */
 		public function get playlist():Playlist {
 			return _playlist;
@@ -99,6 +99,7 @@ package com.longtailvideo.jwplayer.model {
 		public function get fullscreen():Boolean {
 			return config.fullscreen;
 		}
+
 		public function set fullscreen(b:Boolean):void {
 			config.fullscreen = b;
 		}
@@ -107,30 +108,32 @@ package com.longtailvideo.jwplayer.model {
 		public function get mute():Boolean {
 			return _mute;
 		}
+
 		public function set mute(b:Boolean):void {
 			_mute = b;
 		}
-		
-		
+
 		private function setupMediaProviders():void {
 			_mediaSources = {};
+			setMediaProvider('default', new MediaProvider());
 			setMediaProvider('video', new VideoMediaProvider());
 			setMediaProvider('http', new HTTPMediaProvider());
 			setMediaProvider('rtmp', new RTMPMediaProvider());
 			setMediaProvider('sound', new SoundMediaProvider());
 			setMediaProvider('image', new ImageMediaProvider());
 			setMediaProvider('youtube', new YouTubeMediaProvider());
+			setActiveMediaProvider('default');
 		}
-		
+
 		/**
-		 * Whether the Model has a MediaProvider handler for a given type.   
+		 * Whether the Model has a MediaProvider handler for a given type.
 		 */
 		public function hasMediaProvider(type:String):Boolean {
 			return (_mediaSources[url2type(type)] is MediaProvider);
 		}
-		
+
 		/**
-		 * Add a MediaProvider to the list of available sources. 
+		 * Add a MediaProvider to the list of available sources.
 		 */
 		public function setMediaProvider(type:String, provider:MediaProvider):void {
 			if (!hasMediaProvider(type)) {
@@ -138,24 +141,24 @@ package com.longtailvideo.jwplayer.model {
 				provider.initializeMediaProvider(config);
 			}
 		}
-		
+
 		public function setActiveMediaProvider(type:String):Boolean {
-			if (!hasMediaProvider(type)) type = "video";
+			if (!hasMediaProvider(type))
+				type = "video";
 
 			var newMedia:MediaProvider = _mediaSources[url2type(type)] as MediaProvider;
-			
+
 			if (_currentMedia != newMedia) {
-				if (_currentMedia) { 
-					_currentMedia.removeGlobalListener(forwardEvents); 
+				if (_currentMedia) {
+					_currentMedia.removeGlobalListener(forwardEvents);
 				}
 				newMedia.addGlobalListener(forwardEvents);
 				_currentMedia = newMedia;
 			}
-			
-			
+
 			return true;
 		}
-		
+
 		private function forwardEvents(evt:Event):void {
 			if (evt.type == MediaEvent.JWPLAYER_MEDIA_ERROR) {
 				// Translate media error into player error.
@@ -164,10 +167,10 @@ package com.longtailvideo.jwplayer.model {
 				dispatchEvent(evt);
 			}
 		}
-		
+
 		/** e.g. http://providers.longtailvideo.com/5/myProvider.swf --> myprovider **/
 		private function url2type(type:String):String {
-			return type.substring(type.lastIndexOf("/")+1, type.length).replace(".swf","").toLowerCase();
+			return type.substring(type.lastIndexOf("/") + 1, type.length).replace(".swf", "").toLowerCase();
 		}
 
 	}

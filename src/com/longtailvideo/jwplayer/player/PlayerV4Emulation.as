@@ -280,6 +280,8 @@ package com.longtailvideo.jwplayer.player {
 			for each (var i:String in describeType(_player.config).accessor.@name) {
 				cfg[i] = TypeChecker.fromString(_player.config[i], TypeChecker.getType(_player.config, i));
 			} 
+
+			cfg['state'] = _player.state;
 			
 			return cfg;
 		} 
