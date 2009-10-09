@@ -27,7 +27,7 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		private function addListeners():void {
-			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, muteHandler);
+			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, stateHandler);
 			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 			player.addEventListener(PlayerEvent.JWPLAYER_ERROR, errorHandler);
 			addEventListener(MouseEvent.CLICK, clickHandler);
@@ -59,13 +59,20 @@ package com.longtailvideo.jwplayer.view.components {
 			background.height = height;
 			positionIcon();
 			positionText();
+			stateHandler();
 		}
 		
 		public function setIcon(displayIcon:DisplayObject):void {
-			removeChild(icon)
-			_icon = displayIcon;
-			addChild(icon);
-			positionIcon();
+			try {
+				removeChild(icon);
+			} catch (err:Error) {
+				
+			}
+			if (displayIcon){
+				_icon = displayIcon;
+				addChild(icon);
+				positionIcon();
+			}
 		}
 
 		private function positionIcon():void {
@@ -74,7 +81,9 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		public function setText(displayText:String):void {
-			text.text = displayText;
+			if (!displayText){
+				text.text = '';
+			}
 			positionText();
 		}
 		
@@ -84,16 +93,16 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		protected function setDisplay(displayIcon:DisplayObject, displayText:String = null):void {
-			if (displayIcon) setIcon(displayIcon);
-			if (displayText) setText(displayText);
+			setIcon(displayIcon);
+			setText(displayText);
 		}
 		
 		protected function clearDisplay():void {
 			setDisplay(null,null);
 		}
 		
-		protected function stateHandler(event:PlayerStateEvent):void {
-			switch (event.newstate) {
+		protected function stateHandler(event:PlayerEvent = null):void {
+			switch (player.state) {
 				case PlayerState.BUFFERING:
 					setDisplay(getSkinElement('display', 'bufferIcon'));
 					break;
@@ -104,15 +113,11 @@ package com.longtailvideo.jwplayer.view.components {
 					setDisplay(getSkinElement('display', 'playIcon'));
 					break;
 				default:
-					clearDisplay();
-			}
-		}
-		
-		protected function muteHandler(event:MediaEvent):void {
-			if (event.mute) {
-				setDisplay(getSkinElement('display', 'muteIcon'));
-			} else {
-				clearDisplay();
+					if (player.mute){
+						setDisplay(getSkinElement('display', 'muteIcon'));
+					} else {
+						clearDisplay();
+					}
 			}
 		}
 
@@ -121,6 +126,8 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		protected function clickHandler(event:MouseEvent):void {
+			var clickEvent:String = player.state == PlayerState.PLAYING ? ViewEvent.JWPLAYER_VIEW_PAUSE : ViewEvent.JWPLAYER_VIEW_PLAY;
+			dispatchEvent(new ViewEvent(clickEvent));
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_CLICK));
 		}
 		
