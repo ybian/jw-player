@@ -41,7 +41,9 @@
 		Clean out the release folder
 	-->
 	<target name="clean-release">
-		<delete dir="${release.dir}" />
+		<delete dir="${release.dir}">
+		    <include name="*.swf"/>
+		</delete>
 	</target>
 
 	<!--
