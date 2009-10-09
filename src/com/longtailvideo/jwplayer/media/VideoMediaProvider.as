@@ -111,6 +111,7 @@ package com.longtailvideo.jwplayer.media {
 			if (dat.width) {
 				video.width = dat.width;
 				video.height = dat.height;
+				resize(_width, _height);
 			}
 			if (dat.duration) {
 				_item.duration = dat.duration;
