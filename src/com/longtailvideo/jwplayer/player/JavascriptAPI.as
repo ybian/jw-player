@@ -146,7 +146,34 @@ package com.longtailvideo.jwplayer.player {
 		}
 		
 		private function sendEvent(type:String, data:Object = null):void {
-			_emu.sendEvent(type.toUpperCase(), data);
+			var dat:Object = {};
+			switch (type) {
+				case com.jeroenwijering.events.ViewEvent.FULLSCREEN:
+					dat['state'] = data;
+					break;
+				case com.jeroenwijering.events.ViewEvent.ITEM:
+					dat['index'] = data;
+					break;
+				case com.jeroenwijering.events.ViewEvent.LINK:
+					dat['index'] = data;
+					break;
+				case com.jeroenwijering.events.ViewEvent.LOAD:
+					dat['object'] = data;
+					break;
+				case com.jeroenwijering.events.ViewEvent.MUTE:
+					dat['state'] = data;
+					break;
+				case com.jeroenwijering.events.ViewEvent.SEEK:
+					dat['position'] = data;
+					break;
+				case com.jeroenwijering.events.ViewEvent.VOLUME:
+					dat['percentage'] = data;
+					break;
+				default:
+					dat = data;
+					break;
+			}
+			_emu.sendEvent(type.toUpperCase(), dat);
 		}
 		
 		private function forwardControllerEvents(evt:ControllerEvent):void {
