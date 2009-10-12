@@ -30,7 +30,7 @@ package com.longtailvideo.jwplayer.player {
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
-		private static var playerVersion:String = "5.0.441 alpha";
+		private static var playerVersion:String = "5.0.444 alpha";
 		
 		private var model:Model;
 		private var view:View;
