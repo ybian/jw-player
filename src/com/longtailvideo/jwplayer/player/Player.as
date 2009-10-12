@@ -9,6 +9,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.view.PlayerComponents;
 	import com.longtailvideo.jwplayer.view.View;
+	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	import flash.display.Sprite;
@@ -29,7 +30,7 @@ package com.longtailvideo.jwplayer.player {
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
-		private static var playerVersion:String = "5.0.246 alpha";
+		private static var playerVersion:String = "5.0.441 alpha";
 		
 		private var model:Model;
 		private var view:View;
@@ -206,6 +207,10 @@ package com.longtailvideo.jwplayer.player {
 		
 		public function get controls():PlayerComponents {
 			return view.components;
+		}
+		
+		public function overrideComponent(plugin:IPlayerComponent):void {
+			view.overrideComponent(plugin);
 		}
 
 	}

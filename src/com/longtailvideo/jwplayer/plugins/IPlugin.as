@@ -9,7 +9,7 @@ package com.longtailvideo.jwplayer.plugins {
 	 * @author Pablo Schklowsky
 	 */
 	public interface IPlugin extends IEventDispatcher {
-		function initializePlugin(player:Player, config:PluginConfig):void;
+		function initPlugin(player:Player, config:PluginConfig):void;
 		function resize(width:Number, height:Number):void;
 	}
 }

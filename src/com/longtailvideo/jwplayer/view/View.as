@@ -75,7 +75,7 @@ package com.longtailvideo.jwplayer.view {
 			var background:MovieClip = new MovieClip();
 			background.name = "background";
 			_backgroundLayer.addChildAt(background, 0);
-			background.graphics.beginFill(_player.config.backcolor, 1);
+			background.graphics.beginFill(_player.config.screencolor, 1);
 			background.graphics.drawRect(0, 0, 1, 1);
 			background.graphics.endFill();
 
@@ -185,7 +185,7 @@ package com.longtailvideo.jwplayer.view {
 			} else if (newComponent is IPlaylistComponent) {
 				// Replace playlist
 			} else {
-				throw(new Error("Component must implement a component interface"));
+				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, "Component must implement a component interface"));
 			}
 		}
 

@@ -22,8 +22,6 @@ package com.longtailvideo.jwplayer.model {
 		
 		public function PlaylistItem(obj:Object = null) {
 			for (var itm:String in obj) {
-				// For backwards compatibility
-				if (itm == "type") itm = "provider";
 				if (this[itm] && typeof(this[itm]) == typeof(0)) {
 					this[itm] = Number(obj[itm]);
 				} else {
@@ -32,9 +30,9 @@ package com.longtailvideo.jwplayer.model {
 			}
 		}
 		
-		public function get type():String {
-			return provider;
-		}
+		// For backwards compatibility
+		public function get type():String { return provider; }
+		public function set type(t:String):void { provider = t; }
 		
 	}
 }

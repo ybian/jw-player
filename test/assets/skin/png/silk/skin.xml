@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<skin version="1.0" name="Happy Faces" author="Leonardo Da Vinci">
+<skin version="1.0" name="Silk" author="http://www.famfamfam.com/">
 
 	<settings>
 		<setting name="backcolor" value="0x000000" />
@@ -17,6 +17,7 @@
 			<elements>
 				<element name="back" src="smiley.png" />
 				<element name="shade" src="smiley.png" />
+				<element name="divider" src="smiley.png" />
 				
 				<element name="playButton" src="resultset_next.png" />
 				<element name="playButtonBack" src="resultset_next.png" />
@@ -60,7 +61,6 @@
 				<element name="unmuteButtonOver" src="sound_mute.png" />
 				
 				<element name="volumeSliderRail" src="shading.png" />
-				<element name="volumeSliderBuffer" src="smiley.png" />
 				<element name="volumeSliderProgress" src="shape_square.png" />
 				<element name="volumeSliderThumb" src="bullet_white.png" />
 				
@@ -88,10 +88,8 @@
 			<elements>
 				<element name="itemBack" src="smiley.png" />
 				<element name="itemShade" src="smiley.png" />
-				<element name="rail" src="smiley.png" />
-				<element name="slider" src="smiley.png" />
-				<element name="sliderBack" src="smiley.png" />
-				<element name="sliderOver" src="smiley.png" />
+				<element name="sliderRail" src="smiley.png" />
+				<element name="sliderThumb" src="smiley.png" />
 			</elements>
 		</component>
 

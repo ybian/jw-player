@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponentV4;
 	import com.longtailvideo.jwplayer.view.components.DisplayComponent;
@@ -9,6 +10,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
@@ -65,20 +67,16 @@ package com.longtailvideo.jwplayer.view {
 			_controlbar = bar;
 		}
 		
-		
 		public function resize(width:Number, height:Number):void {
-			_display.resize(width, height);
-			_display.x = Number(_player.config.pluginConfig('display')['x']);
-			_display.y = Number(_player.config.pluginConfig('display')['y']);
-			
-			_controlbar.resize(width, height);
-			_controlbar.x = Number(_player.config.pluginConfig('controlbar')['x']);
-			_controlbar.y = Number(_player.config.pluginConfig('controlbar')['y']);
-
-			_playlist.resize(width, height);
-			_playlist.x = Number(_player.config.pluginConfig('playlist')['x']);
-			_playlist.y = Number(_player.config.pluginConfig('playlist')['y']);			
-			
+			resizeComponent(_display, _config.pluginConfig('display'));
+			resizeComponent(_controlbar, _config.pluginConfig('controlbar'));
+			resizeComponent(_playlist, _config.pluginConfig('playlist'));
+		}
+		
+		private function resizeComponent(comp:IPlayerComponent, config:PluginConfig):void {
+			comp.resize(config['width'], config['height']);
+			comp.x = config['x'];
+			comp.y = config['y'];
 		}
 	}
 }

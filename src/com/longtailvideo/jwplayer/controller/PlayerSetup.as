@@ -189,7 +189,7 @@ package com.longtailvideo.jwplayer.controller {
 			try {
 				for each (var pluginName:String in _view.loadedPlugins()) {
 					var plugin:IPlugin = _view.getPlugin(pluginName);
-					plugin.initializePlugin(_player, _model.config.pluginConfig(pluginName));
+					plugin.initPlugin(_player, _model.config.pluginConfig(pluginName));
 				}
 				tasker.success();
 			} catch (e:Error) {

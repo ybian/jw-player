@@ -16,7 +16,7 @@ package com.longtailvideo.jwplayer.plugins {
 			addChild(plug as DisplayObject);
 		}
 
-		public function initializePlugin(player:Player, config:PluginConfig):void {
+		public function initPlugin(player:Player, config:PluginConfig):void {
 			plug.initializePlugin(PlayerV4Emulation.getInstance());
 		}
 		
