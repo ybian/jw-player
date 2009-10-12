@@ -9,6 +9,30 @@ package com.longtailvideo.jwplayer.parsers {
 		/** Prefix for the JW Player namespace. **/
 		private static const PREFIX:String = 'jwplayer';
 
+		/** File extensions of all supported mediatypes. **/
+		private static var extensions:Object = {
+				'3g2':'video',
+				'3gp':'video',
+				'aac':'video',
+				'f4b':'video',
+				'f4p':'video',
+				'f4v':'video',
+				'flv':'video',
+				'gif':'image',
+				'jpg':'image',
+				'jpeg':'image',
+				'm4a':'video',
+				'm4v':'video',
+				'mov':'video',
+				'mp3':'sound',
+				'mp4':'video',
+				'png':'image',
+				'rbs':'sound',
+				'sdp':'video',
+				'swf':'image',
+				'vp6':'video'
+			};
+			
 		/**
 		 * Parse a feedentry for JWPlayer content.
 		 *
@@ -27,7 +51,17 @@ package com.longtailvideo.jwplayer.parsers {
 					itm[i.localName()] = Strings.serialize(i.text().toString());
 				}
 			}
+			updateProvider(itm);
 			return itm;
+		}
+		
+		public static function updateProvider(item:Object):void {
+			if (!item.hasOwnProperty('provider') && item.hasOwnProperty('file')) {
+				var ext:String = Strings.extension(item['file']);
+				if (extensions.hasOwnProperty(ext)) {
+					item['provider'] = extensions[ext];
+				}
+			}
 		}
 
 	}

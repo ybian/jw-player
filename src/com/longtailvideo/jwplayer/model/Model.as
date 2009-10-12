@@ -155,6 +155,7 @@ package com.longtailvideo.jwplayer.model {
 
 			if (_currentMedia != newMedia) {
 				if (_currentMedia) {
+					_currentMedia.stop();
 					_currentMedia.removeGlobalListener(forwardEvents);
 				}
 				newMedia.addGlobalListener(forwardEvents);

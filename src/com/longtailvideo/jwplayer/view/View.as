@@ -217,19 +217,23 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		private function mediaLoaded(evt:MediaEvent):void {
-			while (_mediaLayer.numChildren) {
-				_mediaLayer.removeChildAt(0);
-			}
+
 			_model.media.resize(_player.config.width, _player.config.height);
 
 			_mediaLayer.x = _components.display.x;
 			_mediaLayer.y = _components.display.y;
-			_mediaLayer.addChild(_model.media.display);
+			if (_model.media.display) {
+				_mediaLayer.addChild(_model.media.display);
+			}
 		}
 
 		private function itemHandler(evt:PlaylistEvent):void {
+			while (_mediaLayer.numChildren) {
+				_mediaLayer.removeChildAt(0);
+			}
 			if (_model.playlist.currentItem && _model.playlist.currentItem.image) {
 				loadImage(_model.playlist.currentItem.image);
+
 			}
 		}
 

@@ -177,7 +177,7 @@ package com.longtailvideo.jwplayer.player {
 		}
 		
 		public function playlistItem(index:Number):Boolean {
-			return controller.load(index);
+			return controller.setPlaylistIndex(index);
 		}
 		
 		public function playlistNext():Boolean {

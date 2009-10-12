@@ -6,6 +6,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.parsers.JWParser;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
@@ -47,29 +48,6 @@ package com.longtailvideo.jwplayer.controller {
 		/** Current blocking state **/
 		private var _blocking:Boolean = false;
 
-		/** File extensions of all supported mediatypes. **/
-		private var extensions:Object = {
-				'3g2':'video',
-				'3gp':'video',
-				'aac':'video',
-				'f4b':'video',
-				'f4p':'video',
-				'f4v':'video',
-				'flv':'video',
-				'gif':'image',
-				'jpg':'image',
-				'jpeg':'image',
-				'm4a':'video',
-				'm4v':'video',
-				'mov':'video',
-				'mp3':'sound',
-				'mp4':'video',
-				'png':'image',
-				'rbs':'sound',
-				'sdp':'video',
-				'swf':'image',
-				'vp6':'video'
-			};
 
 		/** A list with legacy CDN classes that are now redirected to buit-in ones. **/
 		private var cdns:Object = {
@@ -108,7 +86,6 @@ package com.longtailvideo.jwplayer.controller {
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PLAY, playHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PAUSE, pauseHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_STOP, stopHandler);
-			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_ITEM, itemHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_NEXT, nextHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PREV, prevHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_SEEK, seekHandler);
@@ -122,7 +99,6 @@ package com.longtailvideo.jwplayer.controller {
 		private function playHandler(evt:ViewEvent):void { play(); }
 		private function stopHandler(evt:ViewEvent):void { stop(); }
 		private function pauseHandler(evt:ViewEvent):void { pause(); }
-		private function itemHandler(evt:ViewEvent):void { loadNumber(evt.data); }
 		private function nextHandler(evt:ViewEvent):void { next(); }
 		private function prevHandler(evt:ViewEvent):void { previous(); }
 		private function seekHandler(evt:ViewEvent):void { seek(evt.data); }
@@ -294,7 +270,11 @@ package com.longtailvideo.jwplayer.controller {
 			if (_model.playlist.currentIndex == _model.playlist.length-1) { 
 				return false;
 			} else {
-				loadNumber(_model.playlist.currentIndex+1);
+				var previousState:String = _player.state;
+				_player.playlist.currentIndex = _player.playlist.currentIndex+1;
+				if (previousState == PlayerState.PLAYING) {
+					play();
+				}
 				return true;
 			} 
 		}
@@ -303,9 +283,25 @@ package com.longtailvideo.jwplayer.controller {
 			if (_model.playlist.currentIndex <= 0) {
 				return false;
 			} else {
-				loadNumber(_model.playlist.currentIndex-1);
+				var previousState:String = _player.state;
+				_player.playlist.currentIndex = _player.playlist.currentIndex-1;
+				if (previousState == PlayerState.PLAYING) {
+					play();
+				}
 				return true;
 			}
+		}
+		
+		public function setPlaylistIndex(index:Number):Boolean {
+			if (0 <= index < _player.playlist.length) {
+				var previousState:String = _player.state;
+				_player.playlist.currentIndex = index;
+				if (previousState == PlayerState.PLAYING) {
+					play();
+				}
+				return true;
+			}
+			return false;
 		}
 
 		public function seek(pos:Number):Boolean {
@@ -340,40 +336,42 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function loadPlaylistItem(item:PlaylistItem):Boolean {
-			_model.setActiveMediaProvider(item.provider);
-			_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
-			_model.media.load(item);
-			return true;
+			var result:Boolean = false;
+			try {
+				if (!item.provider) {
+					JWParser.updateProvider(item);
+				}
+
+				_model.setActiveMediaProvider(item.provider);
+				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
+				_model.media.load(item);
+				result = true;
+			} catch (err:Error) {
+				
+			}
+			return result;
 		}
 
 		private function loadString(item:String):Boolean {
-			var ext:String = Strings.extension(item);
-			if (extensions.hasOwnProperty(ext)) {
-				var type:String = extensions[ext];
-				_model.setActiveMediaProvider(type);
-				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
-				_model.media.load(new PlaylistItem({file:item}));
-			} else {
+			if (Strings.extension(item) == "xml"){
 				_model.playlist.load(item);
+				return true;
+			} else {
+				return loadPlaylistItem(new PlaylistItem({file:item}));
 			}
 			return false;
 		}
 
 		private function loadNumber(item:Number):Boolean {
 			if (item >= 0 && item < _model.playlist.length) {
-				_model.setActiveMediaProvider(_model.playlist.getItemAt(item).provider);
-				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
-				_model.media.load(_model.playlist.getItemAt(item));
-				return true;
+				return loadPlaylistItem(_model.playlist.getItemAt(item));
 			}
 			return false;
 		}
 
 		private function loadObject(item:Object):Boolean {
-			if (Object(item).hasOwnProperty('file')) {
-				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
-				_model.media.load(new PlaylistItem(item));
-				return true;
+			if ((item as Object).hasOwnProperty('file')) {
+				return loadPlaylistItem(new PlaylistItem(item));
 			}
 			return false;
 		}
