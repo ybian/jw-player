@@ -260,7 +260,10 @@ package com.longtailvideo.jwplayer.model {
 
 		/** When below this refers to the height, when right this refers to the width of the playlist. @default 180 **/
 		public function get playlistsize():Number { return _playlistsize; }
-		public function set playlistsize(x:Number):void { _playlistsize = x; }
+		public function set playlistsize(x:Number):void {
+			_playlistsize = x;
+			setPluginProperty('playlist.size', x.toString());
+		}
 
 		/** 
 		 * Location of a SWF or ZIP file with the player graphics. The player skinning documentation gives more info on this.  

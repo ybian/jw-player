@@ -74,7 +74,10 @@ package com.longtailvideo.jwplayer.view {
 			_controlbar.resize(width, height);
 			_controlbar.x = Number(_player.config.pluginConfig('controlbar')['x']);
 			_controlbar.y = Number(_player.config.pluginConfig('controlbar')['y']);
-			
+
+			_playlist.resize(width, height);
+			_playlist.x = Number(_player.config.pluginConfig('playlist')['x']);
+			_playlist.y = Number(_player.config.pluginConfig('playlist')['y']);			
 			
 		}
 	}

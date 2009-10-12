@@ -8,7 +8,6 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	import com.longtailvideo.jwplayer.player.PlayerV4Emulation;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
@@ -362,6 +361,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function loadNumber(item:Number):Boolean {
 			if (item >= 0 && item < _model.playlist.length) {
+				_model.setActiveMediaProvider(_model.playlist.getItemAt(item).provider);
 				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
 				_model.media.load(_model.playlist.getItemAt(item));
 				return true;

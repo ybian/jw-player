@@ -126,16 +126,15 @@ package com.longtailvideo.jwplayer.view {
 		//TODO: I think plugins and components have to go on the same level, otherwise the component layer will simply go over 
 		private function setupComponents():void {
 			_components = new PlayerComponents(_player);
-
-			_components.controlbar.addGlobalListener(forward);
-			_components.display.addGlobalListener(forward);
-
-			_componentsLayer.addChildAt(_components.display as MovieClip, 0);
-			_componentsLayer.addChildAt(_components.controlbar as MovieClip, 1);
-
-			//addToLayer(_playerComponents.controlbar as MovieClip, _components);
-			//addToStage(_playerComponents.dock, _player.config.width, _player.config.height);
-			//addToStage(_playerComponents.playlist, _player.config.width, _player.config.height);
+			
+			setupComponent(_components.display, 0);
+			setupComponent(_components.controlbar, 1);
+			setupComponent(_components.playlist, 2);
+		}
+		
+		private function setupComponent(component:IPlayerComponent, index:Number):void {
+			component.addGlobalListener(forward);
+			_componentsLayer.addChildAt(component as DisplayObject, index);
 		}
 
 		public function get skin():ISkin {
