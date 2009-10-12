@@ -20,6 +20,53 @@
 				<element name="playButtonBack" src="smiley.png" />
 				<element name="playButton" src="smiley.png" />
 				<element name="playButtonOver" src="smiley.png" />
+				
+				<element name="pauseButtonBack" src="smiley.png" />
+				<element name="pauseButton" src="smiley.png" />
+				<element name="pauseButtonOver" src="smiley.png" />
+				
+				<element name="prevButtonBack" src="smiley.png" />
+				<element name="prevButton" src="smiley.png" />
+				<element name="prevButtonOver" src="smiley.png" />
+				
+				<element name="nextButtonBack" src="smiley.png" />
+				<element name="nextButton" src="smiley.png" />
+				<element name="nextButtonOver" src="smiley.png" />
+				
+				<element name="stopButtonBack" src="smiley.png" />
+				<element name="stopButton" src="smiley.png" />
+				<element name="stopButtonOver" src="smiley.png" />
+				
+				<element name="stopButtonBack" src="smiley.png" />
+				<element name="stopButton" src="smiley.png" />
+				<element name="stopButtonOver" src="smiley.png" />
+
+				<element name="timeScrubberRail" src="smiley.png" />
+				<element name="timeSliderBuffer" src="smiley.png" />
+				<element name="timeSliderProgress" src="smiley.png" />
+				<element name="timeSliderThumb" src="smiley.png" />
+
+				<element name="fullscreenButtonBack" src="smiley.png" />
+				<element name="fullscreenButton" src="smiley.png" />
+				<element name="fullscreenButtonOver" src="smiley.png" />
+
+				<element name="normalscreenButtonBack" src="smiley.png" />
+				<element name="normalscreenButton" src="smiley.png" />
+				<element name="normalscreenButtonOver" src="smiley.png" />
+
+				<element name="muteButtonBack" src="smiley.png" />
+				<element name="muteButton" src="smiley.png" />
+				<element name="muteButtonOver" src="smiley.png" />
+
+				<element name="unmuteButtonBack" src="smiley.png" />
+				<element name="unmuteButton" src="smiley.png" />
+				<element name="unmuteButtonOver" src="smiley.png" />
+				
+				<element name="volumeSliderRail" src="smiley.png" />
+				<element name="volumeSliderBuffer" src="smiley.png" />
+				<element name="volumeSliderProgress" src="smiley.png" />
+				<element name="volumeSliderThumb" src="smiley.png" />
+
 			</elements>
 		</component>
 
