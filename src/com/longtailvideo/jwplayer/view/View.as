@@ -46,9 +46,11 @@ package com.longtailvideo.jwplayer.view {
 		private var _mediaLayer:MovieClip;
 		private var _imageLayer:MovieClip;
 		private var _componentsLayer:MovieClip;
+		private var _logoLayer:MovieClip;
 		private var _pluginsLayer:MovieClip;
 
 		private var _image:Loader;
+		private var _logo:Logo;
 
 		public function View(player:Player, model:Model) {
 			_player = player;
@@ -87,7 +89,12 @@ package com.longtailvideo.jwplayer.view {
 			_image.contentLoaderInfo.addEventListener(Event.COMPLETE, imageComplete);
 
 			_componentsLayer = setupLayer("components", 3);
-			_pluginsLayer = setupLayer("plugins", 4);
+
+			_logoLayer = setupLayer("logo", 4);
+			_logo = new Logo(_player);
+			_logoLayer.addChild(_logo);
+
+			_pluginsLayer = setupLayer("plugins", 5);
 		}
 
 		private function setupLayer(name:String, index:Number):MovieClip {
@@ -154,11 +161,17 @@ package com.longtailvideo.jwplayer.view {
 				_imageLayer.y = _components.display.y;
 				Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
 			}
-
+			
 			if (_mediaLayer.numChildren) {
 				_mediaLayer.x = _components.display.x;
 				_mediaLayer.y = _components.display.y;
 				_model.media.resize(_player.config.width, _player.config.height);
+			}
+
+			if (_logoLayer.numChildren) {
+				_logo.resize(_components.display.width, _components.display.height);
+				_logoLayer.x = _components.display.width - _logoLayer.width;
+				_logoLayer.y = _components.display.height - _logoLayer.height;
 			}
 			
 			for (var i:Number = 0; i < _pluginsLayer.numChildren; i++) {
@@ -264,12 +277,14 @@ package com.longtailvideo.jwplayer.view {
 		private function stateHandler(evt:PlayerStateEvent):void {
 			switch (evt.newstate) {
 				case PlayerState.IDLE:
-					_mediaLayer.visible = false;
 					_imageLayer.visible = true;
+					_mediaLayer.visible = false;
+					_logoLayer.visible = false;
 					break;
 				case PlayerState.PLAYING:
-					_mediaLayer.visible = true;
 					_imageLayer.visible = false;
+					_mediaLayer.visible = true;
+					_logoLayer.visible = true;
 					break;
 			}
 		}

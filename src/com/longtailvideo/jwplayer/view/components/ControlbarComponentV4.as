@@ -7,6 +7,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
+	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Stacker;
@@ -49,10 +50,13 @@ package com.longtailvideo.jwplayer.view.components {
 		private var blocking:Boolean;
 		/** Controlbar config **/
 		private var controlbarConfig:PluginConfig;
+		/** Animations handler **/
+		private var animations:Animations;
 		
 		
 		public function ControlbarComponentV4(player:Player) {
 			super(player);
+			animations = new Animations(this);
 			controlbarConfig = player.config.pluginConfig("controlbar");
 			// TODO: Remove Link button
 			BUTTONS = {
@@ -78,6 +82,7 @@ package com.longtailvideo.jwplayer.view.components {
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, itemHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			stacker = new Stacker(skin as MovieClip);
+			getSkinElement("linkButton").visible = false;
 			setButtons();
 			setColors();
 			itemHandler();
@@ -222,9 +227,7 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Show above controlbar on mousemove. **/
 		private function moveHandler(evt:MouseEvent = null):void {
 			if (alpha == 0) {
-				/*var fade:Fade = new Fade(this);
-				fade.alphaTo = 1;
-				fade.play();*/
+				animations.fade(1);
 			}
 			clearTimeout(hiding);
 			hiding = setTimeout(moveTimeout, 2000);
@@ -234,9 +237,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Hide above controlbar again when move has timed out. **/
 		private function moveTimeout():void {
-			/*var fade:Fade = new Fade(this);
-			fade.alphaTo = 0;
-			fade.play();*/
+			animations.fade(0);
 		}
 		
 		
@@ -372,9 +373,7 @@ package com.longtailvideo.jwplayer.view.components {
 					}
 					if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
 						Mouse.show();
-						/*var fade2:Fade = new Fade(this);
-						   fade2.alphaTo = 1;
-						 fade2.play();*/
+						animations.fade(1);
 					}
 					break;
 				case PlayerState.PAUSED:
@@ -385,9 +384,7 @@ package com.longtailvideo.jwplayer.view.components {
 					}
 					if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
 						Mouse.show();
-						/*var fade2:Fade = new Fade(this);
-						   fade2.alphaTo = 1;
-						 fade2.play();*/
+						animations.fade(1);
 					}
 					break;
 				case PlayerState.BUFFERING:
@@ -400,9 +397,7 @@ package com.longtailvideo.jwplayer.view.components {
 						hiding = setTimeout(moveTimeout, 2000);
 						player.skin.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
 					} else {
-						/*var fade1:Fade = new Fade(this);
-						   fade1.alphaTo = 1;
-						 fade1.play();*/
+						animations.fade(1);
 					}
 					break;
 				case PlayerState.IDLE:
@@ -414,9 +409,7 @@ package com.longtailvideo.jwplayer.view.components {
 					}
 					if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
 						Mouse.show();
-						/*var fade2:Fade = new Fade(this);
-						   fade2.alphaTo = 1;
-						 fade2.play();*/
+						animations.fade(1);
 					}
 			}
 		}
