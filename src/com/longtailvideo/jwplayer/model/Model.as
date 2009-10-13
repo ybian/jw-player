@@ -65,8 +65,6 @@ package com.longtailvideo.jwplayer.model {
 
 			_playlist.addGlobalListener(forwardEvents);
 
-			setupMediaProviders();
-			
 			//TODO: Set initial mute state based on user configuration
 		}
 
@@ -117,7 +115,7 @@ package com.longtailvideo.jwplayer.model {
 			_currentMedia.mute(b);
 		}
 
-		private function setupMediaProviders():void {
+		public function setupMediaProviders():void {
 			_mediaSources = {};
 			setMediaProvider('default', new MediaProvider());
 			setMediaProvider('video', new VideoMediaProvider());

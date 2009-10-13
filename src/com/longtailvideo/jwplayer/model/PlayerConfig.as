@@ -26,7 +26,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _mute:Boolean 			= false;
 		private var _repeat:String 			= "none"; 
 		private var _shuffle:Boolean 		= false; 
-		private var _smoothing:Boolean 		= false; 
+		private var _smoothing:Boolean 		= true; 
 		private var _stretching:String 		= "uniform"; 
 		private var _volume:Number 			= 90;
 
@@ -80,7 +80,7 @@ package com.longtailvideo.jwplayer.model {
 					}
 				} else if (item.indexOf(".") > 0) {
 					setPluginProperty(item, config[item]);
-				} else if (config[item]) {
+				} else if (config[item] != null) {
 					setProperty(item, config[item]);
 				}
 			}

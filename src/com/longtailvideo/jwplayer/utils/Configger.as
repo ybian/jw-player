@@ -68,7 +68,6 @@ package com.longtailvideo.jwplayer.utils {
 				for (var param:String in params) {
 					setConfigParam(param, params[param]);
 				}
-//				loadCookies();
 				dispatchEvent(new Event(Event.COMPLETE));
 			} catch (e:Error) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
@@ -76,25 +75,27 @@ package com.longtailvideo.jwplayer.utils {
 			}
 		}
 
-/*
-		private function loadCookies():void {
-			var cookie:SharedObject = SharedObject.getLocal('com.jeroenwijering','/');
-			compareWrite(cookie.data);
-			var xml:String = reference.root.loaderInfo.parameters['config'];
-			if(xml) {
-				loadXML(Strings.decode(xml));
-			} else {
-				loadFlashvars();
-			}
+		public function saveCookie(param:String, value:*):void {
+			try {
+				var cookie:SharedObject = SharedObject.getLocal('com.longtailvideo.jwplayer5','/');
+				cookie.data[param] = value;
+				cookie.flush();
+			} catch (err:Error) {}
 		}
 
-		/** Compare and save new items in config. 
-		private function compareWrite(obj:Object):void {
-			for (var cfv:String in obj) {
-				config[cfv.toLowerCase()] = Strings.serialize(obj[cfv.toLowerCase()]);
-			}
+		private function loadCookies():void {
+			var cookie:SharedObject = SharedObject.getLocal('com.longtailvideo.jwplayer5','/');
+			writeCookieData(cookie.data);
 		}
-*/
+
+		/** Overwrite cookie data. **/ 
+		private function writeCookieData(obj:Object):void {
+			var cookieVars:Object = {};
+			for (var cfv:String in obj) {
+				cookieVars[cfv.toLowerCase()] = Strings.serialize(obj[cfv]);
+			}
+			loadFlashvars(cookieVars);
+		}
 
 		private function loadComplete(evt:Event):void {
 			var loadedXML:XML = XML((evt.target as URLLoader).data);
@@ -104,6 +105,7 @@ package com.longtailvideo.jwplayer.utils {
 			} else {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, "Config was empty"));
 			}
+//			loadCookies();
 		}
 
 		private function xmlFail(evt:ErrorEvent):void {
@@ -131,7 +133,6 @@ package com.longtailvideo.jwplayer.utils {
 		private function setConfigParam(name:String, value:String):void {
 			_config[name.toLowerCase()] = value;
 		}
-
 
 	}
 }

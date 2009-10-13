@@ -71,6 +71,7 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.queueTask(insertDelay);
 			tasker.queueTask(loadConfig, loadConfigComplete);
 			tasker.queueTask(loadSkin, loadSkinComplete);
+			tasker.queueTask(setupMediaProviders);
 			tasker.queueTask(loadPlugins, loadPluginsComplete);
 			tasker.queueTask(loadPlaylist);
 			tasker.queueTask(initPlugins);
@@ -147,6 +148,11 @@ package com.longtailvideo.jwplayer.controller {
 			
 			_model.config.setConfig(confHash);
 			
+		}
+
+		private function setupMediaProviders():void {
+			_model.setupMediaProviders();
+			tasker.success();
 		}
 
 		private function loadPlugins():void {

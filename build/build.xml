@@ -251,6 +251,7 @@
 			<param name="package" value="${application.package}" />
 			<param name="class" value="${application.class}" />
 			<param name="swf" value="player" />
+			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
 

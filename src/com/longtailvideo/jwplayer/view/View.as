@@ -145,7 +145,7 @@ package com.longtailvideo.jwplayer.view {
 			RootReference.stage.displayState = mode ? StageDisplayState.FULL_SCREEN : StageDisplayState.NORMAL;
 		}
 
-		/** Redraws the plugins **/
+		/** Redraws the plugins and player components **/
 		public function redraw():void {
 			_components.resize(_player.config.width, _player.config.height);
 
@@ -165,7 +165,12 @@ package com.longtailvideo.jwplayer.view {
 				var plug:IPlugin = _pluginsLayer.getChildAt(i) as IPlugin;
 				if (plug) {
 					var cfg:PluginConfig = _player.config.pluginConfig((plug as DisplayObject).name);
-					plug.resize(cfg.width, cfg.height);
+					if (cfg['visible']) {
+						plug.visible = true;
+						plug.resize(cfg.width, cfg.height);
+					} else {
+						plug.visible = false;
+					}
 				}
 			}
 			PlayerV4Emulation.getInstance().resize(_player.config.width, _player.config.height);
