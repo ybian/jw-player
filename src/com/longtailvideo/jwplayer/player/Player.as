@@ -31,6 +31,7 @@ package com.longtailvideo.jwplayer.player {
 	 */
 	public class Player extends Sprite {
 		private static var playerVersion:String = "5.0.444 alpha";
+		private static var _commercial:Boolean = Boolean(CONFIG::commercial);
 		
 		private var model:Model;
 		private var view:View;
@@ -46,7 +47,7 @@ package com.longtailvideo.jwplayer.player {
 				setupPlayer();
 			}
 		}
-		
+				
 		private function setupPlayer(event:Event = null):void {
 			try {
 				this.removeEventListener(Event.ADDED_TO_STAGE, setupPlayer);
@@ -90,6 +91,13 @@ package com.longtailvideo.jwplayer.player {
 		 */
 		public static function get version():String {
 			return playerVersion;
+		}
+		
+		/**
+		 * Player type getter
+		 */
+		public static function get commercial():Boolean {
+			return _commercial;
 		}
 
 		/**

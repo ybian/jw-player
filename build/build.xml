@@ -250,7 +250,17 @@
 			<param name="package" value="${application.package}" />
 			<param name="class" value="${application.class}" />
 			<param name="swf" value="player" />
+			<param name="additionalArgs" value="-define=CONFIG::commercial,false" />
 		</antcall>
 	</target>
 
+	<target name="build-release-commercial-player" depends="check-properties, clean-release">
+		<antcall target="release-swf">
+			<param name="package" value="${application.package}" />
+			<param name="class" value="${application.class}" />
+			<param name="swf" value="commercial-player" />
+			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
+		</antcall>
+	</target>
+	
 </project>
