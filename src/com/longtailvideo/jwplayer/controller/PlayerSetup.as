@@ -141,12 +141,13 @@ package com.longtailvideo.jwplayer.controller {
 		private function loadSkinComplete(event:Event=null):void {
 			if (event) {
 				var skin:ISkin = event.target as ISkin;
-				_view.skin = skin;
 				var props:SkinProperties = skin.getSkinProperties();
 				_model.config.setConfig(props);
+				_model.config.setConfig(confHash);
+				_view.skin = skin;
+			} else {
+				_model.config.setConfig(confHash);
 			}
-			
-			_model.config.setConfig(confHash);
 			
 		}
 
