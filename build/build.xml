@@ -85,6 +85,10 @@
 	</target>
 	
 	<target name="build-test-unit">
+		<condition property="additionalArgLine" value="${additionalArgs}" else="">
+			<isset property="additionalArgs" />
+		</condition>
+
 		<exec executable="${mxmlc.exe}" dir="${basedir}"  failonerror="true">
 			<!-- Point to the main class .as file -->
 			<arg line="'${test.src.dir}/${class}'" />
@@ -114,6 +118,9 @@
 			<!-- Ignore missing type definitions -->
 			<arg line="-warnings=false" />
 			
+			<!-- Allow additional arguments to be passed in as parameters -->
+			<arg value="${additionalArgLine}" />
+			
 			<!-- Enable debugging -->
 			<arg line="-debug=true" />
 		</exec>
@@ -126,6 +133,7 @@
 		<antcall target="build-test-unit">
 			<param name="swf" value="UnitTestWindowed.swf" />
 			<param name="class" value="PlayerTest.mxml" />
+			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
 
@@ -133,6 +141,7 @@
 		<antcall target="build-test-unit">
 			<param name="swf" value="UnitTestWindowless.swf" />
 			<param name="class" value="PlayerTest.mxml" />
+			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
 	
