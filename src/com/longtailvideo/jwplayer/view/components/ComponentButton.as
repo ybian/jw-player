@@ -11,29 +11,30 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _background:DisplayObject;
 		protected var _outIcon:DisplayObject;
 		protected var _overIcon:DisplayObject;
-		protected var _outShade:uint;
-		protected var _overShade:uint;
+		protected var _outColor:uint;
+		protected var _overColor:uint;
 		protected var _text:String;
 		protected var _clickEventType:String;
 		protected var _clickEventData:*;
-		
-		public function ComponentButton(outIcon:DisplayObject, clickEventType:String = null, clickEventData:* = null, outShade:uint = 0, overShade:uint = 0, background:DisplayObject = null, overIcon:DisplayObject = null, text:String = null) {
+
+		public function ComponentButton(outIcon:DisplayObject, clickEventType:String = null, clickEventData:* = null, outColor:uint = 0, overColor:uint = 0, background:DisplayObject = null, overIcon:DisplayObject = null, text:String = null) {
 			if (background) {
-				background.x = 0;
-				background.y = 0;
-				addChildAt(background,0);
+				_background = background;
+				_background.x = 0;
+				_background.y = 0;
+				addChildAt(_background,0);
 			}
 			outIcon.x = 0;
 			outIcon.y = 0;
 			outIcon.scaleX = 1;
 			outIcon.scaleY = 1;
 			_outIcon = outIcon;
-			_outIcon.transform.colorTransform = new ColorTransform(outShade);
-			_outShade = outShade;
+			_outIcon.transform.colorTransform = new ColorTransform(outColor);
+			_outColor = outColor;
 			if (overIcon){
 				_overIcon = overIcon;
 			}
-			_overShade = overShade;
+			_overColor = overColor;
 			_text = text;
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 			addEventListener(MouseEvent.MOUSE_OUT, outHandler);
@@ -53,7 +54,7 @@ package com.longtailvideo.jwplayer.view.components {
 				removeChild(_outIcon);
 				addChildAt(_overIcon,1);
 			} else {
-				_outIcon.transform.colorTransform = new ColorTransform(_overShade);
+				_outIcon.transform.colorTransform = new ColorTransform(_overColor);
 			}
 		}
 		
@@ -63,7 +64,7 @@ package com.longtailvideo.jwplayer.view.components {
 				removeChild(_overIcon);
 				addChildAt(_outIcon,1);
 			} else {
-				_outIcon.transform.colorTransform = new ColorTransform(_outShade);
+				_outIcon.transform.colorTransform = new ColorTransform(_outColor);
 			}
 		}
 		

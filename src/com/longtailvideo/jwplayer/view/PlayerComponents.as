@@ -71,6 +71,7 @@ package com.longtailvideo.jwplayer.view {
 			resizeComponent(_display, _config.pluginConfig('display'));
 			resizeComponent(_controlbar, _config.pluginConfig('controlbar'));
 			resizeComponent(_playlist, _config.pluginConfig('playlist'));
+			resizeComponent(_dock, _config.pluginConfig('dock'));
 		}
 		
 		private function resizeComponent(comp:IPlayerComponent, config:PluginConfig):void {

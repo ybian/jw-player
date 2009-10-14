@@ -137,7 +137,7 @@ package com.longtailvideo.jwplayer.view {
 			setupComponent(_components.display, 0);
 			setupComponent(_components.controlbar, 1);
 			setupComponent(_components.playlist, 2);
-			//setupComponent(_components.dock, 3);
+			setupComponent(_components.dock, 3);
 		}
 		
 		private function setupComponent(component:IPlayerComponent, index:Number):void {
