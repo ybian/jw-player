@@ -4,7 +4,7 @@
 package com.longtailvideo.jwplayer.utils {
 	
 	
-	public dynamic class NetClient {
+	public class NetClient {
 		/** Function to callback all events to **/
 		private var callback:Object;
 		
