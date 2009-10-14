@@ -74,6 +74,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (clip.list.button['back']) {
 				setColors();
 			}
+			playlistHandler();
 		}
 		
 		
