@@ -2,6 +2,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.jeroenwijering.events.AbstractView;
 	import com.jeroenwijering.events.ControllerEvent;
 	import com.jeroenwijering.events.ModelEvent;
+	import com.jeroenwijering.events.PluginInterface;
 	import com.longtailvideo.jwplayer.controller.Controller;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
@@ -20,7 +21,6 @@ package com.longtailvideo.jwplayer.player {
 	import flash.display.DisplayObject;
 	import flash.events.EventDispatcher;
 	import flash.utils.describeType;
-	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
 
 	/**
 	 * This singleton class acts as a wrapper between the Player and plugins or javascripts that were
@@ -236,7 +236,7 @@ package com.longtailvideo.jwplayer.player {
 					_player.fullscreen = prm['state'];
 					break;
 				case com.jeroenwijering.events.ViewEvent.ITEM:
-					_player.playlist.currentIndex = prm['index'];
+					_player.playlist.currentIndex = Number(prm);
 					break;
 				case com.jeroenwijering.events.ViewEvent.LINK:
 					_player.link(Number(prm['index']));
@@ -279,7 +279,14 @@ package com.longtailvideo.jwplayer.player {
 			
 			for each (var i:String in describeType(_player.config).accessor.@name) {
 				cfg[i] = TypeChecker.fromString(_player.config[i], TypeChecker.getType(_player.config, i));
-			} 
+			}
+			
+			for each (var j:String in _player.config.pluginNames) {
+				var pluginConfig:PluginConfig = _player.config.pluginConfig(j);
+				for (var k:String in pluginConfig){
+					cfg[j+"."+k] = pluginConfig[k];
+				}
+			}
 
 			cfg['state'] = _player.state;
 			cfg['mute'] = _player.mute;
@@ -336,10 +343,17 @@ package com.longtailvideo.jwplayer.player {
 			viewRedraw(width, height);
 		} 
 		
+		public override function getPlugin(plugin:String):Object {
+			var result:Object;
+			switch (plugin){
+				case 'dock':
+					result = _player.controls.dock as Object;
+					break;
+				case 'controlbar':
+					result = _player.controls.controlbar as Object;
+					break;
+			}
+			return result;
+		}
 	}
-	
-	
-	
-	
-	
 }
