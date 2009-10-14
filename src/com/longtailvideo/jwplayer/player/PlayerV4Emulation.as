@@ -84,6 +84,7 @@ package com.longtailvideo.jwplayer.player {
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, mediaTime);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, mediaVolume);
+			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_META, mediaMeta);
 			_player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 
 			_player.addEventListener(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, viewFullscreen);
@@ -128,6 +129,13 @@ package com.longtailvideo.jwplayer.player {
 		
 		private function mediaVolume(evt:MediaEvent):void {
 			controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.VOLUME, {percentage:evt.volume, id:id, client:client, version:version}));
+		}
+
+		private function mediaMeta(evt:MediaEvent):void {
+			evt.metadata['id'] = id;
+			evt.metadata['client'] = client;
+			evt.metadata['version'] = version;
+			modelEventDispatcher.dispatchEvent(new ModelEvent(ModelEvent.META, evt.metadata));
 		}
 		
 		private function stateHandler(evt:PlayerStateEvent):void {

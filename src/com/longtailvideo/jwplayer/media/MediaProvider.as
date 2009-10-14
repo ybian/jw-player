@@ -9,6 +9,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.utils.Stretcher;
 	
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
@@ -63,8 +64,8 @@ package com.longtailvideo.jwplayer.media {
 		protected var _volume:Number;
 		/** The playback state for the currently loaded media.  @see com.longtailvideo.jwplayer.model.ModelStates **/
 		protected var _state:String;
-		/** Graphical representation of the currently playing media **/
-		private var _media:DisplayObject;
+		/** Clip containing graphical representation of the currently playing media **/
+		private var _media:MovieClip;
 		/** Most recent buffer data **/
 		protected var bufferPercent:Number;
 		/** Handles event dispatching **/
@@ -276,9 +277,14 @@ package com.longtailvideo.jwplayer.media {
 		}
 		
 		protected function set media(m:DisplayObject):void {
-			_media = m;
-			if (m && _width * _height > 0) {
-				Stretcher.stretch(m, _width, _height, _config.stretching);
+			if (m) {
+				_media = new MovieClip();
+				_media.addChild(m);
+				if (_width * _height > 0) {
+					Stretcher.stretch(_media, _width, _height, _config.stretching);
+				}
+			} else {
+				_media = null;
 			}
 		}
 		

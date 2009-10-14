@@ -30,7 +30,7 @@ package com.longtailvideo.jwplayer.player {
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
-		private static var playerVersion:String = "5.0.455 alpha";
+		private static var playerVersion:String = "5.0.464 alpha";
 		private static var _commercial:Boolean = Boolean(CONFIG::commercial);
 		
 		private var model:Model;
@@ -65,7 +65,7 @@ package com.longtailvideo.jwplayer.player {
 			var emu:PlayerV4Emulation = new PlayerV4Emulation(this);
 			var jsAPI:JavascriptAPI = new JavascriptAPI(this);
 
-			Logger.output = Logger.CONSOLE;
+			Logger.output = Logger.TRACE;
 
 			controller.setupPlayer();
 		}

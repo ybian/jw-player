@@ -49,6 +49,8 @@ package com.longtailvideo.jwplayer.view {
 		private var _logoLayer:MovieClip;
 		private var _pluginsLayer:MovieClip;
 
+		private var _displayMasker:MovieClip;
+
 		private var _image:Loader;
 		private var _logo:Logo;
 
@@ -67,19 +69,17 @@ package com.longtailvideo.jwplayer.view {
 			_model.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			_model.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
-			
-			var menu:RightclickMenu = new RightclickMenu(model, _root);
+
+		}
+		
+		public function setupRightclick():void {
+			var menu:RightclickMenu = new RightclickMenu(_model, _root);
 			menu.addGlobalListener(forward);
 		}
 
 		private function setupLayers():void {
 			_backgroundLayer = setupLayer("background", 0);
-			var background:MovieClip = new MovieClip();
-			background.name = "background";
-			_backgroundLayer.addChildAt(background, 0);
-			background.graphics.beginFill(_player.config.screencolor, 1);
-			background.graphics.drawRect(0, 0, 1, 1);
-			background.graphics.endFill();
+			setupBackground();
 
 			_mediaLayer = setupLayer("media", 1);
 
@@ -97,6 +97,26 @@ package com.longtailvideo.jwplayer.view {
 			_pluginsLayer = setupLayer("plugins", 5);
 		}
 
+		private function setupBackground():void {
+			var background:MovieClip = new MovieClip();
+			background.name = "background";
+			_backgroundLayer.addChildAt(background, 0);
+			background.graphics.beginFill(_player.config.screencolor, 1);
+			background.graphics.drawRect(0, 0, 1, 1);
+			background.graphics.endFill();
+		}
+
+		private function setupDisplayMask():void {
+			_displayMasker = new MovieClip();
+			_displayMasker.graphics.beginFill(_player.config.screencolor, 1);
+			_displayMasker.graphics.drawRect(0, 0, _player.config.width, _player.config.height);
+			_displayMasker.graphics.endFill();
+			
+			_backgroundLayer.mask = _displayMasker;
+			_imageLayer.mask = _displayMasker;
+			_mediaLayer.mask = _displayMasker;
+		}
+
 		private function setupLayer(name:String, index:Number):MovieClip {
 			var layer:MovieClip = new MovieClip();
 			_root.addChildAt(layer, index);
@@ -109,8 +129,6 @@ package com.longtailvideo.jwplayer.view {
 		private function resizeHandler(event:Event):void {
 			var width:Number = RootReference.stage.stageWidth;
 			var height:Number = RootReference.stage.stageHeight;
-			_backgroundLayer.getChildByName("background").width = width;
-			_backgroundLayer.getChildByName("background").height = height;
 
 			var layoutManager:PlayerLayoutManager = new PlayerLayoutManager(_player);
 			layoutManager.resize(width, height);
@@ -157,13 +175,16 @@ package com.longtailvideo.jwplayer.view {
 		public function redraw():void {
 			_components.resize(_player.config.width, _player.config.height);
 
+			resizeBackground();
+			resizeMasker();
+
 			if (_imageLayer.numChildren) {
 				_imageLayer.x = _components.display.x;
 				_imageLayer.y = _components.display.y;
 				Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
 			}
 			
-			if (_mediaLayer.numChildren) {
+			if (_mediaLayer.numChildren && _model.media.display) {
 				_mediaLayer.x = _components.display.x;
 				_mediaLayer.y = _components.display.y;
 				_model.media.resize(_player.config.width, _player.config.height);
@@ -188,6 +209,23 @@ package com.longtailvideo.jwplayer.view {
 				}
 			}
 			PlayerV4Emulation.getInstance().resize(_player.config.width, _player.config.height);
+		}
+
+		private function resizeBackground():void {
+			var bg:DisplayObject = _backgroundLayer.getChildByName("background"); 
+			bg.width = _player.config.width;
+			bg.height = _player.config.height;
+			bg.x = _components.display.x;
+			bg.y = _components.display.y;
+		}
+
+		private function resizeMasker():void {
+			if (_displayMasker == null) setupDisplayMask();
+			
+			_displayMasker.x = _components.display.x;
+			_displayMasker.y = _components.display.y;
+			_displayMasker.width = _player.config.width;
+			_displayMasker.height = _player.config.height;
 		}
 
 		public function get components():PlayerComponents {
@@ -236,12 +274,10 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		private function mediaLoaded(evt:MediaEvent):void {
-
-			_model.media.resize(_player.config.width, _player.config.height);
-
 			_mediaLayer.x = _components.display.x;
 			_mediaLayer.y = _components.display.y;
 			if (_model.media.display) {
+				_model.media.resize(_player.config.width, _player.config.height); 
 				_mediaLayer.addChild(_model.media.display);
 			}
 		}

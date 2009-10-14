@@ -17,11 +17,15 @@ package com.longtailvideo.jwplayer.plugins {
 		}
 
 		public function initPlugin(player:Player, config:PluginConfig):void {
+			if ((plug as Object).hasOwnProperty('config')) {
+				(plug as Object).config = config;
+			}
 			plug.initializePlugin(PlayerV4Emulation.getInstance());
 		}
 		
 		public function resize(width:Number, height:Number):void {
-			
+			(plug as DisplayObject).x = 0;
+			(plug as DisplayObject).y = 0;
 		}
 
 	}

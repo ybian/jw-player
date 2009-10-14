@@ -72,6 +72,7 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.queueTask(loadConfig, loadConfigComplete);
 			tasker.queueTask(loadSkin, loadSkinComplete);
 			tasker.queueTask(setupMediaProviders);
+			tasker.queueTask(rightClickMenu);
 			tasker.queueTask(loadPlugins, loadPluginsComplete);
 			tasker.queueTask(loadPlaylist);
 			tasker.queueTask(initPlugins);
@@ -153,6 +154,11 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function setupMediaProviders():void {
 			_model.setupMediaProviders();
+			tasker.success();
+		}
+		
+		private function rightClickMenu():void {
+			_view.setupRightclick();
 			tasker.success();
 		}
 
