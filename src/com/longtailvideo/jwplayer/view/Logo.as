@@ -17,7 +17,7 @@ package com.longtailvideo.jwplayer.view {
 	public class Logo extends MovieClip {
 		/** Configuration defaults **/
 		private var defaults:Object = {
-			file: "http://developer.longtailvideo.com/trac/chrome/site/logo.gif", 
+			file: "http://logo.longtailvideo.com.s3.amazonaws.com/logo.png", 
 			link: "http://www.longtailvideo.com/players/jw-flv-player/", 
 			margin: 10, 
 			out: 0.5, 
@@ -52,8 +52,8 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Logo loaded - add to display **/
 		private function loaderHandler(evt:Event):void {
+			visible = false;
 			addChild(loader);
-			show();
 		}
 		
 		
@@ -88,6 +88,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Fade in **/
 		private function show():void {
+			visible = true;
 			animations.fade(getConfigParam('out'), 0.1);
 			timeout = setTimeout(hide, getConfigParam('timeout') * 1000);
 			mouseEnabled = true;

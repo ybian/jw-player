@@ -137,6 +137,7 @@ package com.longtailvideo.jwplayer.view {
 			setupComponent(_components.display, 0);
 			setupComponent(_components.controlbar, 1);
 			setupComponent(_components.playlist, 2);
+			//setupComponent(_components.dock, 3);
 		}
 		
 		private function setupComponent(component:IPlayerComponent, index:Number):void {
@@ -170,7 +171,7 @@ package com.longtailvideo.jwplayer.view {
 
 			if (_logoLayer.numChildren) {
 				_logo.resize(_components.display.width, _components.display.height);
-				_logoLayer.x = _components.display.width - _logoLayer.width;
+				_logoLayer.x = 0;
 				_logoLayer.y = _components.display.height - _logoLayer.height;
 			}
 			
