@@ -229,7 +229,7 @@ package com.longtailvideo.jwplayer.model {
 			else return _controlbar;
 		}
 		public function set controlbar(x:String):void { 
-			setPluginProperty('controlbar.position', x); 
+			setPluginProperty('controlbar.position', x.toLowerCase()); 
 		}
 
 		/** Set this to true to show the dock with large buttons in the top right of the player. Available since 4.5.  @default true **/
@@ -255,7 +255,7 @@ package com.longtailvideo.jwplayer.model {
 			else return _playlist;
 		}
 		public function set playlist(x:String):void { 
-			setPluginProperty('playlist.position', x); 
+			setPluginProperty('playlist.position', x.toLowerCase()); 
 		}
 
 		/** When below this refers to the height, when right this refers to the width of the playlist. @default 180 **/

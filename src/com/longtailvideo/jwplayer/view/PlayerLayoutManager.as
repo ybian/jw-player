@@ -13,7 +13,6 @@ package com.longtailvideo.jwplayer.view {
 		public static var BOTTOM:String = "bottom";  
 		public static var NONE:String = "none";  
 	
-	
 		private var _player:Player;
 	
 		private var toLayout:Array;
@@ -52,7 +51,7 @@ package com.longtailvideo.jwplayer.view {
 			}
 		}
 
-		public function testPosition(pos:String):String {
+		public static function testPosition(pos:String):String {
 			if (!pos) { return ""; }
 			
 			switch (pos.toLowerCase()) {

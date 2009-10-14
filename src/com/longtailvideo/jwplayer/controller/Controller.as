@@ -270,11 +270,8 @@ package com.longtailvideo.jwplayer.controller {
 			if (_model.playlist.currentIndex == _model.playlist.length-1) { 
 				return false;
 			} else {
-				var previousState:String = _player.state;
 				_player.playlist.currentIndex = _player.playlist.currentIndex+1;
-				if (previousState == PlayerState.PLAYING) {
-					play();
-				}
+				play();
 				return true;
 			} 
 		}
@@ -283,22 +280,16 @@ package com.longtailvideo.jwplayer.controller {
 			if (_model.playlist.currentIndex <= 0) {
 				return false;
 			} else {
-				var previousState:String = _player.state;
 				_player.playlist.currentIndex = _player.playlist.currentIndex-1;
-				if (previousState == PlayerState.PLAYING) {
-					play();
-				}
+				play();
 				return true;
 			}
 		}
 		
 		public function setPlaylistIndex(index:Number):Boolean {
-			if (0 <= index < _player.playlist.length) {
-				var previousState:String = _player.state;
+			if (0 <= index && index < _player.playlist.length) {
 				_player.playlist.currentIndex = index;
-				if (previousState == PlayerState.PLAYING) {
-					play();
-				}
+				play();
 				return true;
 			}
 			return false;

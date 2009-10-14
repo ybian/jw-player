@@ -9,6 +9,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Stacker;
 	import com.longtailvideo.jwplayer.utils.Stretcher;
 	import com.longtailvideo.jwplayer.utils.Strings;
+	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	
 	import flash.display.DisplayObject;
@@ -325,10 +326,12 @@ package com.longtailvideo.jwplayer.view.components {
 			clip.back.width = width;
 			clip.back.height =  height;
 			buildPlaylist(false);
-			if (config['position'] == 'over' || _player.fullscreen) {
+			if (config['position'] == 'over') {
 				stateHandler();
-			} else {
+			} else if (PlayerLayoutManager.testPosition(config['position'])) {
 				clip.visible = true;
+			} else {
+				clip.visible = false;
 			}
 		}
 		
@@ -382,7 +385,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Process state changes **/
 		protected function stateHandler(evt:PlayerStateEvent = null):void {
-			if (config['position'] == 'over' || _player.fullscreen) {
+			if (config['position'] == 'over') {
 				if (player.state == PlayerState.PLAYING || player.state == PlayerState.PAUSED || player.state == PlayerState.BUFFERING) {
 					visible = false;
 				} else {
