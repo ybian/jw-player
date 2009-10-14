@@ -1,9 +1,12 @@
 package com.longtailvideo.jwplayer.view.components {
-	import com.jeroenwijering.events.ControllerEvent;
+	import com.jeroenwijering.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
+	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
+	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	import flash.display.DisplayObject;
@@ -12,8 +15,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	import flash.display.Sprite;
-	import com.longtailvideo.jwplayer.utils.Strings;
 	
 	
 	/**
@@ -93,33 +94,20 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		private function addEventListeners():void {
-			player.addEventListener(ControllerEvent.PLAYLIST, controllerHandler);
-			player.addEventListener(ControllerEvent.PLAY, controllerHandler);
-			player.addEventListener(ControllerEvent.ITEM, controllerHandler);
-			player.addEventListener(ControllerEvent.STOP, controllerHandler);
-			player.addEventListener(ControllerEvent.MUTE, controllerHandler);
-			player.addEventListener(ControllerEvent.VOLUME, controllerHandler);
+			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistHandler);
+			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, playlistHandler);
+			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistHandler);
+			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, updateControlbarState);
+			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, updateControlbarState);
+			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, updateControlbarState);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, mediaHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, mediaHandler);
 		}
 		
 		
-		private function controllerHandler(evt:ControllerEvent):void {
-			switch (evt.type) {
-				case ViewEvent.JWPLAYER_VIEW_VOLUME:
-					var volume:Slider = getButton('volume') as Slider;
-					volume.setProgress(evt.data as Number);
-					break;
-				case ControllerEvent.ITEM:
-					resetSlider();
-					break;
-				case ControllerEvent.STOP:
-					resetSlider();
-					break;
-				default:
-					updateControlbarState();
-					break;
-			}
+		private function playlistHandler(evt:PlaylistEvent):void {
+			resetSlider();
+			updateControlbarState();
 		}
 		
 		private function resetSlider():void {
@@ -127,7 +115,7 @@ package com.longtailvideo.jwplayer.view.components {
 			scrubber.reset();
 		}
 		
-		private function updateControlbarState():void {
+		private function updateControlbarState(evt:PlayerEvent = null):void {
 			var newLayout:String = _defaultLayout;
 			if (player.state == PlayerState.PAUSED){
 				newLayout = newLayout.replace('play', 'pause');
