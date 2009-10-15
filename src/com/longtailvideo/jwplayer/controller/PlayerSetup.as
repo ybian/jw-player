@@ -196,12 +196,13 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function loadPlaylist():void {
+			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, tasker.success);
+			_model.playlist.addEventListener(ErrorEvent.ERROR, tasker.failure);
+
 			if (_model.config.playlistfile) {
-				_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, tasker.success);
-				_model.playlist.addEventListener(ErrorEvent.ERROR, tasker.failure);
 				_model.playlist.load(_model.config.playlistfile);
 			} else {
-				tasker.success();
+				_model.playlist.load(_model.config.singleItem);
 			}
 		}
 

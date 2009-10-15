@@ -13,7 +13,8 @@ package com.longtailvideo.jwplayer.model {
 	 */
 	public dynamic class PlayerConfig extends EventDispatcher {
 		/** Internal playlist reference **/
-		private var _list:Playlist;
+//		private var _list:Playlist;
+		private var _singleItem:PlaylistItem;
 
 		private var _playlistfile:String	= null;
 
@@ -51,31 +52,33 @@ package com.longtailvideo.jwplayer.model {
 		
 		private var _playerready:String		= "";
 		
-		public function PlayerConfig(newlist:Playlist):void {
+		public function PlayerConfig():void {
 			controlbar = _controlbar;
 			playlist = _playlist;
 			playlistsize = _playlistsize;
-			setPlaylist(newlist);
+//			_list = newlist;
+//			setPlaylist(newlist);
 			
 			//Unsupported config variables
 			this['aboutlink'] = "http://www.longtailvideo.com/players/jw-flv-player/";
 		}
 		
+/*		
 		public function setPlaylist(list:Playlist):void {
 			_list = list;
 		}
-		
+*/		
 		public function setConfig(config:Object):void {
-			var newItem:PlaylistItem = new PlaylistItem();
 			var playlistItems:Boolean = false;
+			if (!_singleItem) { _singleItem = new PlaylistItem(); }
 			for (var item:String in config) {
-				if (newItem.hasOwnProperty(item)) {
+				if (_singleItem.hasOwnProperty(item)) {
 					if (item == "file" && Strings.extension(config[item]) == "xml") {
 						setProperty("playlistfile", config[item]);					
-					} else if (_list.length > 0) {
-						_list.currentItem[item] = config[item];
+//					} //else if (_list.length > 0) {
+//						_list.currentItem[item] = config[item];
 					} else {
-						newItem[item] = config[item];
+						_singleItem[item] = config[item];
 						playlistItems = true;
 					}
 				} else if (item.indexOf(".") > 0) {
@@ -84,9 +87,9 @@ package com.longtailvideo.jwplayer.model {
 					setProperty(item, config[item]);
 				}
 			}
-			if (playlistItems && _list.length == 0) {
-				_list.insertItem(newItem, 0);
-			}
+//			if (playlistItems && _list.length == 0) {
+//				_list.insertItem(newItem, 0);
+//			}
 		}
 		
 		private function setProperty(name:String, value:String):void {
@@ -124,7 +127,8 @@ package com.longtailvideo.jwplayer.model {
 		 */
 		private function playlistItem(key:String):String {
 			try {
-				return _list.currentItem[key].toString();
+//				return _list.currentItem[key].toString();
+				return _singleItem[key].toString();
 			} catch (e:Error) {
 			}
 
@@ -193,6 +197,9 @@ package com.longtailvideo.jwplayer.model {
 
 		/** Deprecated.  Use "provider" flashvar. **/
 		public function get type():String { return playlistItem('provider'); }
+
+		/** PlaylistItem representing single-item playlist based on flashvars (e.g. config[file], config[image], etc. **/
+		public function get singleItem():PlaylistItem { return _singleItem; }
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// LAYOUT PROPERTIES

@@ -61,10 +61,11 @@ package com.longtailvideo.jwplayer.model {
 		/** Constructor **/
 		public function Model() {
 			_playlist = new Playlist();
-			_config = new PlayerConfig(_playlist);
+			_config = new PlayerConfig();
 
 			_playlist.addGlobalListener(forwardEvents);
 
+			_mediaSources = {};
 			//TODO: Set initial mute state based on user configuration
 		}
 
@@ -116,7 +117,6 @@ package com.longtailvideo.jwplayer.model {
 		}
 
 		public function setupMediaProviders():void {
-			_mediaSources = {};
 			setMediaProvider('default', new MediaProvider());
 			setMediaProvider('video', new VideoMediaProvider());
 			setMediaProvider('http', new HTTPMediaProvider());

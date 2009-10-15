@@ -35,7 +35,7 @@ package tests.config {
 		
 		[Before]
 		public function setup():void {
-			config = new PlayerConfig(new Playlist());
+			config = new PlayerConfig();
 		} 
 		
 		[Test]

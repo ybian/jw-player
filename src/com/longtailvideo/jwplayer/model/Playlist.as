@@ -56,8 +56,7 @@ package com.longtailvideo.jwplayer.model {
 		/**
 		 * Replaces all playlist items
 		 *  
-		 * @param newPlaylist May be an Array of PlaylistItems or structured Objects, or another Playlist 
-		 * 
+		 * @param newPlaylist May be an Array of PlaylistItems or structured Objects, a PlaylistItem, or another Playlist 
 		 */
 		public function load(newPlaylist:Object):void {
 			var newList:Array = [];
@@ -73,6 +72,8 @@ package com.longtailvideo.jwplayer.model {
 						}
 					} catch (e:Error) {}
 				}
+			} else if (newPlaylist is PlaylistItem) {
+				newList.push(newPlaylist); 
 			} else if (newPlaylist is Playlist) {
 				for (i = 0; i < (newPlaylist as Playlist).length; i++) {
 					newList.push((newPlaylist as Playlist).getItemAt(i));
