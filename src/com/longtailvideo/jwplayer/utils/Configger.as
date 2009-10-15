@@ -68,33 +68,31 @@ package com.longtailvideo.jwplayer.utils {
 				for (var param:String in params) {
 					setConfigParam(param, params[param]);
 				}
+				loadCookies();
 				dispatchEvent(new Event(Event.COMPLETE));
 			} catch (e:Error) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
-
 			}
 		}
 
-		public function saveCookie(param:String, value:*):void {
+		public static function saveCookie(param:String, value:*):void {
 			try {
-				var cookie:SharedObject = SharedObject.getLocal('com.longtailvideo.jwplayer5','/');
+				var cookie:SharedObject = SharedObject.getLocal('com.jeroenwijering','/');
 				cookie.data[param] = value;
 				cookie.flush();
 			} catch (err:Error) {}
 		}
 
 		private function loadCookies():void {
-			var cookie:SharedObject = SharedObject.getLocal('com.longtailvideo.jwplayer5','/');
+			var cookie:SharedObject = SharedObject.getLocal('com.jeroenwijering','/');
 			writeCookieData(cookie.data);
 		}
 
 		/** Overwrite cookie data. **/ 
 		private function writeCookieData(obj:Object):void {
-			var cookieVars:Object = {};
 			for (var cfv:String in obj) {
-				cookieVars[cfv.toLowerCase()] = Strings.serialize(obj[cfv]);
+				setConfigParam(cfv.toLowerCase(), obj[cfv]); 
 			}
-			loadFlashvars(cookieVars);
 		}
 
 		private function loadComplete(evt:Event):void {
@@ -105,7 +103,6 @@ package com.longtailvideo.jwplayer.utils {
 			} else {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, "Config was empty"));
 			}
-//			loadCookies();
 		}
 
 		private function xmlFail(evt:ErrorEvent):void {
@@ -131,7 +128,7 @@ package com.longtailvideo.jwplayer.utils {
 		}
 		
 		private function setConfigParam(name:String, value:String):void {
-			_config[name.toLowerCase()] = value;
+			_config[name.toLowerCase()] = Strings.serialize(value);
 		}
 
 	}

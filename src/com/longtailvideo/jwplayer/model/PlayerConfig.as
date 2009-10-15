@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
+	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	
@@ -51,7 +52,6 @@ package com.longtailvideo.jwplayer.model {
 		private var _playerready:String		= "";
 		
 		public function PlayerConfig(newlist:Playlist):void {
-			getCookiedParams();
 			controlbar = _controlbar;
 			playlist = _playlist;
 			playlistsize = _playlistsize;
@@ -116,14 +116,6 @@ package com.longtailvideo.jwplayer.model {
 				}
 				_pluginConfig[pluginName][pluginProperty] = TypeChecker.fromString(value);
 			}
-		}
-
-		/**
-		 * Loads cookied values and overwrites default properties.
-		 */
-		private function getCookiedParams():void {
-			// TODO: Implement flash cookies
-			return;
 		}
 
 		/**
@@ -379,8 +371,8 @@ package com.longtailvideo.jwplayer.model {
 			return names;
 		}
 		
-		public function setCookie(name:String, value:String):void {
-			
+		public function setCookie(name:String, value:*):void {
+			Configger.saveCookie(name, value);			
 		}
 
 	}
