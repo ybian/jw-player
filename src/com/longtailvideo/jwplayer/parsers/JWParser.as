@@ -56,10 +56,14 @@ package com.longtailvideo.jwplayer.parsers {
 		}
 		
 		public static function updateProvider(item:Object):void {
-			if (!item.hasOwnProperty('provider') && item.hasOwnProperty('file')) {
-				var ext:String = Strings.extension(item['file']);
-				if (extensions.hasOwnProperty(ext)) {
-					item['provider'] = extensions[ext];
+			if (!item['provider'] && item['file']) {
+				if (item['file'].indexOf('youtube.com/w')) {
+					item['provider'] = "youtube";
+				} else {
+					var ext:String = Strings.extension(item['file']);
+					if (extensions.hasOwnProperty(ext)) {
+						item['provider'] = extensions[ext];
+					}
 				}
 			}
 		}

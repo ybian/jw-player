@@ -42,7 +42,7 @@
 	-->
 	<target name="clean-release">
 		<delete dir="${release.dir}">
-		    <include name="*.swf"/>
+		    <include name="player.swf"/>
 		</delete>
 	</target>
 

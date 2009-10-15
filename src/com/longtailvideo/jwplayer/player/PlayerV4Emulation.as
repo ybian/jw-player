@@ -250,7 +250,7 @@ package com.longtailvideo.jwplayer.player {
 					_player.link(Number(prm['index']));
 					break;
 				case com.jeroenwijering.events.ViewEvent.LOAD:
-					_player.load(prm['object']);
+					_player.load(prm);
 					break;
 				case com.jeroenwijering.events.ViewEvent.MUTE:
 					_player.mute = prm['state'];
