@@ -74,15 +74,9 @@ package com.longtailvideo.jwplayer.view {
 
 			layoutManager = new PlayerLayoutManager(_player);
 		}
-		
-		public function setupRightclick():void {
-			var menu:RightclickMenu = new RightclickMenu(_model, _root);
-			menu.addGlobalListener(forward);
-		}
 
 		private function setupLayers():void {
 			_backgroundLayer = setupLayer("background", 0);
-			setupBackground();
 
 			_mediaLayer = setupLayer("media", 1);
 
@@ -98,6 +92,12 @@ package com.longtailvideo.jwplayer.view {
 			_logoLayer.addChild(_logo);
 
 			_pluginsLayer = setupLayer("plugins", 5);
+		}
+
+		public function setupView():void {
+			var menu:RightclickMenu = new RightclickMenu(_model, _root);
+			menu.addGlobalListener(forward);
+			setupBackground();
 		}
 
 		private function setupBackground():void {

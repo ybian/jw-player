@@ -158,7 +158,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 		
 		private function rightClickMenu():void {
-			_view.setupRightclick();
+			_view.setupView();
 			tasker.success();
 		}
 
