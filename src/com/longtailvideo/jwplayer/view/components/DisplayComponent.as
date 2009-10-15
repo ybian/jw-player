@@ -13,7 +13,10 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.geom.ColorTransform;
 	import flash.text.GridFitType;
 	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;	
+	import flash.text.TextFieldAutoSize;
+	import mx.controls.TextArea;
+	import flash.text.TextFormatAlign;
+	import flash.text.TextFormat;	
 	
 	public class DisplayComponent extends CoreComponent implements IDisplayComponent {
 		protected var _icon:DisplayObject;
@@ -48,9 +51,8 @@ package com.longtailvideo.jwplayer.view.components {
 			_text = new TextField();
 			var textColorTransform:ColorTransform = new ColorTransform();
 			textColorTransform.color = player.config.frontcolor;
-			text.transform.colorTransform = textColorTransform
+			text.transform.colorTransform = textColorTransform;
 			text.gridFitType = GridFitType.NONE;
-			text.autoSize = TextFieldAutoSize.LEFT;
 			addChildAt(text,2);
 		}
 		
@@ -76,20 +78,24 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 
 		private function positionIcon():void {
-			icon.x = width / 2;
-			icon.y = height / 2;
+			icon.x = (background.scaleX - icon.width) / 2;
+			icon.y = (background.scaleY) / 2 - icon.height;
 		}
 		
 		public function setText(displayText:String):void {
-			if (!displayText){
-				text.text = '';
-			}
+			text.text = displayText ? displayText : '';
 			positionText();
 		}
 		
 		private function positionText():void {
-			text.x = (width - text.width - 60) / 2;
-			text.y =  (height - icon.height / 2) / 2;
+			if (text.width > background.scaleX * .75){
+				text.width = background.scaleX * .75;
+				text.wordWrap = true;
+			} else {
+				text.autoSize = TextFormatAlign.CENTER;
+			}
+			text.x = (background.scaleX - text.textWidth) / 2;
+			text.y = (background.scaleY + text.height) / 2;
 		}
 		
 		protected function setDisplay(displayIcon:DisplayObject, displayText:String = null):void {

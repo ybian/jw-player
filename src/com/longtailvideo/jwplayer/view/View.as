@@ -77,7 +77,8 @@ package com.longtailvideo.jwplayer.view {
 
 		private function setupLayers():void {
 			_backgroundLayer = setupLayer("background", 0);
-
+			setupBackground();
+			
 			_mediaLayer = setupLayer("media", 1);
 
 			_imageLayer = setupLayer("image", 2);
@@ -97,7 +98,6 @@ package com.longtailvideo.jwplayer.view {
 		public function setupView():void {
 			var menu:RightclickMenu = new RightclickMenu(_model, _root);
 			menu.addGlobalListener(forward);
-			setupBackground();
 		}
 
 		private function setupBackground():void {
@@ -145,14 +145,14 @@ package com.longtailvideo.jwplayer.view {
 			}
 		}
 
-		//TODO: I think plugins and components have to go on the same level, otherwise the component layer will simply go over 
 		private function setupComponents():void {
 			_components = new PlayerComponents(_player);
 			
-			setupComponent(_components.display, 0);
-			setupComponent(_components.controlbar, 1);
-			setupComponent(_components.playlist, 2);
+			setupComponent(_components.playlist, 0);
+			setupComponent(_components.display, 1);
+			setupComponent(_components.controlbar, 2);
 			setupComponent(_components.dock, 3);
+			redraw();
 		}
 		
 		private function setupComponent(component:IPlayerComponent, index:Number):void {
