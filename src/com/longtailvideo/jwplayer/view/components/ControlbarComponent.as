@@ -137,15 +137,6 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		
-		private function swapButtons(button1:String, button2:String):void {
-			var tempButton:DisplayObject = getButton(button1);
-			addButton(button1, getButton(button2));
-			addButton(button2, tempButton);
-			tempButton = null;
-			resize(width, height);
-		}
-		
-		
 		private function mediaHandler(evt:MediaEvent):void {
 			var scrubber:Slider = getButton('time') as Slider;		
 			switch (evt.type) {
@@ -216,7 +207,7 @@ package com.longtailvideo.jwplayer.view.components {
 			addSlider('volume', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
 			addTextField('elapsed', getFont(getSkinElement("controlbar","elapsedText") as TextField));
 			addTextField('duration', getFont(getSkinElement("controlbar","totalText") as TextField));
-			addButton('divider', getSkinElement("controlbar", "divider"));
+			addButton(getSkinElement("controlbar", "divider"), 'divider');
 		}
 		
 		
@@ -225,7 +216,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (outIcon) {
 				var button:ComponentButton = new ComponentButton(outIcon, event, eventData, player.config.lightcolor, player.config.backcolor, getSkinElement("controlbar", name + "ButtonBack"), getSkinElement("controlbar", name + "ButtonOver"), text);
 				button.addEventListener(event, forward);
-				addButton(name, button);
+				addButton(button, name);
 			}
 		}
 		
@@ -233,7 +224,7 @@ package com.longtailvideo.jwplayer.view.components {
 		private function addSlider(name:String, orientation:String, event:String, callback:Function):void {
 			var slider:Slider = new Slider(getSkinElement("controlbar", name + "SliderRail"), getSkinElement("controlbar", name + "SliderBuffer"), getSkinElement("controlbar", name + "SliderProgress"), getSkinElement("controlbar", name + "SliderThumb"), orientation);
 			slider.addEventListener(event, callback);
-			addButton(name, slider);
+			addButton(slider, name);
 		}
 		
 		private function addTextField(name:String, font:String):void {
@@ -245,7 +236,7 @@ package com.longtailvideo.jwplayer.view.components {
 			textField.setTextFormat(textFormat);
 			textField.selectable = false;
 			textField.autoSize = TextFieldAutoSize.LEFT;
-			addButton(name, textField);
+			addButton(textField, name);
 		}
 		
 		
@@ -270,7 +261,7 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		
-		public function addButton(name:String, icon:DisplayObject, handler:Function = null):void {
+		public function addButton(icon:DisplayObject, name:String, handler:Function = null):void {
 			//TODO: Add button + handler
 			if (icon) {
 				icon.name = name;

@@ -60,6 +60,12 @@ package com.longtailvideo.jwplayer.view.skins {
 		}
 		
 		public override function getSkinElement(component:String, element:String):DisplayObject {
+			// Hack for the error icon
+			if (component == 'display' && element == 'errorIcon') {
+				if (super.getSkinElement(component, 'errorIcon')['icn']){
+					return super.getSkinElement(component, 'errorIcon')['icn'];
+				}
+			}
 			return super.getSkinElement(component, element);
 		}
 		

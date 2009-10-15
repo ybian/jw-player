@@ -100,7 +100,7 @@ package com.longtailvideo.jwplayer.view.components {
 		 * @param nam	Name of the button
 		   getSkinElement('* @param hdl	The function to call when clicking the Button').
 		 **/
-		public function addButton(name:String, icon:DisplayObject, handler:Function = null):void {
+		public function addButton(icon:DisplayObject, name:String, handler:Function = null):void {
 			if (getSkinElement('linkButton') && getSkinElementChild('linkButton', 'back')) {
 				var btn:* = Draw.clone(getSkinElement('linkButton') as Sprite);
 				btn.name = name + 'Button';
