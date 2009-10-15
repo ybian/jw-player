@@ -54,6 +54,8 @@ package com.longtailvideo.jwplayer.view {
 		private var _image:Loader;
 		private var _logo:Logo;
 
+		private var layoutManager:PlayerLayoutManager;
+		 
 		public function View(player:Player, model:Model) {
 			_player = player;
 			_model = model;
@@ -70,6 +72,7 @@ package com.longtailvideo.jwplayer.view {
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			_model.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 
+			layoutManager = new PlayerLayoutManager(_player);
 		}
 		
 		public function setupRightclick():void {
@@ -127,12 +130,6 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		private function resizeHandler(event:Event):void {
-			var width:Number = RootReference.stage.stageWidth;
-			var height:Number = RootReference.stage.stageHeight;
-
-			var layoutManager:PlayerLayoutManager = new PlayerLayoutManager(_player);
-			layoutManager.resize(width, height);
-
 			redraw();
 
 			var currentFSMode:Boolean = (RootReference.stage.displayState == StageDisplayState.FULL_SCREEN);
@@ -173,6 +170,8 @@ package com.longtailvideo.jwplayer.view {
 
 		/** Redraws the plugins and player components **/
 		public function redraw():void {
+			layoutManager.resize(RootReference.stage.stageWidth, RootReference.stage.stageHeight);
+
 			_components.resize(_player.config.width, _player.config.height);
 
 			resizeBackground();

@@ -4,15 +4,16 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Strings;
+	import com.longtailvideo.jwplayer.view.View;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	import com.longtailvideo.jwplayer.view.skins.DefaultSkin;
 	import com.longtailvideo.jwplayer.view.skins.PNGSkin;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	import com.longtailvideo.jwplayer.view.skins.SkinProperties;
-	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.display.DisplayObject;
 	import flash.events.ErrorEvent;
@@ -20,7 +21,6 @@ package com.longtailvideo.jwplayer.controller {
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 
 	/**
 	 * Sent when the all of the setup steps have successfully completed.
@@ -182,6 +182,13 @@ package com.longtailvideo.jwplayer.controller {
 					if (plugin is IPlugin) {
 						_view.addPlugin(pluginName, plugin as IPlugin);
 					} else if (plugin is PluginInterface) {
+						if ( (plugin as Object).hasOwnProperty('config') ) {
+							var loadedConf:Object = (plugin as Object).config;
+							var pluginConf:PluginConfig = _model.config.pluginConfig(pluginName);
+							for (var i:String in loadedConf) {
+								if (!pluginConf.hasOwnProperty(i)) pluginConf[i] = loadedConf[i];
+							}
+						}
 						_view.addPlugin(pluginName, new V4Plugin(plugin as PluginInterface, pluginName));
 					}
 				}
