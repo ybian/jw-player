@@ -19,7 +19,7 @@ package com.longtailvideo.jwplayer.view {
 		private var defaults:Object = {
 			file: "http://logo.longtailvideo.com.s3.amazonaws.com/logo.png", 
 			link: "http://www.longtailvideo.com/players/jw-flv-player/", 
-			margin: 10, 
+			margin: 8, 
 			out: 0.5, 
 			over: 1, 
 			state: false, 
@@ -34,9 +34,15 @@ package com.longtailvideo.jwplayer.view {
 		/** Animations handler **/
 		private var animations:Animations;
 		
+		/** Dimensions **/
+		private var _width:Number;
+		private var _height:Number;
+		
 		/** Constructor **/
 		public function Logo(player:Player) {
 			super();
+			this.buttonMode = true;
+			this.mouseChildren = false;
 			animations = new Animations(this);
 			_player = player;
 			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
@@ -54,6 +60,7 @@ package com.longtailvideo.jwplayer.view {
 		private function loaderHandler(evt:Event):void {
 			visible = false;
 			addChild(loader);
+			resize(_width, _height);
 		}
 		
 		
@@ -104,8 +111,10 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Resizes the logo **/
 		public function resize(width:Number, height:Number):void {
-			//loader.width = width;
-			//loader.height = height;
+			_width = width;
+			_height = height;
+			loader.x = defaults['margin'];
+			loader.y = _height - loader.height - defaults['margin'];
 		}
 		
 		

@@ -190,9 +190,9 @@ package com.longtailvideo.jwplayer.view {
 			}
 
 			if (_logoLayer.numChildren) {
-				_logo.resize(_components.display.width, _components.display.height);
-				_logoLayer.x = 0;
-				_logoLayer.y = _components.display.height - _logoLayer.height;
+				_logoLayer.x = _components.display.x;
+				_logoLayer.y = _components.display.y;
+				_logo.resize(_player.config.width, _player.config.height);
 			}
 			
 			for (var i:Number = 0; i < _pluginsLayer.numChildren; i++) {
