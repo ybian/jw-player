@@ -57,7 +57,7 @@ package com.longtailvideo.jwplayer.parsers {
 		
 		public static function updateProvider(item:Object):void {
 			if (!item['provider'] && item['file']) {
-				if (item['file'].indexOf('youtube.com/w')) {
+				if (item['file'].indexOf('youtube.com/w') > -1) {
 					item['provider'] = "youtube";
 				} else {
 					var ext:String = Strings.extension(item['file']);
