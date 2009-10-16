@@ -78,8 +78,12 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 
 		private function positionIcon():void {
-			icon.x = (background.scaleX - icon.width) / 2;
-			icon.y = (background.scaleY) / 2 - icon.height;
+			icon.x = background.scaleX / 2;
+			if (text.text != ''){
+				icon.y = (background.scaleY - icon.height) / 2 ;
+			} else {
+				icon.y = (background.scaleY) / 2 ;
+			}
 		}
 		
 		public function setText(displayText:String):void {
@@ -99,8 +103,8 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		protected function setDisplay(displayIcon:DisplayObject, displayText:String = null):void {
-			setIcon(displayIcon);
 			setText(displayText);
+			setIcon(displayIcon);
 		}
 		
 		protected function clearDisplay():void {

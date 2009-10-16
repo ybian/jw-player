@@ -8,6 +8,7 @@ package com.longtailvideo.jwplayer.view.skins {
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
+	import com.longtailvideo.jwplayer.utils.Draw;
 
 	public class SWFSkin extends SkinBase implements ISkin {
 		
@@ -63,7 +64,16 @@ package com.longtailvideo.jwplayer.view.skins {
 			// Hack for the error icon
 			if (component == 'display' && element == 'errorIcon') {
 				if (super.getSkinElement(component, 'errorIcon')['icn']){
-					return super.getSkinElement(component, 'errorIcon')['icn'];
+					var errorButton:Sprite = Draw.clone(super.getSkinElement('display','playIcon') as Sprite) as Sprite;
+					errorButton.removeChild(errorButton['icn']);
+					errorButton.x = 0;
+					errorButton.y = 0;
+					var errorIcon:Sprite = super.getSkinElement(component, 'errorIcon')['icn'];
+					errorButton.addChild(errorIcon);
+					var errorButttonBackground:DisplayObject = errorButton.getChildAt(0);
+					errorIcon.x = errorButttonBackground.x + (errorButttonBackground.width - errorIcon.width) / 2;
+					errorIcon.y = errorButttonBackground.y + (errorButttonBackground.height - errorIcon.height) / 2;
+					return errorButton;
 				}
 			}
 			return super.getSkinElement(component, element);
