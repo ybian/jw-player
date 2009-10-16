@@ -62,8 +62,21 @@ package com.longtailvideo.jwplayer.view {
 
 			_root = new MovieClip();
 			RootReference.stage.addChildAt(_root, 0);
+		}
 
+		public function get skin():ISkin {
+			return _skin;
+		}
+
+
+		public function set skin(skn:ISkin):void {
+			_skin = skn;
+		}
+		
+		public function setupView():void {
 			setupLayers();
+			setupComponents();
+
 			RootReference.stage.scaleMode = StageScaleMode.NO_SCALE;
 			RootReference.stage.stage.align = StageAlign.TOP_LEFT;
 			RootReference.stage.addEventListener(Event.FULLSCREEN, resizeHandler);
@@ -73,8 +86,10 @@ package com.longtailvideo.jwplayer.view {
 			_model.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 
 			layoutManager = new PlayerLayoutManager(_player);
+			var menu:RightclickMenu = new RightclickMenu(_model, _root);
+			menu.addGlobalListener(forward);
 		}
-
+		
 		private function setupLayers():void {
 			_backgroundLayer = setupLayer("background", 0);
 			setupBackground();
@@ -95,15 +110,19 @@ package com.longtailvideo.jwplayer.view {
 			_pluginsLayer = setupLayer("plugins", 5);
 		}
 
-		public function setupView():void {
-			var menu:RightclickMenu = new RightclickMenu(_model, _root);
-			menu.addGlobalListener(forward);
+		private function setupLayer(name:String, index:Number):MovieClip {
+			var layer:MovieClip = new MovieClip();
+			_root.addChildAt(layer, index);
+			layer.name = name;
+			layer.x = 0;
+			layer.y = 0;
+			return layer;
 		}
 
 		private function setupBackground():void {
 			var background:MovieClip = new MovieClip();
 			background.name = "background";
-			_backgroundLayer.addChildAt(background, 0);
+			_backgroundLayer.addChild(background);
 			background.graphics.beginFill(_player.config.screencolor, 1);
 			background.graphics.drawRect(0, 0, 1, 1);
 			background.graphics.endFill();
@@ -119,16 +138,22 @@ package com.longtailvideo.jwplayer.view {
 			_imageLayer.mask = _displayMasker;
 			_mediaLayer.mask = _displayMasker;
 		}
-
-		private function setupLayer(name:String, index:Number):MovieClip {
-			var layer:MovieClip = new MovieClip();
-			_root.addChildAt(layer, index);
-			layer.name = name;
-			layer.x = 0;
-			layer.y = 0;
-			return layer;
+		
+		private function setupComponents():void {
+			_components = new PlayerComponents(_player);
+			
+			setupComponent(_components.playlist, 0);
+			setupComponent(_components.display, 1);
+			setupComponent(_components.controlbar, 2);
+			setupComponent(_components.dock, 3);
 		}
-
+		
+		private function setupComponent(component:IPlayerComponent, index:Number):void {
+			component.addGlobalListener(forward);
+			_componentsLayer.addChildAt(component as DisplayObject, index);
+		}
+		
+		
 		private function resizeHandler(event:Event):void {
 			redraw();
 
@@ -137,33 +162,8 @@ package com.longtailvideo.jwplayer.view {
 				dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, currentFSMode));
 			}
 		}
-
-		public function set skin(skn:ISkin):void {
-			_skin = skn;
-			if (!_components) {
-				setupComponents();
-			}
-		}
-
-		private function setupComponents():void {
-			_components = new PlayerComponents(_player);
-			
-			setupComponent(_components.playlist, 0);
-			setupComponent(_components.display, 1);
-			setupComponent(_components.controlbar, 2);
-			setupComponent(_components.dock, 3);
-			redraw();
-		}
+				
 		
-		private function setupComponent(component:IPlayerComponent, index:Number):void {
-			component.addGlobalListener(forward);
-			_componentsLayer.addChildAt(component as DisplayObject, index);
-		}
-
-		public function get skin():ISkin {
-			return _skin;
-		}
-
 		public function fullscreen(mode:Boolean=true):void {
 			RootReference.stage.displayState = mode ? StageDisplayState.FULL_SCREEN : StageDisplayState.NORMAL;
 		}
