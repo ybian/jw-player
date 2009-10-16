@@ -221,10 +221,10 @@ package com.longtailvideo.jwplayer.view {
 		private function resizeMasker():void {
 			if (_displayMasker == null) setupDisplayMask();
 			
-			_displayMasker.x = _components.display.x;
-			_displayMasker.y = _components.display.y;
-			_displayMasker.width = _player.config.width;
-			_displayMasker.height = _player.config.height;
+			_displayMasker.graphics.clear();
+			_displayMasker.graphics.beginFill(0, 1);
+			_displayMasker.graphics.drawRect(_components.display.x, _components.display.y, _player.config.width, _player.config.height);
+			_displayMasker.graphics.endFill();
 		}
 
 		public function get components():PlayerComponents {
