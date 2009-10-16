@@ -79,11 +79,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 		private function positionIcon():void {
 			icon.x = background.scaleX / 2;
-			if (text.text != ''){
-				icon.y = (background.scaleY - icon.height) / 2 ;
-			} else {
-				icon.y = (background.scaleY) / 2 ;
-			}
+			icon.y = background.scaleY / 2 ;
 		}
 		
 		public function setText(displayText:String):void {
@@ -99,12 +95,12 @@ package com.longtailvideo.jwplayer.view.components {
 				text.autoSize = TextFormatAlign.CENTER;
 			}
 			text.x = (background.scaleX - text.textWidth) / 2;
-			text.y = (background.scaleY + text.height) / 2;
+			text.y = icon.y + (icon.height / 2) + 10;
 		}
 		
 		protected function setDisplay(displayIcon:DisplayObject, displayText:String = null):void {
-			setText(displayText);
 			setIcon(displayIcon);
+			setText(displayText);
 		}
 		
 		protected function clearDisplay():void {
@@ -112,6 +108,7 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		protected function stateHandler(event:PlayerEvent = null):void {
+			//TODO: Handle mute button in error state
 			switch (player.state) {
 				case PlayerState.BUFFERING:
 					setDisplay(getSkinElement('display', 'bufferIcon'));
