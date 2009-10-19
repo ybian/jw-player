@@ -42,11 +42,9 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		public function addButton(icon:DisplayObject, text:String, clickHandler:Function, name:String = null):void {
 			//TODO: Make this work with the existing skin
-			for (var i:Number=0;i<10;i++){
-				var btn:DockButton = new DockButton(icon, text, clickHandler, player.config.frontcolor, player.config.backcolor, player.config.lightcolor);
-				addChild(btn);
-				buttons[name+i] = btn;
-			}
+			var btn:DockButton = new DockButton(icon, text, clickHandler, player.config.frontcolor, player.config.backcolor, player.config.lightcolor);
+			addChild(btn);
+			buttons[name] = btn;
 			resize(width, height);
 		}
 		
