@@ -10,6 +10,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.events.MouseEvent;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
+	import flash.utils.describeType;
 	
 	
 	public class DockComponent extends CoreComponent implements IDockComponent {
@@ -18,7 +19,7 @@ package com.longtailvideo.jwplayer.view.components {
 			align: 'right'
 		};
 		/** Object with all the buttons in the dock. **/
-		private var buttons:Object;
+		private var buttons:Array;
 		/** Map with color transformation objects. **/
 		private var colors:Object;
 		/** Timeout for hiding the buttons when the video plays. **/
@@ -29,7 +30,7 @@ package com.longtailvideo.jwplayer.view.components {
 		public function DockComponent(player:Player) {
 			super(player);
 			animations = new Animations(this);
-			buttons = new Object();
+			buttons = new Array();
 			if (player.config.dock) {
 				player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 				RootReference.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
@@ -40,9 +41,12 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		public function addButton(icon:DisplayObject, text:String, clickHandler:Function, name:String = null):void {
-			var btn:DockButton = new DockButton(icon, text, clickHandler, player.config.frontcolor, player.config.backcolor, player.config.lightcolor);
-			addChild(btn);
-			buttons[name] = btn;
+			//TODO: Make this work with the existing skin
+			for (var i:Number=0;i<10;i++){
+				var btn:DockButton = new DockButton(icon, text, clickHandler, player.config.frontcolor, player.config.backcolor, player.config.lightcolor);
+				addChild(btn);
+				buttons[name+i] = btn;
+			}
 			resize(width, height);
 		}
 		
@@ -56,18 +60,32 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		public function resize(width:Number, height:Number):void {
-			y = getConfigParam('y');
-			if (getConfigParam('align') == 'left') {
-				x = getConfigParam('x');
-			} else {
-				x = getConfigParam('x') + getConfigParam('width') - width;
+			var margin:Number = 10;
+			var usedHeight:Number = margin;
+			var direction:Number = 1;
+			if (getConfigParam('align') != 'left') {
+				direction = -1;
 			}
 			for (var i:Number = 0; i < buttons.length; i++) {
-				buttons[i].y = buttons[i].height * i;
+				var row:Number = Math.floor(usedHeight / height);
+				if ((usedHeight + buttons[i].height + margin) > ((row + 1) * height)){
+					usedHeight = ((row + 1) * height) + margin;
+					row = Math.floor(usedHeight / height);
+				}
+				buttons[i].y = usedHeight % height;
+				buttons[i].x = (buttons[i].width + margin) * row * direction;
+				usedHeight += buttons[i].height + margin;
+			}
+			setConfigParam('y', player.controls.display.y);
+			if (getConfigParam('align') == 'left') {
+				setConfigParam('x', player.controls.display.x + margin);
+			} else {
+				// No need to subtract the width: all of the positions are negative
+				setConfigParam('x', player.controls.display.x + player.controls.display.width - buttons[0].width - margin);
 			}
 		}
-		
-		
+
+
 		/** Show the buttons on mousemove. **/
 		private function moveHandler(evt:MouseEvent = null):void {
 			clearTimeout(timeout);
@@ -78,8 +96,8 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-		
-		
+
+
 		/** Hide the buttons again when move has timed out. **/
 		private function moveTimeout():void {
 			animations.fade(0);
@@ -103,6 +121,10 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Gets a configuration parameter **/
 		private function getConfigParam(param:String):* {
 			return _player.config.pluginConfig("dock")[param];
+		}
+		
+		private function setConfigParam(param:String, value:*):void {
+			_player.config.pluginConfig("dock")[param] = value;
 		}
 	}
 }

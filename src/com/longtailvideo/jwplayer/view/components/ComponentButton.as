@@ -8,7 +8,9 @@ package com.longtailvideo.jwplayer.view.components {
 	
 	
 	public class ComponentButton extends Sprite {
-		protected var _background:DisplayObject;
+		protected var _backgroundLayer:DisplayObject;
+		protected var _imageLayer:Sprite;
+		protected var _clickLayer:Sprite;
 		protected var _outIcon:DisplayObject;
 		protected var _overIcon:DisplayObject;
 		protected var _outColor:uint;
@@ -17,42 +19,50 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _clickEventType:String;
 		protected var _clickEventData:*;
 
+
 		public function ComponentButton(outIcon:DisplayObject, clickEventType:String = null, clickEventData:* = null, outColor:uint = 0, overColor:uint = 0, background:DisplayObject = null, overIcon:DisplayObject = null, text:String = null) {
-			if (background) {
-				_background = background;
-				_background.x = 0;
-				_background.y = 0;
-				addChildAt(_background,0);
-			}
-			outIcon.x = 0;
-			outIcon.y = 0;
-			outIcon.scaleX = 1;
-			outIcon.scaleY = 1;
+			_backgroundLayer = background ? background : new Sprite();
+			_backgroundLayer.name = "backgroundLayer";
+			addChild(_backgroundLayer);
+			_backgroundLayer.x = 0;
+			_backgroundLayer.y = 0;
+			_imageLayer = new Sprite();
+			_imageLayer.name = "imageLayer";
+			addChild(_imageLayer);
+			_imageLayer.x = 0;
+			_imageLayer.y = 0;
+			_clickLayer = new Sprite();
+			_clickLayer.graphics.beginFill(1,0);
+			_clickLayer.graphics.drawRoundRect(0,0,_backgroundLayer.width,_backgroundLayer.height,5);
+			_clickLayer.graphics.endFill();
+			_clickLayer.name = "clickLayer";
+			addChild(_clickLayer);
 			_outIcon = outIcon;
-			_outIcon.transform.colorTransform = new ColorTransform(outColor);
 			_outColor = outColor;
+			if (_outIcon){
+				_outIcon.x = (_backgroundLayer.width - _outIcon.width) / 2;
+				_outIcon.y = (_backgroundLayer.height - _outIcon.height) / 2;
+				//TODO: Figure out why you can't color transform this.
+				//_outIcon.transform.colorTransform = new ColorTransform(outColor);
+				_imageLayer.addChild(_outIcon);
+			}
 			if (overIcon){
 				_overIcon = overIcon;
 			}
 			_overColor = overColor;
 			_text = text;
+			_clickEventType = clickEventType;
+			_clickEventData = clickEventData;
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 			addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 			addEventListener(MouseEvent.CLICK, clickHandler);
-			if (_outIcon){
-				_outIcon.x = (background.width - _outIcon.width) / 2;
-				_outIcon.y = (background.height - _outIcon.height) / 2;
-				addChildAt(_outIcon,1);
-			}
-			_clickEventType = clickEventType;
-			_clickEventData = clickEventData;
 		}
 		
 		
 		protected function overHandler(event:MouseEvent):void {
 			if (_overIcon) {
-				removeChild(_outIcon);
-				addChildAt(_overIcon,1);
+				_imageLayer.removeChild(_outIcon);
+				_imageLayer.addChild(_overIcon);
 			} else {
 				_outIcon.transform.colorTransform = new ColorTransform(_overColor);
 			}
@@ -61,8 +71,8 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		protected function outHandler(event:MouseEvent):void {
 			if (_overIcon) {
-				removeChild(_overIcon);
-				addChildAt(_outIcon,1);
+				_imageLayer.removeChild(_overIcon);
+				_imageLayer.addChild(_outIcon);
 			} else {
 				_outIcon.transform.colorTransform = new ColorTransform(_outColor);
 			}
@@ -73,7 +83,7 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		public function resize(width:Number, height:Number):void {
-						
+
 		}
 	}
 }
