@@ -65,8 +65,6 @@ package com.longtailvideo.jwplayer.player {
 			var emu:PlayerV4Emulation = new PlayerV4Emulation(this);
 			var jsAPI:JavascriptAPI = new JavascriptAPI(this);
 
-			Logger.output = Logger.TRACE;
-
 			controller.setupPlayer();
 		}
 

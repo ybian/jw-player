@@ -65,8 +65,8 @@ package com.longtailvideo.jwplayer.view {
 				about = new ContextMenuItem('About ' + _model.config['abouttext'] + '...');
 			}
 			addItem(about, aboutHandler);
-			if (Capabilities.isDebugger == true || _model.config['debug'] != 'none') {
-				debug = new ContextMenuItem('Logging to ' + Logger.output + '...');
+			if (Capabilities.isDebugger == true) {
+				debug = new ContextMenuItem('Logging to ' + _model.config.debug + '...');
 				addItem(debug, debugHandler);
 			}
 		}
@@ -79,10 +79,10 @@ package com.longtailvideo.jwplayer.view {
 		/** change the debug system. **/
 		private function debugHandler(evt:ContextMenuEvent):void {
 			var arr:Array = new Array(Logger.NONE, Logger.ARTHROPOD, Logger.CONSOLE, Logger.TRACE);
-			var idx:Number = arr.indexOf(Logger.output);
+			var idx:Number = arr.indexOf(_model.config.debug);
 			idx == arr.length - 1 ? idx = 0 : idx++;
 			debug.caption = 'Logging to ' + arr[idx] + '...';
-			Logger.output = arr[idx];
+			_model.config.debug = arr[idx];
 		}
 
 		/** Toggle the fullscreen mode. **/

@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Configger;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	
@@ -51,6 +52,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _pluginConfig:Object 	= {};
 		
 		private var _playerready:String		= "";
+		private var _debug:String			= Logger.NONE;
 		
 		public function PlayerConfig():void {
 			controlbar = _controlbar;
@@ -349,6 +351,10 @@ package com.longtailvideo.jwplayer.model {
 		/** Javascript player ready callback handlers **/		
 		public function get playerready():String { return _playerready; }
 		public function set playerready(x:String):void { _playerready = x; }
+		
+		/** Javascript player ready callback handlers **/		
+		public function get debug():String { return _debug }
+		public function set debug(x:String):void { _debug = x; Configger.saveCookie('debug', _debug); }
 		
 		/**
 		 * Returns a PluginConfig containing plugin configuration information

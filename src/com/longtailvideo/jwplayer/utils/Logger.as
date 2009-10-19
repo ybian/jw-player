@@ -1,8 +1,9 @@
 package com.longtailvideo.jwplayer.utils {
+	import com.longtailvideo.jwplayer.model.PlayerConfig;
+	
 	import flash.events.StatusEvent;
 	import flash.external.ExternalInterface;
 	import flash.net.LocalConnection;
-	import flash.net.SharedObject;
 	
 	
 	/**
@@ -27,8 +28,8 @@ package com.longtailvideo.jwplayer.utils {
 		public static const NONE:String = "none";
 		/** Constant defining the Flash tracing output type. **/
 		public static const TRACE:String = "trace";
-		/** Latest output position. **/
-		private static var _output:String = Logger.NONE;
+		/** Reference to the player config **/
+		private static var _config:PlayerConfig;
 		
 		
 		/**
@@ -64,29 +65,17 @@ package com.longtailvideo.jwplayer.utils {
 		 *
 		 * @param put	System to use (ARTHROPOD, CONSOLE, TRACE or NONE).StatusEvent
 		 **/
-		public static function set output(put:String):void {
-			if (put == ARTHROPOD) {
+		private function updateOutput():void {
+			if (_config.debug == ARTHROPOD) {
 				CONNECTION.allowInsecureDomain('*');
 				CONNECTION.addEventListener(StatusEvent.STATUS, Logger.status);
 			}
-			SharedObject.getLocal('com.longtailvideo.jwplayer', '/').data['debug'] = put;
-			Logger._output = put;
-		}
-		
-		
-		/**
-		 * Get output system to use for logging.
-		 *
-		 * @return	System to use (ARTHROPOD, CONSOLE, TRACE or NONE).
-		 **/
-		public static function get output():String {
-			return Logger._output;
 		}
 		
 		
 		/** Send the messages to the output system. **/
 		private static function send(text:String):void {
-			switch (Logger._output) {
+			switch (_config.debug) {
 				case ARTHROPOD:
 					CONNECTION.send(CONNECTION_NAME, 'debug', 'CDC309AF', text,	0xCCCCCC);
 					break;
@@ -102,10 +91,14 @@ package com.longtailvideo.jwplayer.utils {
 					break;
 				default:
 					if (ExternalInterface.available) {
-						ExternalInterface.call(Logger._output, text);
+						ExternalInterface.call(_config.debug, text);
 					}
 					break;
 			}
+		}
+		
+		public static function setConfig(config:PlayerConfig):void {
+			_config = config;
 		}
 		
 		

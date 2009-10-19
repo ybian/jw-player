@@ -7,6 +7,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Configger;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.View;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
@@ -149,7 +150,7 @@ package com.longtailvideo.jwplayer.controller {
 			} else {
 				_model.config.setConfig(confHash);
 			}
-			
+			Logger.setConfig(_model.config);
 		}
 
 		private function setupMediaProviders():void {
