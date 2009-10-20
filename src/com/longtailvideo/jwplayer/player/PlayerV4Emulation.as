@@ -2,20 +2,19 @@ package com.longtailvideo.jwplayer.player {
 	import com.jeroenwijering.events.AbstractView;
 	import com.jeroenwijering.events.ControllerEvent;
 	import com.jeroenwijering.events.ModelEvent;
-	import com.jeroenwijering.events.PluginInterface;
 	import com.longtailvideo.jwplayer.controller.Controller;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
+	import com.longtailvideo.jwplayer.model.Color;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
-	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
 	
 	import flash.display.DisplayObject;
@@ -284,9 +283,15 @@ package com.longtailvideo.jwplayer.player {
 
 		public override function get config():Object {
 			var cfg:Object = {};
-			
-			for each (var i:String in describeType(_player.config).accessor.@name) {
-				cfg[i] = TypeChecker.fromString(_player.config[i], TypeChecker.getType(_player.config, i));
+			var descType:XML = describeType(_player.config)
+			for each (var i:String in descType.accessor.@name) {
+				if (_player.config[i] is Number) {
+					cfg[i] = isNaN(_player.config[i]) ? "" : String(_player.config[i]);
+				} else if (_player.config[i]) {
+					cfg[i] = _player.config[i].toString();
+				} else {
+					cfg[i] = "";
+				}
 			}
 			
 			for each (var j:String in _player.config.pluginNames) {

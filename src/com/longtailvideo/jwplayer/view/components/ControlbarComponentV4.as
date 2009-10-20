@@ -317,13 +317,13 @@ package com.longtailvideo.jwplayer.view.components {
 		private function setColors():void {
 			if (player.config.backcolor && getSkinElementChild('playButton', 'icon')) {
 				var clr:ColorTransform = new ColorTransform();
-				clr.color = player.config.backcolor;
+				clr.color = player.config.backcolor.color;
 				getSkinElement('back').transform.colorTransform = clr;
 			}
 			if (player.config.frontcolor) {
 				try {
 					front = new ColorTransform();
-					front.color = player.config.frontcolor;
+					front.color = player.config.frontcolor.color;
 					for (var btn:String in BUTTONS) {
 						if (getSkinElement(btn)) {
 							getSkinElementChild(btn, 'icon').transform.colorTransform = front;
@@ -343,7 +343,7 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			if (player.config.lightcolor) {
 				light = new ColorTransform();
-				light.color = player.config.lightcolor;
+				light.color = player.config.lightcolor.color;
 			} else {
 				light = front;
 			}

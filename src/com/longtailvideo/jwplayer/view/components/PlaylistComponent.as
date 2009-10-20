@@ -203,13 +203,13 @@ package com.longtailvideo.jwplayer.view.components {
 		private function setColors():void {
 			if (_player.config.backcolor) {
 				back = new ColorTransform();
-				back.color = _player.config.backcolor;
+				back.color = _player.config.backcolor.color;
 				clip.back.transform.colorTransform = back;
 				clip.slider.back.transform.colorTransform = back;
 			}
 			if (_player.config.frontcolor) {
 				front = new ColorTransform();
-				front.color = _player.config.frontcolor;
+				front.color = _player.config.frontcolor.color;
 				try {
 					clip.slider.icon.transform.colorTransform = front;
 					clip.slider.rail.transform.colorTransform = front;
@@ -217,7 +217,7 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 				if (_player.config.lightcolor) {
 					light = new ColorTransform();
-					light.color = _player.config.lightcolor;
+					light.color = _player.config.lightcolor.color;
 				} else {
 					light = front;
 				}

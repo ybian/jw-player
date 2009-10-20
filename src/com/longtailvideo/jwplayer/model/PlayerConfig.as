@@ -33,10 +33,10 @@ package com.longtailvideo.jwplayer.model {
 		private var _stretching:String 		= "uniform"; 
 		private var _volume:Number 			= 90;
 
-		private var _backcolor:uint			= 0x000000;
-		private var _frontcolor:uint		= 0x000000;
-		private var _lightcolor:uint		= 0x000000;
-		private var _screencolor:uint		= 0x000000;
+		private var _backcolor:Color		= null;
+		private var _frontcolor:Color		= null;
+		private var _lightcolor:Color		= null;
+		private var _screencolor:Color		= null;
 		
 		private var _controlbar:String 		= "bottom";
 		private var _dock:String 			= "right";
@@ -208,20 +208,20 @@ package com.longtailvideo.jwplayer.model {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		/** Background color of the controlbar and playlist. This is white with the default skin. **/
-		public function get backcolor():uint { return _backcolor; }
-		public function set backcolor(x:uint):void { _backcolor = x; }
+		public function get backcolor():Color { return _backcolor; }
+		public function set backcolor(x:Color):void { _backcolor = x; }
 		
 		/** Color of all icons and texts in the controlbar and playlist. **/
-		public function get frontcolor():uint { return _frontcolor; }
-		public function set frontcolor(x:uint):void { _frontcolor = x; }
+		public function get frontcolor():Color { return _frontcolor; }
+		public function set frontcolor(x:Color):void { _frontcolor = x; }
 
 		/** Color of an icon or text when you rollover it with the mouse. **/
-		public function get lightcolor():uint { return _lightcolor; }
-		public function set lightcolor(x:uint):void { _lightcolor = x; }
+		public function get lightcolor():Color { return _lightcolor; }
+		public function set lightcolor(x:Color):void { _lightcolor = x; }
 
 		/** Background color of the display. **/
-		public function get screencolor():uint { return _screencolor; }
-		public function set screencolor(x:uint):void { _screencolor= x; }
+		public function get screencolor():Color { return _screencolor; }
+		public function set screencolor(x:Color):void { _screencolor = x; }
 
 		/** Position of the controlbar. Can be set to top, bottom, over and none.  @default bottom **/
 		public function get controlbar():String { 

@@ -123,14 +123,14 @@ package com.longtailvideo.jwplayer.view {
 			var background:MovieClip = new MovieClip();
 			background.name = "background";
 			_backgroundLayer.addChild(background);
-			background.graphics.beginFill(_player.config.screencolor, 1);
+			background.graphics.beginFill(_player.config.screencolor.color, 1);
 			background.graphics.drawRect(0, 0, 1, 1);
 			background.graphics.endFill();
 		}
 
 		private function setupDisplayMask():void {
 			_displayMasker = new MovieClip();
-			_displayMasker.graphics.beginFill(_player.config.screencolor, 1);
+			_displayMasker.graphics.beginFill(_player.config.screencolor.color, 1);
 			_displayMasker.graphics.drawRect(0, 0, _player.config.width, _player.config.height);
 			_displayMasker.graphics.endFill();
 			

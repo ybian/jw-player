@@ -1,15 +1,20 @@
 package com.longtailvideo.jwplayer.utils {
+	import com.longtailvideo.jwplayer.model.Color;
+	
 	import flash.utils.describeType;
 
 	public class TypeChecker {
 		
 		public static function getType(object:Object, property:String):String {
 			var description:XML = describeType(object);
+			var type:String;
+			
 			if ((description.accessor as XMLList).length()) { 
-				return description.accessor.(@name == property).@type;
+				type = description.accessor.(@name == property).@type;
 			} else {
-				return description.variable.(@name == property).@type;
+				type = description.variable.(@name == property).@type;
 			}
+			return type.replace(/(.+::)(.*)/,"$2");
 		}
 
 		public static function guessType(value:String):String {
@@ -17,7 +22,7 @@ package com.longtailvideo.jwplayer.utils {
 			if (bools.indexOf(value.toLowerCase().replace(" ","")) >= 0) {
 				return "Boolean";
 			} else if ( value.search(/^(#|0x)\d{3,6}/) >= 0 ) {
-				return "uint";
+				return "Color";
 			} else if (!isNaN(Number(value)) ) {
 				return "Number";
 			} else {
@@ -30,8 +35,8 @@ package com.longtailvideo.jwplayer.utils {
 				type = guessType(value);
 
 			switch(type.toLowerCase()) {
-				case "uint":
-					return stringToColor(value);
+				case "color":
+					return new Color(stringToColor(value));
 				case "number":
 					return Number(value);
 				case "boolean":

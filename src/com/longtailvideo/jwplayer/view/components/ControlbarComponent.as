@@ -178,7 +178,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 			if (player.config.backcolor) {
 				var colorTransform:ColorTransform = new ColorTransform();
-				colorTransform.color = player.config.backcolor;
+				colorTransform.color = player.config.backcolor.color;
 				background.transform.colorTransform = colorTransform;
 			}
 			background.x = 0;
@@ -214,7 +214,7 @@ package com.longtailvideo.jwplayer.view.components {
 		private function addComponentButton(name:String, text:String, event:String, eventData:* = null):void {
 			var outIcon:DisplayObject = getSkinElement("controlbar", name + "Button");
 			if (outIcon) {
-				var button:ComponentButton = new ComponentButton(outIcon, event, eventData, player.config.lightcolor, player.config.backcolor, getSkinElement("controlbar", name + "ButtonBack"), getSkinElement("controlbar", name + "ButtonOver"), text);
+				var button:ComponentButton = new ComponentButton(outIcon, event, eventData, player.config.lightcolor.color, player.config.backcolor.color, getSkinElement("controlbar", name + "ButtonBack"), getSkinElement("controlbar", name + "ButtonOver"), text);
 				button.addEventListener(event, forward);
 				addButton(button, name);
 			}
