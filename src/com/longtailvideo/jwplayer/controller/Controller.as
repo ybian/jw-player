@@ -121,7 +121,10 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function playlistLoadHandler(evt:PlaylistEvent):void {
-			// This stuff moved to playlist item handler
+			playlistItemHandler(evt);
+			if (_player.config.autostart) { 
+				load(_model.playlist.currentItem); 
+			}
 		}
 
 		private function playlistItemHandler(evt:PlaylistEvent):void {
@@ -143,10 +146,6 @@ package com.longtailvideo.jwplayer.controller {
 				}
 				
 				_model.setActiveMediaProvider(item.provider);
-			}
-
-			if (_player.config.autostart) { 
-				load(_model.playlist.currentItem); 
 			}
 		}
 
@@ -289,7 +288,7 @@ package com.longtailvideo.jwplayer.controller {
 		public function setPlaylistIndex(index:Number):Boolean {
 			if (0 <= index && index < _player.playlist.length) {
 				_player.playlist.currentIndex = index;
-				play();
+				load(index);
 				return true;
 			}
 			return false;
