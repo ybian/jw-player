@@ -47,8 +47,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		/** Current blocking state **/
 		private var _blocking:Boolean = false;
-
-
+		
 		/** A list with legacy CDN classes that are now redirected to buit-in ones. **/
 		private var cdns:Object = {
 				bitgravity:{'http.startparam':'starttime', provider:'http'},
@@ -57,8 +56,11 @@ package com.longtailvideo.jwplayer.controller {
 				highwinds:{'rtmp.loadbalance':true, provider:'rtmp'},
 				lighttpd:{'http.startparam':'start', provider:'http'},
 				vdox:{'rtmp.loadbalance':true, provider:'rtmp'}
-			};
-
+		};
+		
+		/** Reference to a PlaylistItem which has triggered an external MediaProvider load **/
+		private var _delayedItem:PlaylistItem;
+		
 		public function Controller(player:Player, model:Model, view:View) {
 			_player = player;
 			_model = model;
@@ -129,31 +131,6 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function playlistItemHandler(evt:PlaylistEvent):void {
 			var item:PlaylistItem = _model.playlist.currentItem;
-			if (item.provider) {
-
-				// Backwards compatibility for CDNs in the 'type' flashvar.
-				if (cdns.hasOwnProperty(item.provider)) {
-					_model.config.setConfig(cdns[item.provider]);
-				}
-
-				// If the model doesn't have an instance of the provider, load & instantiate it
-				if (!_model.hasMediaProvider(item.provider)) {
-					var mediaLoader:MediaProviderLoader = new MediaProviderLoader();
-					mediaLoader.addEventListener(Event.COMPLETE, mediaSourceLoaded);
-					mediaLoader.addEventListener(ErrorEvent.ERROR, errorHandler);
-					mediaLoader.loadSource(item.provider);
-					return;
-				}
-				
-				_model.setActiveMediaProvider(item.provider);
-			}
-		}
-
-		private function mediaSourceLoaded(evt:Event):void {
-			var loader:MediaProviderLoader = evt.target as MediaProviderLoader;
-			_model.setMediaProvider(_model.playlist.currentItem.provider, loader.loadedSource);
-			_model.setActiveMediaProvider(_model.playlist.currentItem.provider);
-			load(_model.playlist.currentItem);
 		}
 
 		private function errorHandler(evt:ErrorEvent):void {
@@ -332,12 +309,13 @@ package com.longtailvideo.jwplayer.controller {
 					JWParser.updateProvider(item);
 				}
 
-				_model.setActiveMediaProvider(item.provider);
-				_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
-				_model.media.load(item);
-				result = true;
+				if (setProvider(item)) {
+					_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
+					_model.media.load(item);
+					result = true;
+				}
 			} catch (err:Error) {
-				
+				result = false;
 			}
 			return result;
 		}
@@ -366,6 +344,42 @@ package com.longtailvideo.jwplayer.controller {
 			return false;
 		}
 
+		private function setProvider(item:PlaylistItem):Boolean {
+			var provider:String = item.provider;
+			if (provider) {
+				
+				// Backwards compatibility for CDNs in the 'type' flashvar.
+				if (cdns.hasOwnProperty(provider)) {
+					_model.config.setConfig(cdns[provider]);
+					provider = cdns[provider]['provider'];
+				}
+				
+				// If the model doesn't have an instance of the provider, load & instantiate it
+				if (!_model.hasMediaProvider(provider)) {
+					_delayedItem = item;
+					
+					var mediaLoader:MediaProviderLoader = new MediaProviderLoader();
+					mediaLoader.addEventListener(Event.COMPLETE, mediaSourceLoaded);
+					mediaLoader.addEventListener(ErrorEvent.ERROR, errorHandler);
+					mediaLoader.loadSource(provider);
+					return false;
+				}
+				
+				_model.setActiveMediaProvider(provider);
+			}
+			
+			return true;
+		}
+		
+		private function mediaSourceLoaded(evt:Event):void {
+			var loader:MediaProviderLoader = evt.target as MediaProviderLoader;
+			var item:PlaylistItem = _delayedItem;
+			_delayedItem = null;
+			_model.setMediaProvider(item.provider, loader.loadedSource);
+			load(item);
+		}
+
+		
 		private function lockHandler(evt:MediaEvent):void {
 			_model.media.play();
 		}
