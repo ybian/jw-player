@@ -3,6 +3,7 @@ package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.parsers.IPlaylistParser;
+	import com.longtailvideo.jwplayer.parsers.JWParser;
 	import com.longtailvideo.jwplayer.parsers.ParserFactory;
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
 	
@@ -73,7 +74,13 @@ package com.longtailvideo.jwplayer.model {
 					} catch (e:Error) {}
 				}
 			} else if (newPlaylist is PlaylistItem) {
-				newList.push(newPlaylist); 
+				var pli:PlaylistItem = newPlaylist as PlaylistItem;
+				JWParser.updateProvider(pli);
+				if (pli.provider) {
+					newList.push(pli);
+				} else {
+					load(pli.file);
+				}
 			} else if (newPlaylist is Playlist) {
 				for (i = 0; i < (newPlaylist as Playlist).length; i++) {
 					newList.push((newPlaylist as Playlist).getItemAt(i));

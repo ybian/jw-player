@@ -76,7 +76,7 @@ package com.longtailvideo.jwplayer.controller {
 			var split:Array = plugin.substr(plugin.lastIndexOf("/")+1).replace(/(.*)\.swf$/i, "$1").split("-");
 			var name:String = split[0];
 			var version:String = split.length > 1 ? ("-" + split[1]) : "";
-			var url:String = pluginRepository + "/5/" + name + "/" + name + version + ".swf";
+			var url:String = pluginRepository + "5/" + name + "/" + name + version + ".swf";
 			
 			loaders[loader] = plugin;
 			loader.load(url);
