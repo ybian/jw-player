@@ -3,10 +3,12 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Animations;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
@@ -52,6 +54,7 @@ package com.longtailvideo.jwplayer.view {
 			if (getConfigParam('file')){
 				loader = new Loader();
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loaderHandler);
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 				loader.load(new URLRequest(getConfigParam('file')));
 			}
 		}
@@ -61,6 +64,11 @@ package com.longtailvideo.jwplayer.view {
 			visible = false;
 			addChild(loader);
 			resize(_width, _height);
+		}
+		
+		/** Logo failed to load - die **/
+		private function errorHandler(evt:IOErrorEvent):void {
+			Logger.log("Failed to load logo: " + evt.text);
 		}
 		
 		

@@ -39,7 +39,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _screencolor:uint		= 0x000000;
 		
 		private var _controlbar:String 		= "bottom";
-		private var _dock:Boolean 			= false;
+		private var _dock:String 			= "right";
 		private var _height:Number 			= 400;
 		private var _icons:Boolean 			= true;
 		private var _logo:String 			= null;
@@ -234,8 +234,14 @@ package com.longtailvideo.jwplayer.model {
 		}
 
 		/** Set this to true to show the dock with large buttons in the top right of the player. Available since 4.5.  @default true **/
-		public function get dock():Boolean { return _dock; }
-		public function set dock(x:Boolean):void { _dock = x; }
+		public function get dock():String { return _dock; }
+		public function set dock(x:String):void {
+			if (x == 'true') {
+				_dock = 'right';
+			} else {
+				_dock = x;
+			}
+		}
 
 		/** Height of the display in pixels. @default 280 **/
 		public function get height():Number { return _height; }

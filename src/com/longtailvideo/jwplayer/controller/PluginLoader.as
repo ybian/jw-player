@@ -1,6 +1,5 @@
 package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
-	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	
 	import flash.display.DisplayObject;
@@ -71,7 +70,7 @@ package com.longtailvideo.jwplayer.controller {
 		private function loadV5Plugin(plugin:String):void {
 			var loader:AssetLoader = new AssetLoader();
 			loader.addEventListener(Event.COMPLETE, loadSuccess);
-			loader.addEventListener(ErrorEvent.ERROR, loadV5Failed);
+			loader.addEventListener(ErrorEvent.ERROR, loadV5Failed);			
 			
 			var split:Array = plugin.substr(plugin.lastIndexOf("/")+1).replace(/(.*)\.swf$/i, "$1").split("-");
 			var name:String = split[0];

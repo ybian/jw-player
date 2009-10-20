@@ -68,7 +68,8 @@ package com.longtailvideo.jwplayer.view.components {
 				fullscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN, 
 				normalscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN, 
 				muteButton: ViewEvent.JWPLAYER_VIEW_MUTE, 
-				unmuteButton: ViewEvent.JWPLAYER_VIEW_MUTE};
+				unmuteButton: ViewEvent.JWPLAYER_VIEW_MUTE
+			};
 			skin = player.skin.getSWFSkin().getChildByName('controlbar') as Sprite;
 			skin.x = 0;
 			skin.y = 0;
@@ -445,15 +446,15 @@ package com.longtailvideo.jwplayer.view.components {
 			try {
 				var xps:Number = Math.round(pct * (getSkinElementChild('timeSlider', 'rail').width - getSkinElementChild('timeSlider', 'icon').width));
 				if (dur > 0) {
-					getSkinElementChild('timeSlider', 'icon').visible = true;
-					getSkinElementChild('timeSlider', 'mark').visible = true;
+					getSkinElementChild('timeSlider', 'icon').visible = player.state != PlayerState.IDLE;
+					getSkinElementChild('timeSlider', 'mark').visible = player.state != PlayerState.IDLE;
 					if(!scrubber) {
 						getSkinElementChild('timeSlider', 'icon').x = xps;
 						getSkinElementChild('timeSlider', 'done').width = xps;
 						getSkinElementChild('timeSlider', 'mark').x = xps;
 						getSkinElementChild('timeSlider', 'mark').width = Math.round(evt.bufferPercent / 100 * (getSkinElementChild('timeSlider', 'rail').width - xps));
 					}
-					getSkinElementChild('timeSlider', 'done').visible = true;
+					getSkinElementChild('timeSlider', 'done').visible = player.state != PlayerState.IDLE;
 				} else {
 					if (player.state != PlayerState.PLAYING){
 						getSkinElementChild('timeSlider', 'icon').visible = false;

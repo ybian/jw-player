@@ -275,4 +275,27 @@
 		</antcall>
 	</target>
 	
+	<!--
+		Builds the player code library used by plugins
+	-->
+	<target name="build-lib">
+		<!-- Clean the SDK directory -->
+		<antcall target="clean-dir">
+			<param name="clean-directory" value="${sdk.dir}"/>
+		</antcall>
+		
+		<!-- Build the library SWC -->
+		<exec executable="${compc.exe}" dir="${src.dir}">
+			<arg line="-source-path ." />
+			<arg line="-output '${sdk.dir}/lib/jwplayer-5-lib.swc'" />
+			<!-- Include the necessary framework libraries in the class path -->
+			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
+			<arg line="-compiler.library-path '${lib.dir}'" />
+			<arg line="-include-classes com.longtailvideo.jwplayer.plugins.IPlugin" />
+			<arg line="-link-report='${release.dir}/sdk-classes.xml'" />
+			<arg line="-define=CONFIG::commercial,true" />
+		</exec>
+	</target>
+
+	
 </project>

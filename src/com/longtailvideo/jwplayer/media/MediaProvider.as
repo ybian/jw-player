@@ -111,14 +111,14 @@ package com.longtailvideo.jwplayer.media {
 		 * @param pos	The position in seconds.
 		 **/
 		public function seek(pos:Number):void {
-			_position = pos;
+			position = pos;
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration:item.duration});
 		}
 		
 		
 		/** Stop playing and loading the item. **/
 		public function stop():void {
-			_position = 0;
+			position = 0;
 			setState(PlayerState.IDLE);
 		}
 		
@@ -176,7 +176,12 @@ package com.longtailvideo.jwplayer.media {
 			return _position;
 		}
 		
-		
+		/** Set current position **/
+		public function set position(pos:Number):void {
+			_position = pos;
+		}
+
+
 		/**
 		 * The current volume of the playing media
 		 * <p>Range: 0-100</p>
@@ -231,8 +236,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Dispatches buffer change notifications **/
 		public function sendBufferEvent(bufferPercent:Number):void {
-			// TODO: Do you send buffering events when in the playing state?
-			if (state == PlayerState.BUFFERING && bufferPercent != this.bufferPercent) {
+			if (bufferPercent != this.bufferPercent) {
 				this.bufferPercent = bufferPercent;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {'bufferPercent': this.bufferPercent});
 			}

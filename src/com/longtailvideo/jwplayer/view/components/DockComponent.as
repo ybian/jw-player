@@ -79,7 +79,9 @@ package com.longtailvideo.jwplayer.view.components {
 				setConfigParam('x', player.controls.display.x + margin);
 			} else {
 				// No need to subtract the width: all of the positions are negative
-				setConfigParam('x', player.controls.display.x + player.controls.display.width - buttons[0].width - margin);
+				if (buttons.length > 0){
+					setConfigParam('x', player.controls.display.x + player.controls.display.width - buttons[0].width - margin);
+				}
 			}
 		}
 
