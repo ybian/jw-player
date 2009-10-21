@@ -1,4 +1,5 @@
 package com.longtailvideo.jwplayer.controller {
+	import com.jeroenwijering.events.ModelStates;
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
@@ -79,7 +80,6 @@ package com.longtailvideo.jwplayer.controller {
 			setup.addEventListener(ErrorEvent.ERROR, errorHandler);
 
 			addViewListeners();
-			addModelListeners();
 
 			setup.setupPlayer();
 		}
@@ -110,22 +110,29 @@ package com.longtailvideo.jwplayer.controller {
 		private function loadHandler(evt:ViewEvent):void { load(evt.data); }
 		private function redrawHandler(evt:ViewEvent):void { redraw(); }
 
-		private function addModelListeners():void {
+		private function setupComplete(evt:Event):void {
+			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_READY));
+
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadHandler);
 			_model.playlist.addEventListener(ErrorEvent.ERROR, errorHandler);
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItemHandler);
-		}
-
-		private function setupComplete(evt:Event):void {
-			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_READY));
+			
+			// Broadcast playlist loaded (which was swallowed during player setup);
+			if (_model.playlist.length > 0) {
+				_model.playlist.dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
+			}
+	
 			RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
-			loadFirstItem();
 		}
 
-		private function playlistLoadHandler(evt:PlaylistEvent):void {
-			playlistItemHandler(evt);
+		private function playlistLoadHandler(evt:PlaylistEvent=null):void {
+			var loadIndex:Number = _model.config.item;
+			if (_model.config.shuffle) {
+				loadIndex = Math.floor(Math.random() * _model.playlist.length);
+			}
+			_model.playlist.currentIndex = loadIndex;
 			if (_player.config.autostart) { 
-				load(_model.playlist.currentItem); 
+				load(loadIndex); 
 			}
 		}
 
@@ -290,6 +297,10 @@ package com.longtailvideo.jwplayer.controller {
 		public function load(item:*):Boolean {
 			//if (!_model.media) return false;
 
+			if (_model.state != ModelStates.IDLE) {
+				_model.media.stop();
+			}
+			
 			if (item is PlaylistItem) {
 				return loadPlaylistItem(item as PlaylistItem);
 			} else if (item is String) {
@@ -407,12 +418,5 @@ package com.longtailvideo.jwplayer.controller {
 			return false;
 		}
 		
-		private function loadFirstItem():void {
-//			if (_model.playlist.currentItem) {
-//				load(_model.playlist.currentItem);
-//			}	
-		}
-		
-
 	}
 }

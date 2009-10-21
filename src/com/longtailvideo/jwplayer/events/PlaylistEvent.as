@@ -1,4 +1,6 @@
 package com.longtailvideo.jwplayer.events {
+	import com.longtailvideo.jwplayer.model.Playlist;
+	
 	import flash.events.Event;
 	
 
@@ -40,12 +42,25 @@ package com.longtailvideo.jwplayer.events {
 		 */
 		public static var JWPLAYER_PLAYLIST_ITEM:String = "jwplayerPlaylistItem";
 
-		public function PlaylistEvent(type:String) {
+		private var _playlist:Playlist;
+		
+		public function PlaylistEvent(type:String, playlist:Playlist) {
+			_playlist = playlist;
 			super(type);
+		}
+
+		public override function toString():String {
+			return '[PlaylistEvent type="' + type + '"'
+				+ ' index="' + _playlist.currentIndex + '"' 
+				+ ' id="' + id + '"'
+				+ ' client="' + client + '"'
+				+ ' version="' + version + '"'
+				+ ' message="' + message + '"'
+				+ ']';
 		}
 		
 		public override function clone() : Event {
-			return new PlaylistEvent(this.type);
+			return new PlaylistEvent(this.type, _playlist);
 		}
 		
 	}

@@ -75,7 +75,7 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.queueTask(setupMediaProviders);
 			tasker.queueTask(setupView);
 			tasker.queueTask(loadPlugins, loadPluginsComplete);
-			tasker.queueTask(loadPlaylist);
+			tasker.queueTask(loadPlaylist, loadPlaylistComplete);
 			tasker.queueTask(initPlugins);
 			tasker.queueTask(setupJS);
 			
@@ -143,6 +143,9 @@ package com.longtailvideo.jwplayer.controller {
 		private function loadSkinComplete(event:Event=null):void {
 			if (event) {
 				var skin:ISkin = event.target as ISkin;
+				skin.removeEventListener(Event.COMPLETE, tasker.success);
+				skin.removeEventListener(ErrorEvent.ERROR, tasker.failure);
+
 				var props:SkinProperties = skin.getSkinProperties();
 				_model.config.setConfig(props);
 				_model.config.setConfig(confHash);
@@ -205,6 +208,11 @@ package com.longtailvideo.jwplayer.controller {
 			} else {
 				_model.playlist.load(_model.config.singleItem);
 			}
+		}
+
+		private function loadPlaylistComplete(event:Event=null):void {
+			_model.playlist.removeEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, tasker.success);
+			_model.playlist.removeEventListener(ErrorEvent.ERROR, tasker.failure);
 		}
 
 		private function initPlugins():void {

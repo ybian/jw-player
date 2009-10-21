@@ -75,7 +75,6 @@ package com.longtailvideo.jwplayer.view.components {
 			if (clip.list.button['back']) {
 				setColors();
 			}
-			playlistHandler();
 		}
 		
 		
@@ -155,7 +154,9 @@ package com.longtailvideo.jwplayer.view.components {
 					buttons.push({c: btn, s: stc});
 					setContents(i);
 				}
-				buttons[i].s.rearrange(wid);
+				if (buttons[i]) {
+					(buttons[i].s as Stacker).rearrange(wid);
+				}
 			}
 		}
 		

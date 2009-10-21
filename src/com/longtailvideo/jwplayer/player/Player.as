@@ -30,7 +30,7 @@ package com.longtailvideo.jwplayer.player {
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
-		private static var playerVersion:String = "5.0.508 alpha";
+		private static var playerVersion:String = "5.0.510 alpha";
 		private static var _commercial:Boolean = Boolean(CONFIG::commercial);
 		
 		private var model:Model;
@@ -57,17 +57,26 @@ package com.longtailvideo.jwplayer.player {
 			view = new View(this, model);
 			controller = new Controller(this, model, view);
 
-			model.addGlobalListener(forward);
-			view.addGlobalListener(forward);
-			controller.addGlobalListener(forward);
-
-			// Initialize V4 "simulator" singleton
-			var emu:PlayerV4Emulation = new PlayerV4Emulation(this);
-			var jsAPI:JavascriptAPI = new JavascriptAPI(this);
-
+			controller.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
+			
 			controller.setupPlayer();
 		}
 
+		protected function playerReady(evt:PlayerEvent):void {
+			// Only handle JWPLAYER_READY once
+			controller.removeEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
+			
+			// Initialize V4 "simulator" singleton
+			var emu:PlayerV4Emulation = new PlayerV4Emulation(this);
+			var jsAPI:JavascriptAPI = new JavascriptAPI(this);
+			
+			model.addGlobalListener(forward);
+			view.addGlobalListener(forward);
+			controller.addGlobalListener(forward);
+			
+			forward(evt);
+		}
+		
 		/**
 		 * Forwards all MVC events to interested listeners. 
 		 * @param evt

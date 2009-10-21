@@ -98,8 +98,6 @@ package com.longtailvideo.jwplayer.view {
 
 			_imageLayer = setupLayer("image", 2);
 			_image = new Loader();
-			_image.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, imageError);
-			_image.contentLoaderInfo.addEventListener(Event.COMPLETE, imageComplete);
 
 			_componentsLayer = setupLayer("components", 3);
 
@@ -292,13 +290,17 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		private function loadImage(url:String):void {
+			while (_imageLayer.numChildren) {
+				_imageLayer.removeChildAt(0);
+			}
+
+			_image = new Loader();
+			_image.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, imageError);
+			_image.contentLoaderInfo.addEventListener(Event.COMPLETE, imageComplete);
 			_image.load(new URLRequest(url));
 		}
 
 		private function imageComplete(evt:Event):void {
-			while (_imageLayer.numChildren) {
-				_imageLayer.removeChildAt(0);
-			}
 			_imageLayer.addChild(_image);
 			_imageLayer.x = _components.display.x;
 			_imageLayer.y = _components.display.y;
@@ -318,8 +320,10 @@ package com.longtailvideo.jwplayer.view {
 					_logoLayer.visible = false;
 					break;
 				case PlayerState.PLAYING:
-					_imageLayer.visible = false;
-					_mediaLayer.visible = true;
+					if (_model.media.display) {
+						_imageLayer.visible = false;
+						_mediaLayer.visible = true;
+					}
 					_logoLayer.visible = true;
 					break;
 			}

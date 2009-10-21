@@ -35,5 +35,16 @@ package com.longtailvideo.jwplayer.events {
 		public override function clone():Event {
 			return new PlayerStateEvent(this.type, this.newstate, this.oldstate);
 		}
+
+		public override function toString():String {
+			return '[PlayerStateEvent type="' + type + '"' 
+				+ ' oldstate="' + oldstate + '"'
+				+ ' newstate="' + newstate + '"'
+				+ ' id="' + id + '"'
+				+ ' client="' + client + '"'
+				+ ' version="' + version + '"'
+				+ ' message="' + message + '"'
+				+ "]";
+		}
 	}
 }

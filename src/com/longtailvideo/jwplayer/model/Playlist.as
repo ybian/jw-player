@@ -96,12 +96,9 @@ package com.longtailvideo.jwplayer.model {
 				return;
 			}
 
-			list = newList;
-			index = newList.length > 0 ? 0 : -1;
-	
-			if (index >= 0) {
-				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED));
-				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM));
+			if (newList.length > 0) {
+				list = newList;
+				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, this));
 			} else {
 				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, "Loaded playlist is empty"));
 			}
@@ -161,7 +158,7 @@ package com.longtailvideo.jwplayer.model {
 				list.push(itm);
 			}
 			
-			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED));
+			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, this));
 			
 			if (index < 0) {
 				currentIndex = list.length - 1;
@@ -176,7 +173,7 @@ package com.longtailvideo.jwplayer.model {
 		public function removeItemAt(idx:Number):void {
 			if (idx >= 0 && idx < list.length && list.length > 0) {
 				list.splice(idx, 1);
-				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED));
+				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, this));
 			}
 			
 			if (index >= list.length) {
@@ -192,7 +189,7 @@ package com.longtailvideo.jwplayer.model {
 			if (idx != index && idx < list.length) {
 				if (idx >= 0) {
 					index = idx;
-					dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM));
+					dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, this));
 				} else {
 					index = -1;
 				}
