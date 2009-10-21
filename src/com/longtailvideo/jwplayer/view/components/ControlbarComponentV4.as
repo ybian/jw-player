@@ -452,7 +452,8 @@ package com.longtailvideo.jwplayer.view.components {
 						getSkinElementChild('timeSlider', 'icon').x = xps;
 						getSkinElementChild('timeSlider', 'done').width = xps;
 						getSkinElementChild('timeSlider', 'mark').x = xps;
-						getSkinElementChild('timeSlider', 'mark').width = Math.round(evt.bufferPercent / 100 * (getSkinElementChild('timeSlider', 'rail').width - xps));
+						var markWidth:Number = player.state == PlayerState.IDLE ? 0 : Math.round(evt.bufferPercent / 100 * (getSkinElementChild('timeSlider', 'rail').width - xps));
+						getSkinElementChild('timeSlider', 'mark').width = markWidth;
 					}
 					getSkinElementChild('timeSlider', 'done').visible = player.state != PlayerState.IDLE;
 				} else {

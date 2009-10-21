@@ -109,6 +109,7 @@ package com.longtailvideo.jwplayer.media {
 				inbound.connect('AS2_' + unique);
 				loader.load(new URLRequest(location));
 			}
+			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {percentage: 0});
 			setState(PlayerState.BUFFERING);
 		}

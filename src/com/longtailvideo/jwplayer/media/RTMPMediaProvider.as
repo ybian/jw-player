@@ -91,6 +91,7 @@ package com.longtailvideo.jwplayer.media {
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
 			_position = 0;
+			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			if (getConfigProperty('loadbalance') as Boolean == true) {
 				smil = item.file;
 				loader.load(new URLRequest(smil));

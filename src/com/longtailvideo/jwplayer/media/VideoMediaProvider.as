@@ -26,7 +26,7 @@ package com.longtailvideo.jwplayer.media {
 		/** ID for the position interval. **/
 		protected var positionInterval:Number;
 		/** Load offset for bandwidth checking. **/
-		protected var loadtimer:Number;
+		protected var loadTimer:Number;
 		
 		
 		/** Constructor; sets up the connection and display. **/
@@ -67,7 +67,7 @@ package com.longtailvideo.jwplayer.media {
 				stream.play(item.file);
 			}
 			positionInterval = setInterval(positionHandler, 200);
-			loadtimer = setTimeout(loadTimeout, 3000);
+			loadTimer = setTimeout(loadTimerComplete, 3000);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			setState(PlayerState.BUFFERING);
@@ -76,7 +76,7 @@ package com.longtailvideo.jwplayer.media {
 				
 		
 		/** timeout for checking the bitrate. **/
-		protected function loadTimeout():void {
+		protected function loadTimerComplete():void {
 			var obj:Object = new Object();
 			obj.bandwidth = Math.round(stream.bytesLoaded / 1024 / 3 * 8);
 			if (item.duration) {
@@ -109,8 +109,9 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Resume playing. **/
 		override public function play():void {
-			clearInterval(positionInterval);
-			positionInterval = setInterval(positionHandler, 100);
+			if (!positionInterval) {
+				positionInterval = setInterval(positionHandler, 100);
+			}
 			stream.resume();
 			super.play();
 		}
@@ -134,7 +135,7 @@ package com.longtailvideo.jwplayer.media {
 			if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
-				} else {
+				} else if (state != PlayerState.PLAYING && item.duration >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {position: position, duration: item.duration, bufferPercent:bufferPercent});
 				}
 			} else if (item.duration > 0) {
@@ -145,6 +146,7 @@ package com.longtailvideo.jwplayer.media {
 		private function complete():void {
 			stream.pause();
 			clearInterval(positionInterval);
+			positionInterval = undefined;
 			setState(PlayerState.IDLE);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 			position = 0;
@@ -156,6 +158,7 @@ package com.longtailvideo.jwplayer.media {
 		override public function seek(pos:Number):void {
 			super.seek(pos);
 			clearInterval(positionInterval);
+			positionInterval = undefined;
 			stream.seek(position);
 			play();
 		}
@@ -184,8 +187,9 @@ package com.longtailvideo.jwplayer.media {
 				stream.pause();
 				stream.seek(0);
 			}
-			loadtimer = undefined;
+			loadTimer = undefined;
 			clearInterval(positionInterval);
+			positionInterval = undefined;
 			super.stop();
 		}
 		

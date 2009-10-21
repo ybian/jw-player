@@ -67,7 +67,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Clip containing graphical representation of the currently playing media **/
 		private var _media:MovieClip;
 		/** Most recent buffer data **/
-		protected var bufferPercent:Number;
+		private var bufferPercent:Number;
 		/** Handles event dispatching **/
 		protected var _dispatcher:GlobalEventDispatcher;
 

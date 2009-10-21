@@ -24,9 +24,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Sound context object. **/
 		private var context:SoundLoaderContext;
 		/** ID for the _position interval. **/
-		protected var interval:Number;
-		/** Interval for loading progress. **/
-		private var loadinterval:uint;
+		protected var positionInterval:Number;
 		
 		
 		/** Constructor; sets up the connection and display. **/
@@ -44,9 +42,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Sound completed; send event. **/
 		private function completeHandler(evt:Event):void {
-			clearInterval(interval);
-			setState(PlayerState.IDLE);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+			complete();
 		}
 		
 		
@@ -75,76 +71,82 @@ package com.longtailvideo.jwplayer.media {
 			sound = new Sound();
 			sound.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 			sound.addEventListener(Event.ID3, id3Handler);
+			sound.addEventListener(ProgressEvent.PROGRESS, positionHandler);
 			sound.load(new URLRequest(_item.file), context);
-			play();
 			if (_item.start > 0) {
 				seek(_item.start);
 			}
-			loadinterval = setInterval(loadHandler, 200);
+			positionInterval = setInterval(positionHandler, 100);
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			setState(PlayerState.BUFFERING);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {percentage: 0});
-		}
-		
-		
-		/** Interval for the loading progress **/
-		private function loadHandler():void {
-			var ldd:uint = sound.bytesLoaded;
-			var ttl:int = sound.bytesTotal;
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED, {loaded: ldd, total: ttl});
-			if (ldd / ttl > 0.1 && _item.duration == 0) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {duration: sound.length / 1000 / ldd * ttl});
-			}
-			if (ldd == ttl && ldd > 0) {
-				clearInterval(loadinterval);
-			}
+			sendBufferEvent(0);
 		}
 		
 		
 		/** Pause the sound. **/
 		override public function pause():void {
 			channel.stop();
-			clearInterval(interval);
 			super.pause();
 		}
 		
 		
 		/** Play the sound. **/
 		override public function play():void {
+			if (!positionInterval) {
+				positionInterval = setInterval(positionHandler, 100);
+			}
 			channel = sound.play(_position * 1000, 0, transformer);
 			channel.addEventListener(Event.SOUND_COMPLETE, completeHandler);
-			interval = setInterval(positionInterval, 100);
 			super.play();
 		}
 		
 		
 		/** Interval for the _position progress **/
-		protected function positionInterval():void {
-			_position = Math.round(channel.position / 100) / 10;
+		protected function positionHandler(progressEvent:ProgressEvent = null):void {
+			var bufferPercent:Number;
+			if (sound.bytesLoaded / sound.bytesTotal > 0.1 && _item.duration <= 0) {
+				_item.duration = sound.length / 1000 / sound.bytesLoaded * sound.bytesTotal;
+			}
+			if (channel){
+				_position = Math.round(channel.position / 100) / 10;
+				bufferPercent = Math.floor(sound.bytesLoaded / sound.bytesTotal * 100);
+			} else if (!channel && progressEvent) {
+				bufferPercent = Math.floor(progressEvent.bytesLoaded / progressEvent.bytesTotal * 100);
+			}
 			if (sound.isBuffering == true && sound.bytesTotal > sound.bytesLoaded) {
-				if (_config.state != PlayerState.BUFFERING) {
+				if (state != PlayerState.BUFFERING) {
+					channel.stop();
 					setState(PlayerState.BUFFERING);
 				} else {
-					var pct:Number = Math.floor(sound.length / (channel.position + _config.bufferlength * 1000) * 100);
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {percentage: pct});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {position: _position, duration: _item.duration, bufferPercent: bufferPercent});
 				}
-			} else if (_config.state == PlayerState.BUFFERING && sound.isBuffering == false) {
-				super.play();
+			} else if (state == PlayerState.BUFFERING && sound.isBuffering == false) {
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
 			if (_position < _item.duration) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {_position: _position, duration: _item.duration});
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration, bufferPercent: bufferPercent});
 			} else if (_item.duration > 0) {
-				pause();
-				setState(PlayerState.IDLE);
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+				complete();
 			}
+		}
+		
+		private function complete():void {
+			clearInterval(positionInterval);
+			positionInterval = undefined;
+			setState(PlayerState.IDLE);
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+			_position = 0;
+			channel.stop();
+			channel = null;
 		}
 		
 		
 		/** Seek in the sound. **/
 		override public function seek(pos:Number):void {
+			clearInterval(positionInterval);
+			positionInterval = undefined;
 			_position = pos;
-			clearInterval(interval);
 			channel.stop();
 			play();
 		}
@@ -152,16 +154,17 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Destroy the sound. **/
 		override public function stop():void {
+			clearInterval(positionInterval);
+			positionInterval = undefined;
+			super.stop();
 			if (channel) {
 				channel.stop();
+				channel = null;
 			}
 			try {
 				sound.close();
 			} catch (err:Error) {
 			}
-			clearInterval(loadinterval);
-			clearInterval(interval);
-			super.stop();
 		}
 		
 		
