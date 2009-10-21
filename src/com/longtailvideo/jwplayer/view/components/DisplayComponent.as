@@ -43,15 +43,19 @@ package com.longtailvideo.jwplayer.view.components {
 			background.graphics.beginFill(0,0);
 			background.graphics.drawRect(0,0,1,1);
 			background.graphics.endFill();
-			var colorTransform:ColorTransform = new ColorTransform();
-			colorTransform.color = player.config.screencolor.color;
-			background.transform.colorTransform = colorTransform;
+			if (player.config.screencolor) {
+				var colorTransform:ColorTransform = new ColorTransform();
+				colorTransform.color = player.config.screencolor.color;
+				background.transform.colorTransform = colorTransform;
+			}
 			_icon = new MovieClip();
 			addChildAt(icon,1);
 			_text = new TextField();
-			var textColorTransform:ColorTransform = new ColorTransform();
-			textColorTransform.color = player.config.frontcolor.color;
-			text.transform.colorTransform = textColorTransform;
+			if (player.config.frontcolor) {
+				var textColorTransform:ColorTransform = new ColorTransform();
+				textColorTransform.color = player.config.frontcolor.color;
+				text.transform.colorTransform = textColorTransform;
+			}
 			text.gridFitType = GridFitType.NONE;
 			addChildAt(text,2);
 		}
