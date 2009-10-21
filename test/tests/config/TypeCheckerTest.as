@@ -1,4 +1,5 @@
 package tests.config {
+	import com.longtailvideo.jwplayer.model.Color;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	
 	import org.flexunit.Assert;
@@ -28,9 +29,9 @@ package tests.config {
 		}
 
 		[Test]
-		public function testUintFromString():void {
-			var result:* = TypeChecker.fromString("0x111111", "uint");
-			Assert.assertTrue("Testing uint", result is uint);
+		public function testColorFromString():void {
+			var result:* = TypeChecker.fromString("0x111111", "Color");
+			Assert.assertTrue("Testing uint", result is Color);
 		}
 
 		[Test]
@@ -63,10 +64,10 @@ package tests.config {
 		public function testGuessType():void {
 			Assert.assertEquals("String", TypeChecker.guessType("Foo"));
 			Assert.assertEquals("Number", TypeChecker.guessType("1"));
-			Assert.assertEquals("uint", TypeChecker.guessType("0x000000"));
-			Assert.assertEquals("uint", TypeChecker.guessType("#000000"));
-			Assert.assertEquals("uint", TypeChecker.guessType("0x123"));
-			Assert.assertEquals("uint", TypeChecker.guessType("#456"));
+			Assert.assertEquals("Color", TypeChecker.guessType("0x000000"));
+			Assert.assertEquals("Color", TypeChecker.guessType("#000000"));
+			Assert.assertEquals("Color", TypeChecker.guessType("0x123"));
+			Assert.assertEquals("Color", TypeChecker.guessType("#456"));
 			Assert.assertEquals("Number", TypeChecker.guessType("123456"));
 			Assert.assertEquals("Boolean", TypeChecker.guessType("true"));
 			Assert.assertEquals("Boolean", TypeChecker.guessType("false"));
