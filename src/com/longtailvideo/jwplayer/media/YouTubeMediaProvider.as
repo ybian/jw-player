@@ -104,7 +104,7 @@ package com.longtailvideo.jwplayer.media {
 			if (connected) {
 				if (outgoing) {
 					var gid:String = getID(_item.file);
-					outgoing.send('AS3_' + unique, "loadVideoById", gid, _item.start);
+					outgoing.send('AS3_' + unique, "cueVideoById", gid, _item.start);
 					resize(_config.width, _config.width / 4 * 3);
 					media = loader;
 				}
@@ -176,27 +176,27 @@ package com.longtailvideo.jwplayer.media {
 				case 3:
 					setState(PlayerState.BUFFERING);
 					break;
+				case 5:
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+					_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+					setState(PlayerState.BUFFERING);
+					sendBufferEvent(0);
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
+					break;
 			}
 		}
 		
 		
 		/** Catch Youtube load changes **/
 		public function onLoadChange(ldd:Number, ttl:Number, off:Number):void {
-			//sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED, {loaded: ldd, total: ttl, offset: off});
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
-			setState(PlayerState.BUFFERING);
-			sendBufferEvent(0);
+			sendBufferEvent(ldd / ttl);
 		}
 		
 		
 		/** Catch Youtube _position changes **/
 		public function onTimeChange(pos:Number, dur:Number):void {
-			if (state != PlayerState.PLAYING) {
-				setState(PlayerState.PLAYING);
-			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: pos, duration: dur});
-			if (item.duration <= 0) {
+			if (item.duration < 0) {
 				item.duration = dur;
 			}
 		}

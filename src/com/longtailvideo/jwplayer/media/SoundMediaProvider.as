@@ -119,7 +119,7 @@ package com.longtailvideo.jwplayer.media {
 					channel.stop();
 					setState(PlayerState.BUFFERING);
 				} else {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {position: _position, duration: _item.duration, bufferPercent: bufferPercent});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {bufferPercent: bufferPercent});
 				}
 			} else if (state == PlayerState.BUFFERING && sound.isBuffering == false) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);

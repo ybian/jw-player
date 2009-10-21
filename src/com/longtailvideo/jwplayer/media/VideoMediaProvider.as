@@ -131,13 +131,11 @@ package com.longtailvideo.jwplayer.media {
 			} else if (bufferFill > 95 && state == PlayerState.BUFFERING) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
-
-			if (position < item.duration) {
-				if (state == PlayerState.PLAYING && position >= 0) {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
-				} else if (state != PlayerState.PLAYING && item.duration >= 0) {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {position: position, duration: item.duration, bufferPercent:bufferPercent});
-				}
+			
+			if (state == PlayerState.BUFFERING){
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {bufferPercent:bufferPercent});
+			} else if (position < item.duration && state == PlayerState.PLAYING && position >= 0) {
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
 			} else if (item.duration > 0) {
 				complete();
 			}

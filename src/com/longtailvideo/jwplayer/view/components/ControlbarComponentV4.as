@@ -25,7 +25,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.ui.Mouse;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
-		
+	
 	
 	public class ControlbarComponentV4 extends CoreComponent implements IControlbarComponent {
 		/** Reference to the original skin **/
@@ -79,7 +79,7 @@ package com.longtailvideo.jwplayer.view.components {
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, timeHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, muteHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, volumeHandler);
-			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, timeHandler);
+			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, bufferHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, itemHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, itemHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
@@ -135,6 +135,7 @@ package com.longtailvideo.jwplayer.view.components {
 		public function removeButton(name:String):void {
 			skin.removeChild(getSkinElement(name));
 		}
+		
 		
 		public function resize(width:Number, height:Number):void {
 			var wid:Number = width;
@@ -212,6 +213,7 @@ package com.longtailvideo.jwplayer.view.components {
 				scrubber = undefined;
 			}
 		}
+		
 		
 		/** Handle a change in the current item **/
 		private function itemHandler(evt:PlaylistEvent = null):void {
@@ -424,19 +426,15 @@ package com.longtailvideo.jwplayer.view.components {
 		private function timeHandler(evt:MediaEvent = null):void {
 			var dur:Number = 0;
 			var pos:Number = 0;
-			var buf:Number = 0;
 			if (evt) {
-				if (evt.duration >= 0){
+				if (evt.duration >= 0) {
 					dur = evt.duration;
 				}
-				if (evt.position >= 0){
+				if (evt.position >= 0) {
 					pos = evt.position;
 				}
-				if (evt.bufferPercent >= 0) {
-					buf = evt.bufferPercent;
-				}
 			} else if (player.playlist.length > 0 && player.playlist.currentItem) {
-				if (player.playlist.currentItem.duration >= 0){
+				if (player.playlist.currentItem.duration >= 0) {
 					dur = player.playlist.currentItem.duration;
 				}
 			}
@@ -454,23 +452,35 @@ package com.longtailvideo.jwplayer.view.components {
 				var xps:Number = Math.round(pct * (getSkinElementChild('timeSlider', 'rail').width - getSkinElementChild('timeSlider', 'icon').width));
 				if (dur > 0) {
 					getSkinElementChild('timeSlider', 'icon').visible = player.state != PlayerState.IDLE;
-					getSkinElementChild('timeSlider', 'mark').visible = player.state != PlayerState.IDLE;
-					if(!scrubber) {
+					if (!scrubber) {
 						getSkinElementChild('timeSlider', 'icon').x = xps;
 						getSkinElementChild('timeSlider', 'done').width = xps;
-						getSkinElementChild('timeSlider', 'mark').x = xps;
-						var markWidth:Number = player.state == PlayerState.IDLE ? 0 : Math.round(buf / 100 * (getSkinElementChild('timeSlider', 'rail').width - xps));
-						getSkinElementChild('timeSlider', 'mark').width = markWidth;
+						bufferHandler(evt);
 					}
 					getSkinElementChild('timeSlider', 'done').visible = player.state != PlayerState.IDLE;
 				} else {
-					if (player.state != PlayerState.PLAYING){
+					if (player.state != PlayerState.PLAYING) {
 						getSkinElementChild('timeSlider', 'icon').visible = false;
 						getSkinElementChild('timeSlider', 'mark').visible = false;
 						getSkinElementChild('timeSlider', 'done').visible = false;
 					}
 				}
 			} catch (err:Error) {
+			}
+		}
+		
+		
+		private function bufferHandler(evt:MediaEvent):void {
+			if (evt.bufferPercent >= 0 || evt.type == MediaEvent.JWPLAYER_MEDIA_BUFFER) {
+				try {
+					var xps:Number = getSkinElementChild('timeSlider', 'icon').x;
+					var mark:DisplayObject = getSkinElementChild('timeSlider', 'mark');
+					var markWidth:Number = player.state == PlayerState.IDLE ? 0 : Math.round(evt.bufferPercent / 100 * (getSkinElementChild('timeSlider', 'rail').width - xps));
+					mark.x = xps;
+					mark.width = markWidth;
+					mark.visible = player.state != PlayerState.IDLE;
+			} catch (err:Error) {
+				}
 			}
 		}
 		

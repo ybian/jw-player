@@ -82,6 +82,7 @@ _as3_to_as2.pauseVideo = function() { ytPlayer.pauseVideo(); };
 _as3_to_as2.playVideo = function() { ytPlayer.playVideo(); };
 _as3_to_as2.stopVideo = function(){ ytPlayer.stopVideo(); clearInterval(byteInterval); };
 _as3_to_as2.loadVideoById = function(id,pos) { ytPlayer.loadVideoById(id,pos); };
+_as3_to_as2.cueVideoById = function(id,pos) { ytPlayer.cueVideoById(id,pos); };
 _as3_to_as2.setVolume = function(vol) { ytPlayer.setVolume(vol); };
 _as3_to_as2.seekTo = function(pos) { ytPlayer.seekTo(pos,true); };
 _as3_to_as2.setSize = function(wid,hei) { ytPlayer.setSize(wid,hei); };

@@ -42,7 +42,7 @@ package com.longtailvideo.jwplayer.media {
 			_position = 0;
 			loader.load(new URLRequest(_item.file), new LoaderContext(true));
 			setState(PlayerState.BUFFERING);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {bufferPercent: 0});
+			sendBufferEvent(0);
 		}
 		
 		

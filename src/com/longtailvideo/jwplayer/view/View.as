@@ -95,6 +95,7 @@ package com.longtailvideo.jwplayer.view {
 			setupBackground();
 			
 			_mediaLayer = setupLayer("media", 1);
+			_mediaLayer.visible = false;
 
 			_imageLayer = setupLayer("image", 2);
 			_image = new Loader();
