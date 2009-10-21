@@ -25,33 +25,21 @@ package com.longtailvideo.jwplayer.media {
 		private var outgoing:LocalConnection;
 		/** connection from the YT proxy. **/
 		private var inbound:LocalConnection;
-		/** Save that the meta has been sent. **/
-		private var metasent:Boolean;
 		/** Save that a load call has been sent. **/
 		private var loading:Boolean;
 		/** Save the connection state. **/
 		private var connected:Boolean;
-		/** URL of a custom youtube swf. **/
-		private var location:String;
 		
 		
 		/** Setup YouTube connections and load proxy. **/
-		public function YouTubeMediaProvider(){
+		public function YouTubeMediaProvider() {
 		}
+		
 		
 		public override function initializeMediaProvider(cfg:PlayerConfig):void {
 			super.initializeMediaProvider(cfg);
 			_provider = 'youtube';
 			Security.allowDomain('*');
-			var url:String = RootReference.root.loaderInfo.url;
-			if (url.indexOf('http://') == 0) {
-				unique = Math.random().toString().substr(2);
-				var str:String = url.substr(0, url.indexOf('.swf'));
-				location = str.substr(0, str.lastIndexOf('/') + 1) + 'yt.swf?unique=' + unique;
-			} else {
-				unique = '1';
-				location = 'yt.swf';
-			}
 			outgoing = new LocalConnection();
 			outgoing.allowDomain('*');
 			outgoing.allowInsecureDomain('*');
@@ -60,7 +48,6 @@ package com.longtailvideo.jwplayer.media {
 			inbound.allowDomain('*');
 			inbound.allowInsecureDomain('*');
 			inbound.addEventListener(StatusEvent.STATUS, onLocalConnectionStatusChange);
-			//inbound.addEventListener(AsyncErrorEvent.ASYNC_ERROR,errorHandler);
 			inbound.client = this;
 			loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
@@ -93,6 +80,22 @@ package com.longtailvideo.jwplayer.media {
 		}
 		
 		
+		/** Get the location of yt.swf. **/
+		private function getLocation():String {
+			var loc:String;
+			var url:String = RootReference.stage.loaderInfo.url;
+			if (url.indexOf('http://') == 0) {
+				unique = Math.random().toString().substr(2);
+				loc = url.substr(0, url.indexOf('.swf'));
+				loc = loc.substr(0, loc.lastIndexOf('/') + 1) + 'yt.swf?unique=' + unique;
+			} else {
+				unique = '1';
+				loc = 'yt.swf';
+			}
+			return loc;
+		}
+		
+		
 		/** Load the YouTube movie. **/
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
@@ -101,17 +104,14 @@ package com.longtailvideo.jwplayer.media {
 			if (connected) {
 				if (outgoing) {
 					var gid:String = getID(_item.file);
-					resize(_config.width, _config.width / 4 * 3);
 					outgoing.send('AS3_' + unique, "loadVideoById", gid, _item.start);
+					resize(_config.width, _config.width / 4 * 3);
 					media = loader;
 				}
 			} else {
+				loader.load(new URLRequest(getLocation()));
 				inbound.connect('AS2_' + unique);
-				loader.load(new URLRequest(location));
 			}
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {percentage: 0});
-			setState(PlayerState.BUFFERING);
 		}
 		
 		
@@ -131,7 +131,6 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** SWF loaded; add it to the tree **/
 		public function onSwfLoadComplete():void {
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			connected = true;
 			if (loading) {
 				load(_item);
@@ -146,9 +145,13 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Catch youtube errors. **/
-		public function onError(erc:String):void {
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: "YouTube error (video not found?):\n" + _item.file});
+		public function onError(erc:Number):void {
 			stop();
+			var msg:String = 'Video not found or deleted: ' + getID(item['file']);
+			if (erc == 101 || erc == 150) {
+				msg = 'Embedding this video is disabled by its owner.';
+			}
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: msg});
 		}
 		
 		
@@ -172,7 +175,6 @@ package com.longtailvideo.jwplayer.media {
 					break;
 				case 3:
 					setState(PlayerState.BUFFERING);
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {percentage: 0});
 					break;
 			}
 		}
@@ -180,16 +182,22 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Catch Youtube load changes **/
 		public function onLoadChange(ldd:Number, ttl:Number, off:Number):void {
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED, {loaded: ldd, total: ttl, offset: off});
+			//sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED, {loaded: ldd, total: ttl, offset: off});
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+			setState(PlayerState.BUFFERING);
+			sendBufferEvent(0);
 		}
 		
 		
 		/** Catch Youtube _position changes **/
 		public function onTimeChange(pos:Number, dur:Number):void {
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {_position: pos, duration: dur});
-			if (!metasent) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {width: 320, height: 240, duration: dur});
-				metasent = true;
+			if (state != PlayerState.PLAYING) {
+				setState(PlayerState.PLAYING);
+			}
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: pos, duration: dur});
+			if (item.duration <= 0) {
+				item.duration = dur;
 			}
 		}
 		
@@ -209,8 +217,11 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Destroy the youtube video. **/
 		override public function stop():void {
-			metasent = false;
-			outgoing.send('AS3_' + unique, "stopVideo");
+			if (connected) {
+				outgoing.send('AS3_' + unique, "stopVideo");
+			} else {
+				loading = false;
+			}
 			super.stop();
 		}
 		
