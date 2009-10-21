@@ -58,6 +58,7 @@ package com.longtailvideo.jwplayer.view.components {
 			super(player);
 			animations = new Animations(this);
 			controlbarConfig = player.config.pluginConfig("controlbar");
+			controlbarConfig['margin'] = 20;
 			// TODO: Remove Link button
 			BUTTONS = {
 				playButton: ViewEvent.JWPLAYER_VIEW_PLAY, 
@@ -138,9 +139,12 @@ package com.longtailvideo.jwplayer.view.components {
 		public function resize(width:Number, height:Number):void {
 			var wid:Number = width;
 			if (controlbarConfig['position'] == 'over' || player.fullscreen == true) {
-				//x = player.config.x + player.config.margin;
-				//y = player.config.y + player.config.height - player.config.margin - player.config.size;
+				skin.x = controlbarConfig['margin'];
+				skin.y = height - skin.height - controlbarConfig['margin'];
 				wid = width - 2 * controlbarConfig['margin'];
+			} else {
+				skin.x = 0;
+				skin.y = 0;
 			}
 			try {
 				getSkinElement('fullscreenButton').visible = false;
@@ -156,7 +160,7 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			} catch (err:Error) {
 			}
-			stacker.rearrange(width);
+			stacker.rearrange(wid);
 			stateHandler();
 			fixTime();
 			Mouse.show();
