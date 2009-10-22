@@ -50,11 +50,9 @@
 			_icon = new MovieClip();
 			addChildAt(icon,1);
 			_text = new TextField();
-			if (player.config.frontcolor) {
-				var textColorTransform:ColorTransform = new ColorTransform();
-				textColorTransform.color = player.config.frontcolor.color;
-				text.transform.colorTransform = textColorTransform;
-			}
+			var textColorTransform:ColorTransform = new ColorTransform();
+			textColorTransform.color = player.config.frontcolor ? player.config.frontcolor.color : 0xFFFFFF;
+			text.transform.colorTransform = textColorTransform;
 			text.gridFitType = GridFitType.NONE;
 			addChildAt(text,2);
 		}
