@@ -2,13 +2,13 @@
  * A button from within the dock.
  **/
 package com.longtailvideo.jwplayer.view.components {
+	import com.longtailvideo.jwplayer.model.Color;
+	
 	import flash.display.*;
 	import flash.events.*;
-	import flash.geom.ColorTransform;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
-	import mx.utils.ColorUtil;
 	
 	
 	public class DockButton extends ComponentButton {
@@ -25,7 +25,7 @@ package com.longtailvideo.jwplayer.view.components {
 		 * @param fcn	The function to call when the button is clicked
 		 * @param clr	The rollover color of the dock icon.
 		 **/
-		public function DockButton(icn:DisplayObject, txt:String, hdl:Function, frontColor:uint, outColor:uint, overColor:uint):void {
+		public function DockButton(icn:DisplayObject, txt:String, hdl:Function, frontColor:Color, outColor:Color, overColor:Color):void {
 			//TODO: Make this work with the existing skin
 			clickFunction = hdl;
 			var background:Sprite = new Sprite();
@@ -48,7 +48,7 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			//TODO: Figure out why you can't color transform this.
 			//_outIcon.transform.colorTransform = new ColorTransform(frontColor);
-			text.textColor = frontColor;
+			text.textColor = frontColor ? frontColor.color : 0xFFFFFF;
 		}
 		
 		
@@ -64,16 +64,16 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		/** Draws the dock icon background **/
-		private function drawBackground(backgroundSprite:Sprite, color:uint):void {
+		private function drawBackground(backgroundSprite:Sprite, color:Color):void {
 			backgroundSprite.graphics.clear();
-			backgroundSprite.graphics.beginFill(color,1);
+			backgroundSprite.graphics.beginFill(color ? color.color : 0x000000, 1);
 			backgroundSprite.graphics.drawRoundRect(0,0,50,50,10);
 			backgroundSprite.graphics.endFill();
 		}
 		
 		/** Handles mouse clicks **/
 		protected override function clickHandler(event:MouseEvent):void {
-			clickFunction();
+			clickFunction(event);
 		}
 		
 		
@@ -92,6 +92,10 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			_outIcon.x = Math.round((_backgroundLayer.width - _outIcon.width) / 2);
 			_outIcon.y = Math.round(_backgroundLayer.height / 2 - _outIcon.height);
+		}
+		
+		public function get field():TextField {
+			return text;
 		}
 	}
 }

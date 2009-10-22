@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.view.components {
+﻿package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
@@ -14,7 +14,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.text.GridFitType;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
-	import mx.controls.TextArea;
 	import flash.text.TextFormatAlign;
 	import flash.text.TextFormat;	
 	

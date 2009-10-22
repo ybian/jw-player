@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.view.interfaces {
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 
 	/**
 	 * Sent when the user interface requests that the player play the currently loaded media
@@ -65,7 +66,7 @@ package com.longtailvideo.jwplayer.view.interfaces {
 	[Event(name="jwPlayerViewSeek", type = "com.longtailvideo.jwplayer.events.ViewEvent")]
 
 	public interface IControlbarComponent extends IPlayerComponent {
-		function addButton(icon:DisplayObject, name:String, handler:Function = null):void;
+		function addButton(icon:DisplayObject, name:String, handler:Function = null):MovieClip;
 		function removeButton(name:String):void;
 		function show():void;
 		function hide():void;

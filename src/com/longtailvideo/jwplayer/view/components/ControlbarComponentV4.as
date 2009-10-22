@@ -102,9 +102,10 @@ package com.longtailvideo.jwplayer.view.components {
 		 * @param nam	Name of the button
 		   getSkinElement('* @param hdl	The function to call when clicking the Button').
 		 **/
-		public function addButton(icon:DisplayObject, name:String, handler:Function = null):void {
+		public function addButton(icon:DisplayObject, name:String, handler:Function = null):MovieClip {
+			var btn:MovieClip;
 			if (getSkinElement('linkButton') && getSkinElementChild('linkButton', 'back')) {
-				var btn:* = Draw.clone(getSkinElement('linkButton') as Sprite);
+				btn = Draw.clone(getSkinElement('linkButton') as MovieClip) as MovieClip;
 				btn.name = name + 'Button';
 				btn.visible = true;
 				btn.tabEnabled = true;
@@ -114,21 +115,22 @@ package com.longtailvideo.jwplayer.view.components {
 				btn.accessibilityProperties = acs;
 				addChild(btn);
 				var off:Number = Math.round((btn.height - icon.height) / 2);
-				Draw.clear(btn.icon);
-				btn.icon.addChild(icon);
+				Draw.clear(btn['icon']);
+				btn['icon'].addChild(icon);
 				icon.x = icon.y = 0;
-				btn.icon.x = btn.icon.y = off;
-				btn.back.width = icon.width + 2 * off;
+				btn['icon'].x = btn['icon'].y = off;
+				btn['back'].width = icon.width + 2 * off;
 				btn.buttonMode = true;
 				btn.mouseChildren = false;
 				btn.addEventListener(MouseEvent.CLICK, handler);
 				if (front) {
-					btn.icon.transform.colorTransform = front;
+					btn['icon'].transform.colorTransform = front;
 					btn.addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 					btn.addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 				}
 				stacker.insert(btn, getSkinElement('linkButton') as MovieClip);
 			}
+			return btn;
 		}
 		
 		

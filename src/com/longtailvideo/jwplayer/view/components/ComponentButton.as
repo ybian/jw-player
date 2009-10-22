@@ -1,26 +1,28 @@
 package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.ViewEvent;
+	import com.longtailvideo.jwplayer.model.Color;
 	
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.ColorTransform;
 	
 	
-	public class ComponentButton extends Sprite {
+	public class ComponentButton extends MovieClip {
 		protected var _backgroundLayer:DisplayObject;
 		protected var _imageLayer:Sprite;
 		protected var _clickLayer:Sprite;
 		protected var _outIcon:DisplayObject;
 		protected var _overIcon:DisplayObject;
-		protected var _outColor:uint;
-		protected var _overColor:uint;
+		protected var _outColor:Color;
+		protected var _overColor:Color;
 		protected var _text:String;
 		protected var _clickEventType:String;
 		protected var _clickEventData:*;
 
 
-		public function ComponentButton(outIcon:DisplayObject, clickEventType:String = null, clickEventData:* = null, outColor:uint = 0, overColor:uint = 0, background:DisplayObject = null, overIcon:DisplayObject = null, text:String = null) {
+		public function ComponentButton(outIcon:DisplayObject, clickEventType:String = null, clickEventData:* = null, outColor:Color=null, overColor:Color=null, background:DisplayObject = null, overIcon:DisplayObject = null, text:String = null) {
 			_backgroundLayer = background ? background : new Sprite();
 			_backgroundLayer.name = "backgroundLayer";
 			addChild(_backgroundLayer);
@@ -63,8 +65,8 @@ package com.longtailvideo.jwplayer.view.components {
 			if (_overIcon) {
 				_imageLayer.removeChild(_outIcon);
 				_imageLayer.addChild(_overIcon);
-			} else {
-				_outIcon.transform.colorTransform = new ColorTransform(_overColor);
+			} else if (_overColor) {
+				_outIcon.transform.colorTransform = new ColorTransform(_overColor.color);
 			}
 		}
 		
@@ -73,8 +75,8 @@ package com.longtailvideo.jwplayer.view.components {
 			if (_overIcon) {
 				_imageLayer.removeChild(_overIcon);
 				_imageLayer.addChild(_outIcon);
-			} else {
-				_outIcon.transform.colorTransform = new ColorTransform(_outColor);
+			} else if (_outColor) {
+				_outIcon.transform.colorTransform = new ColorTransform(_outColor.color);
 			}
 		}
 		

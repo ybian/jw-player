@@ -20,7 +20,8 @@ package com.longtailvideo.jwplayer.plugins {
 			if ((plug as Object).hasOwnProperty('config')) {
 				(plug as Object).config = config;
 			}
-			plug.initializePlugin(PlayerV4Emulation.getInstance());
+			var emu:PlayerV4Emulation = PlayerV4Emulation.getInstance(player); 
+			plug.initializePlugin(emu);
 		}
 		
 		public function resize(width:Number, height:Number):void {

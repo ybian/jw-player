@@ -17,9 +17,9 @@ package com.longtailvideo.jwplayer.player {
 
 		public function JavascriptAPI(player:Player) {
 			_player = player;
-			_emu = PlayerV4Emulation.getInstance();
-
 			_player.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
+
+			_emu = PlayerV4Emulation.getInstance(_player);
 			
 			controllerCallbacks = {};
 			modelCallbacks = {};

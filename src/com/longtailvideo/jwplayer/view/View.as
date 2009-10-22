@@ -206,7 +206,7 @@ package com.longtailvideo.jwplayer.view {
 					}
 				}
 			}
-			PlayerV4Emulation.getInstance().resize(_player.config.width, _player.config.height);
+			PlayerV4Emulation.getInstance(_player).resize(_player.config.width, _player.config.height);
 		}
 
 		private function resizeBackground():void {

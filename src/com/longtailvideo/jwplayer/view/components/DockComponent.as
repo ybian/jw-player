@@ -7,10 +7,10 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
 	
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
-	import flash.utils.describeType;
 	
 	
 	public class DockComponent extends CoreComponent implements IDockComponent {
@@ -40,12 +40,13 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		
-		public function addButton(icon:DisplayObject, text:String, clickHandler:Function, name:String = null):void {
+		public function addButton(icon:DisplayObject, text:String, clickHandler:Function, name:String = null):MovieClip {
 			//TODO: Make this work with the existing skin
-			var btn:DockButton = new DockButton(icon, text, clickHandler, player.config.frontcolor.color, player.config.backcolor.color, player.config.lightcolor.color);
+			var btn:DockButton = new DockButton(icon, text, clickHandler, player.config.frontcolor, player.config.backcolor, player.config.lightcolor);
 			addChild(btn);
 			buttons[name] = btn;
 			resize(width, height);
+			return btn;
 		}
 		
 		

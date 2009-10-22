@@ -1,4 +1,4 @@
-package com.longtailvideo.jwplayer.player {
+﻿package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.controller.Controller;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.model.Model;
@@ -15,7 +15,6 @@ package com.longtailvideo.jwplayer.player {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
-	
 	/**
 	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
 	 *
@@ -30,7 +29,7 @@ package com.longtailvideo.jwplayer.player {
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
-		private static var playerVersion:String = "5.0.516 alpha";
+		private static var playerVersion:String = "5.0.517 alpha";
 		private static var _commercial:Boolean = Boolean(CONFIG::commercial);
 		
 		private var model:Model;
@@ -66,8 +65,6 @@ package com.longtailvideo.jwplayer.player {
 			// Only handle JWPLAYER_READY once
 			controller.removeEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
 			
-			// Initialize V4 "simulator" singleton
-			var emu:PlayerV4Emulation = new PlayerV4Emulation(this);
 			var jsAPI:JavascriptAPI = new JavascriptAPI(this);
 			
 			model.addGlobalListener(forward);

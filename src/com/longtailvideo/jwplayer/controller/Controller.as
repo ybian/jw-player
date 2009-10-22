@@ -11,6 +11,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.View;
@@ -77,13 +78,17 @@ package com.longtailvideo.jwplayer.controller {
 			var setup:PlayerSetup = new PlayerSetup(_player, _model, _view);
 
 			setup.addEventListener(Event.COMPLETE, setupComplete);
-			setup.addEventListener(ErrorEvent.ERROR, errorHandler);
+			setup.addEventListener(ErrorEvent.ERROR, setupError);
 
 			addViewListeners();
 
 			setup.setupPlayer();
 		}
 
+		private function setupError(evt:ErrorEvent):void {
+			Logger.log("STARTUP: Error occurred during player startup: " + evt.text);
+		}
+		
 		private function addViewListeners():void {
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PLAY, playHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PAUSE, pauseHandler);

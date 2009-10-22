@@ -214,7 +214,7 @@ package com.longtailvideo.jwplayer.view.components {
 		private function addComponentButton(name:String, text:String, event:String, eventData:* = null):void {
 			var outIcon:DisplayObject = getSkinElement("controlbar", name + "Button");
 			if (outIcon) {
-				var button:ComponentButton = new ComponentButton(outIcon, event, eventData, player.config.lightcolor.color, player.config.backcolor.color, getSkinElement("controlbar", name + "ButtonBack"), getSkinElement("controlbar", name + "ButtonOver"), text);
+				var button:ComponentButton = new ComponentButton(outIcon, event, eventData, player.config.lightcolor, player.config.backcolor, getSkinElement("controlbar", name + "ButtonBack"), getSkinElement("controlbar", name + "ButtonOver"), text);
 				button.addEventListener(event, forward);
 				addButton(button, name);
 			}
@@ -261,12 +261,16 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		
-		public function addButton(icon:DisplayObject, name:String, handler:Function = null):void {
+		public function addButton(icon:DisplayObject, name:String, handler:Function = null):MovieClip {
 			//TODO: Add button + handler
+			var clipMC:MovieClip = new MovieClip();
 			if (icon) {
-				icon.name = name;
-				_buttons[name] = icon;
+				clipMC.name = name;
+				clipMC.addChild(icon);
+				_buttons[name] = clipMC;
+				
 			}
+			return clipMC;
 		}
 		
 		

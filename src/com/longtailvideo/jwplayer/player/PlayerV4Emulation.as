@@ -8,7 +8,6 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
-	import com.longtailvideo.jwplayer.model.Color;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
@@ -30,9 +29,8 @@ package com.longtailvideo.jwplayer.player {
 	 */
 	public class PlayerV4Emulation extends AbstractView {
 		private static var instance:PlayerV4Emulation;
-		private static var initialized:Boolean = false;
 		
-		private static var _player:Player;
+		private var _player:Player;
 		
 		private var viewEventDispatcher:EventDispatcher;
 		private var modelEventDispatcher:EventDispatcher;
@@ -43,20 +41,18 @@ package com.longtailvideo.jwplayer.player {
 		private var version:String;
 		
 		public function PlayerV4Emulation(player:Player) {
-			if (!initialized) {
-				initialized = true;
+			viewEventDispatcher = new EventDispatcher();
+			modelEventDispatcher = new EventDispatcher();
+			controllerEventDispatcher = new EventDispatcher();
 				
-				viewEventDispatcher = new EventDispatcher();
-				modelEventDispatcher = new EventDispatcher();
-				controllerEventDispatcher = new EventDispatcher();
-				
-				_player = player;
-				_player.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
-				instance = this;
-			}
+			_player = player;
+			_player.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
 		}
 		
-		public static function getInstance():PlayerV4Emulation {
+		public static function getInstance(player:Player):PlayerV4Emulation {
+			if (!instance) {
+				instance = new PlayerV4Emulation(player);
+			}
 			return instance;
 		}
 		
