@@ -299,6 +299,7 @@ package com.longtailvideo.jwplayer.player {
 
 			cfg['state'] = _player.state;
 			cfg['mute'] = _player.mute;
+			cfg['fullscreen'] = _player.fullscreen;
 			
 			return cfg;
 		} 

@@ -35,6 +35,7 @@ package com.longtailvideo.jwplayer.utils {
 		 * @throws Error if something bad happens.
 		 */
 		public function loadConfig():void {
+			loadCookies();
 			if (this.xmlConfig) {
 				loadXML(this.xmlConfig);
 			} else {
@@ -68,7 +69,6 @@ package com.longtailvideo.jwplayer.utils {
 				for (var param:String in params) {
 					setConfigParam(param, params[param]);
 				}
-				loadCookies();
 				dispatchEvent(new Event(Event.COMPLETE));
 			} catch (e:Error) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));

@@ -177,6 +177,7 @@ package com.longtailvideo.jwplayer.media {
 			transformer.volume = vol / 100;
 			if (channel) {
 				channel.soundTransform = transformer;
+				super.setVolume(vol);
 			}
 		}
 	}

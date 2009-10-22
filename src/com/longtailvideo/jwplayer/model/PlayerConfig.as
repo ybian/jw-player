@@ -58,18 +58,11 @@ package com.longtailvideo.jwplayer.model {
 			controlbar = _controlbar;
 			playlist = _playlist;
 			playlistsize = _playlistsize;
-//			_list = newlist;
-//			setPlaylist(newlist);
 			
-			//Unsupported config variables
+			// Unsupported config variable defaults
 			this['aboutlink'] = "http://www.longtailvideo.com/players/jw-flv-player/";
 		}
 		
-/*		
-		public function setPlaylist(list:Playlist):void {
-			_list = list;
-		}
-*/		
 		public function setConfig(config:Object):void {
 			var playlistItems:Boolean = false;
 			if (!_singleItem) { _singleItem = new PlaylistItem(); }
@@ -77,8 +70,6 @@ package com.longtailvideo.jwplayer.model {
 				if (_singleItem.hasOwnProperty(item)) {
 					if (item == "file" && Strings.extension(config[item]) == "xml") {
 						setProperty("playlistfile", config[item]);					
-//					} //else if (_list.length > 0) {
-//						_list.currentItem[item] = config[item];
 					} else {
 						_singleItem[item] = config[item];
 						playlistItems = true;
@@ -89,9 +80,6 @@ package com.longtailvideo.jwplayer.model {
 					setProperty(item, config[item]);
 				}
 			}
-//			if (playlistItems && _list.length == 0) {
-//				_list.insertItem(newItem, 0);
-//			}
 		}
 		
 		private function setProperty(name:String, value:String):void {
@@ -129,7 +117,6 @@ package com.longtailvideo.jwplayer.model {
 		 */
 		private function playlistItem(key:String):String {
 			try {
-//				return _list.currentItem[key].toString();
 				return _singleItem[key].toString();
 			} catch (e:Error) {
 			}
@@ -324,7 +311,7 @@ package com.longtailvideo.jwplayer.model {
 		
 		/** Mute all sounds on startup. This value is set in a user cookie, and is retrieved the next time the player loads. **/
 		public function get mute():Boolean { return _mute; }
-		private function set mute(x:Boolean):void { _mute = x; }
+		public function set mute(x:Boolean):void { _mute = x; Configger.saveCookie('mute', _mute); }
 
 		/** Set to list to play the entire playlist once, to always to continously play the song/video/playlist and to single to continue repeating the selected file in a playlist. @default none **/
 		public function get repeat():String { return _repeat; }
@@ -344,7 +331,7 @@ package com.longtailvideo.jwplayer.model {
 
 		/** Startup volume of the player. Can be 0 to 100. Is saved in a cookie. @default 90 **/
 		public function get volume():Number { return _volume; }
-		public function set volume(x:Number):void { _volume = x; }
+		public function set volume(x:Number):void { _volume = x; Configger.saveCookie('volume', _volume); }
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// PLUGINS

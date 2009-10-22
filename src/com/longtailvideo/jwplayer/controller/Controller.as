@@ -142,7 +142,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function playlistItemHandler(evt:PlaylistEvent):void {
-			var item:PlaylistItem = _model.playlist.currentItem;
+			_model.config.item = _model.playlist.currentIndex;
 		}
 
 		private function errorHandler(evt:ErrorEvent):void {

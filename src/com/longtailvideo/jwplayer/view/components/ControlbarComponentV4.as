@@ -517,7 +517,8 @@ package com.longtailvideo.jwplayer.view.components {
 			if (scrubber.name == 'timeSlider' && player.playlist) {
 				mpl = player.playlist.currentItem.duration;
 			} else if (scrubber.name == 'volumeSlider') {
-				mpl = 100;
+				if (_player.mute) return;
+				else mpl = 100;
 			}
 			var pct:Number = (scrubber.icon.x - scrubber.rail.x) / (scrubber.rail.width - scrubber.icon.width) * mpl;
 			dispatchEvent(new ViewEvent(SLIDERS[scrubber.name], Math.round(pct)));
