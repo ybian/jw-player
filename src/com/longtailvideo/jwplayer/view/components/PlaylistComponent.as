@@ -231,44 +231,42 @@ package com.longtailvideo.jwplayer.view.components {
 			var playlistItem:PlaylistItem = _player.playlist.getItemAt(idx);
 			buttons[idx].c.gotoAndStop(0);
 			if (playlistItem.image) {
-				if (config['thumbs'] != false && _player.config.playlist != 'none' && _player.playlist.getItemAt(idx).image) {
+				if (config['thumbs'] != false && _player.config.playlist != 'none' && playlistItem.image) {
 					var img:MovieClip = buttons[idx].c.image;
 					var msk:Sprite = Draw.rect(buttons[idx].c, '0xFF0000', img.width, img.height, img.x, img.y);
 					var ldr:Loader = new Loader();
 					img.mask = msk;
 					img.addChild(ldr);
 					ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
-					if (_player.playlist.getItemAt(idx).image) {
-						ldr.load(new URLRequest(_player.playlist.getItemAt(idx).image));
+					if (playlistItem.image) {
+						ldr.load(new URLRequest(playlistItem.image));
 					}
 				}
 			}
 			if (playlistItem.duration) {
-				if (_player.playlist.getItemAt(idx).duration > 0) {
-					buttons[idx].c['duration'].text = Strings.digits(_player.playlist.getItemAt(idx).duration);
+				if (playlistItem.duration > 0) {
+					buttons[idx].c['duration'].text = Strings.digits(playlistItem.duration);
 					if (front) {
 						buttons[idx].c['duration'].textColor = front.color;
 					}
 				}
 			}
 			try {
-				if (playlistItem.description) {
-					buttons[idx].c['description'].htmlText = _player.playlist.getItemAt(idx).description;
-				} else {
-					buttons[idx].c['description'].text = _player.playlist.getItemAt(idx).description;
-				}
+				buttons[idx].c['description'].htmlText = playlistItem.description;
+				buttons[idx].c['title'].htmlText = "<b>" + playlistItem.title + "</b>";
 				if (front) {
 					buttons[idx].c['description'].textColor = front.color;
+					buttons[idx].c['title'].textColor = front.color;
 				}
 			} catch (e:Error) {
 			}
-			if (buttons[idx].c['image'] && (!_player.playlist.getItemAt(idx).image || config['thumbs'] == false)) {
+			if (buttons[idx].c['image'] && (!playlistItem.image || config['thumbs'] == false)) {
 				buttons[idx].c['image'].visible = false;
 			}
 			if (back) {
 				buttons[idx].c['back'].transform.colorTransform = back;
 			}
-		};
+		}
 		
 		
 		/** Loading of image completed; resume loading **/
