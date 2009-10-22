@@ -110,6 +110,7 @@ package com.longtailvideo.jwplayer.media {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 					_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 					setState(PlayerState.BUFFERING);
+					sendBufferEvent(0);
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 				}
 			} else {

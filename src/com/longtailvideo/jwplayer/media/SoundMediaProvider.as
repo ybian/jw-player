@@ -86,7 +86,9 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Pause the sound. **/
 		override public function pause():void {
-			channel.stop();
+			if (channel){
+				channel.stop();
+			}
 			super.pause();
 		}
 		
@@ -116,7 +118,9 @@ package com.longtailvideo.jwplayer.media {
 			}
 			if (sound.isBuffering == true && sound.bytesTotal > sound.bytesLoaded) {
 				if (state != PlayerState.BUFFERING) {
-					channel.stop();
+					if (channel) {
+						channel.stop();
+					}
 					setState(PlayerState.BUFFERING);
 				} else {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {bufferPercent: bufferPercent});
