@@ -452,11 +452,12 @@ package com.longtailvideo.jwplayer.view.components {
 				var xps:Number = Math.round(pct * (getSkinElementChild('timeSlider', 'rail').width - getSkinElementChild('timeSlider', 'icon').width));
 				if (dur > 0) {
 					getSkinElementChild('timeSlider', 'icon').visible = player.state != PlayerState.IDLE;
+					getSkinElementChild('timeSlider', 'mark').visible = player.state != PlayerState.IDLE;
 					if (!scrubber) {
 						getSkinElementChild('timeSlider', 'icon').x = xps;
 						getSkinElementChild('timeSlider', 'done').width = xps;
-						bufferHandler(evt);
 					}
+					bufferHandler(evt);
 					getSkinElementChild('timeSlider', 'done').visible = player.state != PlayerState.IDLE;
 				} else {
 					if (player.state != PlayerState.PLAYING) {
@@ -473,7 +474,12 @@ package com.longtailvideo.jwplayer.view.components {
 		private function bufferHandler(evt:MediaEvent):void {
 			if (evt.bufferPercent >= 0 || evt.type == MediaEvent.JWPLAYER_MEDIA_BUFFER) {
 				try {
-					var xps:Number = getSkinElementChild('timeSlider', 'icon').x;
+					var xps:Number;
+					if (!scrubber) {
+						xps = getSkinElementChild('timeSlider', 'icon').x;
+					} else {
+						xps = getSkinElementChild('timeSlider', 'done').width;
+					}
 					var mark:DisplayObject = getSkinElementChild('timeSlider', 'mark');
 					var markWidth:Number = player.state == PlayerState.IDLE ? 0 : Math.round(evt.bufferPercent / 100 * (getSkinElementChild('timeSlider', 'rail').width - xps));
 					mark.x = xps;

@@ -107,6 +107,10 @@ package com.longtailvideo.jwplayer.media {
 					outgoing.send('AS3_' + unique, "cueVideoById", gid, _item.start);
 					resize(_config.width, _config.width / 4 * 3);
 					media = loader;
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+					_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+					setState(PlayerState.BUFFERING);
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 				}
 			} else {
 				loader.load(new URLRequest(getLocation()));
@@ -176,20 +180,13 @@ package com.longtailvideo.jwplayer.media {
 				case 3:
 					setState(PlayerState.BUFFERING);
 					break;
-				case 5:
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-					_config.mute == true ? setVolume(0) : setVolume(_config.volume);
-					setState(PlayerState.BUFFERING);
-					sendBufferEvent(0);
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
-					break;
 			}
 		}
 		
 		
 		/** Catch Youtube load changes **/
 		public function onLoadChange(ldd:Number, ttl:Number, off:Number):void {
-			sendBufferEvent(ldd / ttl);
+			sendBufferEvent(ldd / ttl * 100);
 		}
 		
 		
