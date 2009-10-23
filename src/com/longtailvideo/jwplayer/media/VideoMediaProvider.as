@@ -53,8 +53,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Catch security errors. **/
 		protected function errorHandler(evt:ErrorEvent):void {
-			stop();
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: evt.text});
+			error(evt.text);
 		}
 		
 		
@@ -68,10 +67,10 @@ package com.longtailvideo.jwplayer.media {
 			}
 			positionInterval = setInterval(positionHandler, 200);
 			loadTimer = setTimeout(loadTimerComplete, 3000);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 		}
 				
 		
@@ -142,16 +141,6 @@ package com.longtailvideo.jwplayer.media {
 				complete();
 			}
 		}
-
-		private function complete():void {
-			stream.pause();
-			clearInterval(positionInterval);
-			positionInterval = undefined;
-			setState(PlayerState.IDLE);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
-			position = 0;
-			stream.seek(position);
-		}
 		
 		
 		/** Seek to a new position. **/
@@ -171,8 +160,7 @@ package com.longtailvideo.jwplayer.media {
 					complete();
 					break;
 				case "NetStream.Play.StreamNotFound":
-					stop();
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: 'Video not found or access denied: ' + item.file});
+					error('Video not found or access denied: ' + item.file);
 					break;
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {status: evt.info.code}});

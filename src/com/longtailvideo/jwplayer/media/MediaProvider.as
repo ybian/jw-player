@@ -102,6 +102,9 @@ package com.longtailvideo.jwplayer.media {
 		/** Resume playback of the item. **/
 		public function play():void {
 			setState(PlayerState.PLAYING);
+			if (_media) {
+				_media.visible = true;
+			}
 		}
 		
 		
@@ -118,8 +121,11 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Stop playing and loading the item. **/
 		public function stop():void {
-			position = 0;
 			setState(PlayerState.IDLE);
+			position = 0;
+		 	if (_media) {
+		 		_media.visible = false;
+		 	}
 		}
 		
 		
@@ -143,6 +149,17 @@ package com.longtailvideo.jwplayer.media {
 		 	sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_MUTE, {'mute': mute});
 		 }
 		 
+		 
+		 /** Completes video playback **/
+		 protected function complete():void {
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+		 	stop();
+		 }
+		 
+		 /** Puts the video into a buffer state **/
+		 protected function buffer():void {
+
+		 }
 		
 		/** Graphical representation of media **/
 		public function get display():DisplayObject {
@@ -235,11 +252,18 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Dispatches buffer change notifications **/
-		public function sendBufferEvent(bufferPercent:Number):void {
+		protected function sendBufferEvent(bufferPercent:Number):void {
 			if (bufferPercent != this.bufferPercent) {
 				this.bufferPercent = bufferPercent;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {'bufferPercent': this.bufferPercent});
 			}
+		}
+		
+		
+		/** Dispatches error notifications **/
+		protected function error(message:String):void {
+			stop();
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: message});
 		}
 		
 		
@@ -283,6 +307,7 @@ package com.longtailvideo.jwplayer.media {
 		protected function set media(m:DisplayObject):void {
 			if (m) {
 				_media = new MovieClip();
+				_media.visible = false;
 				_media.addChild(m);
 				if (_width * _height > 0) {
 					Stretcher.stretch(_media, _width, _height, _config.stretching);

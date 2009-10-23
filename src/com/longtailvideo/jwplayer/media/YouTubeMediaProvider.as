@@ -56,8 +56,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Catch load errors. **/
 		private function errorHandler(evt:ErrorEvent):void {
-			stop();
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: evt.text});
+			error(evt.text);
 		}
 		
 		
@@ -101,21 +100,34 @@ package com.longtailvideo.jwplayer.media {
 			_item = itm;
 			_position = 0;
 			loading = true;
+			setState(PlayerState.BUFFERING);
+			sendBufferEvent(0);
 			if (connected) {
-				if (outgoing) {
-					var gid:String = getID(_item.file);
-					outgoing.send('AS3_' + unique, "cueVideoById", gid, _item.start);
-					resize(_config.width, _config.width / 4 * 3);
-					media = loader;
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-					_config.mute == true ? setVolume(0) : setVolume(_config.volume);
-					setState(PlayerState.BUFFERING);
-					sendBufferEvent(0);
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
-				}
+				completeLoad(itm);
 			} else {
 				loader.load(new URLRequest(getLocation()));
 				inbound.connect('AS2_' + unique);
+			}
+		}
+		
+		/** SWF loaded; add it to the tree **/
+		public function onSwfLoadComplete():void {
+			connected = true;
+			if (loading) {
+				completeLoad(_item);
+			}
+		}
+		
+		/** Everything loaded - play the video **/
+		private function completeLoad(itm:PlaylistItem):void {
+			if (outgoing) {
+				var gid:String = getID(_item.file);
+				outgoing.send('AS3_' + unique, "cueVideoById", gid, _item.start);
+				resize(_config.width, _config.width / 4 * 3);
+				media = loader;
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+				_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
 		}
 		
@@ -134,15 +146,6 @@ package com.longtailvideo.jwplayer.media {
 		}
 		
 		
-		/** SWF loaded; add it to the tree **/
-		public function onSwfLoadComplete():void {
-			connected = true;
-			if (loading) {
-				load(_item);
-			}
-		}
-		
-		
 		/** error was thrown without this handler **/
 		public function onLocalConnectionStatusChange(evt:StatusEvent):void {
 			// sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META,{status:evt.code});
@@ -151,12 +154,11 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Catch youtube errors. **/
 		public function onError(erc:Number):void {
-			stop();
 			var msg:String = 'Video not found or deleted: ' + getID(item['file']);
 			if (erc == 101 || erc == 150) {
 				msg = 'Embedding this video is disabled by its owner.';
 			}
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: msg});
+			error(msg);
 		}
 		
 		
@@ -168,8 +170,7 @@ package com.longtailvideo.jwplayer.media {
 					break;
 				case 0:
 					if (_config.state != PlayerState.BUFFERING && _config.state != PlayerState.IDLE) {
-						setState(PlayerState.IDLE);
-						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+						complete();
 					}
 					break;
 				case 1:

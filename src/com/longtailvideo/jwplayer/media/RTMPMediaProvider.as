@@ -44,6 +44,7 @@ package com.longtailvideo.jwplayer.media {
 		public function RTMPMediaProvider() {
 		}
 		
+		
 		/** Constructor; sets up the connection and display. **/
 		public override function initializeMediaProvider(cfg:PlayerConfig):void {
 			super.initializeMediaProvider(cfg);
@@ -67,8 +68,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Catch security errors. **/
 		protected function errorHandler(evt:ErrorEvent):void {
-			stop();
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: evt.text});
+			error(evt.text);
 		}
 		
 		
@@ -91,13 +91,13 @@ package com.longtailvideo.jwplayer.media {
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
 			_position = 0;
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+			setState(PlayerState.BUFFERING);
+			sendBufferEvent(0);
 			if (getConfigProperty('loadbalance') as Boolean == true) {
 				smil = item.file;
 				loader.load(new URLRequest(smil));
 			} else {
-				media = video;
-				connection.connect(item.streamer);
+				finishLoad();
 			}
 		}
 		
@@ -107,21 +107,31 @@ package com.longtailvideo.jwplayer.media {
 			var xml:XML = XML(evt.currentTarget.data);
 			item.streamer = xml.children()[0].children()[0].@base.toString();
 			item.file = xml.children()[1].children()[0].@src.toString();
-			media = video;
-			connection.connect(item.streamer);
+			finishLoad();
 		}
 		
+		/** Finalizes the loading process **/
+		private function finishLoad():void {
+			if (!media){
+				media = video;
+			}
+			connection.connect(item.streamer);
+			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+		}		
 		
 		/** Get metadata information from netstream class. **/
 		public function onData(dat:Object):void {
 			if (dat.width) {
 				video.width = dat.width;
 				video.height = dat.height;
+				resize(_width, _height);
+			}
+			if (dat.duration && item.duration < 0) {
+				item.duration = dat.duration;
 			}
 			if (dat.type == 'complete') {
-				clearInterval(interval);
-				setState(PlayerState.IDLE);
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+				complete();
 			} else if (dat.type == 'close') {
 				stop();
 			}
@@ -155,32 +165,30 @@ package com.longtailvideo.jwplayer.media {
 			_position = Math.round(stream.time * 10) / 10;
 			var bfr:Number = Math.round(stream.bufferLength / stream.bufferTime * 100);
 			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
-				//TODO: Swapped
 				if (state == PlayerState.PLAYING && bfr < 20) {
 					stream.pause();
 					setState(PlayerState.BUFFERING);
 					stream.bufferTime = _config.bufferlength;
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: _config.bufferlength}});
 				}
-				sendBufferEvent(bfr);
 			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
-				super.play();
-				stream.resume();
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 				stream.bufferTime = _config.bufferlength * 4;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: _config.bufferlength * 4}});
 			}
-			if (position < item.duration) {
+			
+			var bufferPercent:Number = Math.round((_position + stream.bufferLength) / item.duration * 100);
+			if (state == PlayerState.BUFFERING) {
+				// Totally accurate, but it looks strange
+				// sendBufferEvent(bufferPercent);
+			} else if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
+					// Totally accurate, but it looks strange
+					// sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 				}
 			} else if (!isNaN(position) && item.duration > 0) {
-				stream.pause();
-				clearInterval(interval);
-				if (started && item.duration == 0) {
-					stop();
-				}
-				setState(PlayerState.IDLE);
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+				complete();
 			}
 		}
 		
@@ -208,10 +216,6 @@ package com.longtailvideo.jwplayer.media {
 			video.attachNetStream(stream);
 			interval = setInterval(positionInterval, 100);
 			stream.play(getID(item.file));
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
-			setState(PlayerState.BUFFERING);
-			sendBufferEvent(0);
 		}
 		
 		
@@ -245,12 +249,11 @@ package com.longtailvideo.jwplayer.media {
 							return;
 						}
 					} catch (err:Error) {
-						stop();
 						var msg:String = evt.info.code;
 						if (evt.info['description']) {
 							msg = evt.info['description'];
 						}
-						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: msg});
+						error(msg);
 					}
 					break;
 				case 'NetStream.Failed':
@@ -259,13 +262,11 @@ package com.longtailvideo.jwplayer.media {
 						onData({type: 'complete'});
 						unpublished = false;
 					} else {
-						stop();
-						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: "Stream not found: " + item.file});
+						error("Stream not found: " + item.file);
 					}
 					break;
 				case 'NetConnection.Connect.Failed':
-					stop();
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: "Server not found: " + item.streamer});
+					error("Server not found: " + item.streamer);
 					break;
 				case 'NetStream.Play.UnpublishNotify':
 					unpublished = true;
@@ -277,7 +278,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Destroy the stream. **/
 		override public function stop():void {
-			if (stream) {
+			if (stream && stream.time) {
 				stream.close();
 			}
 			connection.close();

@@ -49,7 +49,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Catch errors. **/
 		private function errorHandler(evt:ErrorEvent):void {
 			stop();
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: evt.text});
+			error(evt.text);
 		}
 		
 		
@@ -86,9 +86,7 @@ package com.longtailvideo.jwplayer.media {
 			if (_position < _item.duration) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration});
 			} else if (_item.duration > 0) {
-				pause();
-				setState(PlayerState.IDLE);
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+				complete();
 			}
 		}
 		
@@ -96,7 +94,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Send load progress to player. **/
 		private function progressHandler(evt:ProgressEvent):void {
 			var pct:Number = Math.round(evt.bytesLoaded / evt.bytesTotal * 100);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {bufferPercent: pct});
+			sendBufferEvent(pct);
 		}
 		
 		

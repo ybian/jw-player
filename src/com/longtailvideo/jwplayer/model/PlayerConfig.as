@@ -311,7 +311,7 @@ package com.longtailvideo.jwplayer.model {
 		
 		/** Mute all sounds on startup. This value is set in a user cookie, and is retrieved the next time the player loads. **/
 		public function get mute():Boolean { return _mute; }
-		public function set mute(x:Boolean):void { _mute = x; Configger.saveCookie('mute', _mute); }
+		public function set mute(x:Boolean):void { _mute = x;  setCookie('mute', _mute);}
 
 		/** Set to list to play the entire playlist once, to always to continously play the song/video/playlist and to single to continue repeating the selected file in a playlist. @default none **/
 		public function get repeat():String { return _repeat; }
@@ -331,7 +331,7 @@ package com.longtailvideo.jwplayer.model {
 
 		/** Startup volume of the player. Can be 0 to 100. Is saved in a cookie. @default 90 **/
 		public function get volume():Number { return _volume; }
-		public function set volume(x:Number):void { _volume = x; Configger.saveCookie('volume', _volume); }
+		public function set volume(x:Number):void { _volume = x; setCookie('volume', _volume);}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// PLUGINS
@@ -347,7 +347,7 @@ package com.longtailvideo.jwplayer.model {
 		
 		/** Javascript player ready callback handlers **/		
 		public function get debug():String { return _debug }
-		public function set debug(x:String):void { _debug = x; Configger.saveCookie('debug', _debug); }
+		public function set debug(x:String):void { _debug = x; setCookie('debug', _debug); }
 		
 		/**
 		 * Returns a PluginConfig containing plugin configuration information
@@ -377,7 +377,7 @@ package com.longtailvideo.jwplayer.model {
 			return names;
 		}
 		
-		public function setCookie(name:String, value:*):void {
+		private function setCookie(name:String, value:*):void {
 			Configger.saveCookie(name, value);			
 		}
 
