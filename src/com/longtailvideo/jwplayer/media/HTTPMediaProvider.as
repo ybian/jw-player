@@ -84,8 +84,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Catch security errors. **/
 		protected function errorHandler(evt:ErrorEvent):void {
-			stop();
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: evt.text});
+			error(evt.text);
 		}
 		
 		
@@ -109,14 +108,18 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Create the video request URL. **/
 		protected function getURL():String {
-			var url:String = item.streamer;
+			var url:String = item.file;
 			var off:Number = byteoffset;
 			if (getConfigProperty('startparam') as String) {
 				startparam = getConfigProperty('startparam');
 			}
-			if (item['streamer']) {
-				url = item['streamer'];
-				url = getURLConcat(url, 'file', item['file']);
+			if (item.streamer) {
+				if(item['streamer'].indexOf('/') > 0) {
+					url = item.streamer;
+					url = getURLConcat(url,'file',item.file);
+				} else { 
+					startparam = item.streamer;
+				}
 			}
 			if (mp4) {
 				off = timeoffset;
@@ -154,10 +157,10 @@ package com.longtailvideo.jwplayer.media {
 			interval = setInterval(positionInterval, 100);
 			clearInterval(loadinterval);
 			loadinterval = setInterval(loadHandler, 200);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			setState(PlayerState.BUFFERING);
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			sendBufferEvent(0);
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 		}
 		
 		
@@ -171,7 +174,7 @@ package com.longtailvideo.jwplayer.media {
 			try {
 				sendBufferEvent(Math.round(ldd / ttl * 100));
 			} catch (err:Error) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: err.getStackTrace()});
+				error(err.getStackTrace());
 			}
 			if (ldd + off >= ttl && ldd > 0) {
 				clearInterval(loadinterval);
@@ -198,6 +201,10 @@ package com.longtailvideo.jwplayer.media {
 			if (dat.width) {
 				video.width = dat.width;
 				video.height = dat.height;
+				resize(_width, _height);
+			}
+			if (dat.duration) {
+				item.duration = dat.duration;
 			}
 			if (dat['type'] == 'metadata' && !meta) {
 				meta = true;
@@ -243,25 +250,25 @@ package com.longtailvideo.jwplayer.media {
 			}
 			var bfr:Number = Math.round(stream.bufferLength / stream.bufferTime * 100);
 			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
-				stream.pause();
 				if (state == PlayerState.PLAYING && bfr < 25) {
+					stream.pause();
 					setState(PlayerState.BUFFERING);
 				}
 				sendBufferEvent(bfr);
 			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
-				super.play();
-				stream.resume();
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
-			if (position < item.duration) {
+			
+			var bufferPercent:Number = stream.bytesLoaded / stream.bytesTotal * 100;
+			if (state == PlayerState.BUFFERING) {
+				sendBufferEvent(bufferPercent);
+			} else if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
 				}
 			} else if (item.duration > 0) {
 				// Playback completed
-				stream.pause();
-				clearInterval(interval);
-				setState(PlayerState.IDLE);
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+				complete();
 			}
 		}
 		
@@ -295,14 +302,12 @@ package com.longtailvideo.jwplayer.media {
 			switch (evt.info.code) {
 				case "NetStream.Play.Stop":
 					if (state != PlayerState.BUFFERING) {
-						clearInterval(interval);
-						setState(PlayerState.IDLE);
-						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+						complete();
 					}
 					break;
 				case "NetStream.Play.StreamNotFound":
 					stop();
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_ERROR, {message: 'Video not found: ' + item.file});
+					error('Video not found: ' + item.file);
 					break;
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {status: evt.info.code}});
