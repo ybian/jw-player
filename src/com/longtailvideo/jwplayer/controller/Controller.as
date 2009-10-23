@@ -212,6 +212,9 @@ package com.longtailvideo.jwplayer.controller {
 		public function play():Boolean {
 			if (_model.playlist.currentItem) {
 				switch (_player.state) {
+					case PlayerState.BUFFERING:
+					case PlayerState.PLAYING:
+						_model.media.stop();
 					case PlayerState.IDLE:
 						load(_model.playlist.currentItem);
 						break;
