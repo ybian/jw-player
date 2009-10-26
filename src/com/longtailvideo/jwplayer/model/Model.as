@@ -102,7 +102,7 @@ package com.longtailvideo.jwplayer.model {
 		}
 
 		public function set fullscreen(b:Boolean):void {
-			_config.setConfig({fullscreen: b});
+			_config.fullscreen = b;
 		}
 
 		/** The current mute state of the player **/
