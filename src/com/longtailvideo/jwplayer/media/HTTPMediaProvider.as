@@ -158,7 +158,7 @@ package com.longtailvideo.jwplayer.media {
 			clearInterval(loadinterval);
 			loadinterval = setInterval(loadHandler, 200);
 			setState(PlayerState.BUFFERING);
-			sendBufferEvent(0);
+			sendBufferEvent(0, 0);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 		}
@@ -172,7 +172,8 @@ package com.longtailvideo.jwplayer.media {
 			var off:Number = Math.round(ttl * pct / (1 - pct));
 			ttl += off;
 			try {
-				sendBufferEvent(Math.round(ldd / ttl * 100));
+				var buff:Number = bufferPercent();
+				if (buff > 0) sendBufferEvent(buff, timeoffset);  
 			} catch (err:Error) {
 				error(err.getStackTrace());
 			}
@@ -234,6 +235,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Resume playing. **/
 		override public function play():void {
 			stream.resume();
+			clearInterval(interval);
 			interval = setInterval(positionInterval, 100);
 			super.play();
 		}
@@ -248,23 +250,23 @@ package com.longtailvideo.jwplayer.media {
 					_position += timeoffset;
 				}
 			}
-			var bfr:Number = Math.round(stream.bufferLength / stream.bufferTime * 100);
-			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
+			var bfr:Number = stream.bufferLength / stream.bufferTime * 100;
+			if (bfr > 0 && bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
 				if (state == PlayerState.PLAYING && bfr < 25) {
 					stream.pause();
 					setState(PlayerState.BUFFERING);
 				}
-				sendBufferEvent(bfr);
+//				sendBufferEvent(bfr);
 			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
 			
-			var bufferPercent:Number = stream.bytesLoaded / stream.bytesTotal * 100;
-			if (state == PlayerState.BUFFERING) {
-				sendBufferEvent(bufferPercent);
+			var bufferPct:Number = stream.bytesLoaded / stream.bytesTotal * 100;
+			if (state == PlayerState.BUFFERING && bufferPct > 0) {
+				sendBufferEvent(bufferPct, timeoffset);
 			} else if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPct, offset: timeoffset});
 				}
 			} else if (item.duration > 0) {
 				// Playback completed
@@ -272,6 +274,9 @@ package com.longtailvideo.jwplayer.media {
 			}
 		}
 		
+		protected function bufferPercent():Number {
+			return stream ? (stream.bytesLoaded / stream.bytesTotal * 100) : 0;
+		}
 		
 		/** Seek to a specific second. **/
 		override public function seek(pos:Number):void {

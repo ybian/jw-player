@@ -164,6 +164,7 @@ package com.longtailvideo.jwplayer.events {
 		public var duration:Number 			= -1;
 		public var metadata:Object 			= {};
 		public var position:Number 			= -1;
+		public var offset:Number			= -1;
 		public var volume:Number 			= -1;
 		public var mute:Boolean				= false;
 	
@@ -177,6 +178,7 @@ package com.longtailvideo.jwplayer.events {
 			evt.duration = this.duration;
 			evt.metadata = this.metadata;
 			evt.position = this.position;
+			evt.offset = this.offset;
 			evt.volume = this.volume;
 			evt.mute = this.mute;
 			return evt;
@@ -187,6 +189,7 @@ package com.longtailvideo.jwplayer.events {
 				+ ' bufferPercent="' + bufferPercent + '"'
 				+ ' duration="' + duration + '"'
 				+ ' position="' + position + '"'
+				+ ' offset="' + offset + '"'
 				+ ' volume="' + volume + '"'
 				+ ' mute="' + mute + '"'
 				+ ' message="' + message + '"'

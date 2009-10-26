@@ -470,7 +470,7 @@ package com.longtailvideo.jwplayer.view.components {
 			var markWidth:Number = _player.state == PlayerState.IDLE ? 0 : Math.round((evt.bufferPercent / 100) * railWidth); 
 			
 			try {
-				mark.x = 0;
+				mark.x = (evt.offset > 0 && evt.duration > 0) ? Math.round(railWidth*(evt.offset / evt.duration)) : 0;
 				mark.width = markWidth;
 				mark.visible = _player.state != PlayerState.IDLE;
 			} catch (e:Error) {}

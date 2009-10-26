@@ -252,10 +252,14 @@ package com.longtailvideo.jwplayer.media {
 		
 		
 		/** Dispatches buffer change notifications **/
-		protected function sendBufferEvent(bufferPercent:Number):void {
+		protected function sendBufferEvent(bufferPercent:Number, offset:Number=0):void {
 			if (bufferPercent != this.bufferPercent) {
 				this.bufferPercent = bufferPercent;
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {'bufferPercent': this.bufferPercent});
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, 
+								{	'bufferPercent': bufferPercent, 
+									'offset': offset, 
+									'duration': _item.duration
+								});
 			}
 		}
 		
