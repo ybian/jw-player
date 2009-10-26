@@ -184,10 +184,15 @@ package com.longtailvideo.jwplayer.events {
 		
 		public override function toString():String {
 			return '[MediaEvent type="' + type + '"' 
+				+ ' bufferPercent="' + bufferPercent + '"'
+				+ ' duration="' + duration + '"'
+				+ ' position="' + position + '"'
+				+ ' volume="' + volume + '"'
+				+ ' mute="' + mute + '"'
+				+ ' message="' + message + '"'
 				+ ' id="' + id + '"'
 				+ ' client="' + client + '"'
 				+ ' version="' + version + '"'
-				+ ' message="' + message + '"'
 				+ "]";
 		}
 	}
