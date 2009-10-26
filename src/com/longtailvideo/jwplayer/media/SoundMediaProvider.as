@@ -138,11 +138,15 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Seek in the sound. **/
 		override public function seek(pos:Number):void {
-			clearInterval(positionInterval);
-			positionInterval = undefined;
-			_position = pos;
-			channel.stop();
-			play();
+			if (sound && (pos >= (sound.bytesLoaded / sound.bytesTotal) * item.duration)) { 
+				clearInterval(positionInterval);
+				positionInterval = undefined;
+				if (channel) {
+					channel.stop();
+				}
+				_position = pos;
+				play();
+			}
 		}
 		
 		

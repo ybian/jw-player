@@ -1,7 +1,4 @@
-﻿/**
- * Wrapper for playback of progressively downloaded video.
- **/
-package com.longtailvideo.jwplayer.media {
+﻿package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
@@ -13,7 +10,9 @@ package com.longtailvideo.jwplayer.media {
 	import flash.net.*;
 	import flash.utils.*;
 	
-	
+	/**
+	 * Wrapper for playback of progressively downloaded video.
+	 **/
 	public class VideoMediaProvider extends MediaProvider {
 		/** Video object to be instantiated. **/
 		protected var video:Video;
@@ -145,11 +144,14 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Seek to a new position. **/
 		override public function seek(pos:Number):void {
-			super.seek(pos);
-			clearInterval(positionInterval);
-			positionInterval = undefined;
-			stream.seek(position);
-			play();
+			var bufferTime:Number = (stream.bytesLoaded / stream.bytesTotal) * item.duration;
+			if ( pos <= bufferTime ) {
+				super.seek(pos);
+				clearInterval(positionInterval);
+				positionInterval = undefined;
+				stream.seek(position);
+				play();
+			}
 		}
 		
 		
