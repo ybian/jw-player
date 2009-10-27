@@ -164,7 +164,7 @@ package com.longtailvideo.jwplayer.events {
 		public var duration:Number 			= -1;
 		public var metadata:Object 			= {};
 		public var position:Number 			= -1;
-		public var offset:Number			= -1;
+		public var offset:Number			= 0;
 		public var volume:Number 			= -1;
 		public var mute:Boolean				= false;
 	

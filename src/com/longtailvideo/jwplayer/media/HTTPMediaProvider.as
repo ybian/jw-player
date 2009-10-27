@@ -204,7 +204,7 @@ package com.longtailvideo.jwplayer.media {
 				video.height = dat.height;
 				resize(_width, _height);
 			}
-			if (dat.duration) {
+			if (dat.duration && item.duration < 0) {
 				item.duration = dat.duration;
 			}
 			if (dat['type'] == 'metadata' && !meta) {

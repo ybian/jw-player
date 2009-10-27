@@ -467,32 +467,14 @@ package com.longtailvideo.jwplayer.view.components {
 			
 			var mark:DisplayObject = getSkinElementChild('timeSlider', 'mark');
 			var railWidth:Number = getSkinElementChild('timeSlider', 'rail').width;
-			var markWidth:Number = _player.state == PlayerState.IDLE ? 0 : Math.round((evt.bufferPercent / 100) * railWidth); 
+			var markWidth:Number = _player.state == PlayerState.IDLE ? 0 : Math.round((evt.bufferPercent / 100) * railWidth);
+			var offsetRatio:Number = evt.offset / evt.duration;
 			
 			try {
-				mark.x = (evt.offset > 0 && evt.duration > 0) ? Math.round(railWidth*(evt.offset / evt.duration)) : 0;
-				mark.width = markWidth;
+				mark.x = evt.duration > 0 ? Math.round(railWidth * offsetRatio) : 0;
+				mark.width = markWidth * (1 - offsetRatio);
 				mark.visible = _player.state != PlayerState.IDLE;
 			} catch (e:Error) {}
-			
-/*			
-			if (evt.bufferPercent >= 0 || evt.type == MediaEvent.JWPLAYER_MEDIA_BUFFER) {
-				try {
-					var xps:Number;
-					if (!scrubber) {
-						xps = getSkinElementChild('timeSlider', 'icon').x;
-					} else {
-						xps = getSkinElementChild('timeSlider', 'done').width;
-					}
-					var mark:DisplayObject = getSkinElementChild('timeSlider', 'mark');
-					var markWidth:Number = _player.state == PlayerState.IDLE ? 0 : Math.round(evt.bufferPercent / 100 * (getSkinElementChild('timeSlider', 'rail').width - xps));
-					mark.x = xps;
-					mark.width = markWidth;
-					mark.visible = _player.state != PlayerState.IDLE;
-			} catch (err:Error) {
-				}
-			}
-*/			
 		}
 		
 		
