@@ -118,9 +118,9 @@ package com.longtailvideo.jwplayer.controller {
 		private function setupComplete(evt:Event):void {
 			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_READY));
 
-			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadHandler);
+			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadHandler, false, 1000);
 			_model.playlist.addEventListener(ErrorEvent.ERROR, errorHandler);
-			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItemHandler);
+			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItemHandler, false, 1000);
 			
 			// Broadcast playlist loaded (which was swallowed during player setup);
 			if (_model.playlist.length > 0) {

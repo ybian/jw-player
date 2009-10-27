@@ -497,16 +497,18 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Handle mouse releases on sliders. **/
 		private function upHandler(evt:MouseEvent):void {
 			var mpl:Number = 0;
+			var sliderType:String = scrubber.name;
+			
 			stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler);
 			scrubber.icon.stopDrag();
-			if (scrubber.name == 'timeSlider' && _player.playlist) {
+			if (sliderType == 'timeSlider' && _player.playlist) {
 				mpl = _player.playlist.currentItem.duration;
-			} else if (scrubber.name == 'volumeSlider') {
+			} else if (sliderType == 'volumeSlider') {
 				if (_player.mute) return;
-				else mpl = 100;
+				else mpl = 1020;
 			}
 			var pct:Number = (scrubber.icon.x - scrubber.rail.x) / (scrubber.rail.width - scrubber.icon.width) * mpl;
-			dispatchEvent(new ViewEvent(SLIDERS[scrubber.name], Math.round(pct)));
+			dispatchEvent(new ViewEvent(SLIDERS[sliderType], Math.round(pct)));
 			scrubber = undefined;
 		}
 		
