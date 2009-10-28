@@ -35,7 +35,7 @@ package com.longtailvideo.jwplayer.view {
 			addLayout('playlist');			
 			addLayout('controlbar');
 			addLayout('display');			
-			addLayout('dock');			
+			addLayout('dock');	
 			
 			remainingSpace = new Rectangle(0, 0, width, height);
 			generateLayout();
@@ -70,9 +70,7 @@ package com.longtailvideo.jwplayer.view {
 		protected function generateLayout():void {
 			if (toLayout.length == 0) {
 				for each(var item:PluginConfig in noLayout) {
-					if (_player.fullscreen && testPosition(item['position'])) { 
-						item['visible'] = false;
-					}
+					item['visible'] = !(_player.fullscreen && testPosition(item['position']));
 					assignSpace(item, remainingSpace);
 				}
 				_player.config.width = remainingSpace.width;

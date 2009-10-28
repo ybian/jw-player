@@ -326,9 +326,7 @@ package com.longtailvideo.jwplayer.view.components {
 			clip.back.height =  height;
 			buildPlaylist(false);
 			stateHandler();
-			if (PlayerLayoutManager.testPosition(config['position'])) {
-				clip.visible = true;
-			} else {
+			if (clip.visible && config['visible'] === false) {
 				clip.visible = false;
 			}
 		}
@@ -385,12 +383,10 @@ package com.longtailvideo.jwplayer.view.components {
 		protected function stateHandler(evt:PlayerStateEvent = null):void {
 			if (config['position'] == 'over') {
 				if (player.state == PlayerState.PLAYING || player.state == PlayerState.PAUSED || player.state == PlayerState.BUFFERING) {
-					visible = false;
+					clip.visible = false;
+				} else {
+					clip.visible = true;
 				}
-			} else if (player.fullscreen){
-				visible = false;
-			} else {
-				visible = true;
 			}
 		}
 		

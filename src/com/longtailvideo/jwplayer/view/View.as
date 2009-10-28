@@ -100,11 +100,11 @@ package com.longtailvideo.jwplayer.view {
 			_imageLayer = setupLayer("image", 2);
 			_image = new Loader();
 
-			_componentsLayer = setupLayer("components", 3);
-
-			_logoLayer = setupLayer("logo", 4);
+			_logoLayer = setupLayer("logo", 3);
 			_logo = new Logo(_player);
 			_logoLayer.addChild(_logo);
+			
+			_componentsLayer = setupLayer("components", 4);
 
 			_pluginsLayer = setupLayer("plugins", 5);
 		}
@@ -141,8 +141,8 @@ package com.longtailvideo.jwplayer.view {
 		private function setupComponents():void {
 			_components = new PlayerComponents(_player);
 			
-			setupComponent(_components.playlist, 0);
-			setupComponent(_components.display, 1);
+			setupComponent(_components.display, 0);
+			setupComponent(_components.playlist, 1);
 			setupComponent(_components.controlbar, 2);
 			setupComponent(_components.dock, 3);
 		}
