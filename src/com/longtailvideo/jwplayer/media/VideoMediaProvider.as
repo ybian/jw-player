@@ -63,6 +63,8 @@
 				media = video;
 				stream.checkPolicyFile = true;
 				stream.play(item.file);
+			} else {
+				seek(0);
 			}
 			positionInterval = setInterval(positionHandler, 200);
 			loadTimer = setTimeout(loadTimerComplete, 3000);

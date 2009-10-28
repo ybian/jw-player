@@ -3,6 +3,7 @@ package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
+	import com.longtailvideo.jwplayer.utils.Stretcher;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
 	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
@@ -31,7 +32,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _repeat:String 			= RepeatOptions.NONE; 
 		private var _shuffle:Boolean 		= false; 
 		private var _smoothing:Boolean 		= true; 
-		private var _stretching:String 		= "uniform"; 
+		private var _stretching:String 		= Stretcher.UNIFORM; 
 		private var _volume:Number 			= 90;
 
 		private var _backcolor:Color		= null;
@@ -305,7 +306,7 @@ package com.longtailvideo.jwplayer.model {
 
 		/** Set to list to play the entire playlist once, to always to continously play the song/video/playlist and to single to continue repeating the selected file in a playlist. @default none **/
 		public function get repeat():String { return _repeat; }
-		public function set repeat(x:String):void { _repeat = x; }
+		public function set repeat(x:String):void { _repeat = x.toLowerCase(); }
 
 		/** Shuffle playback of playlist items. @default false **/
 		public function get shuffle():Boolean { return _shuffle; }
@@ -317,7 +318,7 @@ package com.longtailvideo.jwplayer.model {
 
 		/** Defines how to resize images in the display. Can be none (no stretching), exactfit (disproportionate), uniform (stretch with black borders) or fill (uniform, but completely fill the display). @default uniform **/
 		public function get stretching():String{ return _stretching; }
-		public function set stretching(x:String):void { _stretching = x; }
+		public function set stretching(x:String):void { _stretching = x.toLowerCase(); }
 
 		/** Startup volume of the player. Can be 0 to 100. Is saved in a cookie. @default 90 **/
 		public function get volume():Number { return _volume; }

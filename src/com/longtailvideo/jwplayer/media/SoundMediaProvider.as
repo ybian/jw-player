@@ -87,6 +87,8 @@ package com.longtailvideo.jwplayer.media {
 		/** Pause the sound. **/
 		override public function pause():void {
 			if (channel){
+				clearInterval(positionInterval);
+				positionInterval = undefined;
 				channel.stop();
 			}
 			super.pause();
@@ -138,7 +140,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Seek in the sound. **/
 		override public function seek(pos:Number):void {
-			if (sound && (pos >= (sound.bytesLoaded / sound.bytesTotal) * item.duration)) { 
+			if (sound && (pos < (sound.bytesLoaded / sound.bytesTotal) * item.duration)) { 
 				clearInterval(positionInterval);
 				positionInterval = undefined;
 				if (channel) {

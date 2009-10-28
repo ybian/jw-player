@@ -163,8 +163,8 @@ package com.longtailvideo.jwplayer.media {
 		 
 		 /** Completes video playback **/
 		 protected function complete():void {
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 		 	stop();
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
 		 }
 		 
 		 /** Puts the video into a buffer state **/

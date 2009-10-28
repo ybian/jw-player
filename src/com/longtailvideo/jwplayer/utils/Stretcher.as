@@ -28,11 +28,11 @@ package com.longtailvideo.jwplayer.utils {
 			var xsc:Number = wid / clp.width;
 			var ysc:Number = hei / clp.height;
 			switch (typ.toLowerCase()) {
-				case 'exactfit':
+				case Stretcher.EXACTFIT:
 					clp.width = wid;
 					clp.height = hei;
 					break;
-				case 'fill':
+				case Stretcher.FILL:
 					if (xsc > ysc) {
 						clp.width *= xsc;
 						clp.height *= xsc;
@@ -41,11 +41,11 @@ package com.longtailvideo.jwplayer.utils {
 						clp.height *= ysc;
 					}
 					break;
-				case 'none':
+				case Stretcher.NONE:
 					clp.scaleX = 1;
 					clp.scaleY = 1;
 					break;
-				case 'uniform':
+				case Stretcher.UNIFORM:
 				default:
 					if (xsc > ysc) {
 						clp.width *= ysc;

@@ -133,14 +133,19 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function playlistLoadHandler(evt:PlaylistEvent=null):void {
-			var loadIndex:Number = _model.config.item;
 			if (_model.config.shuffle) {
-				loadIndex = Math.floor(Math.random() * _model.playlist.length);
+				shuffleItem();
+			} else {
+				_model.playlist.currentIndex = _model.config.item;
 			}
-			_model.playlist.currentIndex = loadIndex;
+			
 			if (_player.config.autostart) { 
-				load(loadIndex); 
+				load(_model.playlist.currentItem); 
 			}
+		}
+		
+		private function shuffleItem():void {
+			_model.playlist.currentIndex = Math.floor(Math.random() * _model.playlist.length); 
 		}
 
 		private function playlistItemHandler(evt:PlaylistEvent):void {
@@ -156,7 +161,26 @@ package com.longtailvideo.jwplayer.controller {
 		}
 		
 		private function completeHandler(evt:MediaEvent):void {
-			
+			switch (_model.config.repeat) {
+				case RepeatOptions.SINGLE:
+					play();
+					break;
+				case RepeatOptions.ALWAYS:
+					if (_model.playlist.currentIndex == _model.playlist.length-1 && !_model.config.shuffle) {
+						_model.playlist.currentIndex = 0;
+						play();
+					} else {
+						next();
+					}
+					break;
+				case RepeatOptions.LIST:
+					if (_model.playlist.currentIndex == _model.playlist.length-1 && !_model.config.shuffle) {
+						_model.playlist.currentIndex = 0;
+					} else {
+						next();
+					}
+					break;
+			}
 		}
 
 		////////////////////
@@ -218,12 +242,12 @@ package com.longtailvideo.jwplayer.controller {
 		public function play():Boolean {
 			if (_model.playlist.currentItem) {
 				switch (_player.state) {
-					case PlayerState.BUFFERING:
-					case PlayerState.PLAYING:
-						_model.media.stop();
 					case PlayerState.IDLE:
 						load(_model.playlist.currentItem);
 						break;
+					case PlayerState.BUFFERING:
+					case PlayerState.PLAYING:
+						_model.media.seek(_model.playlist.currentItem.start);
 					case PlayerState.PAUSED:
 						_model.media.play();
 						break;
@@ -264,7 +288,11 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function next():Boolean {
-			if (_model.playlist.currentIndex == _model.playlist.length-1) { 
+			if (_model.config.shuffle) {
+				shuffleItem();				
+				play();
+				return true;
+			} else if (_model.playlist.currentIndex == _model.playlist.length-1) { 
 				return false;
 			} else {
 				_player.playlist.currentIndex = _player.playlist.currentIndex+1;
