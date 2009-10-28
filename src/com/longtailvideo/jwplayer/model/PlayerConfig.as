@@ -1,9 +1,11 @@
 package com.longtailvideo.jwplayer.model {
+	import com.longtailvideo.jwplayer.controller.RepeatOptions;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
+	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
 	
 	import flash.events.EventDispatcher;
 
@@ -21,13 +23,12 @@ package com.longtailvideo.jwplayer.model {
 
 		private var _autostart:Boolean 		= false; 
 		private var _bufferlength:Number 	= 5; 
-		private var _displayclick:String 	= "play"; 
 		private var _displaytitle:Boolean 	= true; 
 		private var _fullscreen:Boolean 	= false;
 		private var _item:Number			= 0;
 		private var _linktarget:String 		= "_blank";
 		private var _mute:Boolean 			= false;
-		private var _repeat:String 			= "none"; 
+		private var _repeat:String 			= RepeatOptions.NONE; 
 		private var _shuffle:Boolean 		= false; 
 		private var _smoothing:Boolean 		= true; 
 		private var _stretching:String 		= "uniform"; 
@@ -38,8 +39,8 @@ package com.longtailvideo.jwplayer.model {
 		private var _lightcolor:Color		= null;
 		private var _screencolor:Color		= null;
 		
-		private var _controlbar:String 		= "bottom";
-		private var _dock:String 			= "right";
+		private var _controlbar:String 		= PlayerLayoutManager.BOTTOM;
+		private var _dock:Boolean 			= true;
 		private var _height:Number 			= 400;
 		private var _icons:Boolean 			= true;
 		private var _logo:String 			= null;
@@ -221,13 +222,9 @@ package com.longtailvideo.jwplayer.model {
 		}
 
 		/** Set this to true to show the dock with large buttons in the top right of the player. Available since 4.5.  @default true **/
-		public function get dock():String { return _dock; }
-		public function set dock(x:String):void {
-			if (x == 'true') {
-				_dock = 'right';
-			} else {
-				_dock = x;
-			}
+		public function get dock():Boolean { return _dock; }
+		public function set dock(x:Boolean):void {
+			_dock = x;
 		}
 
 		/** Height of the display in pixels. @default 280 **/
@@ -285,13 +282,6 @@ package com.longtailvideo.jwplayer.model {
 		 **/
 		public function get bufferlength():Number { return _bufferlength; }
 		public function set bufferlength(x:Number):void { _bufferlength = x; }
-
-		/** 
-		 * What to do when one clicks the display. Can be play, link, fullscreen, none, mute, next. When set to none, the handcursor is 
-		 * also not shown. @default play 
-		 **/
-		public function get displayclick():String { return _displayclick; }
-		public function set displayclick(x:String):void { _displayclick = x; }
 
 		/** Set this to true to print the title of a video in the display. @default true **/
 		public function get displaytitle():Boolean { return _displaytitle; }

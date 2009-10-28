@@ -38,18 +38,29 @@ package com.longtailvideo.jwplayer.media {
 	 */
 	[Event(name="jwplayerMediaLoaded", type="com.longtailvideo.jwplayer.events.MediaEvent")]
 	/**
+	 * Sent after a load() command has completed
+	 * 
 	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_TIME
 	 */
 	[Event(name="jwplayerMediaTime", type="com.longtailvideo.jwplayer.events.MediaEvent")]
 	/**
+	 * Sends the position and duration of the currently playing media
+	 * 
 	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_VOLUME
 	 */
 	[Event(name="jwplayerMediaVolume", type="com.longtailvideo.jwplayer.events.MediaEvent")]
 	/**
+	 * Fired when the currently playing media has completed its playback
+	 * 
+	 * @eventType com.longtailvideo.jwplayer.events.MediaEvent.JWPLAYER_MEDIA_COMPLETE
+	 */
+	[Event(name="jwplayerMediaComplete", type="com.longtailvideo.jwplayer.events.MediaEvent")]
+	/**
+	 * Sent when the playback state has changed.
+	 * 
 	 * @eventType com.longtailvideo.jwplayer.events.PlayerStateEvent.JWPLAYER_PLAYER_STATE
 	 */
 	[Event(name="jwplayerPlayerState", type="com.longtailvideo.jwplayer.events.PlayerStateEvent")]
-
 
 	public class MediaProvider extends Sprite implements IGlobalEventDispatcher {
 		/** Reference to the player configuration. **/

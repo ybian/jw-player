@@ -28,10 +28,10 @@ package com.longtailvideo.jwplayer.parsers {
 							if (!ytp) {
 								itm['file'] = i.@url.toString();
 							}
-							if (i.@duration) {
+							if (i.@duration.length() > 0) {
 								itm['duration'] = Strings.seconds(i.@duration.toString());
 							}
-							if (i.@start) {
+							if (i.@start.length() > 0) {
 								itm['start'] = Strings.seconds(i.@start.toString());
 							}
 							if (i.children().length() > 0) {
