@@ -325,7 +325,14 @@ package com.longtailvideo.jwplayer.view.components {
 			clip.back.width = width;
 			clip.back.height =  height;
 			buildPlaylist(false);
-			stateHandler();
+			if ( PlayerLayoutManager.testPosition(config['position'])) {
+				clip.visible = true;
+			} else if (config['position'] == "over") {
+				stateHandler();
+			} else {
+				clip.visible = false;
+			}
+
 			if (clip.visible && config['visible'] === false) {
 				clip.visible = false;
 			}
@@ -381,7 +388,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Process state changes **/
 		protected function stateHandler(evt:PlayerStateEvent = null):void {
-			if (config['position'] == 'over') {
+			if (config['position'] == "over") {
 				if (player.state == PlayerState.PLAYING || player.state == PlayerState.PAUSED || player.state == PlayerState.BUFFERING) {
 					clip.visible = false;
 				} else {
