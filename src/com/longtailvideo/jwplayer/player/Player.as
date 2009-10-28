@@ -29,7 +29,7 @@
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite {
-		private static var playerVersion:String = "5.0.538 alpha";
+		private static var playerVersion:String = "5.0.539 alpha";
 		private static var _commercial:Boolean = Boolean(CONFIG::commercial);
 		
 		private var model:Model;

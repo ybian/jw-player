@@ -508,8 +508,8 @@ package com.longtailvideo.jwplayer.view.components {
 				else mpl = 1020;
 			}
 			var pct:Number = (scrubber.icon.x - scrubber.rail.x) / (scrubber.rail.width - scrubber.icon.width) * mpl;
-			dispatchEvent(new ViewEvent(SLIDERS[sliderType], Math.round(pct)));
 			scrubber = undefined;
+			dispatchEvent(new ViewEvent(SLIDERS[sliderType], Math.round(pct)));
 		}
 		
 		
