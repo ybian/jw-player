@@ -5,6 +5,7 @@ To build the JW Player, you will need the following software:
 
  * Flex SDK 3.3: http://opensource.adobe.com/wiki/display/flexsdk/Downloads
  * Ant 1.7.0: http://ant.apache.org/bindownload.cgi
+ * FlexUnit 4: http://opensource.adobe.com/wiki/display/flexunit/FlexUnit (for testing the player)
 
 To compile with Flex and Ant, enter the following command:
 
