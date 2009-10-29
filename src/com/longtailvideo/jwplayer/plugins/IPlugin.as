@@ -11,6 +11,7 @@ package com.longtailvideo.jwplayer.plugins {
 	public interface IPlugin extends IEventDispatcher {
 		function initPlugin(player:Player, config:PluginConfig):void;
 		function resize(width:Number, height:Number):void;
+		function get id():String;
 		function get visible():Boolean;
 		function set visible(v:Boolean):void;
 	}

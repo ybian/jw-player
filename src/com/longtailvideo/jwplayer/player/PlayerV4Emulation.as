@@ -290,7 +290,7 @@ package com.longtailvideo.jwplayer.player {
 				}
 			}
 			
-			for each (var j:String in _player.config.pluginNames) {
+			for each (var j:String in _player.config.pluginIds) {
 				var pluginConfig:PluginConfig = _player.config.pluginConfig(j);
 				for (var k:String in pluginConfig){
 					cfg[j+"."+k] = pluginConfig[k];
@@ -343,7 +343,7 @@ package com.longtailvideo.jwplayer.player {
 		public override function getPluginConfig(plugin:Object):Object {
 			var pluginParent:V4Plugin = (plugin as DisplayObject).parent as V4Plugin; 
 			if (pluginParent) {
-				return _player.config.pluginConfig(pluginParent.pluginName);
+				return _player.config.pluginConfig(pluginParent.pluginId);
 			} else {
 				return new PluginConfig('');
 			}

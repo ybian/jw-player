@@ -98,18 +98,18 @@ package com.longtailvideo.jwplayer.model {
 
 		/**
 		 * Sets the value of a plugin config property 
-		 * @param name The parameter name in the form "pluginname.propertyname"
+		 * @param name The parameter name in the form "pluginId.propertyname"
 		 * @param value The value to set.
 		 */
 		private function setPluginProperty(name:String, value:String):void {
-			var pluginName:String = name.substring(0, name.indexOf(".")).toLowerCase();
+			var pluginId:String = name.substring(0, name.indexOf(".")).toLowerCase();
 			var pluginProperty:String = name.substring(name.indexOf(".") + 1, name.length).toLowerCase();
 
-			if (pluginName && pluginProperty && value) {
-				if (!_pluginConfig.hasOwnProperty(pluginName)) {
-					_pluginConfig[pluginName] = new PluginConfig(pluginName);
+			if (pluginId && pluginProperty && value) {
+				if (!_pluginConfig.hasOwnProperty(pluginId)) {
+					_pluginConfig[pluginId] = new PluginConfig(pluginId);
 				}
-				_pluginConfig[pluginName][pluginProperty] = TypeChecker.fromString(value);
+				_pluginConfig[pluginId][pluginProperty] = TypeChecker.fromString(value);
 			}
 		}
 
@@ -337,20 +337,28 @@ package com.longtailvideo.jwplayer.model {
 		public function set playerready(x:String):void { _playerready = x; }
 		
 		/** Javascript player ready callback handlers **/		
-		public function get debug():String { return _debug }
-		public function set debug(x:String):void { _debug = x; setCookie('debug', _debug); }
+		public function get debug():String {
+			return _debug;
+		}
+
+		public function set debug(x:String):void {
+			if (x != "0"){
+				_debug = x; 
+				setCookie('debug', _debug);
+			}
+		}
 		
 		/**
 		 * Returns a PluginConfig containing plugin configuration information
 		 * 
-		 * @param pluginName Name of the plugin whose config to return.
+		 * @param pluginId Name of the plugin whose config to return.
 		 */
-		public function pluginConfig(pluginName:String):PluginConfig {
-			if (_pluginConfig.hasOwnProperty(pluginName)) {
-				return _pluginConfig[pluginName] as PluginConfig;
+		public function pluginConfig(pluginId:String):PluginConfig {
+			if (_pluginConfig.hasOwnProperty(pluginId)) {
+				return _pluginConfig[pluginId] as PluginConfig;
 			} else {
-				var newConfig:PluginConfig = new PluginConfig(pluginName);
-				_pluginConfig[pluginName] = newConfig;
+				var newConfig:PluginConfig = new PluginConfig(pluginId);
+				_pluginConfig[pluginId] = newConfig;
 				return newConfig;
 			}
 		}
@@ -358,7 +366,7 @@ package com.longtailvideo.jwplayer.model {
 		/**
 		 * A list of available pluginConfig keys. 
 		 */
-		public function get pluginNames():Array {
+		public function get pluginIds():Array {
 			var names:Array = [];
 			for (var plug:String in _pluginConfig) {
 				if ( (['controlbar','playlist','dock','display']).indexOf(plug) == -1 ) {

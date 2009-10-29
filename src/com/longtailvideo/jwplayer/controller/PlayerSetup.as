@@ -181,19 +181,19 @@ package com.longtailvideo.jwplayer.controller {
 			if (event) {
 				var loader:PluginLoader = event.target as PluginLoader;
 
-				for (var pluginName:String in loader.plugins) {
-					var plugin:DisplayObject = loader.plugins[pluginName] as DisplayObject;
+				for (var pluginId:String in loader.plugins) {
+					var plugin:DisplayObject = loader.plugins[pluginId] as DisplayObject;
 					if (plugin is IPlugin) {
-						_view.addPlugin(pluginName, plugin as IPlugin);
+						_view.addPlugin(pluginId, plugin as IPlugin);
 					} else if (plugin is PluginInterface) {
 						if ( (plugin as Object).hasOwnProperty('config') ) {
 							var loadedConf:Object = (plugin as Object).config;
-							var pluginConf:PluginConfig = _model.config.pluginConfig(pluginName);
+							var pluginConf:PluginConfig = _model.config.pluginConfig(pluginId);
 							for (var i:String in loadedConf) {
 								if (!pluginConf.hasOwnProperty(i)) pluginConf[i] = loadedConf[i];
 							}
 						}
-						_view.addPlugin(pluginName, new V4Plugin(plugin as PluginInterface, pluginName));
+						_view.addPlugin(pluginId, new V4Plugin(plugin as PluginInterface, pluginId));
 					}
 				}
 			}
@@ -217,9 +217,9 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function initPlugins():void {
 			try {
-				for each (var pluginName:String in _view.loadedPlugins()) {
-					var plugin:IPlugin = _view.getPlugin(pluginName);
-					plugin.initPlugin(_player, _model.config.pluginConfig(pluginName));
+				for each (var pluginId:String in _view.loadedPlugins()) {
+					var plugin:IPlugin = _view.getPlugin(pluginId);
+					plugin.initPlugin(_player, _model.config.pluginConfig(pluginId));
 				}
 				tasker.success();
 			} catch (e:Error) {

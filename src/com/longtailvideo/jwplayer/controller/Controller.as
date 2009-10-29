@@ -47,8 +47,14 @@ package com.longtailvideo.jwplayer.controller {
 		private var _model:Model;
 		private var _view:View;
 
-		/** Current blocking state **/
-		private var _blocking:Boolean = false;
+		/** Setup completed **/
+		private var _setupComplete:Boolean;
+		/** Setup finalized **/
+		private var _setupFinalized:Boolean;
+		/** Current blocking Plugin **/
+		private var _blocking:Array = [];
+		/** Whether to resume on unblock **/
+		private var _blockingResume:Boolean;
 		
 		/** A list with legacy CDN classes that are now redirected to buit-in ones. **/
 		private var cdns:Object = {
@@ -116,22 +122,31 @@ package com.longtailvideo.jwplayer.controller {
 		private function redrawHandler(evt:ViewEvent):void { redraw(); }
 
 		private function setupComplete(evt:Event):void {
-			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_READY));
-
+			_setupComplete = true;
+			finalizeSetup();
+		}
+		
+		private function finalizeSetup():void {
+			if (!blocking && _setupComplete && !_setupFinalized) {
+				_setupFinalized = true;
+				
+				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_READY));
+	
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadHandler, false, 1000);
-			_model.playlist.addEventListener(ErrorEvent.ERROR, errorHandler);
+				_model.playlist.addEventListener(ErrorEvent.ERROR, errorHandler);
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItemHandler, false, 1000);
-			
+				
 			_model.addEventListener(MediaEvent.JWPLAYER_MEDIA_COMPLETE, completeHandler);
 			
-			// Broadcast playlist loaded (which was swallowed during player setup);
-			if (_model.playlist.length > 0) {
-				_model.playlist.dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
+				// Broadcast playlist loaded (which was swallowed during player setup);
+				if (_model.playlist.length > 0) {
+					_model.playlist.dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
+				}
+		
+				RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
 			}
-	
-			RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
 		}
-
+		
 		private function playlistLoadHandler(evt:PlaylistEvent=null):void {
 			if (_model.config.shuffle) {
 				shuffleItem();
@@ -143,7 +158,7 @@ package com.longtailvideo.jwplayer.controller {
 				load(_model.playlist.currentItem); 
 			}
 		}
-		
+
 		private function shuffleItem():void {
 			_model.playlist.currentIndex = Math.floor(Math.random() * _model.playlist.length); 
 		}
@@ -159,7 +174,7 @@ package com.longtailvideo.jwplayer.controller {
 		private function errorState(message:String=""):void {
 			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, message));
 		}
-		
+
 		private function completeHandler(evt:MediaEvent):void {
 			switch (_model.config.repeat) {
 				case RepeatOptions.SINGLE:
@@ -188,7 +203,7 @@ package com.longtailvideo.jwplayer.controller {
 		////////////////////
 
 		public function get blocking():Boolean {
-			return _blocking;
+			return (_blocking.length > 0);
 		}
 
 		/**
@@ -196,12 +211,20 @@ package com.longtailvideo.jwplayer.controller {
 		 * @copy com.longtailvideo.jwplayer.player.Player#blockPlayback
 		 */
 		public function blockPlayback(plugin:IPlugin):Boolean {
-			if (!_blocking) {
-				_blocking = true;
+			if (_blocking.indexOf(plugin) < 0) {
+				_blocking.push(plugin);
+				// If it was playing, pause playback and plan to resume when you're done
+				if (_player.state == PlayerState.BUFFERING || _player.state == PlayerState.PLAYING) {
+					_model.media.pause();
+					_blockingResume = true;
+				}
+				// If it wasn't playing
+				if (_player.config.autostart || _blockingResume) {
+					_blockingResume = true;
+				}
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		}
 
 		/**
@@ -209,25 +232,34 @@ package com.longtailvideo.jwplayer.controller {
 		 * @copy com.longtailvideo.jwplayer.player.Player#unblockPlayback
 		 */
 		public function unblockPlayback(target:IPlugin):Boolean {
-			if (_blocking) {
-				_blocking = false;
+			var targetIndex:Number = _blocking.indexOf(target);
+			if (targetIndex >= 0) {
+				_blocking.splice(targetIndex, 1);
+				if (!blocking && _blockingResume){
+					_blockingResume = false;
+					_model.media.play();
+				}
+				if (!_setupFinalized){
+					finalizeSetup();
+				}
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		}
 
 		public function setVolume(vol:Number):Boolean {
-			if (_model.media) {
+			if (blocking){ return false; }
+			if (_model.media){
 				_model.config.volume = vol;
 				_model.media.setVolume(vol);
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		}
-
+		
+		
 		public function mute(muted:Boolean):Boolean {
+			if (blocking) { return false; }
 			if (muted && !_model.mute) {
 				_model.mute = true;
 				return true;
@@ -235,11 +267,11 @@ package com.longtailvideo.jwplayer.controller {
 				_model.mute = false;
 				return true;
 			}
-
 			return false;
 		}
 
 		public function play():Boolean {
+			if (blocking){ return false; }
 			if (_model.playlist.currentItem) {
 				switch (_player.state) {
 					case PlayerState.IDLE:
@@ -257,6 +289,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function pause():Boolean {
+			if (blocking){ return false; }
 			if (!_model.media)
 				return false;
 
@@ -272,6 +305,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function stop():Boolean {
+			if (blocking){ return false; }
 			if (!_model.media)
 				return false;
 
@@ -288,6 +322,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function next():Boolean {
+			if (blocking){ return false; }
 			if (_model.config.shuffle) {
 				shuffleItem();				
 				play();
@@ -302,6 +337,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 		
 		public function previous():Boolean {
+			if (blocking){ return false; }
 			if (_model.playlist.currentIndex <= 0) {
 				return false;
 			} else {
@@ -312,6 +348,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 		
 		public function setPlaylistIndex(index:Number):Boolean {
+			if (blocking){ return false; }
 			if (0 <= index && index < _player.playlist.length) {
 				_player.playlist.currentIndex = index;
 				load(index);
@@ -321,6 +358,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function seek(pos:Number):Boolean {
+			if (blocking){ return false; }
 			if (!_model.media)
 				return false;
 
@@ -337,7 +375,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function load(item:*):Boolean {
-			//if (!_model.media) return false;
+			if (blocking){ return false; }
 
 			if (_model.state != ModelStates.IDLE) {
 				_model.media.stop();
@@ -438,17 +476,20 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function redraw():Boolean {
+			if (blocking){ return false; }
 			_view.redraw();
 			return true;
 		}
 
 		public function fullscreen(mode:Boolean):Boolean {
+			if (blocking){ return false; }
 			_model.fullscreen = mode;
 			_view.fullscreen(mode);
 			return true;
 		}
 
 		public function link(playlistIndex:Number=NaN):Boolean {
+			if (blocking){ return false; }
 			if (isNaN(playlistIndex))
 				playlistIndex = _model.playlist.currentIndex;
 

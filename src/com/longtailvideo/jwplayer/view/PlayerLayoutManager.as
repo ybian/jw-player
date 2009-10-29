@@ -28,7 +28,7 @@ package com.longtailvideo.jwplayer.view {
 			toLayout = [];
 			noLayout = [];
 			
-			for each (var plugin:String in _player.config.pluginNames) {
+			for each (var plugin:String in _player.config.pluginIds) {
 				addLayout(plugin);
 			}
 			

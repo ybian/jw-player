@@ -1,6 +1,6 @@
 package com.longtailvideo.jwplayer.view.components {
-	import com.jeroenwijering.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
@@ -112,7 +112,9 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		private function resetSlider():void {
 			var scrubber:Slider = getButton('time') as Slider;
-			scrubber.reset();
+			if (scrubber) {
+				scrubber.reset();
+			}
 		}
 		
 		private function updateControlbarState(evt:PlayerEvent = null):void {
@@ -138,21 +140,23 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		private function mediaHandler(evt:MediaEvent):void {
-			var scrubber:Slider = getButton('time') as Slider;		
-			switch (evt.type) {
-				case MediaEvent.JWPLAYER_MEDIA_BUFFER:
-					setTime(evt.position, evt.duration);
-					scrubber.setProgress(evt.position);
-					scrubber.setBuffer(evt.bufferPercent);
-					break;
-				case MediaEvent.JWPLAYER_MEDIA_TIME:
-					setTime(evt.position, evt.duration);
-					scrubber.setProgress(evt.position);
-					scrubber.setBuffer(evt.bufferPercent);
-					break;
-				default:
-					scrubber.reset();
-					break;
+			var scrubber:Slider = getButton('time') as Slider;
+			if (scrubber) {
+				switch (evt.type) {
+					case MediaEvent.JWPLAYER_MEDIA_BUFFER:
+						setTime(evt.position, evt.duration);
+						scrubber.setProgress(evt.position);
+						scrubber.setBuffer(evt.bufferPercent);
+						break;
+					case MediaEvent.JWPLAYER_MEDIA_TIME:
+						setTime(evt.position, evt.duration);
+						scrubber.setProgress(evt.position);
+						scrubber.setBuffer(evt.bufferPercent);
+						break;
+					default:
+						scrubber.reset();
+						break;
+				}
 			}
 		}
 		

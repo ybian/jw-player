@@ -108,8 +108,8 @@ package com.longtailvideo.jwplayer.controller {
 		private function loadSuccess(evt:Event):void {
 			var loader:AssetLoader = evt.target as AssetLoader;
 			var url:String = loaders[loader] as String;
-			var pluginName:String = url.substr(url.lastIndexOf("/")+1).replace(/(.*)\.swf$/i, "$1").split("-")[0];
-			plugins[pluginName] = loader.loadedObject as DisplayObject;
+			var pluginId:String = url.substr(url.lastIndexOf("/")+1).replace(/(.*)\.swf$/i, "$1").split("-")[0];
+			plugins[pluginId] = loader.loadedObject as DisplayObject;
 			loader.removeEventListener(Event.COMPLETE, loadSuccess);
 			delete loaders[loader];
 			checkComplete();

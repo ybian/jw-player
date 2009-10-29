@@ -48,6 +48,7 @@ package com.longtailvideo.jwplayer.view {
 		private var _componentsLayer:MovieClip;
 		private var _logoLayer:MovieClip;
 		private var _pluginsLayer:MovieClip;
+		private var _plugins:Object;
 
 		private var _displayMasker:MovieClip;
 
@@ -103,10 +104,11 @@ package com.longtailvideo.jwplayer.view {
 			_logoLayer = setupLayer("logo", 3);
 			_logo = new Logo(_player);
 			_logoLayer.addChild(_logo);
-			
+
 			_componentsLayer = setupLayer("components", 4);
 
 			_pluginsLayer = setupLayer("plugins", 5);
+			_plugins = {};
 		}
 
 		private function setupLayer(name:String, index:Number):MovieClip {
@@ -197,7 +199,7 @@ package com.longtailvideo.jwplayer.view {
 			for (var i:Number = 0; i < _pluginsLayer.numChildren; i++) {
 				var plug:IPlugin = _pluginsLayer.getChildAt(i) as IPlugin;
 				if (plug) {
-					var cfg:PluginConfig = _player.config.pluginConfig((plug as DisplayObject).name);
+					var cfg:PluginConfig = _player.config.pluginConfig(plug.id);
 					if (cfg['visible']) {
 						plug.visible = true;
 						plug.resize(cfg.width, cfg.height);
@@ -244,13 +246,13 @@ package com.longtailvideo.jwplayer.view {
 			}
 		}
 
-		public function addPlugin(name:String, plugin:IPlugin):void {
+		public function addPlugin(id:String, plugin:IPlugin):void {
 			try {
 				var plugDO:DisplayObject = plugin as DisplayObject;
-				if (_pluginsLayer.getChildByName(name) == null && plugDO != null) {
-					plugDO.name = name;
+				if (!_plugins[id] && plugDO != null) {
+					_plugins[id] = plugDO;
 					_pluginsLayer.addChild(plugDO);
-					_pluginsLayer[name] = plugDO;
+					//_pluginsLayer[id] = plugDO;
 				}
 			} catch (e:Error) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
@@ -259,16 +261,21 @@ package com.longtailvideo.jwplayer.view {
 
 		public function loadedPlugins():Array {
 			var list:Array = [];
-			for each (var plugin:DisplayObject in _pluginsLayer) {
-				if (plugin is IPlugin) {
-					list.push(plugin.name);
+			for (var pluginId:String in _plugins) {
+				if (_plugins[pluginId] is IPlugin) {
+					list.push(pluginId);
 				}
 			}
 			return list;
 		}
 
-		public function getPlugin(name:String):IPlugin {
-			return _pluginsLayer.getChildByName(name) as IPlugin;
+		public function getPlugin(id:String):IPlugin {
+			return _plugins[id] as IPlugin;
+		}
+		
+		public function bringPluginToFront(id:String):void {
+			var plugin:IPlugin = getPlugin(id);
+			_pluginsLayer.setChildIndex(plugin as DisplayObject, _pluginsLayer.numChildren - 1);			
 		}
 
 		private function mediaLoaded(evt:MediaEvent):void {

@@ -137,8 +137,8 @@ package com.longtailvideo.jwplayer.player {
 			return _emu.playlist;
 		}
 		
-		private function getJSPluginConfig(pluginName:String):Object {
-			return _player.config.pluginConfig(pluginName);
+		private function getJSPluginConfig(pluginId:String):Object {
+			return _player.config.pluginConfig(pluginId);
 		}
 		
 		private function loadPlugin(plugin:String):Object {

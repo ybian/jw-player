@@ -3,13 +3,13 @@ package com.longtailvideo.jwplayer.view.skins {
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.utils.Dictionary;
-	import flash.display.BitmapData;
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
 
 	/**
 	 * Send when the skin is ready
@@ -156,11 +156,14 @@ package com.longtailvideo.jwplayer.view.skins {
 		
 		public override function getSkinElement(component:String, element:String):DisplayObject {
 			var result:Bitmap;
-			var original:DisplayObject = (_skin.getChildByName(component) as DisplayObjectContainer).getChildByName(element);
-			if (original){
-				var resultData:BitmapData = new BitmapData(original.width, original.height,true);
-				resultData.draw(original);
-				result = new Bitmap(resultData);
+			var componentDisplayObjectContainer:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
+			if (componentDisplayObjectContainer) {
+				var original:DisplayObject = componentDisplayObjectContainer.getChildByName(element);
+				if (original){
+					var resultData:BitmapData = new BitmapData(original.width, original.height,true);
+					resultData.draw(original);
+					result = new Bitmap(resultData);
+				}
 			}
 			return result;
 		}
