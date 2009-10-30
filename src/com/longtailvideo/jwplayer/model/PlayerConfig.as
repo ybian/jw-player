@@ -1,12 +1,9 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.controller.RepeatOptions;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
-	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
-	import com.longtailvideo.jwplayer.utils.Stretcher;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.utils.TypeChecker;
-	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
 	
 	import flash.events.EventDispatcher;
 
@@ -16,8 +13,6 @@ package com.longtailvideo.jwplayer.model {
 	 * @author Pablo Schklowsky
 	 */
 	public dynamic class PlayerConfig extends EventDispatcher {
-		/** Internal playlist reference **/
-//		private var _list:Playlist;
 		private var _singleItem:PlaylistItem;
 
 		private var _playlistfile:String	= null;
@@ -31,16 +26,18 @@ package com.longtailvideo.jwplayer.model {
 		private var _mute:Boolean 			= false;
 		private var _repeat:String 			= RepeatOptions.NONE; 
 		private var _shuffle:Boolean 		= false; 
-		private var _smoothing:Boolean 		= true; 
-		private var _stretching:String 		= Stretcher.UNIFORM; 
+		private var _smoothing:Boolean 		= true;
+		//TODO: Move to ENUM class
+		private var _stretching:String 		= "uniform"; 
 		private var _volume:Number 			= 90;
 
 		private var _backcolor:Color		= null;
 		private var _frontcolor:Color		= null;
 		private var _lightcolor:Color		= null;
 		private var _screencolor:Color		= null;
-		
-		private var _controlbar:String 		= PlayerLayoutManager.BOTTOM;
+
+		//TODO: Move to ENUM class
+		private var _controlbar:String 		= "bottom";
 		private var _dock:Boolean 			= true;
 		private var _height:Number 			= 400;
 		private var _icons:Boolean 			= true;
@@ -302,7 +299,7 @@ package com.longtailvideo.jwplayer.model {
 		
 		/** Mute all sounds on startup. This value is set in a user cookie, and is retrieved the next time the player loads. **/
 		public function get mute():Boolean { return _mute; }
-		public function set mute(x:Boolean):void { _mute = x;  setCookie('mute', _mute);}
+		public function set mute(x:Boolean):void { _mute = x;}
 
 		/** Set to list to play the entire playlist once, to always to continously play the song/video/playlist and to single to continue repeating the selected file in a playlist. @default none **/
 		public function get repeat():String { return _repeat; }
@@ -322,7 +319,7 @@ package com.longtailvideo.jwplayer.model {
 
 		/** Startup volume of the player. Can be 0 to 100. Is saved in a cookie. @default 90 **/
 		public function get volume():Number { return _volume; }
-		public function set volume(x:Number):void { _volume = x; setCookie('volume', _volume);}
+		public function set volume(x:Number):void { _volume = x; }
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// PLUGINS
@@ -344,7 +341,6 @@ package com.longtailvideo.jwplayer.model {
 		public function set debug(x:String):void {
 			if (x != "0"){
 				_debug = x; 
-				setCookie('debug', _debug);
 			}
 		}
 		
@@ -375,10 +371,5 @@ package com.longtailvideo.jwplayer.model {
 			}
 			return names;
 		}
-		
-		private function setCookie(name:String, value:*):void {
-			Configger.saveCookie(name, value);			
-		}
-
 	}
 }

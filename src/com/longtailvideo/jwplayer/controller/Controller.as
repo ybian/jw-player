@@ -11,6 +11,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
+	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
@@ -252,6 +253,7 @@ package com.longtailvideo.jwplayer.controller {
 			if (_model.media){
 				_model.config.volume = vol;
 				_model.media.setVolume(vol);
+ 				setCookie('volume', vol);
 				return true;
 			}
 			return false;
@@ -262,9 +264,11 @@ package com.longtailvideo.jwplayer.controller {
 			if (blocking) { return false; }
 			if (muted && !_model.mute) {
 				_model.mute = true;
+				setCookie('mute', true);
 				return true;
 			} else if (!muted && _model.mute) {
 				_model.mute = false;
+				setCookie('mute', false);
 				return true;
 			}
 			return false;
@@ -499,6 +503,10 @@ package com.longtailvideo.jwplayer.controller {
 			}
 
 			return false;
+		}
+		
+		private function setCookie(name:String, value:*):void {
+			Configger.saveCookie(name, value);			
 		}
 		
 	}

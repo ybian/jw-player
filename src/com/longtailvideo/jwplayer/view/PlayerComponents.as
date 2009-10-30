@@ -16,22 +16,23 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
 	
-	public class PlayerComponents {
+	public class PlayerComponents implements IPlayerComponents {
 		private var _controlbar:IControlbarComponent;
 		private var _display:IDisplayComponent;
 		private var _dock:IDockComponent;
 		private var _playlist:IPlaylistComponent;
 		private var _config:PlayerConfig;
 		private var _skin:ISkin;
-		
 		private var _player:IPlayer;
 		
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function PlayerComponents(player:IPlayer) {
 			_player = player;
 			_skin = player.skin;
 			_config = player.config;
-			
 			if (_skin is SWFSkin) {
 				_controlbar = new ControlbarComponentV4(_player);
 			} else {
@@ -43,21 +44,33 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get controlbar():IControlbarComponent {
 			return _controlbar;
 		}
 		
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get display():IDisplayComponent {
 			return _display;
 		}
 		
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get dock():IDockComponent {
 			return _dock;
 		}
 		
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get playlist():IPlaylistComponent {
 			return _playlist;
 		}
@@ -67,12 +80,17 @@ package com.longtailvideo.jwplayer.view {
 			_controlbar = bar;
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function resize(width:Number, height:Number):void {
 			resizeComponent(_display, _config.pluginConfig('display'));
 			resizeComponent(_controlbar, _config.pluginConfig('controlbar'));
 			resizeComponent(_playlist, _config.pluginConfig('playlist'));
 			resizeComponent(_dock, _config.pluginConfig('dock'));
 		}
+		
 		
 		private function resizeComponent(comp:IPlayerComponent, config:PluginConfig):void {
 			comp.resize(config['width'], config['height']);

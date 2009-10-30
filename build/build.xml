@@ -292,7 +292,7 @@
 			<!-- Include the necessary framework libraries in the class path -->
 			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
 			<arg line="-compiler.library-path '${lib.dir}'" />
-			<arg line="-include-classes com.longtailvideo.jwplayer.plugins.IPlugin" />
+			<arg line="-include-classes com.longtailvideo.jwplayer.player.Player" />
 			<arg line="-link-report='${release.dir}/sdk-classes.xml'" />
 			<arg line="-define=CONFIG::commercial,true" />
 		</exec>

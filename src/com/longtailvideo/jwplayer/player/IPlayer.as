@@ -1,8 +1,8 @@
 package com.longtailvideo.jwplayer.player {
+	import com.longtailvideo.jwplayer.model.IPlaylist;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
-	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
-	import com.longtailvideo.jwplayer.view.PlayerComponents;
+	import com.longtailvideo.jwplayer.view.IPlayerComponents;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
@@ -38,7 +38,7 @@ package com.longtailvideo.jwplayer.player {
 		/**
 		 * The player's playlist
 		 */
-		function get playlist():Playlist;
+		function get playlist():IPlaylist;
 		/**
 		 * Set to true when the player is blocking playback.
 		 */
@@ -77,7 +77,7 @@ package com.longtailvideo.jwplayer.player {
 		function get fullscreen():Boolean;
 		function set fullscreen(on:Boolean):void;
 		function link(index:Number = NaN):Boolean;
-		function get controls():PlayerComponents;
+		function get controls():IPlayerComponents;
 		function overrideComponent(plugin:IPlayerComponent):void
 	}
 }

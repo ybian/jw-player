@@ -8,8 +8,8 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
+	import com.longtailvideo.jwplayer.model.IPlaylist;
 	import com.longtailvideo.jwplayer.model.Model;
-	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
@@ -308,7 +308,7 @@ package com.longtailvideo.jwplayer.player {
 			return playlistToArray(_player.playlist);
 		}
 		
-		private function playlistToArray(list:Playlist):Array {
+		private function playlistToArray(list:IPlaylist):Array {
 			var arry:Array = [];
 			
 			for (var i:Number=0; i < list.length; i++) {

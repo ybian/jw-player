@@ -4,6 +4,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.player.PlayerVersion;
+	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Stretcher;
 	
@@ -82,6 +83,7 @@ package com.longtailvideo.jwplayer.view {
 			var idx:Number = arr.indexOf(_model.config.debug);
 			idx == arr.length - 1 ? idx = 0 : idx++;
 			debug.caption = 'Logging to ' + arr[idx] + '...';
+			setCookie('debug', arr[idx]);
 			_model.config.debug = arr[idx];
 		}
 
@@ -98,7 +100,11 @@ package com.longtailvideo.jwplayer.view {
 			_model.config.stretching = arr[idx];
 			stretching.caption = 'Stretching is ' + arr[idx] + '...';
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_REDRAW));
-		};
+		}
+		
+		private function setCookie(name:String, value:*):void {
+			Configger.saveCookie(name, value);			
+		}
 
 	}
 

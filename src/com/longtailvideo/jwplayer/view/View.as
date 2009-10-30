@@ -36,7 +36,7 @@ package com.longtailvideo.jwplayer.view {
 		private var _player:IPlayer;
 		private var _model:Model;
 		private var _skin:ISkin;
-		private var _components:PlayerComponents;
+		private var _components:IPlayerComponents;
 		private var _fullscreen:Boolean = false;
 		private var stage:Stage;
 
@@ -228,7 +228,7 @@ package com.longtailvideo.jwplayer.view {
 			_displayMasker.graphics.endFill();
 		}
 
-		public function get components():PlayerComponents {
+		public function get components():IPlayerComponents {
 			return _components;
 		}
 

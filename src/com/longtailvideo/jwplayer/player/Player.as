@@ -1,16 +1,17 @@
 ﻿package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.controller.Controller;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
+	import com.longtailvideo.jwplayer.model.IPlaylist;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
-	import com.longtailvideo.jwplayer.model.Playlist;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
-	import com.longtailvideo.jwplayer.view.PlayerComponents;
+	import com.longtailvideo.jwplayer.view.IPlayerComponents;
 	import com.longtailvideo.jwplayer.view.View;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
+	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
@@ -120,7 +121,7 @@
 		/**
 		 * @inheritDoc
 		 */
-		public function get playlist():Playlist {
+		public function get playlist():IPlaylist {
 			return model.playlist;
 		}
 		
@@ -272,7 +273,7 @@
 		/**
 		 * @inheritDoc
 		 */
-		public function get controls():PlayerComponents {
+		public function get controls():IPlayerComponents {
 			return view.components;
 		}
 		

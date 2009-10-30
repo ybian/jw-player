@@ -1,4 +1,5 @@
 package com.longtailvideo.jwplayer.events {
+	import com.longtailvideo.jwplayer.model.IPlaylist;
 	import com.longtailvideo.jwplayer.model.Playlist;
 	
 	import flash.events.Event;
@@ -42,9 +43,9 @@ package com.longtailvideo.jwplayer.events {
 		 */
 		public static var JWPLAYER_PLAYLIST_ITEM:String = "jwplayerPlaylistItem";
 
-		private var _playlist:Playlist;
+		private var _playlist:IPlaylist;
 		
-		public function PlaylistEvent(type:String, playlist:Playlist) {
+		public function PlaylistEvent(type:String, playlist:IPlaylist) {
 			_playlist = playlist;
 			super(type);
 		}

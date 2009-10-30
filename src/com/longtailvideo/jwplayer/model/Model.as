@@ -74,7 +74,7 @@ package com.longtailvideo.jwplayer.model {
 	 */
 	public class Model extends GlobalEventDispatcher {
 		private var _config:PlayerConfig;
-		private var _playlist:Playlist;
+		private var _playlist:IPlaylist;
 
 		private var _fullscreen:Boolean = false;
 
@@ -117,7 +117,7 @@ package com.longtailvideo.jwplayer.model {
 		/**
 		 * The loaded playlist
 		 */
-		public function get playlist():Playlist {
+		public function get playlist():IPlaylist {
 			return _playlist;
 		}
 
