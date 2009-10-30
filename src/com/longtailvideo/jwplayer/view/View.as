@@ -23,6 +23,7 @@ package com.longtailvideo.jwplayer.view {
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.display.StageAlign;
 	import flash.display.StageDisplayState;
@@ -56,13 +57,31 @@ package com.longtailvideo.jwplayer.view {
 		private var _logo:Logo;
 
 		private var layoutManager:PlayerLayoutManager;
-		 
+		
+		[Embed(source="../../../../../assets/flash/loader/loader.swf")]
+		private var LoadingScreen:Class;
+		private var loaderScreen:Sprite;
+		private var loaderAnim:DisplayObject;
+		
 		public function View(player:IPlayer, model:Model) {
 			_player = player;
 			_model = model;
 
+			RootReference.stage.scaleMode = StageScaleMode.NO_SCALE;
+			RootReference.stage.stage.align = StageAlign.TOP_LEFT;
+			
+			loaderScreen = new Sprite();
+			loaderScreen.graphics.beginFill(0, 1);
+			loaderScreen.graphics.drawRect(0, 0, RootReference.stage.stageWidth, RootReference.stage.stageHeight);
+			loaderScreen.graphics.endFill();
+			RootReference.stage.addChildAt(loaderScreen, 0);
+			
+			loaderAnim = new LoadingScreen() as DisplayObject;
+			loaderAnim.x = (RootReference.stage.stageWidth - loaderAnim.width) / 2;
+			loaderAnim.y = (RootReference.stage.stageHeight - loaderAnim.height) / 2;
+			loaderScreen.addChild(loaderAnim);
+			
 			_root = new MovieClip();
-			RootReference.stage.addChildAt(_root, 0);
 		}
 
 		public function get skin():ISkin {
@@ -78,10 +97,9 @@ package com.longtailvideo.jwplayer.view {
 			setupLayers();
 			setupComponents();
 
-			RootReference.stage.scaleMode = StageScaleMode.NO_SCALE;
-			RootReference.stage.stage.align = StageAlign.TOP_LEFT;
 			RootReference.stage.addEventListener(Event.FULLSCREEN, resizeHandler);
 			RootReference.stage.addEventListener(Event.RESIZE, resizeHandler);
+
 			_model.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			_model.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
@@ -89,6 +107,11 @@ package com.longtailvideo.jwplayer.view {
 			layoutManager = new PlayerLayoutManager(_player);
 			var menu:RightclickMenu = new RightclickMenu(_model, _root);
 			menu.addGlobalListener(forward);
+		}
+		
+		public function completeView():void {
+			RootReference.stage.removeChild(loaderScreen);
+			RootReference.stage.addChildAt(_root, 0);
 		}
 		
 		private function setupLayers():void {

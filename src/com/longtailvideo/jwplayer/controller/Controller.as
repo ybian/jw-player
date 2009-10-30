@@ -124,6 +124,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function setupComplete(evt:Event):void {
 			_setupComplete = true;
+			_view.completeView();
 			finalizeSetup();
 		}
 		
