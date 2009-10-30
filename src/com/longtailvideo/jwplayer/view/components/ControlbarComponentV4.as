@@ -12,6 +12,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Stacker;
 	import com.longtailvideo.jwplayer.utils.Strings;
+	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
 	import flash.accessibility.AccessibilityProperties;
@@ -139,6 +140,11 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		public function resize(width:Number, height:Number):void {
+			if ( !(PlayerLayoutManager.testPosition(controlbarConfig['position']) || controlbarConfig['position'] == "over") ) {
+				skin.visible = false;
+				return;
+			}
+			
 			var wid:Number = width;
 			if (controlbarConfig['position'] == 'over' || _player.fullscreen == true) {
 				skin.x = controlbarConfig['margin'];
