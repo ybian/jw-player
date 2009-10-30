@@ -1,6 +1,6 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponentV4;
@@ -24,10 +24,10 @@ package com.longtailvideo.jwplayer.view {
 		private var _config:PlayerConfig;
 		private var _skin:ISkin;
 		
-		private var _player:Player;
+		private var _player:IPlayer;
 		
 		
-		public function PlayerComponents(player:Player) {
+		public function PlayerComponents(player:IPlayer) {
 			_player = player;
 			_skin = player.skin;
 			_config = player.config;

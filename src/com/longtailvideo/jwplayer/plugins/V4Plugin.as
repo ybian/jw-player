@@ -1,6 +1,6 @@
 package com.longtailvideo.jwplayer.plugins {
 	import com.jeroenwijering.events.PluginInterface;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerV4Emulation;
 	
 	import flash.display.DisplayObject;
@@ -16,7 +16,7 @@ package com.longtailvideo.jwplayer.plugins {
 			addChild(plug as DisplayObject);
 		}
 
-		public function initPlugin(player:Player, config:PluginConfig):void {
+		public function initPlugin(player:IPlayer, config:PluginConfig):void {
 			if ((plug as Object).hasOwnProperty('config')) {
 				(plug as Object).config = config;
 			}

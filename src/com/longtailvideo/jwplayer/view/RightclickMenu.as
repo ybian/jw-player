@@ -3,7 +3,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.model.Model;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.PlayerVersion;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Stretcher;
 	
@@ -60,7 +60,7 @@ package com.longtailvideo.jwplayer.view {
 			stretching = new ContextMenuItem('Stretching is ' + _model.config.stretching + '...');
 			addItem(stretching, stretchHandler);
 			if (_model.config['abouttext'] == 'JW Player' || _model.config['abouttext'] == undefined) {
-				about = new ContextMenuItem('About JW Player ' + Player.version + '...');
+				about = new ContextMenuItem('About JW Player ' + PlayerVersion.version + '...');
 			} else {
 				about = new ContextMenuItem('About ' + _model.config['abouttext'] + '...');
 			}

@@ -1,6 +1,6 @@
 package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.RootReference;
@@ -27,7 +27,7 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Reference to the animations handler **/
 		private var animations:Animations;
 		
-		public function DockComponent(player:Player) {
+		public function DockComponent(player:IPlayer) {
 			super(player);
 			animations = new Animations(this);
 			buttons = new Array();

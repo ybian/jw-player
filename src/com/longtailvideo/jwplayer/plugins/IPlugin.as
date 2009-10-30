@@ -1,5 +1,5 @@
 package com.longtailvideo.jwplayer.plugins {
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	
 	import flash.events.IEventDispatcher;
 
@@ -9,7 +9,7 @@ package com.longtailvideo.jwplayer.plugins {
 	 * @author Pablo Schklowsky
 	 */
 	public interface IPlugin extends IEventDispatcher {
-		function initPlugin(player:Player, config:PluginConfig):void;
+		function initPlugin(player:IPlayer, config:PluginConfig):void;
 		function resize(width:Number, height:Number):void;
 		function get id():String;
 		function get visible():Boolean;

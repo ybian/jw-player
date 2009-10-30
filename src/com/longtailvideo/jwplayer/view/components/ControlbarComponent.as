@@ -4,7 +4,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
@@ -84,7 +84,7 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _layoutManager:ControlbarLayoutManager;
 		
 		
-		public function ControlbarComponent(player:Player) {
+		public function ControlbarComponent(player:IPlayer) {
 			super(player);
 			_layoutManager = new ControlbarLayoutManager(this);
 			setupBackground();

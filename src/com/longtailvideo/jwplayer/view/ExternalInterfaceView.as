@@ -1,5 +1,5 @@
 package com.longtailvideo.jwplayer.view {
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 
 	/**
 	 * Represents link to Javascript API
@@ -9,7 +9,7 @@ package com.longtailvideo.jwplayer.view {
 	public class ExternalInterfaceView {
 
 		/** Constructor **/
-		public function ExternalInterfaceView(player:Player) {}
+		public function ExternalInterfaceView(player:IPlayer) {}
 
 	}
 }

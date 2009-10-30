@@ -8,14 +8,14 @@ package com.longtailvideo.jwplayer.player {
 	import flash.external.ExternalInterface;
 
 	public class JavascriptAPI {
-		private var _player:Player;
+		private var _player:IPlayer;
 		private var _emu:PlayerV4Emulation;
 
 		private var controllerCallbacks:Object;		
 		private var modelCallbacks:Object;		
 		private var viewCallbacks:Object;		
 
-		public function JavascriptAPI(player:Player) {
+		public function JavascriptAPI(player:IPlayer) {
 			_player = player;
 			_player.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
 

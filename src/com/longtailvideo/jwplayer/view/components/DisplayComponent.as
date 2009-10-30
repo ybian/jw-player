@@ -3,7 +3,7 @@
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	
@@ -22,7 +22,7 @@
 		protected var _background:MovieClip;
 		protected var _text:TextField;
 		
-		public function DisplayComponent(player:Player) {
+		public function DisplayComponent(player:IPlayer) {
 			super(player);
 			addListeners();
 			setupDisplayObjects();

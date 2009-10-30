@@ -4,7 +4,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Animations;
@@ -53,7 +53,7 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Animations handler **/
 		private var animations:Animations;
 		
-		public function ControlbarComponentV4(player:Player) {
+		public function ControlbarComponentV4(player:IPlayer) {
 			super(player);
 			animations = new Animations(this);
 			controlbarConfig = _player.config.pluginConfig("controlbar");

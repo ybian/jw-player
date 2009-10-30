@@ -246,6 +246,7 @@
 			<param name="optimize" value="true" />
 			<param name="outputPath" value="${release.dir}"/>
 		</antcall>
+		<move file="${release.dir}/${swf}.swf" todir="./" />
 	</target>
 
 	<target name="build-debug-player" depends="check-properties">

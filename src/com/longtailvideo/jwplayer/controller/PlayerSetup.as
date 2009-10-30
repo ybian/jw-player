@@ -2,7 +2,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.jeroenwijering.events.PluginInterface;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.model.Model;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
@@ -48,7 +48,7 @@ package com.longtailvideo.jwplayer.controller {
 	public class PlayerSetup extends EventDispatcher {
 
 		/** MVC references **/
-		private var _player:Player;
+		private var _player:IPlayer;
 		private var _model:Model;
 		private var _view:View;
 		
@@ -58,7 +58,7 @@ package com.longtailvideo.jwplayer.controller {
 		/** User-defined configuration **/
 		private var confHash:Object;
 		
-		public function PlayerSetup(player:Player, model:Model, view:View) {
+		public function PlayerSetup(player:IPlayer, model:Model, view:View) {
 			_player = player;
 			_model = model;
 			_view = view;

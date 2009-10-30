@@ -6,7 +6,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.model.Model;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.player.PlayerV4Emulation;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
@@ -33,7 +33,7 @@ package com.longtailvideo.jwplayer.view {
 	import flash.net.URLRequest;
 
 	public class View extends GlobalEventDispatcher {
-		private var _player:Player;
+		private var _player:IPlayer;
 		private var _model:Model;
 		private var _skin:ISkin;
 		private var _components:PlayerComponents;
@@ -57,7 +57,7 @@ package com.longtailvideo.jwplayer.view {
 
 		private var layoutManager:PlayerLayoutManager;
 		 
-		public function View(player:Player, model:Model) {
+		public function View(player:IPlayer, model:Model) {
 			_player = player;
 			_model = model;
 

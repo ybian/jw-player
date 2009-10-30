@@ -11,42 +11,38 @@
 	import com.longtailvideo.jwplayer.view.View;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
-	
 	import flash.display.Sprite;
 	import flash.events.Event;
+	
 	
 	/**
 	 * Sent when the player has been initialized and skins and plugins have been successfully loaded.
 	 *
 	 * @eventType com.longtailvideo.jwplayer.events.PlayerEvent.JWPLAYER_READY
 	 */
-	[Event(name="jwplayerReady", type = "com.longtailvideo.jwplayer.events.PlayerEvent")]
-
-
+	[Event(name="jwplayerReady", type="com.longtailvideo.jwplayer.events.PlayerEvent")]
 	/**
 	 * Main class for JW Flash Media Player
 	 *
 	 * @author Pablo Schklowsky
 	 */
-	public class Player extends Sprite {
-		private static var playerVersion:String = "5.0.546 beta";
-		private static var _commercial:Boolean = Boolean(CONFIG::commercial);
-		
+	public class Player extends Sprite implements IPlayer {
 		private var model:Model;
 		private var view:View;
 		private var controller:Controller;
-
+		
+		
 		/** Player constructor **/
 		public function Player() {
 			new RootReference(this);
-			
 			try {
 				this.addEventListener(Event.ADDED_TO_STAGE, setupPlayer);
 			} catch (err:Error) {
 				setupPlayer();
 			}
 		}
-				
+		
+		
 		private function setupPlayer(event:Event = null):void {
 			try {
 				this.removeEventListener(Event.ADDED_TO_STAGE, setupPlayer);
@@ -55,175 +51,237 @@
 			model = new Model();
 			view = new View(this, model);
 			controller = new Controller(this, model, view);
-
 			controller.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
-			
 			controller.setupPlayer();
 		}
-
+		
+		
 		protected function playerReady(evt:PlayerEvent):void {
 			// Only handle JWPLAYER_READY once
 			controller.removeEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
-			
 			var jsAPI:JavascriptAPI = new JavascriptAPI(this);
-			
 			model.addGlobalListener(forward);
 			view.addGlobalListener(forward);
 			controller.addGlobalListener(forward);
-			
 			forward(evt);
 		}
 		
+		
 		/**
-		 * Forwards all MVC events to interested listeners. 
+		 * Forwards all MVC events to interested listeners.
 		 * @param evt
 		 */
 		protected function forward(evt:PlayerEvent):void {
 			Logger.log(evt.toString(), evt.type);
 			dispatchEvent(evt);
 		}
-
+		
+		
 		/**
-		 * The player's current configuration
+		 * @inheritDoc
 		 */
 		public function get config():PlayerConfig {
 			return model.config;
 		}
-
-		/**
-		 * Player version getter
-		 */
-		public static function get version():String {
-			return playerVersion;
-		}
+		
 		
 		/**
-		 * Player type getter
+		 * @inheritDoc
 		 */
-		public static function get commercial():Boolean {
-			return _commercial;
+		public function get version():String {
+			return PlayerVersion.version;
 		}
-
+		
+		
 		/**
-		 * Reference to player's skin.  If no skin has been loaded, returns null.
+		 * @inheritDoc
+		 */
+		public function get commercial():Boolean {
+			return PlayerVersion.commercial;
+		}
+		
+		
+		/**
+		 * @inheritDoc
 		 */
 		public function get skin():ISkin {
 			return view.skin;
 		}
-
+		
+		
 		/**
-		 * The current player state
+		 * @inheritDoc
 		 */
 		public function get state():String {
 			return model.state;
 		}
-
+		
+		
 		/**
-		 * The player's playlist
+		 * @inheritDoc
 		 */
 		public function get playlist():Playlist {
 			return model.playlist;
 		}
-
+		
+		
 		/**
-		 * Set to true when the player is blocking playback.
+		 * @inheritDoc
 		 */
 		public function get isBlocking():Boolean {
 			return controller.blocking;
 		}
-
+		
+		
 		/**
-		 * Request that the player block playback.  When the Player is blocking, the currently playing stream is 
-		 * paused, and no new playback-related commands will be honored until <code>unblockPlayback</code> is 
-		 * called. 
-		 * 
-		 * @param target Reference to plugin requesting playback blocking
-		 * @return <code>true</code>, if the blocking request is successful.  If another plugin is blocking,returns
-		 * <code>false</code>. 
+		 * @inheritDoc
 		 */
 		public function blockPlayback(target:IPlugin):Boolean {
 			return controller.blockPlayback(target);
 		}
-
+		
+		
 		/**
-		 * Unblocks the player.  If the player was buffering or playing when it was blocked, playback will resume.
-		 * 
-		 * @param target Reference to the requesting plugin. 
-		 * @return <code>true</code>, if <code>target</code> had previously requested player blocking.
-		 *
+		 * @inheritDoc
 		 */
 		public function unblockPlayback(target:IPlugin):Boolean {
 			return controller.unblockPlayback(target);
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function volume(volume:Number):Boolean {
 			return controller.setVolume(volume);
 		}
 		
-		public function get mute():Boolean{
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get mute():Boolean {
 			return model.mute;
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function set mute(state:Boolean):void {
 			controller.mute(state);
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function play():Boolean {
 			return controller.play();
 		}
-
+		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function pause():Boolean {
-			return controller.pause();	
+			return controller.pause();
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function stop():Boolean {
 			return controller.stop();
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function seek(position:Number):Boolean {
 			return controller.seek(position);
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function load(item:*):Boolean {
 			return controller.load(item);
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function playlistItem(index:Number):Boolean {
 			return controller.setPlaylistIndex(index);
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function playlistNext():Boolean {
 			return controller.next();
 		}
-
+		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function playlistPrev():Boolean {
 			return controller.previous();
 		}
 		
-		/** Force a redraw of the player **/
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function redraw():Boolean {
 			return controller.redraw();
 		}
-	
+		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function get fullscreen():Boolean {
 			return model.fullscreen;
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function set fullscreen(on:Boolean):void {
 			controller.fullscreen(on);
 		}
 		
-		public function link(index:Number=NaN):Boolean {
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function link(index:Number = NaN):Boolean {
 			return controller.link(index);
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function get controls():PlayerComponents {
 			return view.components;
 		}
 		
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function overrideComponent(plugin:IPlayerComponent):void {
 			view.overrideComponent(plugin);
 		}
-
 	}
 }

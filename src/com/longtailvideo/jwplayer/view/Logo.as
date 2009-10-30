@@ -1,7 +1,8 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.player.PlayerVersion;
 	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	
@@ -28,7 +29,7 @@ package com.longtailvideo.jwplayer.view {
 			timeout: 3
 		}
 		/** Reference to the player **/
-		private var _player:Player;
+		private var _player:IPlayer;
 		/** Reference to the current fade timer **/
 		private var timeout:uint;
 		/** Reference to the loader **/
@@ -41,7 +42,7 @@ package com.longtailvideo.jwplayer.view {
 		private var _height:Number;
 		
 		/** Constructor **/
-		public function Logo(player:Player) {
+		public function Logo(player:IPlayer) {
 			super();
 			this.buttonMode = true;
 			this.mouseChildren = false;
@@ -130,7 +131,7 @@ package com.longtailvideo.jwplayer.view {
 		private function getConfigParam(param:String):* {
 			var result:*;
 			result = defaults[param];
-			if (Player.commercial && _player.config.pluginConfig("logo")[param]) {
+			if (PlayerVersion.commercial && _player.config.pluginConfig("logo")[param]) {
 				result = _player.config.pluginConfig("logo")[param];
 			}
 			return result;

@@ -1,5 +1,5 @@
 package com.longtailvideo.jwplayer.view {
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	
 	import flash.geom.Rectangle;
@@ -13,14 +13,14 @@ package com.longtailvideo.jwplayer.view {
 		public static var BOTTOM:String = "bottom";  
 		public static var NONE:String = "none";  
 	
-		private var _player:Player;
+		private var _player:IPlayer;
 	
 		private var toLayout:Array;
 		private var noLayout:Array;
 		
 		private var remainingSpace:Rectangle;
 	
-		public function PlayerLayoutManager(player:Player) {
+		public function PlayerLayoutManager(player:IPlayer) {
 			_player = player;
 		}
 		

@@ -1,7 +1,7 @@
 package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	
 	import flash.display.MovieClip;
 	import flash.events.Event;
@@ -9,9 +9,9 @@ package com.longtailvideo.jwplayer.view.components {
 	public class CoreComponent extends MovieClip implements IGlobalEventDispatcher {
 
 		private var _dispatcher:IGlobalEventDispatcher;
-		protected var _player:Player;
+		protected var _player:IPlayer;
 
-		public function CoreComponent(player:Player) {
+		public function CoreComponent(player:IPlayer) {
 			_dispatcher = new GlobalEventDispatcher();
 			_player = player;
 			super();
@@ -25,7 +25,7 @@ package com.longtailvideo.jwplayer.view.components {
 			this.visible = true;
 		}
 		
-		protected function get player():Player {
+		protected function get player():IPlayer {
 			return _player;
 		}
 

@@ -8,7 +8,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.parsers.JWParser;
-	import com.longtailvideo.jwplayer.player.Player;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
@@ -43,7 +43,7 @@ package com.longtailvideo.jwplayer.controller {
 	public class Controller extends GlobalEventDispatcher {
 
 		/** MVC References **/
-		private var _player:Player;
+		private var _player:IPlayer;
 		private var _model:Model;
 		private var _view:View;
 
@@ -69,7 +69,7 @@ package com.longtailvideo.jwplayer.controller {
 		/** Reference to a PlaylistItem which has triggered an external MediaProvider load **/
 		private var _delayedItem:PlaylistItem;
 		
-		public function Controller(player:Player, model:Model, view:View) {
+		public function Controller(player:IPlayer, model:Model, view:View) {
 			_player = player;
 			_model = model;
 			_view = view;

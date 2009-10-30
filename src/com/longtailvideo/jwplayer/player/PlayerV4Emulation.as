@@ -30,7 +30,7 @@ package com.longtailvideo.jwplayer.player {
 	public class PlayerV4Emulation extends AbstractView {
 		private static var instance:PlayerV4Emulation;
 		
-		private var _player:Player;
+		private var _player:IPlayer;
 		
 		private var viewEventDispatcher:EventDispatcher;
 		private var modelEventDispatcher:EventDispatcher;
@@ -40,7 +40,7 @@ package com.longtailvideo.jwplayer.player {
 		private var client:String;
 		private var version:String;
 		
-		public function PlayerV4Emulation(player:Player) {
+		public function PlayerV4Emulation(player:IPlayer) {
 			viewEventDispatcher = new EventDispatcher();
 			modelEventDispatcher = new EventDispatcher();
 			controllerEventDispatcher = new EventDispatcher();
@@ -49,7 +49,7 @@ package com.longtailvideo.jwplayer.player {
 			_player.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
 		}
 		
-		public static function getInstance(player:Player):PlayerV4Emulation {
+		public static function getInstance(player:IPlayer):PlayerV4Emulation {
 			if (!instance) {
 				instance = new PlayerV4Emulation(player);
 			}
