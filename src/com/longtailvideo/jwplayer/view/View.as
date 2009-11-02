@@ -107,6 +107,8 @@ package com.longtailvideo.jwplayer.view {
 			layoutManager = new PlayerLayoutManager(_player);
 			var menu:RightclickMenu = new RightclickMenu(_model, _root);
 			menu.addGlobalListener(forward);
+			
+			redraw();
 		}
 		
 		public function completeView():void {
