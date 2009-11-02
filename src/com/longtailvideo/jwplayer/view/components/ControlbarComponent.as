@@ -6,15 +6,20 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
+	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	import flash.geom.ColorTransform;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	import flash.ui.Mouse;
 	
 	
 	/**
@@ -79,27 +84,32 @@ package com.longtailvideo.jwplayer.view.components {
 	[Event(name="jwPlayerViewSeek", type="com.longtailvideo.jwplayer.events.ViewEvent")]
 	public class ControlbarComponent extends CoreComponent implements IControlbarComponent {
 		protected var _buttons:Object = {};
+		protected var _dividers:Array;
 		protected var _defaultLayout:String = "[play|stop|prev|next|elapsed][time][duration|fullscreen|mute volume]";
 		protected var _currentLayout:String;
 		protected var _layoutManager:ControlbarLayoutManager;
+		protected var _width:Number;
+		protected var _height:Number;
 		
 		
 		public function ControlbarComponent(player:IPlayer) {
 			super(player);
 			_layoutManager = new ControlbarLayoutManager(this);
+			_dividers = [];
 			setupBackground();
 			setupDefaultButtons();
 			addEventListeners();
 			updateControlbarState();
 		}
 		
+		
 		private function addEventListeners():void {
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, playlistHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistHandler);
-			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, updateControlbarState);
-			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, updateControlbarState);
-			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, updateControlbarState);
+			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
+			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, stateHandler);
+			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, stateHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, mediaHandler);
 			player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, mediaHandler);
 		}
@@ -108,7 +118,9 @@ package com.longtailvideo.jwplayer.view.components {
 		private function playlistHandler(evt:PlaylistEvent):void {
 			resetSlider();
 			updateControlbarState();
+			redraw();
 		}
+		
 		
 		private function resetSlider():void {
 			var scrubber:Slider = getButton('time') as Slider;
@@ -117,81 +129,123 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 		}
 		
-		private function updateControlbarState(evt:PlayerEvent = null):void {
-			var newLayout:String = _defaultLayout;
-			if (player.state == PlayerState.PAUSED){
-				newLayout = newLayout.replace('play', 'pause');
-			}
-			
-			if (player.playlist.length <= 1){
-				newLayout = newLayout.replace("|prev|next", "");
-			}
-			
-			if (player.mute) {
-				newLayout = newLayout.replace("mute", "unmute");
-			}
-			
-			if (player.fullscreen){
-				newLayout = newLayout.replace("fullscreen", "normalscreen");
-			}
-			_currentLayout = newLayout;
-			resize(width, height);
+		
+		private function stateHandler(evt:PlayerEvent):void {
+			updateControlbarState();
+			redraw();
 		}
 		
+		
+		private function updateControlbarState():void {
+			var newLayout:String = _defaultLayout;
+			if (player.state == PlayerState.PLAYING) {
+				newLayout = newLayout.replace('play', 'pause');
+				hideButton('play');
+			} else {
+				hideButton('pause');
+			}
+			if (player.playlist.length <= 1) {
+				newLayout = newLayout.replace("|prev|next", "");
+				hideButton('prev');
+				hideButton('next');
+			}
+			if (player.mute) {
+				newLayout = newLayout.replace("mute", "unmute");
+				hideButton("mute");
+			} else {
+				hideButton("unmute");
+			}
+			if (player.fullscreen) {
+				newLayout = newLayout.replace("fullscreen", "normalscreen");
+				hideButton("fullscreen");
+			} else {
+				hideButton("normalscreen");
+			}
+			_currentLayout = removeInactive(newLayout);
+		}
+		
+		
+		private function removeInactive(layout:String):String {
+			var buttons:Array = _defaultLayout.match(/\W*([A-Za-z0-9]+?)\W/g);
+			for (var i:Number = 0; i < buttons.length; i++){
+				var button:String = (buttons[i] as String).replace(/\W/g,"");
+				if (!_buttons[button]) {
+					layout = layout.replace(button,"");
+					layout = layout.replace("||", "|");
+				}
+			}
+			return layout;
+		}
 		
 		private function mediaHandler(evt:MediaEvent):void {
 			var scrubber:Slider = getButton('time') as Slider;
-			if (scrubber) {
-				switch (evt.type) {
-					case MediaEvent.JWPLAYER_MEDIA_BUFFER:
-						setTime(evt.position, evt.duration);
+			switch (evt.type) {
+				case MediaEvent.JWPLAYER_MEDIA_BUFFER:
+					setTime(evt.position, evt.duration);
+					if (scrubber) {
 						scrubber.setProgress(evt.position);
 						scrubber.setBuffer(evt.bufferPercent);
-						break;
-					case MediaEvent.JWPLAYER_MEDIA_TIME:
-						setTime(evt.position, evt.duration);
+					}
+					break;
+				case MediaEvent.JWPLAYER_MEDIA_TIME:
+					setTime(evt.position, evt.duration);
+					if (scrubber) {
 						scrubber.setProgress(evt.position);
 						scrubber.setBuffer(evt.bufferPercent);
-						break;
-					default:
-						scrubber.reset();
-						break;
-				}
+					}
+					break;
+				default:
+					scrubber.reset();
+					break;
 			}
 		}
 		
+		
 		private function setTime(position:Number, duration:Number):void {
-			if (duration >= 0){
+			if (duration >= 0) {
 				var elapsedText:TextField = getButton('elapsed') as TextField;
-				var durationField:TextField = getButton('duration') as TextField;	
+				var durationField:TextField = getButton('duration') as TextField;
 				elapsedText.text = Strings.digits(position);
 				durationField.text = Strings.digits(duration);
 			}
 		}
 		
+		
 		private function setupBackground():void {
-			var background:DisplayObject = getSkinElement("controlbar", "back");
-			if (!background) {
-				var newBackground:MovieClip = new MovieClip();
+			var back:DisplayObject = getSkinElement("controlbar", "back");
+			if (!back) {
+				var newBackground:Sprite = new Sprite();
 				newBackground.name = "background";
 				newBackground.graphics.beginFill(0, 1);
 				newBackground.graphics.drawRect(0, 0, 1, 1);
 				newBackground.graphics.endFill();
-				background = newBackground as DisplayObject;
+				back = newBackground as DisplayObject;
+			} else if (back is Bitmap) {
+				var backContainer:Sprite = new Sprite();
+				backContainer.addChild(back);
+				back = backContainer as DisplayObject;
 			}
-
 			if (player.config.backcolor) {
 				var colorTransform:ColorTransform = new ColorTransform();
 				colorTransform.color = player.config.backcolor.color;
-				background.transform.colorTransform = colorTransform;
+				back.transform.colorTransform = colorTransform;
 			}
-			background.x = 0;
-			background.y = 0;
-			addChildAt(background, 0);
+			back.x = 0;
+			back.y = 0;
+			_buttons['background'] = back;
+			addChildAt(back, 0);
+			player.config.pluginConfig("controlbar")['size'] = back.height;
+			_height = back.height;
 			if (getSkinElement("controlbar", "shade")) {
 				var shade:DisplayObject = getSkinElement("controlbar", "shade");
+				if (shade is Bitmap) {
+					var shadeContainer:Sprite = new Sprite();
+					shadeContainer.addChild(shade);
+					shade = shadeContainer as DisplayObject;
+				}
 				shade.x = 0;
 				shade.y = 0;
+				_buttons['shade'] = shade;
 				addChildAt(shade, 1);
 			}
 		}
@@ -205,22 +259,30 @@ package com.longtailvideo.jwplayer.view.components {
 			addComponentButton('stop', 'Stop', ViewEvent.JWPLAYER_VIEW_STOP);
 			addComponentButton('fullscreen', 'Fullscreen', ViewEvent.JWPLAYER_VIEW_FULLSCREEN, true);
 			addComponentButton('normalscreen', 'Normalscreen', ViewEvent.JWPLAYER_VIEW_FULLSCREEN, false);
-			addComponentButton('unmute', 'Mute', ViewEvent.JWPLAYER_VIEW_MUTE, true);
-			addComponentButton('mute', 'Unmute', ViewEvent.JWPLAYER_VIEW_MUTE, false);
+			addComponentButton('unmute', 'Mute', ViewEvent.JWPLAYER_VIEW_MUTE, false);
+			addComponentButton('mute', 'Unmute', ViewEvent.JWPLAYER_VIEW_MUTE, true);
 			addSlider('time', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
 			addSlider('volume', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
-			addTextField('elapsed', getFont(getSkinElement("controlbar","elapsedText") as TextField));
-			addTextField('duration', getFont(getSkinElement("controlbar","totalText") as TextField));
-			addButton(getSkinElement("controlbar", "divider"), 'divider');
+			addTextField('elapsed', getFont(getSkinElement("controlbar", "elapsedText") as TextField));
+			addTextField('duration', getFont(getSkinElement("controlbar", "totalText") as TextField));
 		}
 		
 		
 		private function addComponentButton(name:String, text:String, event:String, eventData:* = null):void {
-			var outIcon:DisplayObject = getSkinElement("controlbar", name + "Button");
-			if (outIcon) {
-				var button:ComponentButton = new ComponentButton(outIcon, event, eventData, player.config.lightcolor, player.config.backcolor, getSkinElement("controlbar", name + "ButtonBack"), getSkinElement("controlbar", name + "ButtonOver"), text);
-				button.addEventListener(event, forward);
-				addButton(button, name);
+			var button:ComponentButton = new ComponentButton();
+			button.setOutIcon(getSkinElement("controlbar", name + "Button"));
+			button.setOverIcon(getSkinElement("controlbar", name + "ButtonOver"));
+			button.setBackground(getSkinElement("controlbar", name + "ButtonBack"));
+			button.outColor = player.config.lightcolor;
+			button.overColor = player.config.backcolor;
+			button.clickFunction = function():void {
+				forward(new ViewEvent(event, eventData));
+			}
+			if (getSkinElement("controlbar", name + "Button")
+				|| getSkinElement("controlbar", name + "ButtonOver") 
+				|| getSkinElement("controlbar", name + "ButtonBack")) {
+					button.init();
+					addButtonDisplayObject(button, name);
 			}
 		}
 		
@@ -228,19 +290,22 @@ package com.longtailvideo.jwplayer.view.components {
 		private function addSlider(name:String, orientation:String, event:String, callback:Function):void {
 			var slider:Slider = new Slider(getSkinElement("controlbar", name + "SliderRail"), getSkinElement("controlbar", name + "SliderBuffer"), getSkinElement("controlbar", name + "SliderProgress"), getSkinElement("controlbar", name + "SliderThumb"), orientation);
 			slider.addEventListener(event, callback);
-			addButton(slider, name);
+			addButtonDisplayObject(slider, name);
 		}
 		
+		
 		private function addTextField(name:String, font:String):void {
-			var textField:TextField =  new TextField();
+			var textField:TextField = new TextField();
 			textField.text = '00:00';
 			var textFormat:TextFormat = new TextFormat();
 			textFormat.font = font;
-			textFormat.size = 8;
+			textFormat.size = 20;
 			textField.setTextFormat(textFormat);
 			textField.selectable = false;
 			textField.autoSize = TextFieldAutoSize.LEFT;
-			addButton(textField, name);
+			textField.name = name;
+			addChild(textField);
+			_buttons[name] = textField;
 		}
 		
 		
@@ -266,43 +331,83 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		public function addButton(icon:DisplayObject, name:String, handler:Function = null):MovieClip {
-			//TODO: Add button + handler
-			var clipMC:MovieClip = new MovieClip();
+			_defaultLayout = _defaultLayout.replace("|fullscreen","|"+name+"|fullscreen");
+			return addButtonDisplayObject(icon, name, handler);
+		}
+		
+		private function addButtonDisplayObject(icon:DisplayObject, name:String, handler:Function = null):MovieClip{
 			if (icon) {
+				var clipMC:MovieClip = new MovieClip();
+				if (handler != null) {
+					clipMC.addEventListener(MouseEvent.CLICK, handler);
+				}
 				clipMC.name = name;
 				clipMC.addChild(icon);
 				_buttons[name] = clipMC;
-				
+				return clipMC;
 			}
-			return clipMC;
+			return null;
 		}
-		
 		
 		public function removeButton(name:String):void {
 			_buttons[name] = null;
-			_layoutManager.resize(width, height);
+			redraw();
+		}
+		
+		
+		private function hideButton(name:String):void {
+			if (_buttons[name]) {
+				_buttons[name].visible = false;
+			}
 		}
 		
 		
 		public function getButton(buttonName:String):DisplayObject {
+			if (buttonName == "divider") {
+				var divider:DisplayObject = getSkinElement("controlbar", "divider");
+				if (divider) {
+					_dividers.push(divider);
+				}
+				return divider;
+			}
 			return _buttons[buttonName];
 		}
 		
 		
 		public function resize(width:Number, height:Number):void {
-			getChildAt(0).width = width;
-			getChildAt(1).width = width;
-			_layoutManager.resize(width, height);
+			_width = width;
+			var wid:Number = width;
+			if (getConfigParam('position') == 'over' || _player.fullscreen == true) {
+				x = getConfigParam('margin');
+				y = height - background.height - getConfigParam('margin');
+				wid = width - 2 * getConfigParam('margin');
+			}
+			background.width = wid;
+			shade.width = wid;
+			updateControlbarState();
+			redraw();
+			Mouse.show();
 		}
 		
+		
+		private function redraw():void {
+			clearDividers();
+			_layoutManager.resize(_width, _height);
+		}
+		
+		
+		private function clearDividers():void {
+			for (var i:Number = 0; i < _dividers.length; i++){
+				_dividers[i].visible = false;
+				_dividers[i] = null;
+			}
+			_dividers = [];
+		}
 		
 		public function get layout():String {
 			return _currentLayout;
 		}
 		
-		private function getSkinElement(component:String, element:String):DisplayObject {
-			return player.skin.getSkinElement(component,element);
-		}
 		
 		private function getFont(textField:TextField):String {
 			var result:String;
@@ -310,6 +415,32 @@ package com.longtailvideo.jwplayer.view.components {
 				textField.getTextFormat().font;
 			}
 			return result;
+		}
+		
+		
+		private function get background():Sprite {
+			if (_buttons['background']) {
+				return _buttons['background'];
+			}
+			return (new Sprite());
+		}
+		
+		
+		private function get shade():Sprite {
+			if (_buttons['shade']) {
+				return _buttons['shade'];
+			}
+			return (new Sprite());
+		}
+		
+		
+		private function getConfigParam(param:String):* {
+			return player.config.pluginConfig("controlbar")[param];
+		}
+		
+		
+		private function get config():PluginConfig {
+			return player.config.pluginConfig("controlbar");
 		}
 	}
 }

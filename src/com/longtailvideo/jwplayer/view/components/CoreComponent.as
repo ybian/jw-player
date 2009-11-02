@@ -3,6 +3,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	
+	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 
@@ -29,6 +30,9 @@ package com.longtailvideo.jwplayer.view.components {
 			return _player;
 		}
 
+		protected function getSkinElement(component:String, element:String):DisplayObject {
+			return player.skin.getSkinElement(component,element);
+		}
 		
 		///////////////////////////////////////////		
 		/// IGlobalEventDispatcher implementation

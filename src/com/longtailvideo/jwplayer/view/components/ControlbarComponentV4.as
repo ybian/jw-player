@@ -84,7 +84,7 @@ package com.longtailvideo.jwplayer.view.components {
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, itemHandler);
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			stacker = new Stacker(skin as MovieClip);
-			getSkinElement("linkButton").visible = false;
+			getSkinComponent("linkButton").visible = false;
 			setButtons();
 			setColors();
 			itemHandler();
@@ -100,12 +100,12 @@ package com.longtailvideo.jwplayer.view.components {
 		 *
 		 * @param icn	A graphic to show as icon
 		 * @param nam	Name of the button
-		   getSkinElement('* @param hdl	The function to call when clicking the Button').
+		   getSkinComponent('* @param hdl	The function to call when clicking the Button').
 		 **/
 		public function addButton(icon:DisplayObject, name:String, handler:Function = null):MovieClip {
 			var btn:MovieClip;
-			if (getSkinElement('linkButton') && getSkinElementChild('linkButton', 'back')) {
-				btn = Draw.clone(getSkinElement('linkButton') as MovieClip) as MovieClip;
+			if (getSkinComponent('linkButton') && getSkinElementChild('linkButton', 'back')) {
+				btn = Draw.clone(getSkinComponent('linkButton') as MovieClip) as MovieClip;
 				btn.name = name + 'Button';
 				btn.visible = true;
 				btn.tabEnabled = true;
@@ -128,14 +128,14 @@ package com.longtailvideo.jwplayer.view.components {
 					btn.addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 					btn.addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 				}
-				stacker.insert(btn, getSkinElement('linkButton') as MovieClip);
+				stacker.insert(btn, getSkinComponent('linkButton') as MovieClip);
 			}
 			return btn;
 		}
 		
 		
 		public function removeButton(name:String):void {
-			skin.removeChild(getSkinElement(name));
+			skin.removeChild(getSkinComponent(name));
 		}
 		
 		
@@ -155,15 +155,15 @@ package com.longtailvideo.jwplayer.view.components {
 				skin.y = 0;
 			}
 			try {
-				getSkinElement('fullscreenButton').visible = false;
-				getSkinElement('normalscreenButton').visible = false;
+				getSkinComponent('fullscreenButton').visible = false;
+				getSkinComponent('normalscreenButton').visible = false;
 				if (stage['displayState'] && _player.config.height > 40) {
 					if (_player.fullscreen) {
-						getSkinElement('fullscreenButton').visible = false;
-						getSkinElement('normalscreenButton').visible = true;
+						getSkinComponent('fullscreenButton').visible = false;
+						getSkinComponent('normalscreenButton').visible = true;
 					} else {
-						getSkinElement('fullscreenButton').visible = true;
-						getSkinElement('normalscreenButton').visible = false;
+						getSkinComponent('fullscreenButton').visible = true;
+						getSkinComponent('normalscreenButton').visible = false;
 					}
 				}
 			} catch (err:Error) {
@@ -226,9 +226,9 @@ package com.longtailvideo.jwplayer.view.components {
 		private function itemHandler(evt:PlaylistEvent = null):void {
 			try {
 				if (_player.playlist && _player.playlist.length > 1) {
-					getSkinElement('prevButton').visible = getSkinElement('nextButton').visible = true;
+					getSkinComponent('prevButton').visible = getSkinComponent('nextButton').visible = true;
 				} else {
-					getSkinElement('prevButton').visible = getSkinElement('nextButton').visible = false;
+					getSkinComponent('prevButton').visible = getSkinComponent('nextButton').visible = false;
 				}
 			} catch (err:Error) {
 			}
@@ -259,8 +259,8 @@ package com.longtailvideo.jwplayer.view.components {
 		private function muteHandler(evt:MediaEvent = null):void {
 			if (_player.mute == true) {
 				try {
-					getSkinElement('muteButton').visible = false;
-					getSkinElement('unmuteButton').visible = true;
+					getSkinComponent('muteButton').visible = false;
+					getSkinComponent('unmuteButton').visible = true;
 				} catch (err:Error) {
 				}
 				try {
@@ -270,8 +270,8 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			} else {
 				try {
-					getSkinElement('muteButton').visible = true;
-					getSkinElement('unmuteButton').visible = false;
+					getSkinComponent('muteButton').visible = true;
+					getSkinComponent('unmuteButton').visible = false;
 				} catch (err:Error) {
 				}
 				try {
@@ -306,21 +306,21 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Clickhandler for all buttons. **/
 		private function setButtons():void {
 			for (var btn:String in BUTTONS) {
-				if (getSkinElement(btn)) {
-					(getSkinElement(btn) as MovieClip).mouseChildren = false;
-					(getSkinElement(btn) as MovieClip).buttonMode = true;
-					getSkinElement(btn).addEventListener(MouseEvent.CLICK, clickHandler);
-					getSkinElement(btn).addEventListener(MouseEvent.MOUSE_OVER, overHandler);
-					getSkinElement(btn).addEventListener(MouseEvent.MOUSE_OUT, outHandler);
+				if (getSkinComponent(btn)) {
+					(getSkinComponent(btn) as MovieClip).mouseChildren = false;
+					(getSkinComponent(btn) as MovieClip).buttonMode = true;
+					getSkinComponent(btn).addEventListener(MouseEvent.CLICK, clickHandler);
+					getSkinComponent(btn).addEventListener(MouseEvent.MOUSE_OVER, overHandler);
+					getSkinComponent(btn).addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 				}
 			}
 			for (var sld:String in SLIDERS) {
-				if (getSkinElement(sld)) {
-					(getSkinElement(sld) as MovieClip).mouseChildren = false;
-					(getSkinElement(sld) as MovieClip).buttonMode = true;
-					getSkinElement(sld).addEventListener(MouseEvent.MOUSE_DOWN, downHandler);
-					getSkinElement(sld).addEventListener(MouseEvent.MOUSE_OVER, overHandler);
-					getSkinElement(sld).addEventListener(MouseEvent.MOUSE_OUT, outHandler);
+				if (getSkinComponent(sld)) {
+					(getSkinComponent(sld) as MovieClip).mouseChildren = false;
+					(getSkinComponent(sld) as MovieClip).buttonMode = true;
+					getSkinComponent(sld).addEventListener(MouseEvent.MOUSE_DOWN, downHandler);
+					getSkinComponent(sld).addEventListener(MouseEvent.MOUSE_OVER, overHandler);
+					getSkinComponent(sld).addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 				}
 			}
 		}
@@ -331,26 +331,26 @@ package com.longtailvideo.jwplayer.view.components {
 			if (_player.config.backcolor && getSkinElementChild('playButton', 'icon')) {
 				var clr:ColorTransform = new ColorTransform();
 				clr.color = _player.config.backcolor.color;
-				getSkinElement('back').transform.colorTransform = clr;
+				getSkinComponent('back').transform.colorTransform = clr;
 			}
 			if (_player.config.frontcolor) {
 				try {
 					front = new ColorTransform();
 					front.color = _player.config.frontcolor.color;
 					for (var btn:String in BUTTONS) {
-						if (getSkinElement(btn)) {
+						if (getSkinComponent(btn)) {
 							getSkinElementChild(btn, 'icon').transform.colorTransform = front;
 						}
 					}
 					for (var sld:String in SLIDERS) {
-						if (getSkinElement(sld)) {
+						if (getSkinComponent(sld)) {
 							getSkinElementChild(sld, 'icon').transform.colorTransform = front;
 							getSkinElementChild(sld, 'mark').transform.colorTransform = front;
 							getSkinElementChild(sld, 'rail').transform.colorTransform = front;
 						}
 					}
-					(getSkinElement('elapsedText') as TextField).textColor = front.color;
-					(getSkinElement('totalText') as TextField).textColor = front.color;
+					(getSkinComponent('elapsedText') as TextField).textColor = front.color;
+					(getSkinComponent('totalText') as TextField).textColor = front.color;
 				} catch (err:Error) {
 				}
 			}
@@ -385,8 +385,8 @@ package com.longtailvideo.jwplayer.view.components {
 						}
 						break;
 					case PlayerState.PAUSED:
-						getSkinElement('playButton').visible = true;
-						getSkinElement('pauseButton').visible = false;
+						getSkinComponent('playButton').visible = true;
+						getSkinComponent('pauseButton').visible = false;
 						
 						if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
 							Mouse.show();
@@ -394,8 +394,8 @@ package com.longtailvideo.jwplayer.view.components {
 						}
 						break;
 					case PlayerState.BUFFERING:
-						getSkinElement('playButton').visible = false;
-						getSkinElement('pauseButton').visible = true;
+						getSkinComponent('playButton').visible = false;
+						getSkinComponent('pauseButton').visible = true;
 						
 						if (controlbarConfig['position'] == 'over' || (dps == 'fullScreen' && controlbarConfig['position'] != 'none')) {
 							hiding = setTimeout(moveTimeout, 2000);
@@ -405,8 +405,8 @@ package com.longtailvideo.jwplayer.view.components {
 						}
 						break;
 					case PlayerState.IDLE:
-						getSkinElement('playButton').visible = true;
-						getSkinElement('pauseButton').visible = false;
+						getSkinComponent('playButton').visible = true;
+						getSkinComponent('pauseButton').visible = false;
 						timeHandler();
 						
 						if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
@@ -439,8 +439,8 @@ package com.longtailvideo.jwplayer.view.components {
 				pct = 1;
 			}
 			try {
-				(getSkinElement('elapsedText') as TextField).text = Strings.digits(pos);
-				(getSkinElement('totalText') as TextField).text = Strings.digits(dur);
+				(getSkinComponent('elapsedText') as TextField).text = Strings.digits(pos);
+				(getSkinComponent('totalText') as TextField).text = Strings.digits(dur);
 			} catch (err:Error) {
 				Logger.log(err);
 			}
@@ -487,8 +487,8 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Fix the timeline display. **/
 		private function fixTime():void {
 			try {
-				var scp:Number = getSkinElement('timeSlider').scaleX;
-				getSkinElement('timeSlider').scaleX = 1;
+				var scp:Number = getSkinComponent('timeSlider').scaleX;
+				getSkinComponent('timeSlider').scaleX = 1;
 				getSkinElementChild('timeSlider', 'icon').x = scp * getSkinElementChild('timeSlider', 'icon').x;
 				getSkinElementChild('timeSlider', 'mark').x = scp * getSkinElementChild('timeSlider', 'mark').x;
 				getSkinElementChild('timeSlider', 'mark').width = scp * getSkinElementChild('timeSlider', 'mark').width;
@@ -522,7 +522,7 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Reflect the new volume in the controlbar **/
 		private function volumeHandler(evt:MediaEvent = null):void {
 			try {
-				var vsl:MovieClip = getSkinElement('volumeSlider') as MovieClip;
+				var vsl:MovieClip = getSkinComponent('volumeSlider') as MovieClip;
 				vsl.mark.width = _player.config.volume * (vsl.rail.width - vsl.icon.width / 2) / 100;
 				vsl.icon.x = vsl.mark.x + _player.config.volume * (vsl.rail.width - vsl.icon.width) / 100;
 			} catch (err:Error) {
@@ -530,7 +530,7 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		
-		private function getSkinElement(element:String):DisplayObject {
+		private function getSkinComponent(element:String):DisplayObject {
 			return skin.getChildByName(element) as DisplayObject;
 		}
 		

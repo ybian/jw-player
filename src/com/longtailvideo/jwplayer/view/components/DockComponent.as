@@ -11,6 +11,8 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.events.MouseEvent;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
+	import flash.display.Sprite;
+	import com.longtailvideo.jwplayer.model.Color;
 	
 	
 	public class DockComponent extends CoreComponent implements IDockComponent {
@@ -20,8 +22,6 @@ package com.longtailvideo.jwplayer.view.components {
 		};
 		/** Object with all the buttons in the dock. **/
 		private var buttons:Array;
-		/** Map with color transformation objects. **/
-		private var colors:Object;
 		/** Timeout for hiding the buttons when the video plays. **/
 		private var timeout:Number;
 		/** Reference to the animations handler **/
@@ -41,18 +41,27 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		public function addButton(icon:DisplayObject, text:String, clickHandler:Function, name:String = null):MovieClip {
-			//TODO: Make this work with the existing skin
-			var btn:DockButton = new DockButton(icon, text, clickHandler, player.config.frontcolor, player.config.backcolor, player.config.lightcolor);
-			addChild(btn);
-			buttons[name] = btn;
+			var button:DockButton = new DockButton();
+			if (name){
+				button.name = name;
+			}
+			button.setOutIcon(icon);
+			button.setBackground(getSkinElement("dock","buttonBack"));
+			button.assetColor = player.config.backcolor;
+			button.outColor = player.config.frontcolor;
+			button.overColor = player.config.lightcolor;
+			button.clickFunction = clickHandler;
+			button.init();
+			addChild(button);
+			buttons.push(button);
 			resize(width, height);
-			return btn;
+			return button;
 		}
 		
 		
 		public function removeButton(name:String):void {
 			try {
-				removeChild(buttons[name]);
+				removeChild(getChildByName(name));
 			} catch (err:Error) {
 			}
 		}
@@ -62,7 +71,7 @@ package com.longtailvideo.jwplayer.view.components {
 			var margin:Number = 10;
 			var usedHeight:Number = margin;
 			var direction:Number = 1;
-			if (getConfigParam('align') != 'left') {
+			if (getConfigParam('position') != 'left') {
 				direction = -1;
 			}
 			for (var i:Number = 0; i < buttons.length; i++) {
@@ -74,9 +83,10 @@ package com.longtailvideo.jwplayer.view.components {
 				buttons[i].y = usedHeight % height;
 				buttons[i].x = (buttons[i].width + margin) * row * direction;
 				usedHeight += buttons[i].height + margin;
+				(buttons[i] as DockButton).centerText();
 			}
 			setConfigParam('y', player.controls.display.y);
-			if (getConfigParam('align') == 'left') {
+			if (getConfigParam('position') == 'left') {
 				setConfigParam('x', player.controls.display.x + margin);
 			} else {
 				// No need to subtract the width: all of the positions are negative

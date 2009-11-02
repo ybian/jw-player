@@ -150,9 +150,5 @@
 		protected function get background():MovieClip {
 			return _background;
 		}
-		
-		private function getSkinElement(component:String, element:String):DisplayObject {
-			return player.skin.getSkinElement(component,element);
-		}
 	}
 }

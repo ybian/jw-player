@@ -401,10 +401,5 @@ package com.longtailvideo.jwplayer.view.components {
 		protected function get config():PluginConfig {
 			return player.config.pluginConfig('playlist');
 		}
-		
-		
-		protected function getSkinElement(component:String, element:String):DisplayObject {
-			return _player.skin.getSkinElement(component, element);
-		}
 	}
 }

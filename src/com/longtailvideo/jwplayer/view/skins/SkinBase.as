@@ -58,9 +58,11 @@ package com.longtailvideo.jwplayer.view.skins {
 		public function getSkinElement(component:String, element:String):DisplayObject {
 			var result:DisplayObject;
 			var comp:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
-			result = comp.getChildByName(element);
-			if (result && !(result is TextField)){
-				result = Draw.clone(result as Sprite);
+			if (comp) {
+				result = comp.getChildByName(element);
+				if (result && !(result is TextField)){
+					result = Draw.clone(result as Sprite);
+				}
 			}
 			return result;
 		}
