@@ -204,6 +204,9 @@
 			<!-- Optimize for size -->
 			<arg line="${optimizeLine}" />
 
+			<!-- Target a minimum flash player -->
+			<arg line="-target-player=${flexsdk.target}" />
+
 			<!-- Compile with network sandbox -->
 			<arg line="-use-network=true" />
 
