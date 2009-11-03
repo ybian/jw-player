@@ -235,7 +235,7 @@
 			<param name="increment" value="true"/>
 			<param name="outputPath" value="${debug.dir}"/>
 		</antcall>
-
+		<move file="${debug.dir}/${swf}.swf" todir="./" />
 	</target>
 
 	<target name="release-swf">

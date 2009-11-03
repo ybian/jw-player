@@ -14,7 +14,12 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
+	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.components.ControlbarComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	
 	import flash.display.DisplayObject;
 	import flash.events.EventDispatcher;
@@ -254,7 +259,11 @@ package com.longtailvideo.jwplayer.player {
 					_player.playlist.currentIndex++;
 					break;
 				case com.jeroenwijering.events.ViewEvent.PLAY:
-					_player.play();
+					if (prm != null && Strings.serialize(prm.toString()) == false) {
+						_player.pause();
+					} else {
+						_player.play();
+					}
 					break;
 				case com.jeroenwijering.events.ViewEvent.PREV:
 					_player.playlist.currentIndex--;
@@ -281,14 +290,18 @@ package com.longtailvideo.jwplayer.player {
 			var cfg:Object = {};
 			var descType:XML = describeType(_player.config)
 			for each (var i:String in descType.accessor.@name) {
-				if (_player.config[i] is Number) {
-					cfg[i] = isNaN(_player.config[i]) ? "" : String(_player.config[i]);
-				} else if (_player.config[i]) {
-					cfg[i] = _player.config[i].toString();
-				} else {
-					cfg[i] = "";
+				if (_player.config[i] != null) {
+					cfg[i] = Strings.serialize(_player.config[i].toString());
 				}
-			}
+				
+/*				if (_player.config[i] is Number) {
+					cfg[i] = isNaN(_player.config[i]) ? "" : String(_player.config[i]);
+				} else if (_player.config[i] is Boolean) {
+					cfg[i] = _player.config[i];
+				} else if (_player.config[i] != null) {
+					cfg[i] = _player.config[i].toString();
+				}
+*/			}
 			
 			for each (var j:String in _player.config.pluginIds) {
 				var pluginConfig:PluginConfig = _player.config.pluginConfig(j);
@@ -300,6 +313,7 @@ package com.longtailvideo.jwplayer.player {
 			cfg['state'] = _player.state;
 			cfg['mute'] = _player.mute;
 			cfg['fullscreen'] = _player.fullscreen;
+			cfg['version'] = _player.version;
 			
 			return cfg;
 		} 
@@ -344,6 +358,14 @@ package com.longtailvideo.jwplayer.player {
 			var pluginParent:V4Plugin = (plugin as DisplayObject).parent as V4Plugin; 
 			if (pluginParent) {
 				return _player.config.pluginConfig(pluginParent.pluginId);
+			} else if (plugin is IDockComponent) {
+				return _player.config.pluginConfig('dock');
+			} else if (plugin is IDisplayComponent) {
+				return _player.config.pluginConfig('display');
+			} else if (plugin is IControlbarComponent) {
+				return _player.config.pluginConfig('controlbar');
+			} else if (plugin is IPlaylistComponent) {
+				return _player.config.pluginConfig('playlist');
 			} else {
 				return new PluginConfig('');
 			}
@@ -361,6 +383,12 @@ package com.longtailvideo.jwplayer.player {
 					break;
 				case 'controlbar':
 					result = _player.controls.controlbar as Object;
+					break;
+				case 'display':
+					result = _player.controls.display as Object;
+					break;
+				case 'playlist':
+					result = _player.controls.playlist as Object;
 					break;
 			}
 			return result;

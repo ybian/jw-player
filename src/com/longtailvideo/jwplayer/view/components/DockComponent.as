@@ -52,6 +52,7 @@ package com.longtailvideo.jwplayer.view.components {
 			button.overColor = player.config.lightcolor;
 			button.clickFunction = clickHandler;
 			button.init();
+			button.text = text;
 			addChild(button);
 			buttons.push(button);
 			resize(width, height);
