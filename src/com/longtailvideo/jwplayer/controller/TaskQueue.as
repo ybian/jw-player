@@ -33,6 +33,7 @@ package com.longtailvideo.jwplayer.controller {
 		private var taskOrder:Array;
 		
 		private var continueOnFailure:Boolean;
+		private var failureState:Boolean = false;
 		
 		public function TaskQueue(cont:Boolean=false) {
 			taskOrder = [];
@@ -56,11 +57,13 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		public function success(event:Event=null):void {
-			var runSuccess:Function = taskSuccess[activeTask] as Function;
-			if (runSuccess != null) {
-				runSuccess(event);
+			if (!failureState) {
+				var runSuccess:Function = taskSuccess[activeTask] as Function;
+				if (runSuccess != null) {
+					runSuccess(event);
+				}
+				nextTask();
 			}
-			nextTask();
 		}
 		
 		public function failure(event:Event):void {
@@ -79,6 +82,8 @@ package com.longtailvideo.jwplayer.controller {
 			
 			if (continueOnFailure) {
 				nextTask();
+			} else {
+				failureState = true;
 			}
 		}
 

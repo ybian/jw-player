@@ -60,6 +60,10 @@ package com.longtailvideo.jwplayer.view {
 		
 		[Embed(source="../../../../../assets/flash/loader/loader.swf")]
 		private var LoadingScreen:Class;
+
+		[Embed(source="../../../../../assets/flash/loader/error.swf")]
+		private var ErrorScreen:Class;
+
 		private var loaderScreen:Sprite;
 		private var loaderAnim:DisplayObject;
 		
@@ -111,9 +115,17 @@ package com.longtailvideo.jwplayer.view {
 			redraw();
 		}
 		
-		public function completeView():void {
-			RootReference.stage.removeChild(loaderScreen);
-			RootReference.stage.addChildAt(_root, 0);
+		public function completeView(isError:Boolean=false, errorMsg:String=""):void {
+			if (!isError) {
+				RootReference.stage.removeChild(loaderScreen);
+				RootReference.stage.addChildAt(_root, 0);
+			} else {
+				loaderScreen.removeChild(loaderAnim);
+				var errorScreen:DisplayObject = new ErrorScreen() as DisplayObject;
+				errorScreen.x = (loaderScreen.width - errorScreen.width) / 2;
+				errorScreen.y = (loaderScreen.height - errorScreen.height) / 2;
+				loaderScreen.addChild(errorScreen);
+			}
 		}
 		
 		private function setupLayers():void {

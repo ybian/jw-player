@@ -92,10 +92,6 @@ package com.longtailvideo.jwplayer.controller {
 			setup.setupPlayer();
 		}
 
-		private function setupError(evt:ErrorEvent):void {
-			Logger.log("STARTUP: Error occurred during player startup: " + evt.text);
-		}
-		
 		private function addViewListeners():void {
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PLAY, playHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PAUSE, pauseHandler);
@@ -126,6 +122,11 @@ package com.longtailvideo.jwplayer.controller {
 			_setupComplete = true;
 			_view.completeView();
 			finalizeSetup();
+		}
+		
+		private function setupError(evt:ErrorEvent):void {
+			Logger.log("STARTUP: Error occurred during player startup: " + evt.text);
+			_view.completeView(true, evt.text);
 		}
 		
 		private function finalizeSetup():void {

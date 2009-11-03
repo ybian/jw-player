@@ -65,7 +65,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 		
 		public function setupPlayer():void {
-			tasker = new TaskQueue();
+			tasker = new TaskQueue(false);
 			tasker.addEventListener(Event.COMPLETE, setupTasksComplete);
 			tasker.addEventListener(ErrorEvent.ERROR, setupTasksFailed);
 			
