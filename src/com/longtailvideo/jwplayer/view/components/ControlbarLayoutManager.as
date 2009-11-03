@@ -1,7 +1,4 @@
 package com.longtailvideo.jwplayer.view.components {
-	import com.longtailvideo.jwplayer.view.components.ComponentButton;
-	import com.longtailvideo.jwplayer.view.components.Slider;
-	
 	import flash.display.DisplayObject;
 	import flash.text.TextField;
 	
@@ -10,6 +7,7 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _controlbar:ControlbarComponent;
 		protected var _currentLeft:Number;
 		protected var _currentRight:Number;
+		protected var _height:Number;
 		
 		
 		public function ControlbarLayoutManager(controlbar:ControlbarComponent) {
@@ -18,13 +16,16 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		public function resize(width:Number, height:Number):void {
-			_currentLeft = 0;
-			_currentRight = width;
-			var controlbarPattern:RegExp = /\[(.*)\]\[(.*)\]\[(.*)\]/;
-			var result:Object = controlbarPattern.exec(_controlbar.layout);
-			positionLeft(result[1]);
-			positionRight(result[3]);
-			positionCenter(result[2]);
+			if (width && height){
+				_height = height;
+				_currentLeft = 0;
+				_currentRight = width;
+				var controlbarPattern:RegExp = /\[(.+)\]\[(.+)\]\[(.+)\]/;
+				var result:Object = controlbarPattern.exec(_controlbar.layout);
+				positionLeft(result[1]);
+				positionRight(result[3]);
+				positionCenter(result[2]);
+			}
 		}
 		
 		
@@ -46,18 +47,22 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		private function placeLeft(displayObject:DisplayObject):void {
 			if (displayObject) {
+				displayObject.visible = true;
 				if (!_controlbar.contains(displayObject)) {
 					_controlbar.addChild(displayObject);
 				}
 				
-				displayObject.x = _currentLeft;	
-				displayObject.y = 0;
-											
 				if (displayObject is TextField) {
-					//_currentLeft = _currentLeft + (displayObject as TextField).textWidth;
-					_currentLeft = _currentLeft + displayObject.width;
-				} else {
-					_currentLeft = _currentLeft + displayObject.width;
+					_currentLeft = _currentLeft + 5;
+				}
+				
+				displayObject.x = _currentLeft;	
+				displayObject.y = (_height - displayObject.height) / 2;
+
+				_currentLeft = _currentLeft + displayObject.width;								
+
+				if (displayObject is TextField) {
+					_currentLeft = _currentLeft + 5;
 				}
 				
 			}
@@ -82,17 +87,21 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		private function placeRight(displayObject:DisplayObject):void {
 			if (displayObject) {
+				displayObject.visible = true;
 				if (!_controlbar.contains(displayObject)) {
 					_controlbar.addChild(displayObject);
 				}
+
 				if (displayObject is TextField) {
-					//_currentRight = _currentRight - (displayObject as TextField).textWidth;
-					_currentRight = _currentRight - displayObject.width;
-				} else {
-					_currentRight = _currentRight - displayObject.width;
+					_currentRight = _currentRight - 5;
 				}
+				
+				_currentRight = _currentRight - displayObject.width;
 				displayObject.x = _currentRight;
-				displayObject.y = 0;
+				displayObject.y = (_height - displayObject.height) / 2;
+				if (displayObject is TextField) {
+					_currentRight = _currentRight - 5;
+				}
 			}
 		}
 		

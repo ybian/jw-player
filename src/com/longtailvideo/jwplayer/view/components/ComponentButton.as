@@ -75,7 +75,9 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		protected function overHandler(event:MouseEvent):void {
 			if (_overIcon) {
-				_imageLayer.removeChild(_outIcon);
+				if (_imageLayer.contains(_outIcon)){
+					_imageLayer.removeChild(_outIcon);				
+				}
 				setImage(_overIcon);
 			}
 		}
@@ -83,7 +85,9 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		protected function outHandler(event:MouseEvent):void {
 			if (_overIcon) {
-				_imageLayer.removeChild(_overIcon);
+				if (_imageLayer.contains(_overIcon)){
+					_imageLayer.removeChild(_overIcon);				
+				}
 				setImage(_outIcon);
 			}
 		}

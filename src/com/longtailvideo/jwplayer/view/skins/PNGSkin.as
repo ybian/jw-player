@@ -155,14 +155,17 @@ package com.longtailvideo.jwplayer.view.skins {
 		}
 		
 		public override function getSkinElement(component:String, element:String):DisplayObject {
-			var result:Bitmap;
+			var result:DisplayObject;
 			var componentDisplayObjectContainer:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
 			if (componentDisplayObjectContainer) {
 				var original:DisplayObject = componentDisplayObjectContainer.getChildByName(element);
 				if (original){
 					var resultData:BitmapData = new BitmapData(original.width, original.height,true);
 					resultData.draw(original);
-					result = new Bitmap(resultData);
+					var bitmap:Bitmap = new Bitmap(resultData);
+					bitmap.name = "bitmap";
+					result = new Sprite();
+					(result as Sprite).addChild(bitmap);
 				}
 			}
 			return result;
