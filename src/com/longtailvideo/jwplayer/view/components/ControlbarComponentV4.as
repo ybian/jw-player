@@ -511,7 +511,7 @@ package com.longtailvideo.jwplayer.view.components {
 				mpl = _player.playlist.currentItem.duration;
 			} else if (sliderType == 'volumeSlider') {
 				if (_player.mute) return;
-				else mpl = 1020;
+				else mpl = 100;
 			}
 			var pct:Number = (scrubber.icon.x - scrubber.rail.x) / (scrubber.rail.width - scrubber.icon.width) * mpl;
 			scrubber = undefined;
