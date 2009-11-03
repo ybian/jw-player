@@ -14,6 +14,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
+	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
@@ -22,7 +23,6 @@ package com.longtailvideo.jwplayer.player {
 	import flash.display.DisplayObject;
 	import flash.events.EventDispatcher;
 	import flash.utils.describeType;
-	import com.longtailvideo.jwplayer.utils.Strings;
 
 	/**
 	 * This singleton class acts as a wrapper between the Player and plugins or javascripts that were
@@ -238,6 +238,7 @@ package com.longtailvideo.jwplayer.player {
 		// Event "dispatcher"
 		
 		public override function sendEvent(typ:String, prm:Object=undefined) : void {
+			Logger.log("V4 plugin sending event: " + typ); 
 			switch (typ) {
 				case com.jeroenwijering.events.ViewEvent.FULLSCREEN:
 					_player.fullscreen = prm['state'];
@@ -340,9 +341,11 @@ package com.longtailvideo.jwplayer.player {
 				'file':			item.file,
 				'image':		item.image,
 				'link':			item.link,
+				'mediaid':		item.mediaid,
 				'start':		item.start,
 				'streamer':		item.streamer,
 				'tags':			item.tags,
+				'title':		item.title,
 				'type':			item.provider
 			};
 			

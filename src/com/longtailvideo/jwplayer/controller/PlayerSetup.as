@@ -219,15 +219,18 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 		private function initPlugins():void {
-			try {
-				for each (var pluginId:String in _view.loadedPlugins()) {
+			for each (var pluginId:String in _view.loadedPlugins()) {
+				try {
 					var plugin:IPlugin = _view.getPlugin(pluginId);
 					plugin.initPlugin(_player, _model.config.pluginConfig(pluginId));
+				} catch (e:Error) {
+					Logger.log("Error initializing plugin: " + e.message);
+					if (plugin) {
+						_view.removePlugin(plugin);
+					}
 				}
-				tasker.success();
-			} catch (e:Error) {
-				tasker.failure(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
 			}
+			tasker.success();
 		}
 
 		private function setupJS():void {

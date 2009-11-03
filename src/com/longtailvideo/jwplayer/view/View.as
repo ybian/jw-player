@@ -296,6 +296,15 @@ package com.longtailvideo.jwplayer.view {
 			}
 		}
 
+		public function removePlugin(plugin:IPlugin):void {
+			var id:String = plugin.id;
+			if (id && _plugins[id] is IPlugin) {
+				_pluginsLayer.removeChild(_plugins[id]);
+				delete _plugins[id];
+			}
+		}
+
+		
 		public function loadedPlugins():Array {
 			var list:Array = [];
 			for (var pluginId:String in _plugins) {
