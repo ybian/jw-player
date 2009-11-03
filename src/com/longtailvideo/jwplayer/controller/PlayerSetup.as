@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.controller {
 	import com.jeroenwijering.events.PluginInterface;
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.player.IPlayer;
@@ -201,18 +202,20 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function loadPlaylist():void {
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, tasker.success);
-			_model.playlist.addEventListener(ErrorEvent.ERROR, tasker.failure);
+			_model.playlist.addEventListener(PlayerEvent.JWPLAYER_ERROR, tasker.failure);
 
 			if (_model.config.playlistfile) {
 				_model.playlist.load(_model.config.playlistfile);
-			} else {
+			} else if (_model.config.singleItem.file) {
 				_model.playlist.load(_model.config.singleItem);
+			} else {
+				tasker.success();
 			}
 		}
 
 		private function loadPlaylistComplete(event:Event=null):void {
 			_model.playlist.removeEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, tasker.success);
-			_model.playlist.removeEventListener(ErrorEvent.ERROR, tasker.failure);
+			_model.playlist.removeEventListener(PlayerEvent.JWPLAYER_ERROR, tasker.failure);
 		}
 
 		private function initPlugins():void {

@@ -39,7 +39,7 @@ package com.longtailvideo.jwplayer.model {
 	 *
 	 * @eventType com.longtailvideo.jwplayer.events.PlayerEvent.JWPLAYER_ERROR
 	 */
-	[Event(name="jwPlayerError", type="com.longtailvideo.jwplayer.events.PlayerEvent")]
+	[Event(name="jwplayerError", type = "com.longtailvideo.jwplayer.events.PlayerEvent")]
 	
 	
 	public class Playlist extends GlobalEventDispatcher implements IPlaylist {
