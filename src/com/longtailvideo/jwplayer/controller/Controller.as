@@ -410,6 +410,8 @@ package com.longtailvideo.jwplayer.controller {
 					_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
 					_model.media.load(item);
 					result = true;
+				} else if (item.file) {
+					_model.playlist.load(item.file)
 				}
 			} catch (err:Error) {
 				result = false;
@@ -463,9 +465,10 @@ package com.longtailvideo.jwplayer.controller {
 				}
 				
 				_model.setActiveMediaProvider(provider);
+				return true;
 			}
 			
-			return true;
+			return false;
 		}
 		
 		private function mediaSourceLoaded(evt:Event):void {
