@@ -59,7 +59,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		protected function setThumb(progress:Number):void {
 			_currentThumb = progress;
-			if (_thumb && !_dragging) {
+			if (_thumb) {
 				_thumb.visible = true;
 			}
 		}
@@ -67,7 +67,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		public function setProgress(progress:Number):void {
 			_currentProgress = progress;
-			if (_progress && !_dragging) {
+			if (_progress) {
 				_progress.visible = true;
 			}
 			setThumb(progress);
@@ -92,11 +92,11 @@ package com.longtailvideo.jwplayer.view.components {
 				_buffer.getChildByName("bitmap").width = _width;
 				resizeElement(_buffer, _currentBuffer);
 			}
-			if (_progress){
+			if (_progress && !_dragging){
 				_progress.getChildByName("bitmap").width = _width;
 				resizeElement(_progress, _currentProgress);
 			}
-			if (_thumb){
+			if (_thumb && !_dragging){
 				_thumb.x = _width * _currentThumb / 100;				
 			}
 		}

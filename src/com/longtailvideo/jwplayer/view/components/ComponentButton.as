@@ -1,13 +1,11 @@
 package com.longtailvideo.jwplayer.view.components {
-	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.model.Color;
+	import com.longtailvideo.jwplayer.utils.Logger;
+	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	import flash.geom.ColorTransform;
-	import com.longtailvideo.jwplayer.utils.Logger;
-	import com.longtailvideo.jwplayer.utils.Draw;
 	
 	
 	public class ComponentButton extends MovieClip {
@@ -27,13 +25,13 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		public function init():void {
 			if (_background) {
-				_background.name = "backgroundLayer";
+				nameDisplayObject("backgroundLayer", _background);
 				addChild(_background);
 				_background.x = 0;
 				_background.y = 0;
 			}
 			_imageLayer = new Sprite();
-			_imageLayer.name = "imageLayer";
+			nameDisplayObject("imageLayer", _imageLayer);
 			addChild(_imageLayer);
 			_imageLayer.x = 0;
 			_imageLayer.y = 0;
@@ -41,6 +39,14 @@ package com.longtailvideo.jwplayer.view.components {
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 			addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 			addEventListener(MouseEvent.CLICK, clickHandler);
+		}
+		
+		private function nameDisplayObject(name:String, displayObject:DisplayObject):void {
+			try {
+				displayObject.name = name;
+			} catch (error:Error){
+				
+			}
 		}
 		
 		

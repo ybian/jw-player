@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.view.skins {
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
+	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	import flash.display.DisplayObject;
@@ -8,21 +9,20 @@ package com.longtailvideo.jwplayer.view.skins {
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
-	import com.longtailvideo.jwplayer.utils.Draw;
-
+	
+	
 	public class SWFSkin extends SkinBase implements ISkin {
-		
 		private var props:SkinProperties;
-
-
-		public function SWFSkin(loadedSkin:DisplayObject=null) {
+		
+		
+		public function SWFSkin(loadedSkin:DisplayObject = null) {
 			props = new SkinProperties();
-			
 			if (loadedSkin) {
 				overwriteSkin(loadedSkin);
 			}
 		}
-
+		
+		
 		protected function overwriteSkin(newSkin:DisplayObject):void {
 			if (newSkin is Sprite) {
 				_skin = newSkin as Sprite;
@@ -32,10 +32,11 @@ package com.longtailvideo.jwplayer.view.skins {
 			}
 			if (_skin.getChildByName('controlbar')) {
 				props['controlbar.size'] = _skin.getChildByName('controlbar').height;
-			} 
+			}
 		}
-
-		public override function load(url:String=null):void {
+		
+		
+		public override function load(url:String = null):void {
 			if (url) {
 				var loader:AssetLoader = new AssetLoader();
 				loader.addEventListener(Event.COMPLETE, loadComplete);
@@ -45,26 +46,30 @@ package com.longtailvideo.jwplayer.view.skins {
 				sendError("Skin must load from URL if skin is empty.");
 			}
 		}
-
+		
+		
 		protected function loadComplete(evt:Event):void {
 			var loader:AssetLoader = AssetLoader(evt.target);
 			overwriteSkin(DisplayObjectContainer(loader.loadedObject).getChildByName('player'));
 			dispatchEvent(new Event(Event.COMPLETE));
 		}
-
+		
+		
 		protected function loadError(evt:ErrorEvent):void {
 			sendError(evt.text);
 		}
-
+		
+		
 		public override function getSkinProperties():SkinProperties {
 			return props;
 		}
 		
+		
 		public override function getSkinElement(component:String, element:String):DisplayObject {
 			// Hack for the error icon
 			if (component == 'display' && element == 'errorIcon') {
-				if (super.getSkinElement(component, 'errorIcon')['icn']){
-					var errorButton:Sprite = Draw.clone(super.getSkinElement('display','playIcon') as Sprite) as Sprite;
+				if (super.getSkinElement(component, 'errorIcon')['icn']) {
+					var errorButton:Sprite = Draw.clone(super.getSkinElement('display', 'playIcon') as Sprite) as Sprite;
 					errorButton.removeChild(errorButton['icn']);
 					errorButton.x = 0;
 					errorButton.y = 0;
@@ -75,9 +80,22 @@ package com.longtailvideo.jwplayer.view.skins {
 					errorIcon.y = errorButttonBackground.y + (errorButttonBackground.height - errorIcon.height) / 2;
 					return errorButton;
 				}
+			} else if (component == "dock") {
+				var cls:Class;
+				try {
+					cls = _skin.loaderInfo.applicationDomain.getDefinition("dockbutton") as Class;
+					var dup:* = new cls();
+					dup.transform = _skin.transform;
+					dup.filters = _skin.filters;
+					dup.cacheAsBitmap = _skin.cacheAsBitmap;
+					dup.opaqueBackground = _skin.opaqueBackground;
+					return ((dup as Sprite).getChildByName("back") as Sprite);
+				} catch (e:Error) {
+				}
 			}
 			return super.getSkinElement(component, element);
 		}
+		
 		
 		public function getTranslatedSkinElement(component:String, element:String):DisplayObject {
 			var result:DisplayObject = super.getSkinElement(component, element);
@@ -87,7 +105,7 @@ package com.longtailvideo.jwplayer.view.skins {
 					var sliderStart:Number = element.indexOf('Slider');
 					if (buttonStart > 0) {
 						var buttonElement:String = element.substr(buttonStart, element.length);
-						var buttonName:String = element.substr(0,buttonStart+6);
+						var buttonName:String = element.substr(0, buttonStart + 6);
 						switch (buttonElement) {
 							case 'Button':
 								result = getSubElement('icon', result);
@@ -102,21 +120,21 @@ package com.longtailvideo.jwplayer.view.skins {
 						}
 					} else if (sliderStart > 0) {
 						var sliderElement:String = element.substr(sliderStart, element.length);
-						var sliderName:String = element.substr(0,sliderStart+6);
+						var sliderName:String = element.substr(0, sliderStart + 6);
 						result = super.getSkinElement(component, sliderName);
 						switch (sliderElement) {
 							case 'SliderRail':
 								result = getSubElement('rail', result);
 								break;
 							case 'SliderBuffer':
-								if (element == "volumeSliderBuffer"){
+								if (element == "volumeSliderBuffer") {
 									result = null;
 								} else {
 									result = getSubElement('mark', result);
 								}
 								break;
 							case 'SliderProgress':
-								if (element == "volumeSliderProgress"){
+								if (element == "volumeSliderProgress") {
 									result = null;
 								} else {
 									result = getSubElement('done', result);
@@ -132,15 +150,16 @@ package com.longtailvideo.jwplayer.view.skins {
 					break;
 				case 'display':
 					switch (element) {
-						case 'errorIcon':
-							if (result['icn']) {
-								result = result['icn'];
-							}
-							break;
-					}
+					case 'errorIcon':
+						if (result['icn']) {
+							result = result['icn'];
+						}
+						break;
+				}
 			}
 			return result;
 		}
+		
 		
 		private function getSubElement(subElement:String, element:DisplayObject):DisplayObject {
 			var result:DisplayObject;
@@ -150,9 +169,9 @@ package com.longtailvideo.jwplayer.view.skins {
 			return result;
 		}
 		
+		
 		public override function getSWFSkin():Sprite {
 			return _skin;
 		}
-
 	}
 }

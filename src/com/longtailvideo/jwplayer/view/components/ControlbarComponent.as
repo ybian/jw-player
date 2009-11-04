@@ -6,7 +6,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
@@ -85,7 +84,7 @@ package com.longtailvideo.jwplayer.view.components {
 	public class ControlbarComponent extends CoreComponent implements IControlbarComponent {
 		protected var _buttons:Object = {};
 		protected var _dividers:Array;
-		protected var _defaultLayout:String = "[play|stop|prev|next|elapsed][time][duration|fullscreen|mute volume]";
+		protected var _defaultLayout:String = "[capLeft play|stop|prev|next|elapsed][time][duration|fullscreen|mute volume capRight]";
 		protected var _currentLayout:String;
 		protected var _layoutManager:ControlbarLayoutManager;
 		protected var _width:Number;
@@ -143,6 +142,12 @@ package com.longtailvideo.jwplayer.view.components {
 			if (player.state == PlayerState.PLAYING) {
 				newLayout = newLayout.replace('play', 'pause');
 				hideButton('play');
+			} else if (player.state == PlayerState.IDLE) {
+				resetSlider();
+				if (_player.playlist.currentItem){
+					setTime(0,_player.playlist.currentItem.duration);
+				}
+				hideButton('pause');
 			} else {
 				hideButton('pause');
 			}
@@ -183,7 +188,9 @@ package com.longtailvideo.jwplayer.view.components {
 			var scrubber:Slider = getButton('time') as Slider;
 			switch (evt.type) {
 				case MediaEvent.JWPLAYER_MEDIA_BUFFER:
+					//setTime(evt.position, evt.duration);
 					if (scrubber) {
+						//scrubber.setProgress(evt.position / evt.duration *100);
 						scrubber.setBuffer(evt.bufferPercent);
 					}
 					break;
@@ -206,10 +213,10 @@ package com.longtailvideo.jwplayer.view.components {
 				if (!_player.config.mute) {
 					volume.setBuffer(100);
 					volume.setProgress(_player.config.volume);
-					volume.resize(getSkinElement("controlbar", "volumeSliderRail").height,volume.height);
+					volume.resize(getSkinElement("controlbar", "volumeSliderRail").width,volume.height);
 				} else {
 					volume.reset();
-					volume.resize(getSkinElement("controlbar", "volumeSliderRail").height,volume.height);
+					volume.resize(getSkinElement("controlbar", "volumeSliderRail").width,volume.height);
 				}
 			}
 		}
@@ -218,7 +225,8 @@ package com.longtailvideo.jwplayer.view.components {
 		private function setTime(position:Number, duration:Number):void {
 			var textFormat:TextFormat = new TextFormat();
 			textFormat.font = "_sans";
-			textFormat.size = getConfigParam("fontsize");
+			textFormat.size = 10;
+			textFormat.bold = true;
 			textFormat.color = player.config.frontcolor.color;
 			if (position < 0) {
 				position = 0;				
@@ -237,7 +245,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		private function setupBackground():void {
-			var back:DisplayObject = getSkinElement("controlbar", "back");
+			var back:DisplayObject = getSkinElement("controlbar", "background");
 			if (!back) {
 				var newBackground:Sprite = new Sprite();
 				newBackground.name = "background";
@@ -249,11 +257,6 @@ package com.longtailvideo.jwplayer.view.components {
 				var backContainer:Sprite = new Sprite();
 				backContainer.addChild(back);
 				back = backContainer as DisplayObject;
-			}
-			if (player.config.backcolor) {
-				var colorTransform:ColorTransform = new ColorTransform();
-				colorTransform.color = player.config.backcolor.color;
-				back.transform.colorTransform = colorTransform;
 			}
 			back.x = 0;
 			back.y = 0;
@@ -290,6 +293,8 @@ package com.longtailvideo.jwplayer.view.components {
 			addTextField('duration');
 			addSlider('time', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
 			addSlider('volume', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, volumeHandler);
+			_buttons['capLeft'] = getSkinElement("controlbar", "capLeft");
+			_buttons['capRight'] = getSkinElement("controlbar", "capRight");
 		}
 		
 		
@@ -399,12 +404,12 @@ package com.longtailvideo.jwplayer.view.components {
 			_width = width;
 			var wid:Number = width;
 			if (getConfigParam('position') == 'over' || _player.fullscreen == true) {
-				x = getConfigParam('margin');
-				y = height - background.height - getConfigParam('margin');
-				wid = width - 2 * getConfigParam('margin');
+				player.config.pluginConfig("controlbar")['x'] = getConfigParam('margin');
+				player.config.pluginConfig("controlbar")['y'] = height - background.height - getConfigParam('margin');
+				_width = width - 2 * getConfigParam('margin');
 			}
-			background.width = wid;
-			shade.width = wid;
+			background.width = _width;
+			shade.width = _width;
 			updateControlbarState();
 			redraw();
 			Mouse.show();

@@ -3,13 +3,13 @@
  **/
 package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.model.Color;
+	
 	import flash.display.*;
 	import flash.events.*;
+	import flash.geom.ColorTransform;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
-	import flash.geom.ColorTransform;
-	import flash.text.TextFieldAutoSize;
 	
 	
 	public class DockButton extends ComponentButton {
@@ -38,24 +38,29 @@ package com.longtailvideo.jwplayer.view.components {
 				_background = new Sprite();
 				drawBackground(_background as Sprite, _outColor);
 			}
+			_background.transform.colorTransform = createColorTransform(_outColor);
 			super.init();
 			_imageLayer.addChild(_text);
 			_assetColor = _assetColor ? _assetColor : new Color(0xFFFFFF);
-			var iconColor:ColorTransform = new ColorTransform();
-			iconColor.color = _assetColor.color;
-			_outIcon.transform.colorTransform = iconColor;
+			_outIcon.transform.colorTransform = createColorTransform(_assetColor);
 			_text.textColor = _assetColor.color;
 			mouseChildren = false;
 			buttonMode = true;
 		}
 		
 		
+		protected function createColorTransform(color:Color):ColorTransform {
+			var colorTransform:ColorTransform = new ColorTransform();
+			colorTransform.color = color.color;
+			return colorTransform;
+		}
+		
 		/** When rolling over, the background is color changed. **/
 		protected override function overHandler(evt:MouseEvent):void {
 			if (_drawBackground) {
 				drawBackground(_background as Sprite, _overColor);
 			} else {
-				_background.transform.colorTransform = new ColorTransform(_overColor.color);
+				_background.transform.colorTransform = createColorTransform(_overColor);
 			}
 		}
 		
@@ -65,7 +70,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (_drawBackground) {
 				drawBackground(_background as Sprite, _outColor);
 			} else {
-				_background.transform.colorTransform = new ColorTransform(_outColor.color);
+				_background.transform.colorTransform = createColorTransform(_outColor);
 			}
 		}
 		
