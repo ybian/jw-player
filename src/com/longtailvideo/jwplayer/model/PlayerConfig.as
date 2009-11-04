@@ -368,6 +368,11 @@ package com.longtailvideo.jwplayer.model {
 				if ( (['controlbar','playlist','dock','display']).indexOf(plug) == -1 ) {
 					names.push(plug);
 				}
+				/* TODO: Make sure this only returns loaded plugins
+				if (_plugins.indexOf(plug)) {
+					names.push(plug);
+				}
+				*/
 			}
 			return names;
 		}
