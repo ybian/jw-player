@@ -29,7 +29,7 @@ package com.longtailvideo.jwplayer.utils {
 		/** Constant defining the Flash tracing output type. **/
 		public static const TRACE:String = "trace";
 		/** Reference to the player config **/
-		private static var _config:PlayerConfig = new PlayerConfig();
+		private static var _config:PlayerConfig;
 		
 		/**
 		 * Log a message to the output system.
@@ -74,7 +74,9 @@ package com.longtailvideo.jwplayer.utils {
 		
 		/** Send the messages to the output system. **/
 		private static function send(text:String):void {
-			switch (_config.debug) {
+			var debug:String = _config ? _config.debug : TRACE;
+			
+			switch (debug) {
 				case ARTHROPOD:
 					CONNECTION.send(CONNECTION_NAME, 'debug', 'CDC309AF', text,	0xCCCCCC);
 					break;
