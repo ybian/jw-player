@@ -14,11 +14,11 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	import flash.geom.ColorTransform;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.ui.Mouse;
+	import com.longtailvideo.jwplayer.utils.DisplayObjectUtils;
 	
 	
 	/**
@@ -84,15 +84,14 @@ package com.longtailvideo.jwplayer.view.components {
 	public class ControlbarComponent extends CoreComponent implements IControlbarComponent {
 		protected var _buttons:Object = {};
 		protected var _dividers:Array;
-		protected var _defaultLayout:String = "[capLeft play|stop|prev|next|elapsed][time][duration|fullscreen|mute volume capRight]";
+		protected var _defaultLayout:String = "[play|stop|prev|next|elapsed][time][duration|fullscreen|mute volume]";
 		protected var _currentLayout:String;
 		protected var _layoutManager:ControlbarLayoutManager;
 		protected var _width:Number;
 		protected var _height:Number;
 		
-		
 		public function ControlbarComponent(player:IPlayer) {
-			super(player);
+			super(player, "controlbar");
 			_layoutManager = new ControlbarLayoutManager(this);
 			_dividers = [];
 			setupBackground();
@@ -198,7 +197,9 @@ package com.longtailvideo.jwplayer.view.components {
 					setTime(evt.position, evt.duration);
 					if (scrubber) {
 						scrubber.setProgress(evt.position / evt.duration * 100);
-						scrubber.setBuffer(evt.bufferPercent);
+						if (evt.bufferPercent >= 0){
+							scrubber.setBuffer(evt.bufferPercent);
+						}
 					}
 					break;
 				default:
@@ -213,10 +214,10 @@ package com.longtailvideo.jwplayer.view.components {
 				if (!_player.config.mute) {
 					volume.setBuffer(100);
 					volume.setProgress(_player.config.volume);
-					volume.resize(getSkinElement("controlbar", "volumeSliderRail").width,volume.height);
+					volume.resize(getSkinElement("volumeSliderRail").width,volume.height);
 				} else {
 					volume.reset();
-					volume.resize(getSkinElement("controlbar", "volumeSliderRail").width,volume.height);
+					volume.resize(getSkinElement("volumeSliderRail").width,volume.height);
 				}
 			}
 		}
@@ -245,7 +246,11 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		private function setupBackground():void {
-			var back:DisplayObject = getSkinElement("controlbar", "background");
+			var back:DisplayObject = getSkinElement("background");
+			var capLeft:DisplayObject = getSkinElement("capLeft");
+			var capRight:DisplayObject = getSkinElement("capRight");
+			//var shade:DisplayObject = getSkinElement("shade");
+			
 			if (!back) {
 				var newBackground:Sprite = new Sprite();
 				newBackground.name = "background";
@@ -253,29 +258,27 @@ package com.longtailvideo.jwplayer.view.components {
 				newBackground.graphics.drawRect(0, 0, 1, 1);
 				newBackground.graphics.endFill();
 				back = newBackground as DisplayObject;
-			} else if (back is Bitmap) {
-				var backContainer:Sprite = new Sprite();
-				backContainer.addChild(back);
-				back = backContainer as DisplayObject;
 			}
-			back.x = 0;
-			back.y = 0;
+
 			_buttons['background'] = back;
-			addChildAt(back, 0);
-			player.config.pluginConfig("controlbar")['size'] = back.height;
+			addChild(back);
 			_height = back.height;
-			if (getSkinElement("controlbar", "shade")) {
-				var shade:DisplayObject = getSkinElement("controlbar", "shade");
-				if (shade is Bitmap) {
-					var shadeContainer:Sprite = new Sprite();
-					shadeContainer.addChild(shade);
-					shade = shadeContainer as DisplayObject;
-				}
-				shade.x = 0;
-				shade.y = 0;
-				_buttons['shade'] = shade;
-				addChildAt(shade, 1);
+			player.config.pluginConfig("controlbar")['size'] = back.height;
+			
+			if (capLeft) {
+				_buttons['capLeft'] = capLeft;
+				addChild(capLeft);
 			}
+
+			if (capRight) {
+				_buttons['capRight'] = capRight;
+				addChild(capRight);
+			}
+
+			/*if (shade) {
+				_buttons['shade'] = shade;
+				addChild(shade);
+			}*/
 		}
 		
 		
@@ -293,24 +296,23 @@ package com.longtailvideo.jwplayer.view.components {
 			addTextField('duration');
 			addSlider('time', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
 			addSlider('volume', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, volumeHandler);
-			_buttons['capLeft'] = getSkinElement("controlbar", "capLeft");
-			_buttons['capRight'] = getSkinElement("controlbar", "capRight");
 		}
 		
 		
 		private function addComponentButton(name:String, text:String, event:String, eventData:* = null):void {
 			var button:ComponentButton = new ComponentButton();
-			button.setOutIcon(getSkinElement("controlbar", name + "Button"));
-			button.setOverIcon(getSkinElement("controlbar", name + "ButtonOver"));
-			button.setBackground(getSkinElement("controlbar", name + "ButtonBack"));
+			button.name = name;
+			button.setOutIcon(getSkinElement(name + "Button"));
+			button.setOverIcon(getSkinElement(name + "ButtonOver"));
+			button.setBackground(getSkinElement(name + "ButtonBack"));
 			button.outColor = player.config.lightcolor;
 			button.overColor = player.config.backcolor;
 			button.clickFunction = function():void {
 				forward(new ViewEvent(event, eventData));
 			}
-			if (getSkinElement("controlbar", name + "Button")
-				|| getSkinElement("controlbar", name + "ButtonOver") 
-				|| getSkinElement("controlbar", name + "ButtonBack")) {
+			if (getSkinElement(name + "Button")
+				|| getSkinElement(name + "ButtonOver") 
+				|| getSkinElement(name + "ButtonBack")) {
 					button.init();
 					addButtonDisplayObject(button, name);
 			}
@@ -318,7 +320,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		private function addSlider(name:String, orientation:String, event:String, callback:Function):void {
-			var slider:Slider = new Slider(getSkinElement("controlbar", name + "SliderRail") as Sprite, getSkinElement("controlbar", name + "SliderBuffer") as Sprite, getSkinElement("controlbar", name + "SliderProgress") as Sprite, getSkinElement("controlbar", name + "SliderThumb") as Sprite, orientation);
+			var slider:Slider = new Slider(getSkinElement(name + "SliderRail") as Sprite, getSkinElement(name + "SliderBuffer") as Sprite, getSkinElement(name + "SliderProgress") as Sprite, getSkinElement(name + "SliderThumb") as Sprite, orientation);
 			slider.addEventListener(event, callback);
 			slider.name = name;
 			_buttons[name] = slider;
@@ -390,7 +392,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		public function getButton(buttonName:String):DisplayObject {
 			if (buttonName == "divider") {
-				var divider:DisplayObject = getSkinElement("controlbar", "divider");
+				var divider:DisplayObject = getSkinElement("divider");
 				if (divider) {
 					_dividers.push(divider);
 				}
@@ -402,14 +404,28 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		public function resize(width:Number, height:Number):void {
 			_width = width;
-			var wid:Number = width;
+			
 			if (getConfigParam('position') == 'over' || _player.fullscreen == true) {
 				player.config.pluginConfig("controlbar")['x'] = getConfigParam('margin');
 				player.config.pluginConfig("controlbar")['y'] = height - background.height - getConfigParam('margin');
 				_width = width - 2 * getConfigParam('margin');
 			}
-			background.width = _width;
-			shade.width = _width;
+			
+			//shade.width = _width;
+
+			var backgroundWidth:Number = _width;
+			
+			backgroundWidth -= capLeft.width;
+			capLeft.x = 0;
+
+			backgroundWidth -= capRight.width;
+			capRight.x = _width - capRight.width;
+
+			background.width = backgroundWidth;
+			background.x = capLeft.width;
+			setChildIndex(capLeft,numChildren-1);
+			setChildIndex(capRight,numChildren-1);
+						
 			updateControlbarState();
 			redraw();
 			Mouse.show();
@@ -444,7 +460,7 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		
-		private function get background():Sprite {
+		private function get background():DisplayObject {
 			if (_buttons['background']) {
 				return _buttons['background'];
 			}
@@ -452,16 +468,25 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		
-		private function get shade():Sprite {
+		/*private function get shade():DisplayObject {
 			if (_buttons['shade']) {
 				return _buttons['shade'];
 			}
 			return (new Sprite());
+		}*/
+		
+		private function get capLeft():DisplayObject {
+			if (_buttons['capLeft']) {
+				return _buttons['capLeft'];
+			}
+			return (new Sprite());
 		}
 		
-		
-		private function getConfigParam(param:String):* {
-			return player.config.pluginConfig("controlbar")[param];
+		private function get capRight():DisplayObject {
+			if (_buttons['capRight']) {
+				return _buttons['capRight'];
+			}
+			return (new Sprite());
 		}
 	}
 }

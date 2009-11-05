@@ -11,8 +11,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.events.MouseEvent;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
-	import flash.display.Sprite;
-	import com.longtailvideo.jwplayer.model.Color;
 	
 	
 	public class DockComponent extends CoreComponent implements IDockComponent {
@@ -28,7 +26,7 @@ package com.longtailvideo.jwplayer.view.components {
 		private var animations:Animations;
 		
 		public function DockComponent(player:IPlayer) {
-			super(player);
+			super(player, "dock");
 			animations = new Animations(this);
 			buttons = new Array();
 			if (player.config.dock) {
@@ -46,7 +44,7 @@ package com.longtailvideo.jwplayer.view.components {
 				button.name = name;
 			}
 			button.setOutIcon(icon);
-			button.setBackground(getSkinElement("dock","buttonBack"));
+			button.setBackground(getSkinElement("buttonBack"));
 			button.assetColor = player.config.backcolor;
 			button.outColor = player.config.frontcolor;
 			button.overColor = player.config.lightcolor;
@@ -128,15 +126,6 @@ package com.longtailvideo.jwplayer.view.components {
 					animations.fade(1);
 					break;
 			}
-		}
-		
-		/** Gets a configuration parameter **/
-		private function getConfigParam(param:String):* {
-			return _player.config.pluginConfig("dock")[param];
-		}
-		
-		private function setConfigParam(param:String, value:*):void {
-			_player.config.pluginConfig("dock")[param] = value;
 		}
 	}
 }

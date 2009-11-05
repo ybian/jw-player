@@ -11,10 +11,12 @@ package com.longtailvideo.jwplayer.view.components {
 
 		private var _dispatcher:IGlobalEventDispatcher;
 		protected var _player:IPlayer;
+		protected var _name:String;
 
-		public function CoreComponent(player:IPlayer) {
+		public function CoreComponent(player:IPlayer, name:String) {
 			_dispatcher = new GlobalEventDispatcher();
 			_player = player;
+			_name = name;
 			super();
 		}
 		
@@ -30,8 +32,16 @@ package com.longtailvideo.jwplayer.view.components {
 			return _player;
 		}
 
-		protected function getSkinElement(component:String, element:String):DisplayObject {
-			return player.skin.getSkinElement(component,element);
+		protected function getSkinElement(element:String):DisplayObject {
+			return player.skin.getSkinElement(_name,element);
+		}
+		
+		protected function getConfigParam(param:String):* {
+			return player.config.pluginConfig(_name)[param];
+		}
+		
+		protected function setConfigParam(param:String, value:*):void {
+			player.config.pluginConfig(_name)[param] = value;
 		}
 		
 		///////////////////////////////////////////		

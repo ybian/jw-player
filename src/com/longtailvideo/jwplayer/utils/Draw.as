@@ -27,6 +27,7 @@ package com.longtailvideo.jwplayer.utils {
 			dup.filters = tgt.filters;
 			dup.cacheAsBitmap = tgt.cacheAsBitmap;
 			dup.opaqueBackground = tgt.opaqueBackground;
+			dup.name = tgt.name;
 			if (adc == true) {
 				var idx:Number = tgt.parent.getChildIndex(tgt);
 				tgt.parent.addChildAt(dup, idx + 1);

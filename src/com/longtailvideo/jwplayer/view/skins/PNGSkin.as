@@ -159,10 +159,9 @@ package com.longtailvideo.jwplayer.view.skins {
 			var componentDisplayObjectContainer:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
 			if (componentDisplayObjectContainer) {
 				var original:DisplayObject = componentDisplayObjectContainer.getChildByName(element);
-				if (original){
-					var resultData:BitmapData = new BitmapData(original.width, original.height,true);
-					resultData.draw(original);
-					var bitmap:Bitmap = new Bitmap(resultData);
+				if (original && original is DisplayObjectContainer){
+					var bitmapData:BitmapData = ((original as DisplayObjectContainer).getChildAt(0) as Bitmap).bitmapData;
+					var bitmap:Bitmap = new Bitmap(bitmapData);
 					bitmap.name = "bitmap";
 					result = new Sprite();
 					(result as Sprite).addChild(bitmap);

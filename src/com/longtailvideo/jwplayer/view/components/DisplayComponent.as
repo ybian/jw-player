@@ -23,7 +23,7 @@
 		protected var _text:TextField;
 		
 		public function DisplayComponent(player:IPlayer) {
-			super(player);
+			super(player, "display");
 			addListeners();
 			setupDisplayObjects();
 		}
@@ -112,17 +112,17 @@
 			//TODO: Handle mute button in error state
 			switch (player.state) {
 				case PlayerState.BUFFERING:
-					setDisplay(getSkinElement('display', 'bufferIcon'));
+					setDisplay(getSkinElement('bufferIcon'));
 					break;
 				case PlayerState.PAUSED:
-					setDisplay(getSkinElement('display', 'playIcon'));
+					setDisplay(getSkinElement('playIcon'));
 					break;
 				case PlayerState.IDLE:
-					setDisplay(getSkinElement('display', 'playIcon'));
+					setDisplay(getSkinElement('playIcon'));
 					break;
 				default:
 					if (player.mute){
-						setDisplay(getSkinElement('display', 'muteIcon'));
+						setDisplay(getSkinElement('muteIcon'));
 					} else {
 						clearDisplay();
 					}
@@ -130,7 +130,7 @@
 		}
 
 		protected function errorHandler(event:PlayerEvent):void {
-			setDisplay(getSkinElement('display', 'errorIcon'), event.message);
+			setDisplay(getSkinElement('errorIcon'), event.message);
 		}
 		
 		protected function clickHandler(event:MouseEvent):void {

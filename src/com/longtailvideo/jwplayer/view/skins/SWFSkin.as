@@ -1,8 +1,8 @@
 package com.longtailvideo.jwplayer.view.skins {
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
+	import com.longtailvideo.jwplayer.utils.DisplayObjectUtils;
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
-	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
@@ -91,6 +91,17 @@ package com.longtailvideo.jwplayer.view.skins {
 					dup.opaqueBackground = _skin.opaqueBackground;
 					return ((dup as Sprite).getChildByName("back") as Sprite);
 				} catch (e:Error) {
+				}
+			} else if (component == "playlist") {
+				if (element == "masker" || element == "background") {
+					if (element == "background") {
+						element = "back";
+					}
+					var result:DisplayObject;
+					var comp:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
+					if (comp) {
+						return comp.getChildByName(element);
+					}
 				}
 			}
 			return super.getSkinElement(component, element);

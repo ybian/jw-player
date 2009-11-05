@@ -4,8 +4,8 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Draw;
+	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Stacker;
 	import com.longtailvideo.jwplayer.utils.Stretcher;
 	import com.longtailvideo.jwplayer.utils.Strings;
@@ -13,6 +13,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -20,13 +21,12 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.events.MouseEvent;
 	import flash.geom.ColorTransform;
 	import flash.net.URLRequest;
+	import flash.text.TextField;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
 	
 	public class PlaylistComponent extends CoreComponent implements IPlaylistComponent {
-		/** Reference to the playlist MC. **/
-		public var clip:MovieClip;
 		/** Array with all button instances **/
 		private var buttons:Array;
 		/** Height of a button (to calculate scrolling) **/
@@ -45,36 +45,117 @@ package com.longtailvideo.jwplayer.view.components {
 		private var front:ColorTransform;
 		/** Color object for lightcolor. **/
 		private var light:ColorTransform;
+		/** Visual representation of a the playlist **/
+		private var list:Sprite;
+		/** Visual representation of a playlist item **/
+		private var button:Sprite;
+		/** The playlist mask **/
+		private var listmask:Sprite;
+		/** The playlist slider **/
+		private var slider:Sprite;
+		/** The playlist background **/
+		private var background:Sprite;
 		
 		
 		public function PlaylistComponent(player:IPlayer) {
-			super(player);
+			super(player, "playlist");
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, playlistHandler);
 			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
-			clip = _player.skin.getSWFSkin().getChildByName("playlist") as MovieClip;
-			addChild(clip);
-			buttonheight = clip.list.button.height;
-			clip.list.button.visible = false;
-			clip.list.mask = clip.masker;
-			clip.list.addEventListener(MouseEvent.CLICK, clickHandler);
-			clip.list.addEventListener(MouseEvent.MOUSE_OVER, overHandler);
-			clip.list.addEventListener(MouseEvent.MOUSE_OUT, outHandler);
-			clip.slider.buttonMode = true;
-			clip.slider.mouseChildren = false;
-			clip.slider.addEventListener(MouseEvent.MOUSE_DOWN, sdownHandler);
-			clip.slider.addEventListener(MouseEvent.MOUSE_OVER, soverHandler);
-			clip.slider.addEventListener(MouseEvent.MOUSE_OUT, soutHandler);
-			clip.slider.visible = false;
+			background = getSkinElement("background") as Sprite;
+			if (!background) {
+				background = new Sprite();
+				background.graphics.beginFill(0, 0);
+				background.graphics.drawRect(0, 0, 1, 1);
+				background.graphics.endFill();
+			}
+			addElement(background);
+			slider = getSkinElement("slider") as Sprite;
+			if (!slider) {
+				slider = new Sprite();
+				var sliderBack:Sprite = new Sprite();
+				sliderBack.name = "back";
+				sliderBack.graphics.beginFill(0, 1);
+				sliderBack.graphics.drawRect(0, 0, 1, 1);
+				sliderBack.graphics.endFill();
+				addElement(sliderBack,slider);
+				var sliderRail:DisplayObject = getSkinElement("sliderRail") ? getSkinElement("sliderRail") : new Sprite();
+				sliderRail.name = "rail";
+				addElement(sliderRail,slider);
+				var sliderThumb:DisplayObject = getSkinElement("sliderThumb")? getSkinElement("sliderThumb") : new Sprite();
+				sliderThumb.name = "icon";
+				addElement(sliderThumb,slider);
+			}
+			addElement(slider);
+			slider.buttonMode = true;
+			slider.mouseChildren = false;
+			slider.addEventListener(MouseEvent.MOUSE_DOWN, sdownHandler);
+			slider.addEventListener(MouseEvent.MOUSE_OVER, soverHandler);
+			slider.addEventListener(MouseEvent.MOUSE_OUT, soutHandler);
+			slider.visible = false;
+			listmask = getSkinElement("masker") as Sprite;
+			if (!listmask) {
+				listmask = new Sprite();
+				listmask.graphics.beginFill(0, 0);
+				listmask.graphics.drawRect(0, 0, 1, 1);
+				listmask.graphics.endFill();
+			}
+			addElement(listmask);
+			list = getSkinElement("list") as Sprite;
+			if (!list) {
+				list = new Sprite();
+				button = buildButton() as Sprite;
+				addElement(button, list);
+			} else {
+				button = list.getChildByName("button") as Sprite;
+			}
+			buttonheight = button.height;
+			button.visible = false;
+			list.mask = listmask;
+			list.addEventListener(MouseEvent.CLICK, clickHandler);
+			list.addEventListener(MouseEvent.MOUSE_OVER, overHandler);
+			list.addEventListener(MouseEvent.MOUSE_OUT, outHandler);
+			addElement(list);
 			buttons = new Array();
+			this.addEventListener(MouseEvent.MOUSE_WHEEL, wheelHandler);
 			try {
-				image = new Array(clip.list.button.image.width, clip.list.button.image.height);
+				image = new Array(button.getChildByName("image").width, button.getChildByName("image").height);
 			} catch (err:Error) {
 			}
-			if (clip.list.button['back']) {
+			if (button.getChildByName("back")) {
 				setColors();
 			}
+		}
+		
+		
+		private function buildButton():MovieClip {
+				var btn:MovieClip = new MovieClip();
+				var img:Sprite = new Sprite();
+				img.name = "image";
+				img.graphics.beginFill(0, 1);
+				img.graphics.drawRect(1, 0, 80, 59);
+				img.graphics.endFill();
+				addElement(img, btn);
+				var title:TextField = new TextField();
+				title.name = "title";
+				addElement(title, btn, 85, 2);
+				var description:TextField = new TextField();
+				description.name = "description";
+				addElement(description, btn, 86, 20);
+				var duration:TextField = new TextField();
+				duration.name = "duration";
+				addElement(duration, btn, 335, 4);
+				return btn;
+		}
+		
+		private function addElement(doc:DisplayObject, parent:DisplayObjectContainer = null, x:Number = 0, y:Number = 0):void {
+			if (!parent) {
+				parent = this;
+			}
+			parent.addChild(doc);
+			doc.x = x;
+			doc.y = y;
 		}
 		
 		
@@ -83,14 +164,13 @@ package com.longtailvideo.jwplayer.view.components {
 			var idx:Number = Number(evt.target.name);
 			if (front && back) {
 				for (var itm:String in _player.playlist.getItemAt(idx)) {
-					if (buttons[idx].c[itm] && typeof(buttons[idx].c[itm]) == "object") {
-						buttons[idx].c[itm].textColor = back.color;
+					if (getButton(idx).getChildByName(itm) && getButton(idx).getChildByName(itm) is TextField) {
+						(getButton(idx).getChildByName(itm) as TextField).textColor = back.color;
 					}
 				}
-				buttons[idx].c['back'].transform.colorTransform = light;
+				getButton(idx).getChildByName("back").transform.colorTransform = light;
 			}
-			buttons[idx].c.gotoAndStop('over');
-		};
+		}
 		
 		
 		/** Handle a button rollover. **/
@@ -98,44 +178,39 @@ package com.longtailvideo.jwplayer.view.components {
 			var idx:Number = Number(evt.target.name);
 			if (front && back) {
 				for (var itm:String in _player.playlist.getItemAt(idx)) {
-					if (buttons[idx].c[itm] && typeof(buttons[idx].c[itm]) == "object") {
+					if (getButton(idx).getChildByName(itm) && getButton(idx).getChildByName(itm) is TextField) {
 						if (idx == active) {
-							buttons[idx].c[itm].textColor = light.color;
+							(getButton(idx).getChildByName(itm) as TextField).textColor = light.color;
 						} else {
-							buttons[idx].c[itm].textColor = front.color;
+							(getButton(idx).getChildByName(itm) as TextField).textColor = front.color;
 						}
 					}
 				}
-				buttons[idx].c['back'].transform.colorTransform = back;
+				getButton(idx).getChildByName("back").transform.colorTransform = back;
 			}
-			if (idx == active) {
-				buttons[idx].c.gotoAndStop('active');
-			} else {
-				buttons[idx].c.gotoAndStop('out');
-			}
-		};
+		}
 		
 		
 		/** Setup all buttons in the playlist **/
 		private function buildPlaylist(clr:Boolean):void {
-			if (!_player.playlist) {
+			if (!_player.playlist || player.playlist.length < 1) {
 				return;
 			}
-			var wid:Number = clip.back.width;
-			var hei:Number = clip.back.height;
-			clip.masker.height = hei;
-			clip.masker.width = wid;
+			var wid:Number = getConfigParam("width");
+			var hei:Number = getConfigParam("height");
+			listmask.height = hei;
+			listmask.width = wid;
 			proportion = _player.playlist.length * buttonheight / hei;
 			if (proportion > 1.01) {
-				wid -= clip.slider.width;
+				wid -= slider.width;
 				buildSlider();
 			} else {
-				clip.slider.visible = false;
+				slider.visible = false;
 			}
 			if (clr) {
-				clip.list.y = clip.masker.y;
+				list.y = listmask.y;
 				for (var j:Number = 0; j < buttons.length; j++) {
-					clip.list.removeChild(buttons[j].c);
+					list.removeChild(getButton(j));
 				}
 				buttons = new Array();
 			} else {
@@ -145,7 +220,10 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			for (var i:Number = 0; i < _player.playlist.length; i++) {
 				if (clr) {
-					var btn:MovieClip = Draw.clone(clip.list.button, true) as MovieClip;
+					var btn:MovieClip = Draw.clone(button, true) as MovieClip;
+					if (!btn || btn.numChildren < 1) {
+						btn = buildButton();
+					}
 					var stc:Stacker = new Stacker(btn);
 					btn.y = i * buttonheight;
 					btn.buttonMode = true;
@@ -163,41 +241,38 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Setup the scrollbar component **/
 		private function buildSlider():void {
-			var scr:MovieClip = clip.slider;
-			scr.visible = true;
-			scr.x = clip.back.width - scr.width;
-			var dif:Number = clip.back.height - scr.height - scr.y;
-			scr.back.height += dif;
-			scr.rail.height += dif;
-			scr.icon.height = Math.round(scr.rail.height / proportion);
+			slider.visible = true;
+			slider.x = getConfigParam("width") - slider.width;
+			var dif:Number = getConfigParam("height") - slider.height - slider.y;
+			slider.getChildByName("back").height += dif;
+			slider.getChildByName("rail").height += dif;
+			slider.getChildByName("icon").height = Math.round(slider.getChildByName("rail").height / proportion);
 		}
 		
 		
 		/** Make sure the playlist is not out of range. **/
 		private function scrollEase(ips:Number = -1, cps:Number = -1):void {
-			var scr:MovieClip = clip.slider;
 			if (ips != -1) {
-				scr.icon.y = Math.round(ips - (ips - scr.icon.y) / 1.5);
-				clip.list.y = Math.round((cps - (cps - clip.list.y) / 1.5));
+				slider.getChildByName("icon").y = Math.round(ips - (ips - slider.getChildByName("icon").y) / 1.5);
+				list.y = Math.round((cps - (cps - list.y) / 1.5));
 			}
-			if (clip.list.y > 0 || scr.icon.y < scr.rail.y) {
-				clip.list.y = clip.masker.y;
-				scr.icon.y = scr.rail.y;
-			} else if (clip.list.y < clip.masker.height - clip.list.height || scr.icon.y > scr.rail.y + scr.rail.height - scr.icon.height) {
-				scr.icon.y = scr.rail.y + scr.rail.height - scr.icon.height;
-				clip.list.y = clip.masker.y + clip.masker.height - clip.list.height;
+			if (list.y > 0 || slider.getChildByName("icon").y < slider.getChildByName("rail").y) {
+				list.y = listmask.y;
+				slider.getChildByName("icon").y = slider.getChildByName("rail").y;
+			} else if (list.y < listmask.height - list.height || slider.getChildByName("icon").y > slider.getChildByName("rail").y + slider.getChildByName("rail").height - slider.getChildByName("icon").height) {
+				slider.getChildByName("icon").y = slider.getChildByName("rail").y + slider.getChildByName("rail").height - slider.getChildByName("icon").height;
+				list.y = listmask.y + listmask.height - list.height;
 			}
-		};
+		}
 		
 		
 		/** Scrolling handler. **/
 		private function scrollHandler():void {
-			var scr:MovieClip = clip.slider;
-			var yps:Number = scr.mouseY - scr.rail.y;
-			var ips:Number = yps - scr.icon.height / 2;
-			var cps:Number = clip.masker.y + clip.masker.height / 2 - proportion * yps;
+			var yps:Number = slider.mouseY - slider.getChildByName("rail").y;
+			var ips:Number = yps - slider.getChildByName("icon").height / 2;
+			var cps:Number = listmask.y + listmask.height / 2 - proportion * yps;
 			scrollEase(ips, cps);
-		};
+		}
 		
 		
 		/** Init the colors. **/
@@ -205,15 +280,15 @@ package com.longtailvideo.jwplayer.view.components {
 			if (_player.config.backcolor) {
 				back = new ColorTransform();
 				back.color = _player.config.backcolor.color;
-				clip.back.transform.colorTransform = back;
-				clip.slider.back.transform.colorTransform = back;
+				background.transform.colorTransform = back;
+				slider.getChildByName("back").transform.colorTransform = back;
 			}
 			if (_player.config.frontcolor) {
 				front = new ColorTransform();
 				front.color = _player.config.frontcolor.color;
 				try {
-					clip.slider.icon.transform.colorTransform = front;
-					clip.slider.rail.transform.colorTransform = front;
+					slider.getChildByName("icon").transform.colorTransform = front;
+					slider.getChildByName("rail").transform.colorTransform = front;
 				} catch (err:Error) {
 				}
 				if (_player.config.lightcolor) {
@@ -223,17 +298,19 @@ package com.longtailvideo.jwplayer.view.components {
 					light = front;
 				}
 			}
-		};
+		}
 		
 		
 		/** Setup button elements **/
 		private function setContents(idx:Number):void {
 			var playlistItem:PlaylistItem = _player.playlist.getItemAt(idx);
-			buttons[idx].c.gotoAndStop(0);
+			var title:TextField = getButton(idx).getChildByName("title") as TextField;
+			var description:TextField = getButton(idx).getChildByName("description") as TextField;
+			var duration:TextField = getButton(idx).getChildByName("duration") as TextField;
 			if (playlistItem.image) {
-				if (config['thumbs'] != false && _player.config.playlist != 'none' && playlistItem.image) {
-					var img:MovieClip = buttons[idx].c.image;
-					var msk:Sprite = Draw.rect(buttons[idx].c, '0xFF0000', img.width, img.height, img.x, img.y);
+				if (getConfigParam('thumbs') != false && _player.config.playlist != 'none' && playlistItem.image) {
+					var img:Sprite = getButton(idx).getChildByName("image") as Sprite;
+					var msk:Sprite = Draw.rect(getButton(idx), '0xFF0000', img.width, img.height, img.x, img.y);
 					var ldr:Loader = new Loader();
 					img.mask = msk;
 					img.addChild(ldr);
@@ -245,26 +322,26 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			if (playlistItem.duration) {
 				if (playlistItem.duration > 0) {
-					buttons[idx].c['duration'].text = Strings.digits(playlistItem.duration);
+					duration.text = Strings.digits(playlistItem.duration);
 					if (front) {
-						buttons[idx].c['duration'].textColor = front.color;
+						duration.textColor = front.color;
 					}
 				}
 			}
 			try {
-				buttons[idx].c['description'].htmlText = playlistItem.description;
-				buttons[idx].c['title'].htmlText = "<b>" + playlistItem.title + "</b>";
+				description.htmlText = playlistItem.description;
+				title.htmlText = "<b>" + playlistItem.title + "</b>";
 				if (front) {
-					buttons[idx].c['description'].textColor = front.color;
-					buttons[idx].c['title'].textColor = front.color;
+					description.textColor = front.color;
+					title.textColor = front.color;
 				}
 			} catch (e:Error) {
 			}
-			if (buttons[idx].c['image'] && (!playlistItem.image || config['thumbs'] == false)) {
-				buttons[idx].c['image'].visible = false;
+			if (getButton(idx).getChildByName("image") && (!playlistItem.image || getConfigParam('thumbs') == false)) {
+				getButton(idx).getChildByName("image").visible = false;
 			}
 			if (back) {
-				buttons[idx].c['back'].transform.colorTransform = back;
+				getButton(idx).getChildByName("back").transform.colorTransform = back;
 			}
 		}
 		
@@ -273,43 +350,48 @@ package com.longtailvideo.jwplayer.view.components {
 		private function loaderHandler(evt:Event):void {
 			var ldr:Loader = Loader(evt.target.loader);
 			Stretcher.stretch(ldr, image[0], image[1], Stretcher.FILL);
-		};
+		}
+		
+		
+		private function wheelHandler(evt:MouseEvent):void {
+			//scrollEase(evt.delta * -1, getConfigParam("height"));
+		}
 		
 		
 		/** Start scrolling the playlist on mousedown. **/
 		private function sdownHandler(evt:MouseEvent):void {
 			clearInterval(scrollInterval);
-			clip.stage.addEventListener(MouseEvent.MOUSE_UP, supHandler);
+			RootReference.stage.addEventListener(MouseEvent.MOUSE_UP, supHandler);
 			scrollHandler();
 			scrollInterval = setInterval(scrollHandler, 50);
-		};
+		}
 		
 		
 		/** Revert the highlight on mouseout. **/
 		private function soutHandler(evt:MouseEvent):void {
 			if (front) {
-				clip.slider.icon.transform.colorTransform = front;
+				slider.getChildByName("icon").transform.colorTransform = front;
 			} else {
-				clip.slider.icon.gotoAndStop('out');
+				//slider.getChildByName("icon").gotoAndStop('out');
 			}
-		};
+		}
 		
 		
 		/** Highlight the icon on rollover. **/
 		private function soverHandler(evt:MouseEvent):void {
 			if (front) {
-				clip.slider.icon.transform.colorTransform = light;
+				slider.getChildByName("icon").transform.colorTransform = light;
 			} else {
-				clip.slider.icon.gotoAndStop('over');
+				//slider.getChildByName("icon").gotoAndStop('over');
 			}
-		};
+		}
 		
 		
 		/** Stop scrolling the playlist on mouseout. **/
 		private function supHandler(evt:MouseEvent):void {
 			clearInterval(scrollInterval);
-			clip.stage.removeEventListener(MouseEvent.MOUSE_UP, supHandler);
-		};
+			RootReference.stage.removeEventListener(MouseEvent.MOUSE_UP, supHandler);
+		}
 		
 		
 		/** Handle a click on a button. **/
@@ -320,21 +402,22 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Process resizing requests **/
 		public function resize(width:Number, height:Number):void {
-			clip.x = 0;
-			clip.y = 0;
-			clip.back.width = width;
-			clip.back.height =  height;
+			x = 0;
+			y = 0;
+			setConfigParam("width", width);
+			setConfigParam("height", height);
+			background.width = width;
+			background.height = height;
 			buildPlaylist(false);
-			if ( PlayerLayoutManager.testPosition(config['position'])) {
-				clip.visible = true;
-			} else if (config['position'] == "over") {
+			if (PlayerLayoutManager.testPosition(getConfigParam('position'))) {
+				visible = true;
+			} else if (getConfigParam('position') == "over") {
 				stateHandler();
 			} else {
-				clip.visible = false;
+				visible = false;
 			}
-
-			if (clip.visible && config['visible'] === false) {
-				clip.visible = false;
+			if (visible && getConfigParam('visible') === false) {
+				visible = false;
 			}
 		}
 		
@@ -344,34 +427,32 @@ package com.longtailvideo.jwplayer.view.components {
 			var idx:Number = _player.playlist.currentIndex;
 			clearInterval(scrollInterval);
 			if (proportion > 1.01) {
-				scrollInterval = setInterval(scrollEase, 50, idx * buttonheight / proportion, -idx * buttonheight + clip.masker.y);
+				scrollInterval = setInterval(scrollEase, 50, idx * buttonheight / proportion, -idx * buttonheight + listmask.y);
 			}
 			if (light) {
 				for (var itm:String in _player.playlist.getItemAt(idx)) {
-					if (buttons[idx].c[itm]) {
+					if (getButton(idx).getChildByName(itm)) {
 						try {
-							buttons[idx].c[itm].textColor = light.color;
+							(getButton(idx).getChildByName(itm) as TextField).textColor = light.color;
 						} catch (err:Error) {
 						}
 					}
 				}
 			}
 			if (back) {
-				buttons[idx].c['back'].transform.colorTransform = back;
+				getButton(idx).getChildByName("back").transform.colorTransform = back;
 			}
-			buttons[idx].c.gotoAndStop('active');
 			if (!isNaN(active)) {
 				if (front) {
 					for (var act:String in _player.playlist.getItemAt(active)) {
-						if (buttons[active].c[act]) {
+						if (getButton(active).getChildByName(act)) {
 							try {
-								buttons[active].c[act].textColor = front.color;
+								(getButton(active).getChildByName(act) as TextField).textColor = front.color;
 							} catch (err:Error) {
 							}
 						}
 					}
 				}
-				buttons[active].c.gotoAndStop('out');
 			}
 			active = idx;
 		}
@@ -388,18 +469,18 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Process state changes **/
 		protected function stateHandler(evt:PlayerStateEvent = null):void {
-			if (config['position'] == "over") {
+			if (getConfigParam('position') == "over") {
 				if (player.state == PlayerState.PLAYING || player.state == PlayerState.PAUSED || player.state == PlayerState.BUFFERING) {
-					clip.visible = false;
+					visible = false;
 				} else {
-					clip.visible = true;
+					visible = true;
 				}
 			}
 		}
 		
 		
-		protected function get config():PluginConfig {
-			return player.config.pluginConfig('playlist');
+		private function getButton(id:Number):Sprite {
+			return buttons[id].c as Sprite;
 		}
 	}
 }

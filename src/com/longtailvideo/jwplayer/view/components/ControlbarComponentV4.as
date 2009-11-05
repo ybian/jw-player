@@ -55,7 +55,7 @@ package com.longtailvideo.jwplayer.view.components {
 		private var animations:Animations;
 		
 		public function ControlbarComponentV4(player:IPlayer) {
-			super(player);
+			super(player, "controlbar");
 			animations = new Animations(this);
 			controlbarConfig = _player.config.pluginConfig("controlbar");
 			controlbarConfig['margin'] = 20;
