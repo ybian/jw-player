@@ -138,14 +138,14 @@ package com.longtailvideo.jwplayer.view {
 			_imageLayer = setupLayer("image", 2);
 			_image = new Loader();
 
-			_logoLayer = setupLayer("logo", 3);
+			_componentsLayer = setupLayer("components", 3);
+
+			_pluginsLayer = setupLayer("plugins", 4);
+			_plugins = {};
+
+			_logoLayer = setupLayer("logo", 5);
 			_logo = new Logo(_player);
 			_logoLayer.addChild(_logo);
-
-			_componentsLayer = setupLayer("components", 4);
-
-			_pluginsLayer = setupLayer("plugins", 5);
-			_plugins = {};
 		}
 
 		private function setupLayer(name:String, index:Number):MovieClip {
@@ -240,6 +240,8 @@ package com.longtailvideo.jwplayer.view {
 					if (cfg['visible']) {
 						plug.visible = true;
 						plug.resize(cfg.width, cfg.height);
+						plug.x = cfg['x'];
+						plug.y = cfg['y'];
 					} else {
 						plug.visible = false;
 					}

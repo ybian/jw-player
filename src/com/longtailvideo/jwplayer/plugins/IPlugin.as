@@ -12,5 +12,9 @@ package com.longtailvideo.jwplayer.plugins {
 		function get id():String;
 		function get visible():Boolean;
 		function set visible(v:Boolean):void;
+		function get x():Number;
+		function set x(pos:Number):void;
+		function get y():Number;
+		function set y(pos:Number):void;
 	}
 }

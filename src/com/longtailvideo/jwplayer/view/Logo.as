@@ -1,8 +1,8 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.player.IPlayer;
+	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	import com.longtailvideo.jwplayer.player.PlayerVersion;
 	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	
@@ -131,7 +131,7 @@ package com.longtailvideo.jwplayer.view {
 		private function getConfigParam(param:String):* {
 			var result:*;
 			result = defaults[param];
-			if (PlayerVersion.commercial && _player.config.pluginConfig("logo")[param]) {
+			if (_player.commercial && _player.config.pluginConfig("logo")[param]) {
 				result = _player.config.pluginConfig("logo")[param];
 			}
 			return result;

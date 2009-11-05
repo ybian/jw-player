@@ -28,6 +28,8 @@
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite implements IPlayer {
+		protected static var _commercial:Boolean = Boolean(CONFIG::commercial);
+
 		private var model:Model;
 		private var view:View;
 		private var controller:Controller;
@@ -98,7 +100,7 @@
 		 * @inheritDoc
 		 */
 		public function get commercial():Boolean {
-			return PlayerVersion.commercial;
+			return _commercial;
 		}
 		
 		
