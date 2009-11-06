@@ -9,7 +9,6 @@ package com.longtailvideo.jwplayer.plugins {
 	public class V4Plugin extends Sprite implements IPlugin {
 		private var plug:PluginInterface;
 		public var pluginId:String;
-		public var pl:TestPlugin;
 
 		public function V4Plugin(plugin:PluginInterface, pluginId:String) {
 			plug = plugin;
