@@ -6,7 +6,9 @@
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
+	
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -14,6 +16,8 @@
 	import flash.text.GridFitType;
 	import flash.text.TextField;
 	import flash.text.TextFormatAlign;
+	import flash.utils.clearInterval;
+	import flash.utils.setInterval;
 	
 	
 	public class DisplayComponent extends CoreComponent implements IDisplayComponent {
@@ -21,6 +25,9 @@
 		protected var _background:MovieClip;
 		protected var _text:TextField;
 		protected var _icons:Object;
+		protected var _rotateInterval:Number;
+		protected var _bufferIcon:Sprite;
+		protected var _rotate:Boolean = true;
 		
 		
 		public function DisplayComponent(player:IPlayer) {
@@ -84,6 +91,17 @@
 			} else {
 				_icons[name] = icon;
 			}
+			if (name == "buffer") {
+				try {
+					_bufferIcon = (_icons[name] as DisplayObjectContainer).getChildAt((_icons[name] as DisplayObjectContainer).numChildren - 1) as Sprite;
+					_bufferIcon.getChildAt(0).x = Math.round(_bufferIcon.getChildAt(0).width / -2);
+					_bufferIcon.getChildAt(0).y = Math.round(_bufferIcon.getChildAt(0).height / -2);
+					_bufferIcon.x = back.width / 2 ;
+					_bufferIcon.y = back.height - icon.height;
+				} catch (err:Error){
+					_rotate = false;	
+				}
+			}
 		}
 		
 		
@@ -146,9 +164,13 @@
 		
 		protected function stateHandler(event:PlayerEvent = null):void {
 			//TODO: Handle mute button in error state
+			clearRotation();
 			switch (player.state) {
 				case PlayerState.BUFFERING:
 					setDisplay(_icons['buffer']);
+					if (_rotate){
+						startRotation();
+					}
 					break;
 				case PlayerState.PAUSED:
 					setDisplay(_icons['play']);
@@ -162,6 +184,28 @@
 					} else {
 						clearDisplay();
 					}
+			}
+		}
+		
+		
+		protected function startRotation():void {
+			if (!_rotateInterval) {
+				_rotateInterval = setInterval(updateRotation, 100);
+			}
+		}
+		
+		
+		protected function updateRotation():void {
+			if (icon is DisplayObjectContainer) {
+				_bufferIcon.rotation += 15;
+			}
+		}
+		
+		
+		protected function clearRotation():void {
+			if (_rotateInterval) {
+				clearInterval(_rotateInterval);
+				_rotateInterval = undefined;
 			}
 		}
 		

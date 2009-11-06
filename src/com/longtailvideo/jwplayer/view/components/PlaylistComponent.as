@@ -22,6 +22,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.geom.ColorTransform;
 	import flash.net.URLRequest;
 	import flash.text.TextField;
+	import flash.text.TextFormat;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
@@ -66,7 +67,8 @@ package com.longtailvideo.jwplayer.view.components {
 			background = getSkinElement("background") as Sprite;
 			if (!background) {
 				background = new Sprite();
-				background.graphics.beginFill(0, 0);
+				background.name = "background";
+				background.graphics.beginFill(0, 1);
 				background.graphics.drawRect(0, 0, 1, 1);
 				background.graphics.endFill();
 			}
@@ -74,16 +76,35 @@ package com.longtailvideo.jwplayer.view.components {
 			slider = getSkinElement("slider") as Sprite;
 			if (!slider) {
 				slider = new Sprite();
-				var sliderBack:Sprite = new Sprite();
+				
+
+				var sliderBack:Sprite = getSkinElement("sliderBackground") as Sprite;
+				if (!sliderBack) {
+					sliderBack = new Sprite();
+					sliderBack.graphics.beginFill(0, 1);
+					sliderBack.graphics.drawRect(0, 0, 1, 1);
+					sliderBack.graphics.endFill();
+				}
 				sliderBack.name = "back";
-				sliderBack.graphics.beginFill(0, 1);
-				sliderBack.graphics.drawRect(0, 0, 1, 1);
-				sliderBack.graphics.endFill();
 				addElement(sliderBack,slider);
-				var sliderRail:DisplayObject = getSkinElement("sliderRail") ? getSkinElement("sliderRail") : new Sprite();
+
+				var sliderRail:Sprite = getSkinElement("sliderRail") as Sprite;
+				if (!sliderRail){
+					sliderRail = new Sprite();
+					sliderRail.graphics.beginFill(0, 1);
+					sliderRail.graphics.drawRect(0, 0, 7, 22);
+					sliderRail.graphics.endFill();
+				}
 				sliderRail.name = "rail";
 				addElement(sliderRail,slider);
-				var sliderThumb:DisplayObject = getSkinElement("sliderThumb")? getSkinElement("sliderThumb") : new Sprite();
+				
+				var sliderThumb:Sprite = getSkinElement("sliderThumb") as Sprite;
+				if (!sliderThumb) {
+					sliderThumb = new Sprite();
+					sliderThumb.graphics.beginFill(0, 1);
+					sliderThumb.graphics.drawRect(0, 0, 5, 54);
+					sliderThumb.graphics.endFill();
+				}
 				sliderThumb.name = "icon";
 				addElement(sliderThumb,slider);
 			}
@@ -131,20 +152,53 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		private function buildButton():MovieClip {
 				var btn:MovieClip = new MovieClip();
+
+				var back:Sprite = new Sprite();
+				back.name = "back";
+				back.graphics.beginFill(0, 1);
+				back.graphics.drawRect(0, 0, 1, 1);
+				back.graphics.endFill();
+				addElement(back, btn, 0, 0);
+
 				var img:Sprite = new Sprite();
 				img.name = "image";
 				img.graphics.beginFill(0, 1);
-				img.graphics.drawRect(1, 0, 80, 59);
+				img.graphics.drawRect(0, 0, 80, 60);
 				img.graphics.endFill();
-				addElement(img, btn);
+				addElement(img, btn, 1, 1);
+				
+				var titleTextFormat:TextFormat = new TextFormat();
+				titleTextFormat.size = 13;
+				titleTextFormat.font = "_sans";
+				titleTextFormat.bold = true;
 				var title:TextField = new TextField();
 				title.name = "title";
+				//title.autoSize = TextFieldAutoSize.LEFT;
+				title.defaultTextFormat = titleTextFormat;
+				title.wordWrap = true;
+				title.multiline = true;
+				title.setTextFormat(titleTextFormat);
+				title.width = 250;
+				title.height = 20;
 				addElement(title, btn, 85, 2);
+				
+				var descriptionTextFormat:TextFormat = new TextFormat();
+				descriptionTextFormat.size = 11;
+				descriptionTextFormat.font = "_sans";
 				var description:TextField = new TextField();
 				description.name = "description";
+				//description.autoSize = TextFieldAutoSize.LEFT;
+				description.wordWrap = true;
+				description.multiline = true;
+				description.width= 290;
+				description.height = 36;
+				description.defaultTextFormat = descriptionTextFormat;
 				addElement(description, btn, 86, 20);
+				
 				var duration:TextField = new TextField();
 				duration.name = "duration";
+				duration.width = 40;
+				duration.height = 20;
 				addElement(duration, btn, 335, 4);
 				return btn;
 		}
@@ -223,6 +277,7 @@ package com.longtailvideo.jwplayer.view.components {
 					var btn:MovieClip = Draw.clone(button, true) as MovieClip;
 					if (!btn || btn.numChildren < 1) {
 						btn = buildButton();
+						list.addChild(btn);
 					}
 					var stc:Stacker = new Stacker(btn);
 					btn.y = i * buttonheight;
