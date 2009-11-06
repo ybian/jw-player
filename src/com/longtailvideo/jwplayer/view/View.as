@@ -235,15 +235,16 @@ package com.longtailvideo.jwplayer.view {
 			
 			for (var i:Number = 0; i < _pluginsLayer.numChildren; i++) {
 				var plug:IPlugin = _pluginsLayer.getChildAt(i) as IPlugin;
-				if (plug) {
+				var plugDisplay:DisplayObject = plug as DisplayObject;
+				if (plug && plugDisplay) {
 					var cfg:PluginConfig = _player.config.pluginConfig(plug.id);
 					if (cfg['visible']) {
-						plug.visible = true;
+						plugDisplay.visible = true;
+						plugDisplay.x = cfg['x'];
+						plugDisplay.y = cfg['y'];
 						plug.resize(cfg.width, cfg.height);
-						plug.x = cfg['x'];
-						plug.y = cfg['y'];
 					} else {
-						plug.visible = false;
+						plugDisplay.visible = false;
 					}
 				}
 			}

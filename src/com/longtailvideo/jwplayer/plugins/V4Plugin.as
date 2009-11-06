@@ -9,6 +9,7 @@ package com.longtailvideo.jwplayer.plugins {
 	public class V4Plugin extends Sprite implements IPlugin {
 		private var plug:PluginInterface;
 		public var pluginId:String;
+		public var pl:TestPlugin;
 
 		public function V4Plugin(plugin:PluginInterface, pluginId:String) {
 			plug = plugin;
@@ -25,8 +26,8 @@ package com.longtailvideo.jwplayer.plugins {
 		}
 		
 		public function resize(width:Number, height:Number):void {
-			(plug as DisplayObject).x = 0;
-			(plug as DisplayObject).y = 0;
+			this.x = 0;
+			this.y = 0;
 		}
 		
 		public function get id():String {
