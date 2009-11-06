@@ -379,6 +379,9 @@ package com.longtailvideo.jwplayer.view.components {
 
 				switch (_player.state) {
 					case PlayerState.PLAYING:
+						getSkinComponent('playButton').visible = false;
+						getSkinComponent('pauseButton').visible = true;
+
 						if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
 							Mouse.show();
 							animations.fade(1);
