@@ -51,7 +51,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		protected function createColorTransform(color:Color):ColorTransform {
 			var colorTransform:ColorTransform = new ColorTransform();
-			colorTransform.color = color.color;
+			if (color) colorTransform.color = color.color;
 			return colorTransform;
 		}
 		
