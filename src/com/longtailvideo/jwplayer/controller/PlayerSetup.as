@@ -9,6 +9,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
+	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.View;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
@@ -104,9 +105,9 @@ package com.longtailvideo.jwplayer.controller {
 		///////////////////////
 		
 		private function insertDelay():void {
-			var timer:Timer = new Timer(50, 1);
+			var timer:Timer = new Timer(100, 1);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, tasker.success);
-			timer.start(); 
+			timer.start();
 		}
 
 		private function loadConfig():void {

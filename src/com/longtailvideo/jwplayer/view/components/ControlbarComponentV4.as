@@ -10,6 +10,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Logger;
+	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Stacker;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
@@ -372,8 +373,11 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Process state changes **/
 		private function stateHandler(evt:PlayerEvent = undefined):void {
+			// TODO: Fix non-working fading
 			clearTimeout(hiding);
-			_player.skin.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+			try {
+				_player.controls.display.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+			} catch (e:Error) {}
 			try {
 				var dps:String = stage['displayState'];
 
@@ -402,7 +406,9 @@ package com.longtailvideo.jwplayer.view.components {
 						
 						if (controlbarConfig['position'] == 'over' || (dps == 'fullScreen' && controlbarConfig['position'] != 'none')) {
 							hiding = setTimeout(moveTimeout, 2000);
-							_player.skin.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+							try {
+								_player.controls.display.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+							} catch (e:Error) {}
 						} else {
 							animations.fade(1);
 						}
