@@ -4,6 +4,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.jeroenwijering.events.ModelEvent;
 	import com.jeroenwijering.events.ViewEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	
 	import flash.external.ExternalInterface;
 
@@ -45,7 +46,7 @@ package com.longtailvideo.jwplayer.player {
 		}
 		
 		private function setupListeners():void {
-			if (ExternalInterface.available) {
+			try {
 				ExternalInterface.addCallback("addControllerListener",addJSControllerListener);
 				ExternalInterface.addCallback("addModelListener",addJSModelListener);
 				ExternalInterface.addCallback("addViewListener",addJSViewListener);
@@ -57,6 +58,8 @@ package com.longtailvideo.jwplayer.player {
 				ExternalInterface.addCallback("getPluginConfig",getJSPluginConfig);
 				ExternalInterface.addCallback("loadPlugin",loadPlugin);
 				ExternalInterface.addCallback("sendEvent",sendEvent);
+			} catch(e:Error) {
+				 Logger.log("Could not start up JavasScript API: " + e.message);
 			}
 		}
 		

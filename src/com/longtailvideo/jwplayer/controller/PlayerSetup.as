@@ -163,8 +163,12 @@ package com.longtailvideo.jwplayer.controller {
 		}
 		
 		private function setupView():void {
-			_view.setupView();
-			tasker.success();
+			try {
+				_view.setupView();
+				tasker.success();
+			} catch (e:Error) {
+				tasker.failure(new ErrorEvent(ErrorEvent.ERROR, false, false, "View setup failed: " + e.message));
+			}
 		}
 
 		private function loadPlugins():void {
