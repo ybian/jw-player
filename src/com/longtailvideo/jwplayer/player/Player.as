@@ -131,7 +131,7 @@
 		/**
 		 * @inheritDoc
 		 */
-		public function get isBlocking():Boolean {
+		public function get locked():Boolean {
 			return controller.blocking;
 		}
 		
@@ -139,7 +139,7 @@
 		/**
 		 * @inheritDoc
 		 */
-		public function blockPlayback(target:IPlugin):Boolean {
+		public function lock(target:IPlugin):Boolean {
 			return controller.blockPlayback(target);
 		}
 		
@@ -147,7 +147,7 @@
 		/**
 		 * @inheritDoc
 		 */
-		public function unblockPlayback(target:IPlugin):Boolean {
+		public function unlock(target:IPlugin):Boolean {
 			return controller.unblockPlayback(target);
 		}
 		

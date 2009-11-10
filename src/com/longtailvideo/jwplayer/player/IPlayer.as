@@ -40,27 +40,27 @@ package com.longtailvideo.jwplayer.player {
 		 */
 		function get playlist():IPlaylist;
 		/**
-		 * Set to true when the player is blocking playback.
+		 * Set to true when the player is in a locked state.
 		 */
-		function get isBlocking():Boolean;
+		function get locked():Boolean;
 		/**
-		 * Request that the player block playback.  When the Player is blocking, the currently playing stream is
-		 * paused, and no new playback-related commands will be honored until <code>unblockPlayback</code> is
+		 * Request that the player enter the locked state.  When the Player is locked, the currently playing stream is
+		 * paused, and no new playback-related commands will be honored until <code>unlock</code> is
 		 * called.
 		 *
-		 * @param target Reference to plugin requesting playback blocking
-		 * @return <code>true</code>, if the blocking request is successful.  If another plugin is blocking,returns
+		 * @param target Reference to plugin requesting the player lock
+		 * @return <code>true</code>, if the locking request is successful.  If another plugin is locking, returns
 		 * <code>false</code>.
 		 */
-		function blockPlayback(target:IPlugin):Boolean;
+		function lock(target:IPlugin):Boolean;
 		/**
-		 * Unblocks the player.  If the player was buffering or playing when it was blocked, playback will resume.
+		 * Unlocks the player.  If the player was buffering or playing when it was locked, playback will resume.
 		 *
 		 * @param target Reference to the requesting plugin.
-		 * @return <code>true</code>, if <code>target</code> had previously requested player blocking.
+		 * @return <code>true</code>, if <code>target</code> had previously requested player locking.
 		 *
 		 */
-		function unblockPlayback(target:IPlugin):Boolean;
+		function unlock(target:IPlugin):Boolean;
 		function volume(volume:Number):Boolean;
 		function get mute():Boolean;
 		function set mute(state:Boolean):void;
