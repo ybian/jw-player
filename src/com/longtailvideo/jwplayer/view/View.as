@@ -448,7 +448,6 @@ package com.longtailvideo.jwplayer.view {
 		public function lock(plugin:IPlugin):void {
 			_lockAnimator.fade(1);
 
-			var idx:Number = _pluginsLayer.getChildIndex(plugin as DisplayObject);
 			if (_pluginsLayer.contains(plugin as DisplayObject)) {
 				_lockPlugin = _pluginsLayer.getChildAt(_pluginsLayer.getChildIndex(plugin as DisplayObject)) as IPlugin;
 				_pluginsLayer.removeChild(_lockPlugin as DisplayObject);
