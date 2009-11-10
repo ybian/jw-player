@@ -365,13 +365,15 @@ package com.longtailvideo.jwplayer.view.components {
 			if (playlistItem.image) {
 				if (getConfigParam('thumbs') != false && _player.config.playlist != 'none' && playlistItem.image) {
 					var img:Sprite = getButton(idx).getChildByName("image") as Sprite;
-					var msk:Sprite = Draw.rect(getButton(idx), '0xFF0000', img.width, img.height, img.x, img.y);
-					var ldr:Loader = new Loader();
-					img.mask = msk;
-					img.addChild(ldr);
-					ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
-					if (playlistItem.image) {
-						ldr.load(new URLRequest(playlistItem.image));
+					if (img) {
+						var msk:Sprite = Draw.rect(getButton(idx), '0xFF0000', img.width, img.height, img.x, img.y);
+						var ldr:Loader = new Loader();
+						img.mask = msk;
+						img.addChild(ldr);
+						ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
+						if (playlistItem.image) {
+							ldr.load(new URLRequest(playlistItem.image));
+						}
 					}
 				}
 			}
@@ -384,8 +386,12 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 			try {
-				description.htmlText = playlistItem.description;
-				title.htmlText = "<b>" + playlistItem.title + "</b>";
+				if (description) { 
+					description.htmlText = playlistItem.description; 
+				}
+				if (title) { 
+					title.htmlText = "<b>" + playlistItem.title + "</b>"; 
+				}
 				if (front) {
 					description.textColor = front.color;
 					title.textColor = front.color;

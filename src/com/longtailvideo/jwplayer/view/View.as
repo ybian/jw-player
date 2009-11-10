@@ -207,9 +207,6 @@ package com.longtailvideo.jwplayer.view {
 			_lockLayer.mouseChildren = true;
 			_lockLayer.visible = false;
 			_lockLayer.alpha = 0;
-			_lockLayer.graphics.beginFill(0x000000, 0.7);
-			_lockLayer.graphics.drawRect(0, 0, 1, 1);
-			_lockLayer.graphics.endFill();
 			_lockAnimator = new Animations(_lockLayer);
 		}
 		
@@ -292,15 +289,17 @@ package com.longtailvideo.jwplayer.view {
 
 		private function resizeBackground():void {
 			var bg:DisplayObject = _backgroundLayer.getChildByName("background"); 
-			bg.width = _player.config.width;
-			bg.height = _player.config.height;
-			bg.x = _components.display.x;
-			bg.y = _components.display.y;
+			bg.width = RootReference.stage.stageWidth;
+			bg.height = RootReference.stage.stageHeight;
+			bg.x = 0;
+			bg.y = 0;
 		}
 
 		private function resizeLock():void {
-			_lockLayer.width = RootReference.stage.stageWidth;
-			_lockLayer.height = RootReference.stage.stageHeight;
+			_lockLayer.graphics.clear();
+			_lockLayer.graphics.beginFill(0x000000, 0.7);
+			_lockLayer.graphics.drawRect(0, 0, RootReference.stage.stageWidth, RootReference.stage.stageHeight);
+			_lockLayer.graphics.endFill();
 			_lockLayer.x = _lockLayer.y = 0;
 			
 			if (_lockPlugin) {
