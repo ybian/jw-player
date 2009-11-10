@@ -10,7 +10,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Logger;
-	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Stacker;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
@@ -85,7 +84,7 @@ package com.longtailvideo.jwplayer.view.components {
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, itemHandler);
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			stacker = new Stacker(skin as MovieClip);
-			getSkinComponent("linkButton").visible = false;
+			try { getSkinComponent("linkButton").visible = false; } catch (e:Error) {}
 			setButtons();
 			setColors();
 			itemHandler();

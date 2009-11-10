@@ -93,23 +93,16 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		private function resizeStage(evt:Event=null):void {
-			RootReference.stage.scaleMode = StageScaleMode.NO_SCALE;
-			RootReference.stage.stage.align = StageAlign.TOP_LEFT;
+			RootReference.stage.removeEventListener(Event.RESIZE, resizeStage);
+			RootReference.stage.removeEventListener(Event.ADDED_TO_STAGE, resizeStage);
 			
 			loaderScreen.graphics.clear();
 			loaderScreen.graphics.beginFill(0, 1);
 			loaderScreen.graphics.drawRect(0, 0, RootReference.stage.stageWidth, RootReference.stage.stageHeight);
 			loaderScreen.graphics.endFill();
 			
-			
 			loaderAnim.x = (RootReference.stage.stageWidth - loaderAnim.width) / 2;
 			loaderAnim.y = (RootReference.stage.stageHeight - loaderAnim.height) / 2;
-			
-			trace("stage dimensions: " + RootReference.stage.stageWidth + "x" + RootReference.stage.stageHeight);
-			trace("loaderAnim dimensions: " + loaderAnim.width + "x" + loaderAnim.height);
-			trace("loaderAnim Position: " + loaderAnim.x + ", " + loaderAnim.y);
-			trace("loaderScreen Position: " + loaderScreen.x + ", " + loaderScreen.y);
-			
 		}
 
 		public function get skin():ISkin {

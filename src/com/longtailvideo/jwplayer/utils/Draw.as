@@ -16,6 +16,8 @@ package com.longtailvideo.jwplayer.utils {
 		 **/
 		public static function clone(tgt:Sprite, adc:Boolean = false):DisplayObject {
 			var nam:String = getQualifiedClassName(tgt);
+			if (nam == "flash.display::MovieClip") return tgt;
+			
 			var cls:Class;
 			try {
 				cls = tgt.loaderInfo.applicationDomain.getDefinition(nam) as Class;

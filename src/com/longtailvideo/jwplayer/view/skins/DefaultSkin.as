@@ -10,7 +10,7 @@ package com.longtailvideo.jwplayer.view.skins {
 	import mx.core.MovieClipLoaderAsset;
 
 	public class DefaultSkin extends SWFSkin {
-		[Embed(source="../../../../../../assets/flash/skin/player.swf")]
+		[Embed(source="../../../../../../assets/flash/skin/five.swf")]
 		private var EmbeddedSkin:Class;
 
 		public override function load(notUsed:String=""):void {
