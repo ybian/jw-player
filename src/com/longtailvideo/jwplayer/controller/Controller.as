@@ -75,6 +75,7 @@ package com.longtailvideo.jwplayer.controller {
 			_player = player;
 			_model = model;
 			_view = view;
+			_lockManager = new LockManager();
 		}
 
 		/**
