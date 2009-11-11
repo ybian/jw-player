@@ -113,7 +113,7 @@ package com.longtailvideo.jwplayer.view.components {
 				var acs:AccessibilityProperties = new AccessibilityProperties();
 				acs.name = name + 'Button';
 				btn.accessibilityProperties = acs;
-				addChild(btn);
+				skin.addChild(btn);
 				var off:Number = Math.round((btn.height - icon.height) / 2);
 				Draw.clear(btn['icon']);
 				btn['icon'].addChild(icon);
