@@ -14,7 +14,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
-
+	
 	import flash.accessibility.AccessibilityProperties;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
@@ -245,7 +245,9 @@ package com.longtailvideo.jwplayer.view.components {
 
 		/** Show above controlbar on mousemove. **/
 		private function moveHandler(evt:MouseEvent=null):void {
+			Logger.log("Mouse moved");
 			if (alpha == 0) {
+				Logger.log("Fading in");
 				animations.fade(1);
 			}
 			clearTimeout(hiding);
@@ -256,6 +258,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 		/** Hide above controlbar again when move has timed out. **/
 		private function moveTimeout():void {
+			Logger.log("Move timed out");
 			animations.fade(0);
 		}
 
@@ -374,15 +377,33 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 		}
 
+		private function startFader():void {
+			if (controlbarConfig['position'] == 'over' || (_player.fullscreen && controlbarConfig['position'] != 'none')) {
+				if (!isNaN(hiding)) {
+					clearTimeout(hiding);
+				}
+				hiding = setTimeout(moveTimeout, 2000);
+				_player.controls.display.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+			}
+		}
+		
+		private function stopFader():void {
+			if (controlbarConfig['position'] == 'over' || (_player.fullscreen && controlbarConfig['position'] != 'none')) {
+				if (!isNaN(hiding)) {
+					clearTimeout(hiding);
+					try {
+						_player.controls.display.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+					} catch (e:Error) {}
+				}
+			}
+			Mouse.show();
+			animations.fade(1);
+		}
 
 		/** Process state changes **/
 		private function stateHandler(evt:PlayerEvent=undefined):void {
 			// TODO: Fix non-working fading
 			clearTimeout(hiding);
-			try {
-				_player.controls.display.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
-			} catch (e:Error) {
-			}
 			try {
 				var dps:String = stage['displayState'];
 
@@ -390,44 +411,23 @@ package com.longtailvideo.jwplayer.view.components {
 					case PlayerState.PLAYING:
 						getSkinComponent('playButton').visible = false;
 						getSkinComponent('pauseButton').visible = true;
-
-						if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
-							Mouse.show();
-							animations.fade(1);
-						}
+						startFader();
 						break;
 					case PlayerState.PAUSED:
 						getSkinComponent('playButton').visible = true;
 						getSkinComponent('pauseButton').visible = false;
-
-						if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
-							Mouse.show();
-							animations.fade(1);
-						}
+						stopFader();
 						break;
 					case PlayerState.BUFFERING:
 						getSkinComponent('playButton').visible = false;
 						getSkinComponent('pauseButton').visible = true;
-
-						if (controlbarConfig['position'] == 'over' || (dps == 'fullScreen' && controlbarConfig['position'] != 'none')) {
-							hiding = setTimeout(moveTimeout, 2000);
-							try {
-								_player.controls.display.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
-							} catch (e:Error) {
-							}
-						} else {
-							animations.fade(1);
-						}
+						stopFader();
 						break;
 					case PlayerState.IDLE:
 						getSkinComponent('playButton').visible = true;
 						getSkinComponent('pauseButton').visible = false;
 						timeHandler();
-
-						if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
-							Mouse.show();
-							animations.fade(1);
-						}
+						stopFader();
 						break;
 				}
 			} catch (e:Error) {
