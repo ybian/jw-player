@@ -6,6 +6,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
@@ -114,9 +115,10 @@ package com.longtailvideo.jwplayer.view.components {
 			player.addEventListener(PlayerEvent.JWPLAYER_LOCKED, lockHandler);
 			player.addEventListener(PlayerEvent.JWPLAYER_UNLOCKED, lockHandler);
 		}
-		
-		private function lockHandler(evt:PlayerEvent):void{
-			if (_player.locked){
+
+
+		private function lockHandler(evt:PlayerEvent):void {
+			if (_player.locked) {
 				getSlider('time').lock();
 				getSlider('volume').lock();
 			} else {
@@ -185,8 +187,9 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			return layout;
 		}
-		
-		private function removeButtonFromLayout(button:String,layout:String):String {
+
+
+		private function removeButtonFromLayout(button:String, layout:String):String {
 			layout = layout.replace(button, "");
 			layout = layout.replace("||", "|");
 			return layout;
@@ -287,10 +290,10 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		private function setupDefaultButtons():void {
-			addComponentButton('play',  ViewEvent.JWPLAYER_VIEW_PLAY);
+			addComponentButton('play', ViewEvent.JWPLAYER_VIEW_PLAY);
 			addComponentButton('pause', ViewEvent.JWPLAYER_VIEW_PAUSE);
-			addComponentButton('prev',  ViewEvent.JWPLAYER_VIEW_PREV);
-			addComponentButton('next',  ViewEvent.JWPLAYER_VIEW_NEXT);
+			addComponentButton('prev', ViewEvent.JWPLAYER_VIEW_PREV);
+			addComponentButton('next', ViewEvent.JWPLAYER_VIEW_NEXT);
 			addComponentButton('stop', ViewEvent.JWPLAYER_VIEW_STOP);
 			addComponentButton('fullscreen', ViewEvent.JWPLAYER_VIEW_FULLSCREEN, true);
 			addComponentButton('normalscreen', ViewEvent.JWPLAYER_VIEW_FULLSCREEN, false);
@@ -371,6 +374,7 @@ package com.longtailvideo.jwplayer.view.components {
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_SEEK, percent));
 		}
 
+
 		private function addButtonDisplayObject(icon:DisplayObject, name:String, handler:Function=null):MovieClip {
 			if (icon) {
 				var clipMC:MovieClip = new MovieClip();
@@ -384,15 +388,36 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			return null;
 		}
-		
-		
+
+
 		public function addButton(icon:DisplayObject, name:String, handler:Function=null):MovieClip {
-			_defaultLayout = _defaultLayout.replace("|blank", "|blank|" + name);
-			return addButtonDisplayObject(icon, name, handler);
+			icon.x = icon.y = 0;
+			var button:ComponentButton = new ComponentButton();
+			button.name = name;
+			var outBackground:Sprite = getSkinElement("blankButton") as Sprite;
+			if (outBackground) {
+				var outIcon:DisplayObject = Draw.clone(icon as Sprite);
+				var outOffset:Number = Math.round((outBackground.height - outIcon.height) / 2);
+				outBackground.width = outIcon.width + 2 * outOffset;
+				outBackground.addChild(outIcon);
+				outIcon.x = outIcon.y = outOffset;
+				button.setOutIcon(outBackground);
+			}
+			var overBackground:Sprite = getSkinElement("blankButtonOver")  as Sprite;
+			if (overBackground) {
+				var overIcon:DisplayObject = Draw.clone(icon as Sprite);
+				var overOffset:Number = Math.round((overBackground.height - overIcon.height) / 2);
+				overBackground.width = overIcon.width + 2 * overOffset;
+				overBackground.addChild(overIcon);
+				overIcon.x = overIcon.y = overOffset;
+				button.setOverIcon(overBackground);
+			}
+			if (outBackground || overBackground) {
+				button.init();
+				return addButtonDisplayObject(button, name, handler);
+			}
+			return null;
 		}
-
-
-
 
 
 		public function removeButton(name:String):void {
@@ -418,7 +443,8 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			return _buttons[buttonName];
 		}
-		
+
+
 		public function getSlider(sliderName:String):Slider {
 			return getButton(sliderName) as Slider;
 		}

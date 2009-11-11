@@ -13,13 +13,13 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
 	import com.longtailvideo.jwplayer.utils.TEA;
-	
+
 	import flash.events.*;
 	import flash.media.*;
 	import flash.net.*;
 	import flash.utils.*;
-	
-	
+
+
 	public class RTMPMediaProvider extends MediaProvider {
 		/** Video object to be instantiated. **/
 		protected var video:Video;
@@ -39,12 +39,12 @@ package com.longtailvideo.jwplayer.media {
 		protected var interval:Number;
 		/** Save that a file is unpublished. **/
 		protected var unpublished:Boolean;
-		
-		
+
+
 		public function RTMPMediaProvider() {
 		}
-		
-		
+
+
 		/** Constructor; sets up the connection and display. **/
 		public override function initializeMediaProvider(cfg:PlayerConfig):void {
 			super.initializeMediaProvider(cfg);
@@ -64,14 +64,14 @@ package com.longtailvideo.jwplayer.media {
 			video.smoothing = _config.smoothing;
 			transformer = new SoundTransform();
 		}
-		
-		
+
+
 		/** Catch security errors. **/
 		protected function errorHandler(evt:ErrorEvent):void {
 			error(evt.text);
 		}
-		
-		
+
+
 		/** Extract the correct rtmp syntax from the file string. **/
 		protected function getID(url:String):String {
 			var ext:String = url.substr(-4);
@@ -85,8 +85,8 @@ package com.longtailvideo.jwplayer.media {
 				return url;
 			}
 		}
-		
-		
+
+
 		/** Load content. **/
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
@@ -100,8 +100,8 @@ package com.longtailvideo.jwplayer.media {
 				finishLoad();
 			}
 		}
-		
-		
+
+
 		/** Get the streamer / file from the loadbalancing XML. **/
 		private function loaderHandler(evt:Event):void {
 			var xml:XML = XML(evt.currentTarget.data);
@@ -109,17 +109,19 @@ package com.longtailvideo.jwplayer.media {
 			item.file = xml.children()[1].children()[0].@src.toString();
 			finishLoad();
 		}
-		
+
+
 		/** Finalizes the loading process **/
 		private function finishLoad():void {
-			if (!media){
+			if (!media) {
 				media = video;
 			}
 			connection.connect(item.streamer);
 			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-		}		
-		
+		}
+
+
 		/** Get metadata information from netstream class. **/
 		public function onData(dat:Object):void {
 			if (dat.width) {
@@ -139,8 +141,8 @@ package com.longtailvideo.jwplayer.media {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: dat});
 			}
 		}
-		
-		
+
+
 		/** Pause playback. **/
 		override public function pause():void {
 			stream.pause();
@@ -150,16 +152,16 @@ package com.longtailvideo.jwplayer.media {
 				stop();
 			}
 		}
-		
-		
+
+
 		/** Resume playing. **/
 		override public function play():void {
 			stream.resume();
 			interval = setInterval(positionInterval, 100);
 			super.play();
 		}
-		
-		
+
+
 		/** Interval for the position progress. **/
 		protected function positionInterval():void {
 			_position = Math.round(stream.time * 10) / 10;
@@ -176,7 +178,7 @@ package com.longtailvideo.jwplayer.media {
 				stream.bufferTime = _config.bufferlength * 4;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: _config.bufferlength * 4}});
 			}
-			
+
 			var bufferPercent:Number = Math.round((_position + stream.bufferLength) / item.duration * 100);
 			if (state == PlayerState.BUFFERING) {
 				// Totally accurate, but it looks strange
@@ -185,14 +187,15 @@ package com.longtailvideo.jwplayer.media {
 				if (state == PlayerState.PLAYING && position >= 0) {
 					// Totally accurate, but it looks strange
 					// sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position,
+							duration: item.duration});
 				}
 			} else if (!isNaN(position) && item.duration > 0) {
 				complete();
 			}
 		}
-		
-		
+
+
 		/** Seek to a new position. **/
 		override public function seek(pos:Number):void {
 			_position = pos;
@@ -202,8 +205,8 @@ package com.longtailvideo.jwplayer.media {
 			//stream.resume();
 			//super.play();
 		}
-		
-		
+
+
 		/** Start the netstream object. **/
 		protected function setStream():void {
 			stream = new NetStream(connection);
@@ -217,8 +220,8 @@ package com.longtailvideo.jwplayer.media {
 			interval = setInterval(positionInterval, 100);
 			stream.play(getID(item.file));
 		}
-		
-		
+
+
 		/** Receive NetStream status updates. **/
 		protected function statusHandler(evt:NetStatusEvent):void {
 			switch (evt.info.code) {
@@ -274,8 +277,8 @@ package com.longtailvideo.jwplayer.media {
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: evt.info});
 		}
-		
-		
+
+
 		/** Destroy the stream. **/
 		override public function stop():void {
 			if (stream && stream.time) {
@@ -289,22 +292,26 @@ package com.longtailvideo.jwplayer.media {
 				item.file = smil;
 			}
 		}
-		
-		
+
+
 		/** Get the streamlength returned from the connection. **/
 		private function streamlengthHandler(len:Number):void {
 			if (len > 0) {
 				onData({type: 'streamlength', duration: len});
 			}
 		}
-		
-		
+
+
 		/** Set the volume level. **/
 		override public function setVolume(vol:Number):void {
 			transformer.volume = vol / 100;
 			if (stream) {
-				stream.soundTransform = transformer;
-				super.setVolume(vol);
+				try {
+					stream.soundTransform = transformer;
+					super.setVolume(vol);
+				} catch (err:Error) {
+
+				}
 			}
 		}
 	}
