@@ -52,10 +52,6 @@ package com.longtailvideo.jwplayer.view {
 		private var _pluginsLayer:MovieClip;
 		private var _plugins:Object;
 
-		private var _lockLayer:MovieClip;
-		private var _lockPlugin:IPlugin;
-		private var _lockAnimator:Animations;
-
 		private var _displayMasker:MovieClip;
 
 		private var _image:Loader;
@@ -169,8 +165,6 @@ package com.longtailvideo.jwplayer.view {
 			_logo = new Logo(_player);
 			_logoLayer.addChild(_logo);
 
-			_lockLayer = setupLayer("lock", 6);
-			setupLock();
 }
 
 		private function setupLayer(name:String, index:Number):MovieClip {
@@ -200,14 +194,6 @@ package com.longtailvideo.jwplayer.view {
 			_backgroundLayer.mask = _displayMasker;
 			_imageLayer.mask = _displayMasker;
 			_mediaLayer.mask = _displayMasker;
-		}
-		
-		private function setupLock():void {
-			_lockLayer.mouseEnabled = false;
-			_lockLayer.mouseChildren = true;
-			_lockLayer.visible = false;
-			_lockLayer.alpha = 0;
-			_lockAnimator = new Animations(_lockLayer);
 		}
 		
 		private function setupComponents():void {
@@ -282,8 +268,6 @@ package com.longtailvideo.jwplayer.view {
 				}
 			}
 
-			resizeLock();
-
 			PlayerV4Emulation.getInstance(_player).resize(_player.config.width, _player.config.height);
 		}
 
@@ -293,24 +277,6 @@ package com.longtailvideo.jwplayer.view {
 			bg.height = RootReference.stage.stageHeight;
 			bg.x = 0;
 			bg.y = 0;
-		}
-
-		private function resizeLock():void {
-			_lockLayer.graphics.clear();
-			_lockLayer.graphics.beginFill(0x000000, 0.7);
-			_lockLayer.graphics.drawRect(0, 0, RootReference.stage.stageWidth, RootReference.stage.stageHeight);
-			_lockLayer.graphics.endFill();
-			_lockLayer.x = _lockLayer.y = 0;
-			
-			if (_lockPlugin) {
-				(_lockPlugin as DisplayObject).x = 0;
-				(_lockPlugin as DisplayObject).y = 0;
-				var cfg:PluginConfig = _player.config.pluginConfig(_lockPlugin.id);
-				cfg['x'] = cfg['y'] = 0;
-				cfg['width'] = _lockLayer.width;
-				cfg['height'] = _lockLayer.height;
-				_lockPlugin.resize(cfg['width'], cfg['height']);
-			}
 		}
 
 		private function resizeMasker():void {
@@ -444,28 +410,5 @@ package com.longtailvideo.jwplayer.view {
 			if (evt is PlayerEvent) dispatchEvent(evt);
 		}
 		
-		public function lock(plugin:IPlugin):void {
-			_lockAnimator.fade(1);
-
-			if (_pluginsLayer.contains(plugin as DisplayObject)) {
-				_lockPlugin = _pluginsLayer.getChildAt(_pluginsLayer.getChildIndex(plugin as DisplayObject)) as IPlugin;
-				_pluginsLayer.removeChild(_lockPlugin as DisplayObject);
-				_lockLayer.addChild(_lockPlugin as DisplayObject);
-			}
-			
-			redraw();
-		}
-		
-		public function unlock(plugin:IPlugin):void {
-			if (plugin == _lockPlugin) {
-				_lockLayer.removeChild(_lockPlugin as DisplayObject);
-				_pluginsLayer.addChild(_lockPlugin as DisplayObject);
-				_lockPlugin = null;
-			}
-			_lockAnimator.fade(0);
-			
-			redraw();
-		}
-
 	}
 }

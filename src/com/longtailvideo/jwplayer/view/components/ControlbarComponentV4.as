@@ -211,13 +211,15 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Handle mouse presses on sliders. **/
 		private function downHandler(evt:MouseEvent):void {
-			scrubber = MovieClip(evt.target);
-			if (blocking != true || scrubber.name == 'volumeSlider') {
-				var rct:Rectangle = new Rectangle(scrubber.rail.x, scrubber.icon.y, scrubber.rail.width - scrubber.icon.width, 0);
-				scrubber.icon.startDrag(true, rct);
-				stage.addEventListener(MouseEvent.MOUSE_UP, upHandler);
-			} else {
-				scrubber = undefined;
+			if (!_player.locked) {
+				scrubber = MovieClip(evt.target);
+				if (blocking != true || scrubber.name == 'volumeSlider') {
+					var rct:Rectangle = new Rectangle(scrubber.rail.x, scrubber.icon.y, scrubber.rail.width - scrubber.icon.width, 0);
+					scrubber.icon.startDrag(true, rct);
+					stage.addEventListener(MouseEvent.MOUSE_UP, upHandler);
+				} else {
+					scrubber = undefined;
+				}
 			}
 		}
 		

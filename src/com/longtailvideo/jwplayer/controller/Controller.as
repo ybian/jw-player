@@ -225,7 +225,6 @@ package com.longtailvideo.jwplayer.controller {
 				if (_player.config.autostart || _blockingResume) {
 					_blockingResume = true;
 				}
-				_view.lock(plugin);
 				return true;
 			}
 			return false;
@@ -246,7 +245,6 @@ package com.longtailvideo.jwplayer.controller {
 				if (!_setupFinalized){
 					finalizeSetup();
 				}
-				_view.unlock(target);
 				return true;
 			}
 			return false;
