@@ -1,4 +1,6 @@
 package com.longtailvideo.jwplayer.controller {
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
+	
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -74,7 +76,10 @@ package com.longtailvideo.jwplayer.controller {
 			
 			if (event is ErrorEvent) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, 
-								"Task Queue failed at step " + taskIndex + ": " +  ErrorEvent(event).text));
+					"Task Queue failed at step " + taskIndex + ": " +  ErrorEvent(event).text));
+			} else if (event is PlayerEvent && (event as PlayerEvent).message) {
+				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, 
+					"Task Queue failed at step " + taskIndex + ": " +  PlayerEvent(event).message));
 			} else {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, 
 								"Task Queue failed at step " + taskIndex + ": " +  event.toString()));

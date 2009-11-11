@@ -83,6 +83,7 @@ package com.longtailvideo.jwplayer.model {
 					newList.push(pli);
 				} else {
 					load(pli.file);
+					return;
 				}
 			} else if (newPlaylist is Playlist) {
 				for (i = 0; i < (newPlaylist as Playlist).length; i++) {
