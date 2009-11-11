@@ -6,6 +6,7 @@
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
+	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -128,8 +129,14 @@
 		
 		
 		private function positionIcon():void {
-			icon.x = (background.scaleX - icon.width) / 2;
-			icon.y = (background.scaleY - icon.height) / 2;
+			if (_player.skin is SWFSkin) {
+				// SWF skins' display icons have centered origins
+				icon.x = background.scaleX / 2;
+				icon.y = background.scaleY / 2;
+			} else {
+				icon.x = (background.scaleX - icon.width) / 2;
+				icon.y = (background.scaleY - icon.height) / 2;
+			}
 		}
 		
 		
