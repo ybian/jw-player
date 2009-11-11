@@ -228,6 +228,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Set the volume level. **/
 		override public function setVolume(pct:Number):void {
 			outgoing.send('AS3_' + unique, "setVolume", pct);
+			super.setVolume(pct);
 		}
 	}
 }

@@ -7,8 +7,8 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.events.MouseEvent;
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
-	
-	
+
+
 	public class Slider extends Sprite {
 		public static var HORIZONTAL:String = "horizontal";
 		public static var VERTICAL:String = "vertical";
@@ -29,8 +29,10 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _height:Number;
 		/** Currently dragging thumb **/
 		protected var _dragging:Boolean;
-		
-		
+		/** Lock state of the slider **/
+		protected var _lock:Boolean;
+
+
 		//protected var _height:Number;
 		public function Slider(rail:Sprite, buffer:Sprite, progress:Sprite, thumb:Sprite, orientation:String) {
 			super();
@@ -47,24 +49,24 @@ package com.longtailvideo.jwplayer.view.components {
 			addElement(_thumb, "thumb");
 			_orientation = orientation;
 		}
-		
-		
-		private function addElement(element:DisplayObject, name:String, visible:Boolean = false):void {
+
+
+		private function addElement(element:DisplayObject, name:String, visible:Boolean=false):void {
 			if (element) {
 				element.visible = visible;
 				addChild(element);
 			}
 		}
-		
-		
+
+
 		protected function setThumb(progress:Number):void {
 			_currentThumb = progress;
 			if (_thumb) {
 				_thumb.visible = true;
 			}
 		}
-		
-		
+
+
 		public function setProgress(progress:Number):void {
 			_currentProgress = progress;
 			if (_progress) {
@@ -72,37 +74,37 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			setThumb(progress);
 		}
-		
-		
+
+
 		public function setBuffer(buffer:Number):void {
 			_currentBuffer = buffer;
 			if (_buffer) {
 				_buffer.visible = true;
 			}
 		}
-		
-		
+
+
 		public function resize(width:Number, height:Number):void {
 			var scale:Number = this.scaleX;
 			this.scaleX = 1;
 			_width = width * scale;
 			_height = height;
 			_rail.getChildByName("bitmap").width = _width;
-			if (_buffer){
+			if (_buffer) {
 				_buffer.getChildByName("bitmap").width = _width;
 				resizeElement(_buffer, _currentBuffer);
 			}
-			if (_progress && !_dragging){
+			if (_progress && !_dragging) {
 				_progress.getChildByName("bitmap").width = _width;
 				resizeElement(_progress, _currentProgress);
 			}
-			if (_thumb && !_dragging){
-				_thumb.x = _width * _currentThumb / 100;				
+			if (_thumb && !_dragging) {
+				_thumb.x = _width * _currentThumb / 100;
 			}
 		}
-		
-		
-		private function resizeElement(element:Sprite, maskpercentage:Number = 100):void {
+
+
+		private function resizeElement(element:Sprite, maskpercentage:Number=100):void {
 			if (element) {
 				element.y = (_height - element.height) / 2;
 				if (_width && _height) {
@@ -123,19 +125,19 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-		
-		
+
+
 		/** Handle mouse downs. **/
 		private function downHandler(evt:MouseEvent):void {
-			if (_thumb) {
+			if (_thumb && !_lock) {
 				var rct:Rectangle = new Rectangle(_rail.x, _thumb.y, _rail.width - _thumb.width, 0);
 				_thumb.startDrag(true, rct);
 				_dragging = true;
 				RootReference.stage.addEventListener(MouseEvent.MOUSE_UP, upHandler);
 			}
 		}
-		
-		
+
+
 		/** Handle mouse releases. **/
 		private function upHandler(evt:MouseEvent):void {
 			RootReference.stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler);
@@ -145,23 +147,31 @@ package com.longtailvideo.jwplayer.view.components {
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_CLICK, percent));
 			setThumb(percent * 100);
 		}
-		
-		
+
+
 		/** Handle mouseouts. **/
 		private function outHandler(evt:MouseEvent):void {
 			//slider.transform.colorTransform = front;
 		}
-		
-		
+
+
 		/** Handle mouseovers. **/
 		private function overHandler(evt:MouseEvent):void {
 			//slider.transform.colorTransform = light;
 		}
-		
-		
+
+		/** Reset the slider to it's original state**/
 		public function reset():void {
 			setBuffer(0);
 			setProgress(0);
+		}
+		
+		public function lock():void {
+			_lock = true;
+		} 
+		
+		public function unlock():void{
+			_lock = false;
 		}
 	}
 }

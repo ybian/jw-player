@@ -5,10 +5,10 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.view.IPlayerComponents;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
-	
+
 	import flash.events.IEventDispatcher;
-	
-	
+
+
 	/**
 	 * Interface for JW Flash Media Player
 	 *
@@ -49,10 +49,9 @@ package com.longtailvideo.jwplayer.player {
 		 * called.
 		 *
 		 * @param target Reference to plugin requesting the player lock
-		 * @return <code>true</code>, if the locking request is successful.  If another plugin is locking, returns
-		 * <code>false</code>.
+		 * @param callback The function to be executed once a lock is aquired.
 		 */
-		function lock(target:IPlugin):Boolean;
+		function lock(target:IPlugin, callback:Function):void;
 		/**
 		 * Unlocks the player.  If the player was buffering or playing when it was locked, playback will resume.
 		 *
@@ -71,12 +70,12 @@ package com.longtailvideo.jwplayer.player {
 		function load(item:*):Boolean;
 		function playlistItem(index:Number):Boolean;
 		function playlistNext():Boolean;
-		function playlistPrev():Boolean; 
+		function playlistPrev():Boolean;
 		/** Force a redraw of the player **/
 		function redraw():Boolean;
 		function get fullscreen():Boolean;
 		function set fullscreen(on:Boolean):void;
-		function link(index:Number = NaN):Boolean;
+		function link(index:Number=NaN):Boolean;
 		function get controls():IPlayerComponents;
 		function overrideComponent(plugin:IPlayerComponent):void
 	}

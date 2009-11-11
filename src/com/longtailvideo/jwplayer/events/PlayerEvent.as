@@ -32,9 +32,9 @@ package com.longtailvideo.jwplayer.events {
 		public static var JWPLAYER_READY:String = "jwplayerReady";
 
 		/**
-		 * The PlayerEvent.JWPLAYER_ERROR constant defines the value of the
+		 * The PlayerEvent.JWPLAYER_LOCKED constant defines the value of the
 		 * <code>type</code> property of the event object
-		 * for a <code>jwplayerError</code> event.
+		 * for a <code>jwplayerLocked</code> event.
 		 *
 	     * <table class="innertable">
      	 *		<tr><th>Property</th><th>Value</th></tr>
@@ -45,10 +45,46 @@ package com.longtailvideo.jwplayer.events {
   	     * </table>
   	     * 
 		 * @see com.longtailvideo.jwplayer.player.Player
+		 * @eventType jwplayerLocked
+		 */
+		public static var JWPLAYER_LOCKED:String = "jwplayerLocked";
+
+		/**
+		 * The PlayerEvent.JWPLAYER_UNLOCKED constant defines the value of the
+		 * <code>type</code> property of the event object
+		 * for a <code>jwplayerUnlocked</code> event.
+		 *
+		 * <table class="innertable">
+		 *		<tr><th>Property</th><th>Value</th></tr>
+		 *		<tr><td><code>id</code></td><td>ID of the player in the HTML DOM. Used by javascript to reference the player.</td></tr>
+		 *		<tr><td><code>client</code></td><td>A string representing the client the player runs in (e.g. FLASH WIN 9,0,115,0).</td></tr>
+		 * 		<tr><td><code>version</code></td><td>A string representing the major version, minor version and revision number of the player (e.g. 5.0.395).</td></tr>
+		 * 		<tr><td><code>message</code></td><td>Message explaining the cause of the error</td></tr>
+		 * </table>
+		 * 
+		 * @see com.longtailvideo.jwplayer.player.Player
+		 * @eventType jwplayerUnlocked
+		 */
+		public static var JWPLAYER_UNLOCKED:String = "jwplayerUnlocked";
+		
+		/**
+		 * The PlayerEvent.JWPLAYER_ERROR constant defines the value of the
+		 * <code>type</code> property of the event object
+		 * for a <code>jwplayerError</code> event.
+		 *
+		 * <table class="innertable">
+		 *		<tr><th>Property</th><th>Value</th></tr>
+		 *		<tr><td><code>id</code></td><td>ID of the player in the HTML DOM. Used by javascript to reference the player.</td></tr>
+		 *		<tr><td><code>client</code></td><td>A string representing the client the player runs in (e.g. FLASH WIN 9,0,115,0).</td></tr>
+		 * 		<tr><td><code>version</code></td><td>A string representing the major version, minor version and revision number of the player (e.g. 5.0.395).</td></tr>
+		 * 		<tr><td><code>message</code></td><td>Message explaining the cause of the error</td></tr>
+		 * </table>
+		 * 
+		 * @see com.longtailvideo.jwplayer.player.Player
 		 * @eventType jwplayerError
 		 */
 		public static var JWPLAYER_ERROR:String = "jwplayerError";
-
+		
 		public var id:String;
 		public var client:String;
 		public var version:String;

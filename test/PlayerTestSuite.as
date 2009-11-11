@@ -21,5 +21,6 @@ package {
 		public var parserSuite:ParserSuite;
 		public var setupSuite:SetupSuite;
 //		public var swftest:SWFTest;
+		public var controllerSuite:ControllerSuite;
 	}
 }

@@ -14,7 +14,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
-	
+
 	import flash.accessibility.AccessibilityProperties;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
@@ -26,8 +26,8 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.ui.Mouse;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
-	
-	
+
+
 	public class ControlbarComponentV4 extends CoreComponent implements IControlbarComponent {
 		/** Reference to the original skin **/
 		private var skin:Sprite;
@@ -44,7 +44,8 @@ package com.longtailvideo.jwplayer.view.components {
 		/** The actions for all controlbar buttons. **/
 		private var BUTTONS:Object;
 		/** The actions for all sliders **/
-		private var SLIDERS:Object = {timeSlider: ViewEvent.JWPLAYER_VIEW_SEEK, volumeSlider: ViewEvent.JWPLAYER_VIEW_VOLUME};
+		private var SLIDERS:Object = {timeSlider: ViewEvent.JWPLAYER_VIEW_SEEK,
+				volumeSlider: ViewEvent.JWPLAYER_VIEW_VOLUME};
 		/** The button to clone for all custom buttons. **/
 		private var clonee:MovieClip;
 		/** Saving the block state of the controlbar. **/
@@ -53,24 +54,23 @@ package com.longtailvideo.jwplayer.view.components {
 		private var controlbarConfig:PluginConfig;
 		/** Animations handler **/
 		private var animations:Animations;
-		
+
+
 		public function ControlbarComponentV4(player:IPlayer) {
 			super(player, "controlbar");
 			animations = new Animations(this);
 			controlbarConfig = _player.config.pluginConfig("controlbar");
 			controlbarConfig['margin'] = 20;
 			// TODO: Remove Link button
-			BUTTONS = {
-				playButton: ViewEvent.JWPLAYER_VIEW_PLAY, 
-				pauseButton: ViewEvent.JWPLAYER_VIEW_PAUSE, 
-				stopButton: ViewEvent.JWPLAYER_VIEW_STOP, 
-				prevButton: ViewEvent.JWPLAYER_VIEW_PREV, 
-				nextButton: ViewEvent.JWPLAYER_VIEW_NEXT, 
-				fullscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN, 
-				normalscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN, 
-				muteButton: ViewEvent.JWPLAYER_VIEW_MUTE, 
-				unmuteButton: ViewEvent.JWPLAYER_VIEW_MUTE
-			};
+			BUTTONS = {playButton: ViewEvent.JWPLAYER_VIEW_PLAY,
+					pauseButton: ViewEvent.JWPLAYER_VIEW_PAUSE,
+					stopButton: ViewEvent.JWPLAYER_VIEW_STOP,
+					prevButton: ViewEvent.JWPLAYER_VIEW_PREV,
+					nextButton: ViewEvent.JWPLAYER_VIEW_NEXT,
+					fullscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN,
+					normalscreenButton: ViewEvent.JWPLAYER_VIEW_FULLSCREEN,
+					muteButton: ViewEvent.JWPLAYER_VIEW_MUTE,
+					unmuteButton: ViewEvent.JWPLAYER_VIEW_MUTE};
 			skin = _player.skin.getSWFSkin().getChildByName('controlbar') as Sprite;
 			skin.x = 0;
 			skin.y = 0;
@@ -84,7 +84,10 @@ package com.longtailvideo.jwplayer.view.components {
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, itemHandler);
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
 			stacker = new Stacker(skin as MovieClip);
-			try { getSkinComponent("linkButton").visible = false; } catch (e:Error) {}
+			try {
+				getSkinComponent("linkButton").visible = false;
+			} catch (e:Error) {
+			}
 			setButtons();
 			setColors();
 			itemHandler();
@@ -93,8 +96,8 @@ package com.longtailvideo.jwplayer.view.components {
 			timeHandler();
 			volumeHandler();
 		}
-		
-		
+
+
 		/**
 		 * Add a new button to the control
 		 *
@@ -102,7 +105,7 @@ package com.longtailvideo.jwplayer.view.components {
 		 * @param nam	Name of the button
 		   getSkinComponent('* @param hdl	The function to call when clicking the Button').
 		 **/
-		public function addButton(icon:DisplayObject, name:String, handler:Function = null):MovieClip {
+		public function addButton(icon:DisplayObject, name:String, handler:Function=null):MovieClip {
 			var btn:MovieClip;
 			if (getSkinComponent('linkButton') && getSkinElementChild('linkButton', 'back')) {
 				btn = Draw.clone(getSkinComponent('linkButton') as MovieClip) as MovieClip;
@@ -132,19 +135,19 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			return btn;
 		}
-		
-		
+
+
 		public function removeButton(name:String):void {
 			skin.removeChild(getSkinComponent(name));
 		}
-		
-		
+
+
 		public function resize(width:Number, height:Number):void {
-			if ( !(PlayerLayoutManager.testPosition(controlbarConfig['position']) || controlbarConfig['position'] == "over") ) {
+			if (!(PlayerLayoutManager.testPosition(controlbarConfig['position']) || controlbarConfig['position'] == "over")) {
 				skin.visible = false;
 				return;
 			}
-			
+
 			var wid:Number = width;
 			if (controlbarConfig['position'] == 'over' || _player.fullscreen == true) {
 				skin.x = controlbarConfig['margin'];
@@ -173,20 +176,20 @@ package com.longtailvideo.jwplayer.view.components {
 			fixTime();
 			Mouse.show();
 		}
-		
-		
+
+
 		public function getButton(buttonName:String):DisplayObject {
 			return null;
 		}
-		
-		
+
+
 		/** Hide the controlbar **/
 		public function block(stt:Boolean):void {
 			blocking = stt;
 			timeHandler();
 		}
-		
-		
+
+
 		/** Handle clicks from all buttons. **/
 		private function clickHandler(evt:MouseEvent):void {
 			var act:String = BUTTONS[evt.target.name];
@@ -207,8 +210,8 @@ package com.longtailvideo.jwplayer.view.components {
 				dispatchEvent(event);
 			}
 		}
-		
-		
+
+
 		/** Handle mouse presses on sliders. **/
 		private function downHandler(evt:MouseEvent):void {
 			if (!_player.locked) {
@@ -222,10 +225,10 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-		
-		
+
+
 		/** Handle a change in the current item **/
-		private function itemHandler(evt:PlaylistEvent = null):void {
+		private function itemHandler(evt:PlaylistEvent=null):void {
 			try {
 				if (_player.playlist && _player.playlist.length > 1) {
 					getSkinComponent('prevButton').visible = getSkinComponent('nextButton').visible = true;
@@ -238,10 +241,10 @@ package com.longtailvideo.jwplayer.view.components {
 			stacker.rearrange();
 			fixTime();
 		}
-		
-		
+
+
 		/** Show above controlbar on mousemove. **/
-		private function moveHandler(evt:MouseEvent = null):void {
+		private function moveHandler(evt:MouseEvent=null):void {
 			if (alpha == 0) {
 				animations.fade(1);
 			}
@@ -249,16 +252,16 @@ package com.longtailvideo.jwplayer.view.components {
 			hiding = setTimeout(moveTimeout, 2000);
 			Mouse.show();
 		}
-		
-		
+
+
 		/** Hide above controlbar again when move has timed out. **/
 		private function moveTimeout():void {
 			animations.fade(0);
 		}
-		
-		
+
+
 		/** Show a mute icon if playing. **/
-		private function muteHandler(evt:MediaEvent = null):void {
+		private function muteHandler(evt:MediaEvent=null):void {
 			if (_player.mute == true) {
 				try {
 					getSkinComponent('muteButton').visible = false;
@@ -283,8 +286,8 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-		
-		
+
+
 		/** Handle mouseouts from all buttons **/
 		private function outHandler(evt:MouseEvent):void {
 			if (front && evt.target['icon']) {
@@ -293,8 +296,8 @@ package com.longtailvideo.jwplayer.view.components {
 				evt.target.gotoAndPlay('out');
 			}
 		}
-		
-		
+
+
 		/** Handle clicks from all buttons **/
 		private function overHandler(evt:MouseEvent):void {
 			if (front && evt.target['icon']) {
@@ -303,8 +306,8 @@ package com.longtailvideo.jwplayer.view.components {
 				evt.target.gotoAndPlay('over');
 			}
 		}
-		
-		
+
+
 		/** Clickhandler for all buttons. **/
 		private function setButtons():void {
 			for (var btn:String in BUTTONS) {
@@ -326,8 +329,8 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-		
-		
+
+
 		/** Init the colors. **/
 		private function setColors():void {
 			if (_player.config.backcolor && getSkinElementChild('playButton', 'icon')) {
@@ -370,15 +373,16 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-		
-		
+
+
 		/** Process state changes **/
-		private function stateHandler(evt:PlayerEvent = undefined):void {
+		private function stateHandler(evt:PlayerEvent=undefined):void {
 			// TODO: Fix non-working fading
 			clearTimeout(hiding);
 			try {
 				_player.controls.display.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
-			} catch (e:Error) {}
+			} catch (e:Error) {
+			}
 			try {
 				var dps:String = stage['displayState'];
 
@@ -395,7 +399,7 @@ package com.longtailvideo.jwplayer.view.components {
 					case PlayerState.PAUSED:
 						getSkinComponent('playButton').visible = true;
 						getSkinComponent('pauseButton').visible = false;
-						
+
 						if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
 							Mouse.show();
 							animations.fade(1);
@@ -404,12 +408,13 @@ package com.longtailvideo.jwplayer.view.components {
 					case PlayerState.BUFFERING:
 						getSkinComponent('playButton').visible = false;
 						getSkinComponent('pauseButton').visible = true;
-						
+
 						if (controlbarConfig['position'] == 'over' || (dps == 'fullScreen' && controlbarConfig['position'] != 'none')) {
 							hiding = setTimeout(moveTimeout, 2000);
 							try {
 								_player.controls.display.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
-							} catch (e:Error) {}
+							} catch (e:Error) {
+							}
 						} else {
 							animations.fade(1);
 						}
@@ -418,18 +423,20 @@ package com.longtailvideo.jwplayer.view.components {
 						getSkinComponent('playButton').visible = true;
 						getSkinComponent('pauseButton').visible = false;
 						timeHandler();
-						
+
 						if (controlbarConfig['position'] == 'over' || dps == 'fullScreen') {
 							Mouse.show();
 							animations.fade(1);
 						}
 						break;
 				}
-			} catch (e:Error) {}
+			} catch (e:Error) {
+			}
 		}
-		
+
+
 		/** Process time updates given by the model. **/
-		private function timeHandler(evt:MediaEvent = null):void {
+		private function timeHandler(evt:MediaEvent=null):void {
 			var dur:Number = 0;
 			var pos:Number = 0;
 			if (evt) {
@@ -475,25 +482,26 @@ package com.longtailvideo.jwplayer.view.components {
 			} catch (err:Error) {
 			}
 		}
-		
-		
+
+
 		private function bufferHandler(evt:MediaEvent):void {
 			if (evt.bufferPercent < 0)
 				return;
-			
+
 			var mark:DisplayObject = getSkinElementChild('timeSlider', 'mark');
 			var railWidth:Number = getSkinElementChild('timeSlider', 'rail').width;
 			var markWidth:Number = _player.state == PlayerState.IDLE ? 0 : Math.round((evt.bufferPercent / 100) * railWidth);
 			var offsetRatio:Number = evt.offset / evt.duration;
-			
+
 			try {
 				mark.x = evt.duration > 0 ? Math.round(railWidth * offsetRatio) : 0;
 				mark.width = markWidth * (1 - offsetRatio);
 				mark.visible = _player.state != PlayerState.IDLE;
-			} catch (e:Error) {}
+			} catch (e:Error) {
+			}
 		}
-		
-		
+
+
 		/** Fix the timeline display. **/
 		private function fixTime():void {
 			try {
@@ -508,29 +516,36 @@ package com.longtailvideo.jwplayer.view.components {
 			} catch (err:Error) {
 			}
 		}
-		
-		
+
+
 		/** Handle mouse releases on sliders. **/
 		private function upHandler(evt:MouseEvent):void {
 			var mpl:Number = 0;
 			var sliderType:String = scrubber.name;
-			
+
 			stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler);
 			scrubber.icon.stopDrag();
 			if (sliderType == 'timeSlider' && _player.playlist) {
 				mpl = _player.playlist.currentItem.duration;
 			} else if (sliderType == 'volumeSlider') {
-				if (_player.mute) return;
-				else mpl = 100;
+				if (_player.mute)
+					return;
+				else
+					mpl = 100;
 			}
 			var pct:Number = (scrubber.icon.x - scrubber.rail.x) / (scrubber.rail.width - scrubber.icon.width) * mpl;
 			scrubber = undefined;
+			if (sliderType == 'volumeSlider') {
+				var volumeEvent:MediaEvent = new MediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME);
+				volumeEvent.volume = Math.round(pct);
+				volumeHandler(volumeEvent);
+			}
 			dispatchEvent(new ViewEvent(SLIDERS[sliderType], Math.round(pct)));
 		}
-		
-		
+
+
 		/** Reflect the new volume in the controlbar **/
-		private function volumeHandler(evt:MediaEvent = null):void {
+		private function volumeHandler(evt:MediaEvent=null):void {
 			try {
 				var vsl:MovieClip = getSkinComponent('volumeSlider') as MovieClip;
 				vsl.mark.width = _player.config.volume * (vsl.rail.width - vsl.icon.width / 2) / 100;
@@ -538,13 +553,13 @@ package com.longtailvideo.jwplayer.view.components {
 			} catch (err:Error) {
 			}
 		}
-		
-		
+
+
 		private function getSkinComponent(element:String):DisplayObject {
 			return skin.getChildByName(element) as DisplayObject;
 		}
-		
-		
+
+
 		private function getSkinElementChild(element:String, child:String):DisplayObject {
 			return (skin.getChildByName(element) as MovieClip).getChildByName(child);
 		}

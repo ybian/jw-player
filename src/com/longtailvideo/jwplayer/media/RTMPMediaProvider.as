@@ -304,6 +304,7 @@ package com.longtailvideo.jwplayer.media {
 			transformer.volume = vol / 100;
 			if (stream) {
 				stream.soundTransform = transformer;
+				super.setVolume(vol);
 			}
 		}
 	}

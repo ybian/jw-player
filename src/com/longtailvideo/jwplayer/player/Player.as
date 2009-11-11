@@ -11,7 +11,7 @@
 	import com.longtailvideo.jwplayer.view.View;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
-	
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
@@ -132,15 +132,15 @@
 		 * @inheritDoc
 		 */
 		public function get locked():Boolean {
-			return controller.blocking;
+			return controller.locking;
 		}
 		
 		
 		/**
 		 * @inheritDoc
 		 */
-		public function lock(target:IPlugin):Boolean {
-			return controller.blockPlayback(target);
+		public function lock(target:IPlugin, callback:Function):void {
+			controller.lockPlayback(target, callback);
 		}
 		
 		
@@ -148,7 +148,7 @@
 		 * @inheritDoc
 		 */
 		public function unlock(target:IPlugin):Boolean {
-			return controller.unblockPlayback(target);
+			return controller.unlockPlayback(target);
 		}
 		
 		
