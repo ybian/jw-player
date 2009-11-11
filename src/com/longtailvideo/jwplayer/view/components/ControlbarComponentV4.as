@@ -60,7 +60,7 @@ package com.longtailvideo.jwplayer.view.components {
 			super(player, "controlbar");
 			animations = new Animations(this);
 			controlbarConfig = _player.config.pluginConfig("controlbar");
-			controlbarConfig['margin'] = 20;
+			if (!controlbarConfig['margin']) controlbarConfig['margin'] = 0;	
 			// TODO: Remove Link button
 			BUTTONS = {playButton: ViewEvent.JWPLAYER_VIEW_PLAY,
 					pauseButton: ViewEvent.JWPLAYER_VIEW_PAUSE,

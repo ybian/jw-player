@@ -33,6 +33,11 @@ package com.longtailvideo.jwplayer.view.skins {
 			}
 			if (_skin.getChildByName('controlbar')) {
 				props['controlbar.size'] = _skin.getChildByName('controlbar').height;
+				try {
+					props['controlbar.margin'] = ((_skin.getChildByName('display') as DisplayObjectContainer).getChildByName('back').width - _skin.getChildByName('controlbar').width) / 2;
+				} catch (e:Error) {
+					props['controlbar.margin'] = 0;
+				}
 			}
 		}
 		
