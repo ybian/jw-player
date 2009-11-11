@@ -9,7 +9,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
-	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -18,7 +17,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.ui.Mouse;
-	import com.longtailvideo.jwplayer.utils.DisplayObjectUtils;
 	
 	
 	/**
@@ -224,11 +222,6 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		private function setTime(position:Number, duration:Number):void {
-			var textFormat:TextFormat = new TextFormat();
-			textFormat.font = "_sans";
-			textFormat.size = 10;
-			textFormat.bold = true;
-			textFormat.color = player.config.frontcolor.color;
 			if (position < 0) {
 				position = 0;				
 			}
@@ -237,10 +230,8 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			var elapsedText:TextField = getButton('elapsed') as TextField;
 			elapsedText.text = Strings.digits(position);
-			elapsedText.setTextFormat(textFormat);
 			var durationField:TextField = getButton('duration') as TextField;
 			durationField.text = Strings.digits(duration);
-			durationField.setTextFormat(textFormat);
 			redraw();
 		}
 		
@@ -259,7 +250,7 @@ package com.longtailvideo.jwplayer.view.components {
 				newBackground.graphics.endFill();
 				back = newBackground as DisplayObject;
 			}
-
+			
 			_buttons['background'] = back;
 			addChild(back);
 			_height = back.height;
@@ -269,16 +260,16 @@ package com.longtailvideo.jwplayer.view.components {
 				_buttons['capLeft'] = capLeft;
 				addChild(capLeft);
 			}
-
+			
 			if (capRight) {
 				_buttons['capRight'] = capRight;
 				addChild(capRight);
 			}
-
-			/*if (shade) {
-				_buttons['shade'] = shade;
-				addChild(shade);
-			}*/
+		
+		/*if (shade) {
+		   _buttons['shade'] = shade;
+		   addChild(shade);
+		 }*/
 		}
 		
 		
@@ -313,8 +304,8 @@ package com.longtailvideo.jwplayer.view.components {
 			if (getSkinElement(name + "Button")
 				|| getSkinElement(name + "ButtonOver") 
 				|| getSkinElement(name + "ButtonBack")) {
-					button.init();
-					addButtonDisplayObject(button, name);
+				button.init();
+				addButtonDisplayObject(button, name);
 			}
 		}
 		
@@ -328,7 +319,13 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		private function addTextField(name:String):void {
+			var textFormat:TextFormat = new TextFormat();
+			textFormat.font = "_sans";
+			textFormat.size = 10;
+			textFormat.bold = true;
+			textFormat.color = player.config.frontcolor.color;
 			var textField:TextField = new TextField();
+			textField.defaultTextFormat = textFormat;
 			textField.selectable = false;
 			textField.autoSize = TextFieldAutoSize.LEFT;
 			textField.name = name;
@@ -412,20 +409,20 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			
 			//shade.width = _width;
-
+			
 			var backgroundWidth:Number = _width;
 			
 			backgroundWidth -= capLeft.width;
 			capLeft.x = 0;
-
+			
 			backgroundWidth -= capRight.width;
 			capRight.x = _width - capRight.width;
-
+			
 			background.width = backgroundWidth;
 			background.x = capLeft.width;
 			setChildIndex(capLeft,numChildren-1);
 			setChildIndex(capRight,numChildren-1);
-						
+			
 			updateControlbarState();
 			redraw();
 			Mouse.show();
@@ -469,11 +466,11 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		/*private function get shade():DisplayObject {
-			if (_buttons['shade']) {
-				return _buttons['shade'];
-			}
-			return (new Sprite());
-		}*/
+		   if (_buttons['shade']) {
+		   return _buttons['shade'];
+		   }
+		   return (new Sprite());
+		 }*/
 		
 		private function get capLeft():DisplayObject {
 			if (_buttons['capLeft']) {
@@ -490,3 +487,4 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 	}
 }
+

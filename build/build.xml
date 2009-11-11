@@ -4,7 +4,7 @@
 	<property file="./build/build.properties" />
 
 	<!--
-		Have you edit the properties file to make sure the paths are right oo your system?
+		 Have you edit the properties file to make sure the paths are right oo your system?
 	-->
 	<target name="check-properties">
 		<fail unless="asdoc.exe">The "asdoc.exe" property must be set in ${build.dir}/build.properties.</fail>
@@ -20,16 +20,16 @@
 	</target>
 
 	<!--
-		Clean out the debug folder
+		 Clean out the debug folder
 	-->
 	<target name="clean-debug">
 		<delete dir="${debug.dir}">
 			<include name="*.swf" />
 		</delete>
 	</target>
-	
+
 	<!--
-		Clean out the test folder
+		 Clean out the test folder
 	-->
 	<target name="clean-test">
 		<delete dir="${test.bin.dir}">
@@ -38,25 +38,25 @@
 	</target>
 
 	<!--
-		Clean out the release folder
+		 Clean out the release folder
 	-->
 	<target name="clean-release">
 		<delete dir="${release.dir}">
-		    <include name="player.swf"/>
+			<include name="player.swf"/>
 		</delete>
 	</target>
 
 	<!--
-		Generate ASDoc output for the library
+		 Generate ASDoc output for the library
 	-->
 	<target name="asdoc-all" depends="check-properties">
 		<!-- Clean out the contents of the doc directory, without delete "docs" -->
 
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" failonerror="false">
 			<fileset dir="${docs.dir}" includes="**/*" />
 		</delete>
 
-		<exec executable="${asdoc.exe}" spawn="no">
+		<exec executable="${asdoc.exe}" dir="${basedir}" spawn="no">
 			<!-- Place the documentation in the "docs" directory -->
 			<arg line="-output '${docs.dir}'" />
 
@@ -77,13 +77,11 @@
 
 			<!-- Ignore missing type declarations -->
 			<arg line="-warnings=false" />
-		</exec>
 
-		<exec executable="${browser}" spawn="yes">
-			<arg line="'file://${docs.dir}/index.html'" />
+			<arg line="-define=CONFIG::commercial,false" />
 		</exec>
 	</target>
-	
+
 	<target name="build-test-unit">
 		<condition property="additionalArgLine" value="${additionalArgs}" else="">
 			<isset property="additionalArgs" />
@@ -111,16 +109,16 @@
 
 			<!-- Enable incremental compilation -->
 			<arg line="-incremental=true" />
-			
+
 			<!-- Compile with network sandbox -->
 			<arg line="-use-network=true" />
 
 			<!-- Ignore missing type definitions -->
 			<arg line="-warnings=false" />
-			
+
 			<!-- Allow additional arguments to be passed in as parameters -->
 			<arg value="${additionalArgLine}" />
-			
+
 			<!-- Enable debugging -->
 			<arg line="-debug=true" />
 		</exec>
@@ -144,7 +142,7 @@
 			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
-	
+
 	<target name="test-unit-windowed" depends="clean-test,check-properties,build-debug-player,build-test-unit-windowed">
 		<exec executable="${flashDebugPlayer.exe}" failonerror="true">
 			<arg line="'${test.bin.dir}/UnitTestWindowed.swf'" />
@@ -156,7 +154,7 @@
 			<arg line="'${test.bin.dir}/UnitTestWindowless.swf'" />
 		</exec>
 	</target>
-	
+
 	<target name="test-all">
 		<exec executable="${flashDebugPlayer.exe}" spawn="yes">
 			<arg line="'${debug.dir}/player.swf'" />
@@ -192,14 +190,14 @@
 			<arg line="-compiler.library-path '${lib.dir}'" />
 
 			<arg line="-default-background-color=0xFFFFFF" />
-			
+
 			<!-- Include locale-specific items in the path -->
 			<arg line="-locale ${flexsdk.locale}" />
 			<arg line="-compiler.library-path '${flexsdk.locale.dir}'" />
-			
+
 			<!-- Enable incremental compilation -->
 			<arg line="${incrementLine}" />
-			
+
 			<!-- Optimize for size -->
 			<arg line="${optimizeLine}" />
 
@@ -214,16 +212,16 @@
 
 			<!-- Allow additional arguments to be passed in as parameters -->
 			<arg value="${additionalArgLine}" />
-			
+
 			<!-- Enable debugging -->
 			<arg line="${debugLine}" />
 
 		</exec>
 	</target>
-	
-	
+
+
 	<!--
-		Compile the player in debug mode.
+		 Compile the player in debug mode.
 	-->
 	<target name="debug-swf">
 		<antcall target="build-swf">
@@ -234,7 +232,8 @@
 			<param name="increment" value="true"/>
 			<param name="outputPath" value="${debug.dir}"/>
 		</antcall>
-		<move file="${debug.dir}/${swf}.swf" todir="./" />
+		<copy file="${debug.dir}/${swf}.swf" tofile="./player-5.0.swf" />
+		<copy file="${debug.dir}/${swf}.swf" tofile="./player-5.0d.swf" />
 	</target>
 
 	<target name="release-swf">
@@ -277,16 +276,16 @@
 			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
-	
+
 	<!--
-		Builds the player code library used by plugins
+		 Builds the player code library used by plugins
 	-->
 	<target name="build-lib">
 		<!-- Clean the SDK directory -->
 		<antcall target="clean-dir">
 			<param name="clean-directory" value="${sdk.dir}"/>
 		</antcall>
-		
+
 		<!-- Build the library SWC -->
 		<exec executable="${compc.exe}" dir="${src.dir}">
 			<arg line="-source-path ." />
@@ -300,5 +299,5 @@
 		</exec>
 	</target>
 
-	
+
 </project>

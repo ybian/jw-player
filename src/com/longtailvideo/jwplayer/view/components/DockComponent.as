@@ -5,9 +5,11 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.view.interfaces.IDockComponent;
+	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
@@ -16,8 +18,8 @@ package com.longtailvideo.jwplayer.view.components {
 	public class DockComponent extends CoreComponent implements IDockComponent {
 		/** Default configuration vars for this plugin. **/
 		public var defaults:Object = {
-			align: 'right'
-		};
+				align: 'right'
+			};
 		/** Object with all the buttons in the dock. **/
 		private var buttons:Array;
 		/** Timeout for hiding the buttons when the video plays. **/
@@ -43,8 +45,12 @@ package com.longtailvideo.jwplayer.view.components {
 			if (name){
 				button.name = name;
 			}
+			if (_player.skin is SWFSkin) {
+				button.colorize = true;
+			}
 			button.setOutIcon(icon);
-			button.setBackground(getSkinElement("buttonBack"));
+			button.outBackground = getSkinElement("button") as Sprite;
+			button.overBackground = getSkinElement("buttonOver") as Sprite;
 			button.assetColor = player.config.backcolor;
 			button.outColor = player.config.frontcolor;
 			button.overColor = player.config.lightcolor;
@@ -94,8 +100,8 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-
-
+		
+		
 		/** Show the buttons on mousemove. **/
 		private function moveHandler(evt:MouseEvent = null):void {
 			clearTimeout(timeout);
@@ -106,8 +112,8 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-
-
+		
+		
 		/** Hide the buttons again when move has timed out. **/
 		private function moveTimeout():void {
 			animations.fade(0);
@@ -129,3 +135,4 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 	}
 }
+

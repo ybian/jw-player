@@ -11,6 +11,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
+	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -77,7 +78,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (!slider) {
 				slider = new Sprite();
 				
-
+				
 				var sliderBack:Sprite = getSkinElement("sliderBackground") as Sprite;
 				if (!sliderBack) {
 					sliderBack = new Sprite();
@@ -87,7 +88,7 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 				sliderBack.name = "back";
 				addElement(sliderBack,slider);
-
+				
 				var sliderRail:Sprite = getSkinElement("sliderRail") as Sprite;
 				if (!sliderRail){
 					sliderRail = new Sprite();
@@ -106,7 +107,7 @@ package com.longtailvideo.jwplayer.view.components {
 					sliderThumb.graphics.endFill();
 				}
 				sliderThumb.name = "icon";
-				addElement(sliderThumb,slider);
+				addElement(sliderThumb,slider,(sliderRail.width - sliderThumb.width)/2);
 			}
 			addElement(slider);
 			slider.buttonMode = true;
@@ -151,56 +152,72 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		private function buildButton():MovieClip {
-				var btn:MovieClip = new MovieClip();
-
-				var back:Sprite = new Sprite();
-				back.name = "back";
+			var btn:MovieClip = new MovieClip();
+			
+			var backOver:Sprite = getSkinElement("itemOver") as Sprite;
+			if (!backOver) {
+				backOver = new Sprite();
+				backOver.graphics.beginFill(0, 1);
+				backOver.graphics.drawRect(0, 0, 1, 1);
+				backOver.graphics.endFill();
+			}
+			backOver.name = "backOver";
+			addElement(backOver, btn, 0, 0);
+			
+			var back:Sprite = getSkinElement("item") as Sprite;
+			if (!back) {
+				back = new Sprite();
 				back.graphics.beginFill(0, 1);
 				back.graphics.drawRect(0, 0, 1, 1);
 				back.graphics.endFill();
-				addElement(back, btn, 0, 0);
-
-				var img:Sprite = new Sprite();
-				img.name = "image";
-				img.graphics.beginFill(0, 1);
-				img.graphics.drawRect(0, 0, 80, 60);
-				img.graphics.endFill();
-				addElement(img, btn, 1, 1);
-				
-				var titleTextFormat:TextFormat = new TextFormat();
-				titleTextFormat.size = 13;
-				titleTextFormat.font = "_sans";
-				titleTextFormat.bold = true;
-				var title:TextField = new TextField();
-				title.name = "title";
-				//title.autoSize = TextFieldAutoSize.LEFT;
-				title.defaultTextFormat = titleTextFormat;
-				title.wordWrap = true;
-				title.multiline = true;
-				title.setTextFormat(titleTextFormat);
-				title.width = 250;
-				title.height = 20;
-				addElement(title, btn, 85, 2);
-				
-				var descriptionTextFormat:TextFormat = new TextFormat();
-				descriptionTextFormat.size = 11;
-				descriptionTextFormat.font = "_sans";
-				var description:TextField = new TextField();
-				description.name = "description";
-				//description.autoSize = TextFieldAutoSize.LEFT;
-				description.wordWrap = true;
-				description.multiline = true;
-				description.width= 290;
-				description.height = 36;
-				description.defaultTextFormat = descriptionTextFormat;
-				addElement(description, btn, 86, 20);
-				
-				var duration:TextField = new TextField();
-				duration.name = "duration";
-				duration.width = 40;
-				duration.height = 20;
-				addElement(duration, btn, 335, 4);
-				return btn;
+			}
+			back.name = "back";
+			addElement(back, btn, 0, 0);
+			
+			var img:Sprite = new Sprite();
+			img.name = "image";
+			img.graphics.beginFill(0, 1);
+			img.graphics.drawRect(0, 0, 80, back.height);
+			img.graphics.endFill();
+			addElement(img, btn, 1, 1);
+			
+			var titleTextFormat:TextFormat = new TextFormat();
+			titleTextFormat.size = 13;
+			titleTextFormat.font = "_sans";
+			titleTextFormat.bold = true;
+			var title:TextField = new TextField();
+			title.name = "title";
+			//title.autoSize = TextFieldAutoSize.LEFT;
+			title.defaultTextFormat = titleTextFormat;
+			title.wordWrap = true;
+			title.multiline = true;
+			title.width = 250;
+			title.height = 20;
+			addElement(title, btn, 85, 2);
+			
+			var descriptionTextFormat:TextFormat = new TextFormat();
+			descriptionTextFormat.size = 11;
+			descriptionTextFormat.font = "_sans";
+			var description:TextField = new TextField();
+			description.name = "description";
+			//description.autoSize = TextFieldAutoSize.LEFT;
+			description.wordWrap = true;
+			description.multiline = true;
+			description.width= 290;
+			description.height = back.height - 20;
+			description.defaultTextFormat = descriptionTextFormat;
+			addElement(description, btn, 86, 20);
+			
+			var duration:TextField = new TextField();
+			duration.name = "duration";
+			duration.width = 40;
+			duration.height = 20;
+			addElement(duration, btn, 335, 4);
+			
+			backOver.width = btn.width;			
+			back.width = btn.width;
+			
+			return btn;
 		}
 		
 		private function addElement(doc:DisplayObject, parent:DisplayObjectContainer = null, x:Number = 0, y:Number = 0):void {
@@ -222,7 +239,12 @@ package com.longtailvideo.jwplayer.view.components {
 						(getButton(idx).getChildByName(itm) as TextField).textColor = back.color;
 					}
 				}
-				getButton(idx).getChildByName("back").transform.colorTransform = light;
+				if (_player.skin is SWFSkin) {
+					getButton(idx).getChildByName("back").transform.colorTransform = light;
+				} else {
+					getButton(idx).setChildIndex(getButton(idx).getChildByName("back"), 0);
+					getButton(idx).setChildIndex(getButton(idx).getChildByName("backOver"), 1);
+				}
 			}
 		}
 		
@@ -240,7 +262,12 @@ package com.longtailvideo.jwplayer.view.components {
 						}
 					}
 				}
-				getButton(idx).getChildByName("back").transform.colorTransform = back;
+				if (_player.skin is SWFSkin) {
+					getButton(idx).getChildByName("back").transform.colorTransform = back;
+				} else {
+					getButton(idx).setChildIndex(getButton(idx).getChildByName("backOver"), 0);
+					getButton(idx).setChildIndex(getButton(idx).getChildByName("back"), 1);
+				}
 			}
 		}
 		
@@ -274,8 +301,10 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			for (var i:Number = 0; i < _player.playlist.length; i++) {
 				if (clr) {
-					var btn:MovieClip = Draw.clone(button, true) as MovieClip;
-					if (!btn || btn.numChildren < 1) {
+					var btn:MovieClip;
+					if (_player.skin is SWFSkin) {
+						btn = Draw.clone(button, true) as MovieClip;
+					} else {
 						btn = buildButton();
 						list.addChild(btn);
 					}
@@ -335,15 +364,19 @@ package com.longtailvideo.jwplayer.view.components {
 			if (_player.config.backcolor) {
 				back = new ColorTransform();
 				back.color = _player.config.backcolor.color;
-				background.transform.colorTransform = back;
-				slider.getChildByName("back").transform.colorTransform = back;
+				if (_player.skin is SWFSkin) {
+					background.transform.colorTransform = back;
+					slider.getChildByName("back").transform.colorTransform = back;
+				}
 			}
 			if (_player.config.frontcolor) {
 				front = new ColorTransform();
 				front.color = _player.config.frontcolor.color;
 				try {
-					slider.getChildByName("icon").transform.colorTransform = front;
-					slider.getChildByName("rail").transform.colorTransform = front;
+					if (_player.skin is SWFSkin) {
+						slider.getChildByName("icon").transform.colorTransform = front;
+						slider.getChildByName("rail").transform.colorTransform = front;
+					}
 				} catch (err:Error) {
 				}
 				if (_player.config.lightcolor) {
@@ -401,7 +434,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (getButton(idx).getChildByName("image") && (!playlistItem.image || getConfigParam('thumbs') == false)) {
 				getButton(idx).getChildByName("image").visible = false;
 			}
-			if (back) {
+			if (back && (_player.skin is SWFSkin)) {
 				getButton(idx).getChildByName("back").transform.colorTransform = back;
 			}
 		}
@@ -430,7 +463,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Revert the highlight on mouseout. **/
 		private function soutHandler(evt:MouseEvent):void {
-			if (front) {
+			if (front && (_player.skin is SWFSkin)) {
 				slider.getChildByName("icon").transform.colorTransform = front;
 			} else {
 				//slider.getChildByName("icon").gotoAndStop('out');
@@ -440,7 +473,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Highlight the icon on rollover. **/
 		private function soverHandler(evt:MouseEvent):void {
-			if (front) {
+			if (front && (_player.skin is SWFSkin)) {
 				slider.getChildByName("icon").transform.colorTransform = light;
 			} else {
 				//slider.getChildByName("icon").gotoAndStop('over');
@@ -500,7 +533,7 @@ package com.longtailvideo.jwplayer.view.components {
 					}
 				}
 			}
-			if (back) {
+			if (back && (_player.skin is SWFSkin)) {
 				getButton(idx).getChildByName("back").transform.colorTransform = back;
 			}
 			if (!isNaN(active)) {
@@ -545,3 +578,4 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 	}
 }
+

@@ -9,6 +9,7 @@ package com.longtailvideo.jwplayer.view.skins {
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
+	import flash.text.TextField;
 	
 	
 	public class SWFSkin extends SkinBase implements ISkin {
@@ -111,14 +112,17 @@ package com.longtailvideo.jwplayer.view.skins {
 					if (element == "background") {
 						element = "back";
 					}
-					var result:DisplayObject;
 					var comp:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
 					if (comp) {
 						return comp.getChildByName(element);
 					}
 				}
 			}
-			return super.getSkinElement(component, element);
+			var result:DisplayObject = super.getSkinElement(component, element);
+			if (result && !(result is TextField)){
+				result = Draw.clone(result as Sprite);
+			}
+			return result;
 		}
 		
 		
@@ -200,3 +204,4 @@ package com.longtailvideo.jwplayer.view.skins {
 		}
 	}
 }
+
