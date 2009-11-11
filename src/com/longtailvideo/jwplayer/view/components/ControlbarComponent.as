@@ -127,16 +127,9 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		private function playlistHandler(evt:PlaylistEvent):void {
-			resetSlider();
+			getSlider('time').reset();
 			updateControlbarState();
 			redraw();
-		}
-
-
-		private function resetSlider():void {
-			if (getSlider('time')) {
-				getSlider('time').reset();
-			}
 		}
 
 
@@ -153,7 +146,7 @@ package com.longtailvideo.jwplayer.view.components {
 				newLayout = newLayout.replace('play', 'pause');
 				hideButton('play');
 			} else if (player.state == PlayerState.IDLE) {
-				resetSlider();
+				getSlider('time').reset();
 				if (_player.playlist.currentItem) {
 					setTime(0, _player.playlist.currentItem.duration);
 				}
@@ -227,7 +220,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		private function updateVolumeSlider(evt:MediaEvent=null):void {
-			var volume:Slider = getSlider('time');
+			var volume:Slider = getSlider('volume');
 			if (volume) {
 				if (!_player.config.mute) {
 					volume.setBuffer(100);
