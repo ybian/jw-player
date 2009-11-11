@@ -410,7 +410,7 @@ package com.longtailvideo.jwplayer.view.components {
 					}
 				}
 			}
-			if (playlistItem.duration) {
+			if (duration && playlistItem.duration) {
 				if (playlistItem.duration > 0) {
 					duration.text = Strings.digits(playlistItem.duration);
 					if (front) {
