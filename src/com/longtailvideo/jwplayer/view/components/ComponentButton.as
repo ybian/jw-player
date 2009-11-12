@@ -63,7 +63,7 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Handles mouse clicks **/
 		protected function clickHandler (event:MouseEvent):void {
 			try {
-				_clickFunction();
+				_clickFunction(event);
 			} catch (error:Error) {
 				Logger.log(error.message);
 			}
