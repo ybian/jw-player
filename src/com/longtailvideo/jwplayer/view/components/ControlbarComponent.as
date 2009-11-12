@@ -194,6 +194,7 @@ package com.longtailvideo.jwplayer.view.components {
 					break;
 			}
 			updateControlbarState();
+			redraw();
 		}
 
 
@@ -304,6 +305,7 @@ package com.longtailvideo.jwplayer.view.components {
 			elapsedText.text = Strings.digits(position);
 			var durationField:TextField = getButton('duration') as TextField;
 			durationField.text = Strings.digits(duration);
+			redraw();
 		}
 
 
