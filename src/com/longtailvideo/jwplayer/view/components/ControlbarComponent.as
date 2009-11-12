@@ -14,6 +14,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.geom.ColorTransform;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
@@ -391,26 +392,41 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		public function addButton(icon:DisplayObject, name:String, handler:Function=null):MovieClip {
+			_defaultLayout = _defaultLayout.replace("|blank","|blank|"+name);
 			icon.x = icon.y = 0;
 			var button:ComponentButton = new ComponentButton();
 			button.name = name;
-			var outBackground:Sprite = getSkinElement("blankButton") as Sprite;
+			var outBackground:DisplayObject = getSkinElement("blankButton");
 			if (outBackground) {
-				var outIcon:DisplayObject = Draw.clone(icon as Sprite);
+				var outImage:Sprite = new Sprite();
+				var outIcon:DisplayObject = Draw.clone(icon);
+				if (_player.config.frontcolor){
+					var outTransform:ColorTransform = new ColorTransform();
+					outTransform.color = _player.config.frontcolor.color;
+					outIcon.transform.colorTransform = outTransform;
+				}
 				var outOffset:Number = Math.round((outBackground.height - outIcon.height) / 2);
 				outBackground.width = outIcon.width + 2 * outOffset;
-				outBackground.addChild(outIcon);
+				outImage.addChild(outBackground);
+				outImage.addChild(outIcon);
 				outIcon.x = outIcon.y = outOffset;
-				button.setOutIcon(outBackground);
+				button.setOutIcon(outImage);
 			}
-			var overBackground:Sprite = getSkinElement("blankButtonOver")  as Sprite;
+			var overBackground:DisplayObject = getSkinElement("blankButtonOver");
 			if (overBackground) {
-				var overIcon:DisplayObject = Draw.clone(icon as Sprite);
+				var overImage:Sprite = new Sprite();
+				var overIcon:DisplayObject = Draw.clone(icon);
+				if (_player.config.frontcolor){
+					var overTransform:ColorTransform = new ColorTransform();
+					overTransform.color = _player.config.frontcolor.color;
+					overIcon.transform.colorTransform = overTransform;
+				}
 				var overOffset:Number = Math.round((overBackground.height - overIcon.height) / 2);
 				overBackground.width = overIcon.width + 2 * overOffset;
-				overBackground.addChild(overIcon);
+				overImage.addChild(overBackground);
+				overImage.addChild(overIcon);
 				overIcon.x = overIcon.y = overOffset;
-				button.setOverIcon(overBackground);
+				button.setOverIcon(overImage);
 			}
 			if (outBackground || overBackground) {
 				button.init();

@@ -496,8 +496,6 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Process resizing requests **/
 		public function resize(width:Number, height:Number):void {
-			x = 0;
-			y = 0;
 			setConfigParam("width", width);
 			setConfigParam("height", height);
 			background.width = width;

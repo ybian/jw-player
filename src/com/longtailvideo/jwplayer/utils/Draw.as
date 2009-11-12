@@ -1,8 +1,10 @@
 package com.longtailvideo.jwplayer.utils {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.utils.getQualifiedClassName;
-	import flash.display.DisplayObjectContainer;
 	
 	
 	public class Draw {
@@ -14,9 +16,12 @@ package com.longtailvideo.jwplayer.utils {
 		 *
 		 * @return		The clone; not yet added to the displaystack.
 		 **/
-		public static function clone(tgt:Sprite, adc:Boolean = false):DisplayObject {
+		public static function clone(tgt:DisplayObject, adc:Boolean = false):DisplayObject {
 			var nam:String = getQualifiedClassName(tgt);
 			if (nam == "flash.display::MovieClip") return tgt;
+			if (tgt.hasOwnProperty("bitmapData") && tgt['bitmapData'] is BitmapData){
+				return new Bitmap(tgt['bitmapData']);
+			}
 			
 			var cls:Class;
 			try {
