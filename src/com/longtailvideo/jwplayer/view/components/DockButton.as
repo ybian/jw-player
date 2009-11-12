@@ -43,7 +43,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (!_overBackground && !_outBackground) {
 				setupBackground();
 			} else if (_outBackground){
-				if (_colorize) {
+				if (_colorize && _outColor) {
 					_background.transform.colorTransform = createColorTransform(_outColor);
 				}
 			}
