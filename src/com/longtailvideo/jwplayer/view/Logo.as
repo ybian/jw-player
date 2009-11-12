@@ -1,7 +1,6 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.player.IPlayer;
-	import com.longtailvideo.jwplayer.player.Player;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.Logger;
@@ -20,7 +19,8 @@ package com.longtailvideo.jwplayer.view {
 	public class Logo extends MovieClip {
 		/** Configuration defaults **/
 		private var defaults:Object = {
-			file: "http://logo.longtailvideo.com.s3.amazonaws.com/logo.png", 
+			prefix: "http://l.longtailvideo.com/", 
+			file: "logo.png", 
 			link: "http://www.longtailvideo.com/players/jw-flv-player/", 
 			margin: 8, 
 			out: 0.5, 
@@ -52,6 +52,11 @@ package com.longtailvideo.jwplayer.view {
 			addEventListener(MouseEvent.CLICK, clickHandler);
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 			addEventListener(MouseEvent.MOUSE_OUT, outHandler);
+			
+			var versionRE:RegExp = /(\d+)\.(\d+)\./;
+			var versionInfo:Array = versionRE.exec(_player.version);
+			defaults['file'] = defaults['prefix'] + versionInfo[1] + "/" + versionInfo[2] + "/" + defaults['file'];
+			
 			if (getConfigParam('file')){
 				loader = new Loader();
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loaderHandler);

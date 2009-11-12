@@ -101,6 +101,7 @@ package com.longtailvideo.jwplayer.model {
 			}
 			if (newList.length > 0) {
 				list = newList;
+				index = 0;
 				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, this));
 			} else {
 				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, "Loaded playlist is empty"));
