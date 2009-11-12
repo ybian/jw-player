@@ -11,7 +11,7 @@
 	import com.longtailvideo.jwplayer.view.View;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
-
+	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
@@ -286,5 +286,14 @@
 		public function overrideComponent(plugin:IPlayerComponent):void {
 			view.overrideComponent(plugin);
 		}
+		
+		/** 
+		 * @private
+		 * 
+		 * This method is deprecated, and is used for backwards compatibility only.
+		 */
+		public function getPlugin(id:String):Object {
+			return view.getPlugin(id);
+		} 
 	}
 }

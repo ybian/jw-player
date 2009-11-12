@@ -457,7 +457,7 @@ package com.longtailvideo.jwplayer.view.components {
 			var outBackground:DisplayObject = getSkinElement("blankButton");
 			if (outBackground) {
 				var outImage:Sprite = new Sprite();
-				var outIcon:DisplayObject = Draw.clone(icon);
+				var outIcon:DisplayObject = icon;
 				if (_player.config.frontcolor){
 					var outTransform:ColorTransform = new ColorTransform();
 					outTransform.color = _player.config.frontcolor.color;
@@ -469,24 +469,7 @@ package com.longtailvideo.jwplayer.view.components {
 				outImage.addChild(outIcon);
 				outIcon.x = outIcon.y = outOffset;
 				button.setOutIcon(outImage);
-			}
-			var overBackground:DisplayObject = getSkinElement("blankButtonOver");
-			if (overBackground) {
-				var overImage:Sprite = new Sprite();
-				var overIcon:DisplayObject = Draw.clone(icon);
-				if (_player.config.frontcolor){
-					var overTransform:ColorTransform = new ColorTransform();
-					overTransform.color = _player.config.frontcolor.color;
-					overIcon.transform.colorTransform = overTransform;
-				}
-				var overOffset:Number = Math.round((overBackground.height - overIcon.height) / 2);
-				overBackground.width = overIcon.width + 2 * overOffset;
-				overImage.addChild(overBackground);
-				overImage.addChild(overIcon);
-				overIcon.x = overIcon.y = overOffset;
-				button.setOverIcon(overImage);
-			}
-			if (outBackground || overBackground) {
+
 				button.init();
 				return addButtonDisplayObject(button, name, handler);
 			}

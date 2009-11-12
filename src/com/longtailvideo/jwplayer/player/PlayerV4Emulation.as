@@ -392,6 +392,11 @@ package com.longtailvideo.jwplayer.player {
 				case 'playlist':
 					result = _player.controls.playlist as Object;
 					break;
+				default:
+					// Backwards compatibility for 4.x plugins
+					try {
+						result = (_player as Object).getPlugin(plugin);
+					} catch (e:Error) {}
 			}
 			return result;
 		}
