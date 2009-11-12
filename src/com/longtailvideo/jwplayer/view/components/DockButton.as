@@ -3,6 +3,7 @@
  **/
 package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.model.Color;
+	
 	import flash.display.*;
 	import flash.events.*;
 	import flash.geom.ColorTransform;
@@ -24,7 +25,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		/** Constructor **/
-		public function DockButton ():void {
+		public function DockButton():void {
 			var textFormat:TextFormat = new TextFormat();
 			textFormat.align = TextFormatAlign.CENTER;
 			textFormat.font = "_sans";
@@ -39,15 +40,23 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		/** Sets up the button **/
-		override public function init ():void {
+		override public function init():void {
 			if (!_overBackground && !_outBackground) {
 				setupBackground();
+				setBackground(_outBackground);
 			} else if (_outBackground){
 				if (_colorize && _outColor) {
-					_background.transform.colorTransform = createColorTransform(_outColor);
+					_outBackground.transform.colorTransform = createColorTransform(_outColor);
 				}
+				setBackground(_outBackground);
+			} else if (!_background) {
+				var backgroundSprite:Sprite = new Sprite();
+				backgroundSprite.graphics.clear();
+				backgroundSprite.graphics.beginFill(_outColor ? _outColor.color : 0x000000, 0.55);
+				backgroundSprite.graphics.drawRect(0, 0, 50, 50);
+				backgroundSprite.graphics.endFill();
+				setBackground(backgroundSprite);
 			}
-			setBackground(_outBackground);
 			super.init();
 			_imageLayer.addChild(_text);
 			_assetColor = _assetColor ? _assetColor : new Color(0xFFFFFF);

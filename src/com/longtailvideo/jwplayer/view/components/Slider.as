@@ -53,6 +53,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 		private function addElement(element:DisplayObject, name:String, visible:Boolean=false):void {
 			if (element) {
+				element.name = name;
 				element.visible = visible;
 				addChild(element);
 			}
@@ -89,7 +90,10 @@ package com.longtailvideo.jwplayer.view.components {
 			this.scaleX = 1;
 			_width = width * scale;
 			_height = height;
-			_rail.getChildByName("bitmap").width = _width;
+			if (_rail) {
+				_rail.getChildByName("bitmap").width = _width;
+				resizeElement(_rail);
+			}
 			if (_buffer) {
 				_buffer.getChildByName("bitmap").width = _width;
 				resizeElement(_buffer, _currentBuffer);
@@ -101,12 +105,12 @@ package com.longtailvideo.jwplayer.view.components {
 			if (_thumb && !_dragging) {
 				_thumb.x = _width * _currentThumb / 100;
 			}
+			verticalCenter();
 		}
 
 
 		private function resizeElement(element:Sprite, maskpercentage:Number=100):void {
 			if (element) {
-				element.y = (_height - element.height) / 2;
 				if (_width && _height) {
 					var mask:Sprite;
 					if (element.mask) {
@@ -120,12 +124,26 @@ package com.longtailvideo.jwplayer.view.components {
 					mask.x = 0;
 					mask.graphics.clear();
 					mask.graphics.beginFill(0x000000, 0);
-					mask.graphics.drawRect(element.x, 0, _width * maskpercentage / 100, _height);
+					mask.graphics.drawRect(element.x, 0, _width * maskpercentage / 100, element.height);
 					mask.graphics.endFill();
 				}
 			}
 		}
 
+		private function verticalCenter():void {
+			var maxHeight:Number = 0;
+			var element:DisplayObject;
+
+			for(var i:Number = 0; i < numChildren; i++) {
+				element = getChildAt(i);
+				if (element.height > maxHeight) maxHeight = element.height;
+			}
+			
+			for(i = 0; i < numChildren; i++) {
+				element = getChildAt(i);
+				element.y = (maxHeight - element.height) / 2;
+			}
+		}
 
 		/** Handle mouse downs. **/
 		private function downHandler(evt:MouseEvent):void {
