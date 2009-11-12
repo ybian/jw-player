@@ -6,6 +6,8 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.plugins.PluginConfig;
+	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
@@ -19,6 +21,8 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.ui.Mouse;
+	import flash.utils.clearTimeout;
+	import flash.utils.setTimeout;
 
 
 	/**
@@ -90,7 +94,10 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _width:Number;
 		protected var _height:Number;
 
-
+		protected var controlbarConfig:PluginConfig;
+		protected var animations:Animations;
+		protected var hiding:Number;
+		
 		public function ControlbarComponent(player:IPlayer) {
 			super(player, "controlbar");
 			_layoutManager = new ControlbarLayoutManager(this);
@@ -101,8 +108,9 @@ package com.longtailvideo.jwplayer.view.components {
 			updateControlbarState();
 			setTime(0, 0);
 			updateVolumeSlider();
+			controlbarConfig = _player.config.pluginConfig(_name);
+			animations = new Animations(this);
 		}
-
 
 		private function addEventListeners():void {
 			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
@@ -135,8 +143,56 @@ package com.longtailvideo.jwplayer.view.components {
 			redraw();
 		}
 
-
-		private function stateHandler(evt:PlayerEvent):void {
+		
+		private function startFader():void {
+			if (controlbarConfig['position'] == 'over' || (_player.fullscreen && controlbarConfig['position'] != 'none')) {
+				if (!isNaN(hiding)) {
+					clearTimeout(hiding);
+				}
+				hiding = setTimeout(moveTimeout, 2000);
+				_player.controls.display.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+			}
+		}
+		
+		private function stopFader():void {
+			if (!isNaN(hiding)) {
+				clearTimeout(hiding);
+				try {
+					_player.controls.display.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+				} catch (e:Error) {}
+			}
+			Mouse.show();
+			animations.fade(1, 0.5);
+		}
+		
+		/** Show above controlbar on mousemove. **/
+		private function moveHandler(evt:MouseEvent=null):void {
+			if (alpha == 0) {
+				animations.fade(1, 0.5);
+			}
+			clearTimeout(hiding);
+			hiding = setTimeout(moveTimeout, 2000);
+			Mouse.show();
+		}
+		
+		
+		/** Hide above controlbar again when move has timed out. **/
+		private function moveTimeout():void {
+			animations.fade(0, 0.5);
+			Mouse.hide();
+		}
+		
+		private function stateHandler(evt:PlayerEvent=null):void {
+			switch(_player.state) {
+				case PlayerState.BUFFERING:
+				case PlayerState.PLAYING:
+					startFader();
+					break;
+				case PlayerState.PAUSED:
+				case PlayerState.IDLE:
+					stopFader();
+					break;
+			}
 			updateControlbarState();
 			redraw();
 		}
@@ -355,13 +411,15 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		private function volumeHandler(evt:ViewEvent):void {
-			var volume:Number = Math.round(evt.data * 100);
-			if (!_player.locked) {
-				var volumeEvent:MediaEvent = new MediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME);
-				volumeEvent.volume = volume;
-				updateVolumeSlider(volumeEvent);
+			if (!_player.mute) {
+				var volume:Number = Math.round(evt.data * 100);
+				if (!_player.locked) {
+					var volumeEvent:MediaEvent = new MediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME);
+					volumeEvent.volume = volume;
+					updateVolumeSlider(volumeEvent);
+				}
+				dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_VOLUME, volume));
 			}
-			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_VOLUME, volume));
 		}
 
 
@@ -490,9 +548,9 @@ package com.longtailvideo.jwplayer.view.components {
 			setChildIndex(capLeft, numChildren - 1);
 			setChildIndex(capRight, numChildren - 1);
 
-			updateControlbarState();
+			stopFader();
+			stateHandler();
 			redraw();
-			Mouse.show();
 		}
 
 

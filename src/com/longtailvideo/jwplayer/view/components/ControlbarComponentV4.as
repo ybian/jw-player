@@ -141,7 +141,6 @@ package com.longtailvideo.jwplayer.view.components {
 			skin.removeChild(getSkinComponent(name));
 		}
 
-
 		public function resize(width:Number, height:Number):void {
 			if (!(PlayerLayoutManager.testPosition(controlbarConfig['position']) || controlbarConfig['position'] == "over")) {
 				skin.visible = false;
@@ -221,7 +220,7 @@ package com.longtailvideo.jwplayer.view.components {
 					scrubber.icon.startDrag(true, rct);
 					stage.addEventListener(MouseEvent.MOUSE_UP, upHandler);
 				} else {
-					scrubber = undefined;
+					scrubber = null;
 				}
 			}
 		}
@@ -241,25 +240,6 @@ package com.longtailvideo.jwplayer.view.components {
 			stacker.rearrange();
 			fixTime();
 		}
-
-
-		/** Show above controlbar on mousemove. **/
-		private function moveHandler(evt:MouseEvent=null):void {
-			if (alpha == 0) {
-				animations.fade(1);
-			}
-			clearTimeout(hiding);
-			hiding = setTimeout(moveTimeout, 2000);
-			Mouse.show();
-		}
-
-
-		/** Hide above controlbar again when move has timed out. **/
-		private function moveTimeout():void {
-			animations.fade(0);
-			Mouse.hide();
-		}
-
 
 		/** Show a mute icon if playing. **/
 		private function muteHandler(evt:MediaEvent=null):void {
@@ -375,6 +355,7 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 		}
 
+		
 		private function startFader():void {
 			if (controlbarConfig['position'] == 'over' || (_player.fullscreen && controlbarConfig['position'] != 'none')) {
 				if (!isNaN(hiding)) {
@@ -395,14 +376,29 @@ package com.longtailvideo.jwplayer.view.components {
 			Mouse.show();
 			animations.fade(1);
 		}
-
+		
+		/** Show above controlbar on mousemove. **/
+		private function moveHandler(evt:MouseEvent=null):void {
+			if (alpha == 0) {
+				animations.fade(1);
+			}
+			clearTimeout(hiding);
+			hiding = setTimeout(moveTimeout, 2000);
+			Mouse.show();
+		}
+		
+		
+		/** Hide above controlbar again when move has timed out. **/
+		private function moveTimeout():void {
+			animations.fade(0);
+			Mouse.hide();
+		}
+		
 		/** Process state changes **/
-		private function stateHandler(evt:PlayerEvent=undefined):void {
+		private function stateHandler(evt:PlayerEvent=null):void {
 			// TODO: Fix non-working fading
 			clearTimeout(hiding);
 			try {
-				var dps:String = stage['displayState'];
-
 				switch (_player.state) {
 					case PlayerState.PLAYING:
 						getSkinComponent('playButton').visible = false;
@@ -530,7 +526,7 @@ package com.longtailvideo.jwplayer.view.components {
 					mpl = 100;
 			}
 			var pct:Number = (scrubber.icon.x - scrubber.rail.x) / (scrubber.rail.width - scrubber.icon.width) * mpl;
-			scrubber = undefined;
+			scrubber = null;
 			if (sliderType == 'volumeSlider') {
 				var volumeEvent:MediaEvent = new MediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME);
 				volumeEvent.volume = Math.round(pct);
