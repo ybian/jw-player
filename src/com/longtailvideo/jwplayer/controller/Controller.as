@@ -372,7 +372,7 @@ package com.longtailvideo.jwplayer.controller {
 				return false;
 			} else {
 				_player.playlist.currentIndex = _player.playlist.currentIndex + 1;
-				play();
+				loadPlaylistItem(_player.playlist.currentItem);
 				return true;
 			}
 		}
@@ -386,7 +386,7 @@ package com.longtailvideo.jwplayer.controller {
 				return false;
 			} else {
 				_player.playlist.currentIndex = _player.playlist.currentIndex - 1;
-				play();
+				loadPlaylistItem(_player.playlist.currentItem);
 				return true;
 			}
 		}
