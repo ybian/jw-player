@@ -11,6 +11,8 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.PlayerLayoutManager;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
+	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
+	import com.longtailvideo.jwplayer.view.skins.DefaultSkin;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
 	import flash.display.DisplayObject;
@@ -21,6 +23,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.ColorTransform;
+	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -57,7 +60,11 @@ package com.longtailvideo.jwplayer.view.components {
 		private var slider:Sprite;
 		/** The playlist background **/
 		private var background:Sprite;
-		
+		/** Internal reference to the skin **/
+		private var skin:ISkin;
+		private var skinLoaded:Boolean = false;
+		private var pendingResize:Rectangle;
+		private var pendingBuild:Boolean = false;
 		
 		public function PlaylistComponent(player:IPlayer) {
 			super(player, "playlist");
@@ -65,6 +72,22 @@ package com.longtailvideo.jwplayer.view.components {
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistHandler);
 			player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, playlistHandler);
 			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
+			
+			if (_player.skin is SWFSkin && !_player.skin.hasComponent('playlist')) {
+				var defaultSkin:DefaultSkin = new DefaultSkin();
+				defaultSkin.addEventListener(Event.COMPLETE, continueSetup);
+				skin = defaultSkin;
+				defaultSkin.load();
+			} else {
+				skinLoaded = true;
+				skin = _player.skin;
+				continueSetup();
+			}
+		}
+		
+		protected function continueSetup(evt:Event=null):void {
+			skinLoaded = true;
+			
 			background = getSkinElement("background") as Sprite;
 			if (!background) {
 				background = new Sprite();
@@ -148,6 +171,12 @@ package com.longtailvideo.jwplayer.view.components {
 			if (button.getChildByName("back")) {
 				setColors();
 			}
+			if (pendingBuild) {
+				buildPlaylist(true);
+			}
+			if (pendingResize) {
+				resize(pendingResize.width, pendingResize.height);
+			}
 		}
 		
 		
@@ -168,7 +197,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (!back) {
 				back = new Sprite();
 				back.graphics.beginFill(0, 1);
-				back.graphics.drawRect(0, 0, 1, 1);
+				back.graphics.drawRect(0, 0, 100, 100);
 				back.graphics.endFill();
 			}
 			back.name = "back";
@@ -239,7 +268,7 @@ package com.longtailvideo.jwplayer.view.components {
 						(getButton(idx).getChildByName(itm) as TextField).textColor = back.color;
 					}
 				}
-				if (_player.skin is SWFSkin) {
+				if (swfSkinned) {
 					getButton(idx).getChildByName("back").transform.colorTransform = light;
 				} else {
 					getButton(idx).setChildIndex(getButton(idx).getChildByName("back"), 0);
@@ -262,7 +291,7 @@ package com.longtailvideo.jwplayer.view.components {
 						}
 					}
 				}
-				if (_player.skin is SWFSkin) {
+				if (swfSkinned) {
 					getButton(idx).getChildByName("back").transform.colorTransform = back;
 				} else {
 					getButton(idx).setChildIndex(getButton(idx).getChildByName("backOver"), 0);
@@ -276,6 +305,10 @@ package com.longtailvideo.jwplayer.view.components {
 		private function buildPlaylist(clr:Boolean):void {
 			if (!_player.playlist || player.playlist.length < 1) {
 				return;
+			}
+			if (!skinLoaded) {
+				pendingBuild = true;
+				return
 			}
 			var wid:Number = getConfigParam("width");
 			var hei:Number = getConfigParam("height");
@@ -302,7 +335,7 @@ package com.longtailvideo.jwplayer.view.components {
 			for (var i:Number = 0; i < _player.playlist.length; i++) {
 				if (clr) {
 					var btn:MovieClip;
-					if (_player.skin is SWFSkin) {
+					if (swfSkinned) {
 						btn = Draw.clone(button, true) as MovieClip;
 					} else {
 						btn = buildButton();
@@ -364,16 +397,16 @@ package com.longtailvideo.jwplayer.view.components {
 			if (_player.config.backcolor) {
 				back = new ColorTransform();
 				back.color = _player.config.backcolor.color;
-				if (_player.skin is SWFSkin) {
+				if (swfSkinned) {
 					background.transform.colorTransform = back;
 					slider.getChildByName("back").transform.colorTransform = back;
-				}
+				} 
 			}
 			if (_player.config.frontcolor) {
 				front = new ColorTransform();
 				front.color = _player.config.frontcolor.color;
 				try {
-					if (_player.skin is SWFSkin) {
+					if (swfSkinned) {
 						slider.getChildByName("icon").transform.colorTransform = front;
 						slider.getChildByName("rail").transform.colorTransform = front;
 					}
@@ -434,7 +467,7 @@ package com.longtailvideo.jwplayer.view.components {
 			if (getButton(idx).getChildByName("image") && (!playlistItem.image || getConfigParam('thumbs') == false)) {
 				getButton(idx).getChildByName("image").visible = false;
 			}
-			if (back && (_player.skin is SWFSkin)) {
+			if (back && swfSkinned) {
 				getButton(idx).getChildByName("back").transform.colorTransform = back;
 			}
 		}
@@ -463,7 +496,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Revert the highlight on mouseout. **/
 		private function soutHandler(evt:MouseEvent):void {
-			if (front && (_player.skin is SWFSkin)) {
+			if (front && swfSkinned) {
 				slider.getChildByName("icon").transform.colorTransform = front;
 			} else {
 				//slider.getChildByName("icon").gotoAndStop('out');
@@ -473,7 +506,7 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Highlight the icon on rollover. **/
 		private function soverHandler(evt:MouseEvent):void {
-			if (front && (_player.skin is SWFSkin)) {
+			if (front && swfSkinned) {
 				slider.getChildByName("icon").transform.colorTransform = light;
 			} else {
 				//slider.getChildByName("icon").gotoAndStop('over');
@@ -496,20 +529,24 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Process resizing requests **/
 		public function resize(width:Number, height:Number):void {
-			setConfigParam("width", width);
-			setConfigParam("height", height);
-			background.width = width;
-			background.height = height;
-			buildPlaylist(false);
-			if (PlayerLayoutManager.testPosition(getConfigParam('position'))) {
-				visible = true;
-			} else if (getConfigParam('position') == "over") {
-				stateHandler();
+			if (skinLoaded) {
+				setConfigParam("width", width);
+				setConfigParam("height", height);
+				background.width = width;
+				background.height = height;
+				buildPlaylist(false);
+				if (PlayerLayoutManager.testPosition(getConfigParam('position'))) {
+					visible = true;
+				} else if (getConfigParam('position') == "over") {
+					stateHandler();
+				} else {
+					visible = false;
+				}
+				if (visible && getConfigParam('visible') === false) {
+					visible = false;
+				}
 			} else {
-				visible = false;
-			}
-			if (visible && getConfigParam('visible') === false) {
-				visible = false;
+				pendingResize = new Rectangle(0,0,width,height);
 			}
 		}
 		
@@ -531,7 +568,7 @@ package com.longtailvideo.jwplayer.view.components {
 					}
 				}
 			}
-			if (back && (_player.skin is SWFSkin)) {
+			if (back && swfSkinned) {
 				getButton(idx).getChildByName("back").transform.colorTransform = back;
 			}
 			if (!isNaN(active)) {
@@ -574,6 +611,18 @@ package com.longtailvideo.jwplayer.view.components {
 		private function getButton(id:Number):Sprite {
 			return buttons[id].c as Sprite;
 		}
+		
+		private function get swfSkinned():Boolean {
+			if (skin is SWFSkin) {
+				return (skin.hasComponent('playlist'));
+			}
+			return false;
+		}
+		
+		protected override function getSkinElement(element:String):DisplayObject {
+			return skin.getSkinElement(_name,element);
+		}
+		
 	}
 }
 
