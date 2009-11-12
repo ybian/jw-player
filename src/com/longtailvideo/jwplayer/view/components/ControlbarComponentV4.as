@@ -86,8 +86,8 @@ package com.longtailvideo.jwplayer.view.components {
 			stacker = new Stacker(skin as MovieClip);
 			try {
 				getSkinComponent("linkButton").visible = false;
-			} catch (e:Error) {
-			}
+			} catch (e:Error) {}
+			
 			setButtons();
 			setColors();
 			itemHandler();
@@ -172,9 +172,9 @@ package com.longtailvideo.jwplayer.view.components {
 			} catch (err:Error) {
 			}
 			stacker.rearrange(wid);
+			stopFader();
 			stateHandler();
 			fixTime();
-			Mouse.show();
 		}
 
 
@@ -245,9 +245,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 		/** Show above controlbar on mousemove. **/
 		private function moveHandler(evt:MouseEvent=null):void {
-			Logger.log("Mouse moved");
 			if (alpha == 0) {
-				Logger.log("Fading in");
 				animations.fade(1);
 			}
 			clearTimeout(hiding);
@@ -258,8 +256,8 @@ package com.longtailvideo.jwplayer.view.components {
 
 		/** Hide above controlbar again when move has timed out. **/
 		private function moveTimeout():void {
-			Logger.log("Move timed out");
 			animations.fade(0);
+			Mouse.hide();
 		}
 
 
@@ -388,13 +386,11 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 		
 		private function stopFader():void {
-			if (controlbarConfig['position'] == 'over' || (_player.fullscreen && controlbarConfig['position'] != 'none')) {
-				if (!isNaN(hiding)) {
-					clearTimeout(hiding);
-					try {
-						_player.controls.display.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
-					} catch (e:Error) {}
-				}
+			if (!isNaN(hiding)) {
+				clearTimeout(hiding);
+				try {
+					_player.controls.display.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+				} catch (e:Error) {}
 			}
 			Mouse.show();
 			animations.fade(1);
