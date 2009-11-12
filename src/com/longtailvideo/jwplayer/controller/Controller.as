@@ -548,9 +548,6 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		public function fullscreen(mode:Boolean):Boolean {
-			if (locking) {
-				return false;
-			}
 			_model.fullscreen = mode;
 			_view.fullscreen(mode);
 			return true;
