@@ -121,6 +121,9 @@ package com.longtailvideo.jwplayer.view {
 
 
 		public function setupView():void {
+			RootReference.stage.addChildAt(_root, 0);
+			_root.visible = false;
+
 			setupLayers();
 			setupComponents();
 
@@ -141,8 +144,8 @@ package com.longtailvideo.jwplayer.view {
 
 		public function completeView(isError:Boolean=false, errorMsg:String=""):void {
 			if (!isError) {
+				_root.visible = true;
 				RootReference.stage.removeChild(loaderScreen);
-				RootReference.stage.addChildAt(_root, 0);
 			} else {
 				loaderScreen.removeChild(loaderAnim);
 				var errorScreen:DisplayObject = new ErrorScreen() as DisplayObject;

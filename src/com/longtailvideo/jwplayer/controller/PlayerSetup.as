@@ -198,6 +198,9 @@ package com.longtailvideo.jwplayer.controller {
 							for (var i:String in loadedConf) {
 								if (!pluginConf.hasOwnProperty(i)) pluginConf[i] = loadedConf[i];
 							}
+							pluginConf['width'] = _player.controls.display.width;
+							pluginConf['height'] = _player.controls.display.height;
+							pluginConf['visible'] = true;
 						}
 						_view.addPlugin(pluginId, new V4Plugin(plugin as PluginInterface, pluginId));
 					}

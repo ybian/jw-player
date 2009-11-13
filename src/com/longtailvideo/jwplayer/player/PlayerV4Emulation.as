@@ -294,15 +294,7 @@ package com.longtailvideo.jwplayer.player {
 				if (_player.config[i] != null) {
 					cfg[i] = Strings.serialize(_player.config[i].toString());
 				}
-				
-/*				if (_player.config[i] is Number) {
-					cfg[i] = isNaN(_player.config[i]) ? "" : String(_player.config[i]);
-				} else if (_player.config[i] is Boolean) {
-					cfg[i] = _player.config[i];
-				} else if (_player.config[i] != null) {
-					cfg[i] = _player.config[i].toString();
-				}
-*/			}
+			}
 			
 			for each (var j:String in _player.config.pluginIds) {
 				var pluginConfig:PluginConfig = _player.config.pluginConfig(j);
