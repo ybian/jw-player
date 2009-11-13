@@ -5,7 +5,7 @@ package com.longtailvideo.jwplayer.plugins {
 		private var _id:String;
 
 		public function PluginConfig(pluginId:String) {
-			this._id = pluginId;
+			this._id = pluginId.toLowerCase();
 		}
 		
 		public function get id():String {

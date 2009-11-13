@@ -339,7 +339,7 @@ package com.longtailvideo.jwplayer.view {
 
 
 		public function removePlugin(plugin:IPlugin):void {
-			var id:String = plugin.id;
+			var id:String = plugin.id.toLowerCase();
 			if (id && _plugins[id] is IPlugin) {
 				_pluginsLayer.removeChild(_plugins[id]);
 				delete _plugins[id];

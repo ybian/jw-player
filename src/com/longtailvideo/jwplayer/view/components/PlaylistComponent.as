@@ -101,7 +101,6 @@ package com.longtailvideo.jwplayer.view.components {
 			if (!slider) {
 				slider = new Sprite();
 				
-				
 				var sliderBack:Sprite = getSkinElement("sliderBackground") as Sprite;
 				if (!sliderBack) {
 					sliderBack = new Sprite();

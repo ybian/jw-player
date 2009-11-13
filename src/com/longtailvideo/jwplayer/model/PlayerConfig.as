@@ -350,6 +350,7 @@ package com.longtailvideo.jwplayer.model {
 		 * @param pluginId Name of the plugin whose config to return.
 		 */
 		public function pluginConfig(pluginId:String):PluginConfig {
+			pluginId = pluginId.toLowerCase();
 			if (_pluginConfig.hasOwnProperty(pluginId)) {
 				return _pluginConfig[pluginId] as PluginConfig;
 			} else {
