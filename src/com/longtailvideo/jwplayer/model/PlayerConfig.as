@@ -66,16 +66,18 @@ package com.longtailvideo.jwplayer.model {
 			var playlistItems:Boolean = false;
 			if (!_singleItem) { _singleItem = new PlaylistItem(); }
 			for (var item:String in config) {
+				item = item;
 				if (_singleItem.hasOwnProperty(item)) {
 					if (item == "file" && Strings.extension(config[item]) == "xml") {
 						setProperty("playlistfile", config[item]);					
 					} else {
-						_singleItem[item] = config[item];
+						_singleItem[item.toLowerCase()] = config[item];
 						playlistItems = true;
 					}
 				} else if (item.indexOf(".") > 0) {
 					setPluginProperty(item, config[item]);
-				} else if (config[item] != null) {
+					_singleItem[item.toLowerCase()] = config[item]; 
+				} else if (config[item.toLowerCase()] != null) {
 					setProperty(item, config[item]);
 				}
 			}

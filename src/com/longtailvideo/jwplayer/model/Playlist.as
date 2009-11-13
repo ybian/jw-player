@@ -205,12 +205,21 @@ package com.longtailvideo.jwplayer.model {
 			return index >= 0 ? getItemAt(index) : null;
 		}
 		
-		
 		/**
 		 * @inheritDoc
 		 */
 		public function get length():Number {
 			return list.length;
+		}
+
+		/**
+		 * @inheritDoc
+		 **/
+		public function contains(item:PlaylistItem):Boolean {
+			for (var i:Number=0; i < length; i++) {
+				if (getItemAt(i) == item) return true;
+			}
+			return false;
 		}
 	}
 }

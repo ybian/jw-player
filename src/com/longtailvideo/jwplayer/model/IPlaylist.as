@@ -66,6 +66,11 @@ package com.longtailvideo.jwplayer.model {
 		 * @param idx The index from which to remove the item
 		 */
 		function removeItemAt(idx:Number):void;
+		/** 
+		 * Returns true if the given playlist item is currently loaded in the list. 
+		 **/
+		function contains(item:PlaylistItem):Boolean;
+
 		function get currentIndex():Number;
 		function set currentIndex(idx:Number):void;
 		function get currentItem():PlaylistItem;

@@ -148,8 +148,7 @@ package com.longtailvideo.jwplayer.controller {
 
 				// Broadcast playlist loaded (which was swallowed during player setup);
 				if (_model.playlist.length > 0) {
-					_model.playlist.dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
-					_model.playlist.dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, _model.playlist));
+					dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
 				}
 
 				RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
@@ -162,6 +161,7 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		private function playlistLoadHandler(evt:PlaylistEvent=null):void {
+			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
 			if (_model.config.shuffle) {
 				shuffleItem();
 			} else {
@@ -370,12 +370,12 @@ package com.longtailvideo.jwplayer.controller {
 				play();
 				return true;
 			} else if (_model.playlist.currentIndex == _model.playlist.length - 1) {
-				return false;
+				_player.playlist.currentIndex = 0;
 			} else {
 				_player.playlist.currentIndex = _player.playlist.currentIndex + 1;
-				loadPlaylistItem(_player.playlist.currentItem);
-				return true;
 			}
+			loadPlaylistItem(_player.playlist.currentItem);
+			return true;
 		}
 
 
@@ -384,12 +384,12 @@ package com.longtailvideo.jwplayer.controller {
 				return false;
 			}
 			if (_model.playlist.currentIndex <= 0) {
-				return false;
+				_model.playlist.currentIndex = _model.playlist.length - 1;
 			} else {
 				_player.playlist.currentIndex = _player.playlist.currentIndex - 1;
-				loadPlaylistItem(_player.playlist.currentItem);
-				return true;
 			}
+			loadPlaylistItem(_player.playlist.currentItem);
+			return true;
 		}
 
 
@@ -449,6 +449,10 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		private function loadPlaylistItem(item:PlaylistItem):Boolean {
+			if (!_model.playlist.contains(item)) {
+				_model.playlist.load(item);
+			}
+			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, _model.playlist));
 			var result:Boolean = false;
 			try {
 				if (!item.provider) {

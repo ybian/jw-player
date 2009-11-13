@@ -99,8 +99,8 @@ package com.longtailvideo.jwplayer.player {
 			_player.addEventListener(ViewEvent.JWPLAYER_VIEW_STOP, viewStop);
 			_player.addEventListener(ViewEvent.JWPLAYER_VIEW_VOLUME, viewVolume);
 			
-			_player.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItem);
-			_player.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoad);
+			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItem);
+			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoad);
 		}
 		
 		// Player Event Handlers
@@ -368,7 +368,7 @@ package com.longtailvideo.jwplayer.player {
 				'type':			item.provider
 			};
 			
-			for each (var i:String in item) {
+			for (var i:String in item) {
 				obj[i] = item[i];
 			}
 			
