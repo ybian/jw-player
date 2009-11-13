@@ -2,6 +2,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.jeroenwijering.events.AbstractView;
 	import com.jeroenwijering.events.ControllerEvent;
 	import com.jeroenwijering.events.ModelEvent;
+	import com.jeroenwijering.events.ModelStates;
 	import com.longtailvideo.jwplayer.controller.Controller;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
@@ -310,7 +311,25 @@ package com.longtailvideo.jwplayer.player {
 				}
 			}
 
-			cfg['state'] = _player.state;
+			switch(_player.state) {
+				case PlayerState.BUFFERING:
+					cfg['state'] = ModelStates.BUFFERING;
+					break;
+				case PlayerState.PLAYING:
+					cfg['state'] = ModelStates.PLAYING;
+					break;
+				case PlayerState.PAUSED:
+					cfg['state'] = ModelStates.PAUSED;
+					break;
+				case PlayerState.IDLE:
+					if (_player.playlist.currentIndex > 0 && _player.playlist.currentIndex == (_player.playlist.length-1)) {
+						cfg['state'] = ModelStates.COMPLETED;
+					} else {
+						cfg['state'] = ModelStates.IDLE;
+					}
+					break;
+			}
+
 			cfg['mute'] = _player.mute;
 			cfg['fullscreen'] = _player.fullscreen;
 			cfg['version'] = _player.version;

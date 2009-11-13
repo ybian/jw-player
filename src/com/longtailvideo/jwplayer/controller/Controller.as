@@ -149,9 +149,14 @@ package com.longtailvideo.jwplayer.controller {
 				// Broadcast playlist loaded (which was swallowed during player setup);
 				if (_model.playlist.length > 0) {
 					_model.playlist.dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
+					_model.playlist.dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, _model.playlist));
 				}
 
 				RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
+
+				if (_player.config.autostart) {
+					load(_model.playlist.currentItem);
+				}
 			}
 		}
 
@@ -161,10 +166,6 @@ package com.longtailvideo.jwplayer.controller {
 				shuffleItem();
 			} else {
 				_model.playlist.currentIndex = _model.config.item;
-			}
-
-			if (_player.config.autostart) {
-				load(_model.playlist.currentItem);
 			}
 		}
 

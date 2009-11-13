@@ -73,9 +73,6 @@ package com.longtailvideo.jwplayer.media {
 			sound.addEventListener(Event.ID3, id3Handler);
 			sound.addEventListener(ProgressEvent.PROGRESS, positionHandler);
 			sound.load(new URLRequest(_item.file), context);
-			if (_item.start > 0) {
-				seek(_item.start);
-			}
 			positionInterval = setInterval(positionHandler, 100);
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
@@ -97,6 +94,10 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Play the sound. **/
 		override public function play():void {
+			if (_position == 0 && _item.start > 0) {
+				seek(item.start);
+				return;
+			}
 			if (!positionInterval) {
 				positionInterval = setInterval(positionHandler, 100);
 			}
@@ -140,7 +141,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Seek in the sound. **/
 		override public function seek(pos:Number):void {
-			if (sound && (pos < (sound.bytesLoaded / sound.bytesTotal) * item.duration)) { 
+			if (sound && (pos < (sound.bytesLoaded / sound.bytesTotal) * item.duration) || item.start) { 
 				clearInterval(positionInterval);
 				positionInterval = undefined;
 				if (channel) {

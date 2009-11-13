@@ -141,7 +141,7 @@ package com.longtailvideo.jwplayer.view.components {
 			listmask = getSkinElement("masker") as Sprite;
 			if (!listmask) {
 				listmask = new Sprite();
-				listmask.graphics.beginFill(0, 0);
+				listmask.graphics.beginFill(0xff0000, 1);
 				listmask.graphics.drawRect(0, 0, 1, 1);
 				listmask.graphics.endFill();
 			}
@@ -591,7 +591,7 @@ package com.longtailvideo.jwplayer.view.components {
 			clearInterval(scrollInterval);
 			active = undefined;
 			buildPlaylist(true);
-			resize(width, height);
+			resize(background.width, background.height);
 		}
 		
 		
