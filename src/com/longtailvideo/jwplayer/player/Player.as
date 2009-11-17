@@ -12,6 +12,7 @@
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
@@ -54,7 +55,7 @@
 			model = new Model();
 			view = new View(this, model);
 			controller = new Controller(this, model, view);
-			controller.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady);
+			controller.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady, false, -1);
 			controller.setupPlayer();
 		}
 		
@@ -295,5 +296,26 @@
 		public function getPlugin(id:String):Object {
 			return view.getPlugin(id);
 		} 
+		
+		/** The player should not accept any calls referencing its display stack **/
+		public override function addChild(child:DisplayObject):DisplayObject {
+			return null;
+		}
+
+		/** The player should not accept any calls referencing its display stack **/
+		public override function addChildAt(child:DisplayObject, index:int):DisplayObject {
+			return null;
+		}
+
+		/** The player should not accept any calls referencing its display stack **/
+		public override function removeChild(child:DisplayObject):DisplayObject {
+			return null;
+		}
+
+		/** The player should not accept any calls referencing its display stack **/
+		public override function removeChildAt(index:int):DisplayObject {
+			return null;
+		}
+		
 	}
 }

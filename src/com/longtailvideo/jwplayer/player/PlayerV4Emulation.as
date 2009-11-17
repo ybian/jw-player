@@ -12,6 +12,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.model.IPlaylist;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Logger;
@@ -368,9 +369,12 @@ package com.longtailvideo.jwplayer.player {
 		}
 		
 		public override function getPluginConfig(plugin:Object):Object {
-			var pluginParent:V4Plugin = (plugin as DisplayObject).parent as V4Plugin; 
-			if (pluginParent) {
-				return _player.config.pluginConfig(pluginParent.pluginId);
+			if (plugin is IPlugin) {
+				return _player.config.pluginConfig((plugin as IPlugin).id)
+			} else if (plugin is V4Plugin) {
+				return _player.config.pluginConfig((plugin as V4Plugin).pluginId);
+			} else if ((plugin as DisplayObject).parent is V4Plugin) {
+				return _player.config.pluginConfig((plugin.parent as V4Plugin).pluginId);
 			} else if (plugin is IDockComponent) {
 				return _player.config.pluginConfig('dock');
 			} else if (plugin is IDisplayComponent) {

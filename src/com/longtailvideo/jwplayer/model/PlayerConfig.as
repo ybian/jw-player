@@ -367,16 +367,15 @@ package com.longtailvideo.jwplayer.model {
 		 */
 		public function get pluginIds():Array {
 			var names:Array = [];
-			for (var plug:String in _pluginConfig) {
-				if ( (['controlbar','playlist','dock','display']).indexOf(plug) == -1 ) {
-					names.push(plug);
+
+			// Only include loaded plugins
+			for each (var lp:String in _plugins.split(",")) {
+				var plugName:String = (lp.substr(lp.lastIndexOf("/")+1).replace(/(.*)\.swf$/i, "$1").split("-")[0] as String).toLowerCase();
+				if (plugName) {
+					names.push(plugName);
 				}
-				/* TODO: Make sure this only returns loaded plugins
-				if (_plugins.indexOf(plug)) {
-					names.push(plug);
-				}
-				*/
 			}
+			
 			return names;
 		}
 	}
