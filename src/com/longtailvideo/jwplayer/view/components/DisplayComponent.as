@@ -94,11 +94,16 @@
 			}
 			if (name == "buffer") {
 				try {
-					_bufferIcon = (_icons[name] as DisplayObjectContainer).getChildAt((_icons[name] as DisplayObjectContainer).numChildren - 1) as Sprite;
-					_bufferIcon.getChildAt(0).x = Math.round(_bufferIcon.getChildAt(0).width / -2);
-					_bufferIcon.getChildAt(0).y = Math.round(_bufferIcon.getChildAt(0).height / -2);
-					_bufferIcon.x = back.width / 2 ;
-					_bufferIcon.y = back.height - icon.height;
+					if (_icons[name] is MovieClip && (_icons[name] as MovieClip).totalFrames > 1) {
+						// Buffer is already animated; no need to rotate.
+						_rotate = false;
+					} else {
+						_bufferIcon = (_icons[name] as DisplayObjectContainer).getChildAt((_icons[name] as DisplayObjectContainer).numChildren - 1) as Sprite;
+						_bufferIcon.getChildAt(0).x = Math.round(_bufferIcon.getChildAt(0).width / -2);
+						_bufferIcon.getChildAt(0).y = Math.round(_bufferIcon.getChildAt(0).height / -2);
+						_bufferIcon.x = back.width / 2 ;
+						_bufferIcon.y = back.height - icon.height;
+					}
 				} catch (err:Error){
 					_rotate = false;	
 				}
