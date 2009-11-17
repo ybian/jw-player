@@ -54,6 +54,8 @@ package com.longtailvideo.jwplayer.view.components {
 		private var controlbarConfig:PluginConfig;
 		/** Animations handler **/
 		private var animations:Animations;
+		/** Last inserted button **/
+		private var lastInsert:MovieClip;
 
 
 		public function ControlbarComponentV4(player:IPlayer) {
@@ -131,7 +133,12 @@ package com.longtailvideo.jwplayer.view.components {
 					btn.addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 					btn.addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 				}
-				stacker.insert(btn, getSkinComponent('linkButton') as MovieClip);
+				if (lastInsert) {
+					stacker.insert(btn, lastInsert);
+				} else {
+					stacker.insert(btn, getSkinComponent('linkButton') as MovieClip);
+				}
+				lastInsert = btn;
 			}
 			return btn;
 		}
