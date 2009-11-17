@@ -9,7 +9,6 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
-	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.View;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
@@ -79,7 +78,6 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.queueTask(loadPlugins, loadPluginsComplete);
 			tasker.queueTask(loadPlaylist, loadPlaylistComplete);
 			tasker.queueTask(initPlugins);
-			tasker.queueTask(setupJS);
 			
 			tasker.runTasks();
 		}
@@ -126,19 +124,21 @@ package com.longtailvideo.jwplayer.controller {
 			confHash = (evt.target as Configger).config;
 		}
 
-		private function loadSkin():void {
+		private function loadSkin(evt:ErrorEvent=null):void {
 			var skin:ISkin;
-			if (confHash && confHash['skin']) {
+			if (confHash && confHash['skin'] && evt == null) {
 				if (Strings.extension(confHash['skin']) == "swf") {
 					skin = new SWFSkin();
 				} else {
 					skin = new PNGSkin();
 				}
+				// If this step fails, load the default skin instead
+				skin.addEventListener(ErrorEvent.ERROR, loadSkin);
 			} else {
 				skin = new DefaultSkin();
+				skin.addEventListener(ErrorEvent.ERROR, tasker.failure);
 			}
 			skin.addEventListener(Event.COMPLETE, tasker.success);
-			skin.addEventListener(ErrorEvent.ERROR, tasker.failure);
 			skin.load(confHash['skin']);
 		}
 		
@@ -147,6 +147,7 @@ package com.longtailvideo.jwplayer.controller {
 				var skin:ISkin = event.target as ISkin;
 				skin.removeEventListener(Event.COMPLETE, tasker.success);
 				skin.removeEventListener(ErrorEvent.ERROR, tasker.failure);
+				skin.removeEventListener(ErrorEvent.ERROR, loadSkin);
 
 				var props:SkinProperties = skin.getSkinProperties();
 				_model.config.setConfig(props);
@@ -162,7 +163,7 @@ package com.longtailvideo.jwplayer.controller {
 			_model.setupMediaProviders();
 			tasker.success();
 		}
-		
+
 		private function setupView():void {
 			try {
 				_view.setupView();
@@ -238,10 +239,6 @@ package com.longtailvideo.jwplayer.controller {
 					}
 				}
 			}
-			tasker.success();
-		}
-
-		private function setupJS():void {
 			tasker.success();
 		}
 

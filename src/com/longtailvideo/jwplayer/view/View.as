@@ -11,7 +11,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.player.PlayerV4Emulation;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
-	import com.longtailvideo.jwplayer.utils.Animations;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Stretcher;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
@@ -20,7 +20,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
-
+	
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.MovieClip;
@@ -276,7 +276,11 @@ package com.longtailvideo.jwplayer.view {
 						plugDisplay.visible = true;
 						plugDisplay.x = cfg['x'];
 						plugDisplay.y = cfg['y'];
-						plug.resize(cfg.width, cfg.height);
+						try {
+							plug.resize(cfg.width, cfg.height);
+						} catch (e:Error) {
+							Logger.log("There was an error resizing plugin '" + plug.id + "': " + e.message);
+						}
 					} else {
 						plugDisplay.visible = false;
 					}

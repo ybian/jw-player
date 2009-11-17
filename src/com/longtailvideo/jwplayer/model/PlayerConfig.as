@@ -47,7 +47,7 @@ package com.longtailvideo.jwplayer.model {
 		private var _skin:String 			= null;
 		private var _width:Number 			= 280;
 		
-		private var _plugins:String 		= null
+		private var _plugins:String 		= "";
 		private var _pluginConfig:Object 	= {};
 		
 		private var _playerready:String		= "";
