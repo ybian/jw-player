@@ -49,11 +49,13 @@ package com.longtailvideo.jwplayer.controller {
 		private var _view:View;
 
 		/** Setup completed **/
-		private var _setupComplete:Boolean;
+		private var _setupComplete:Boolean = false;
 		/** Setup finalized **/
-		private var _setupFinalized:Boolean;
+		private var _setupFinalized:Boolean = false;
+		/** Whether to autostart on unlock **/
+		private var _unlockAutostart:Boolean = false;
 		/** Whether to resume on unlock **/
-		private var _lockingResume:Boolean;
+		private var _lockingResume:Boolean = false;
 		/** Lock manager **/
 		private var _lockManager:LockManager;
 		
@@ -155,7 +157,11 @@ package com.longtailvideo.jwplayer.controller {
 				RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
 
 				if (_player.config.autostart) {
-					load(_model.playlist.currentItem);
+					if (locking) {
+						_unlockAutostart = true;
+					} else {
+						load(_model.playlist.currentItem);
+					}
 				}
 			}
 		}
@@ -261,9 +267,14 @@ package com.longtailvideo.jwplayer.controller {
 				if (!_setupFinalized) {
 					finalizeSetup();
 				}
-				if (!locking && _lockingResume) {
+				if (!locking && (_lockingResume || _unlockAutostart)) {
 					_lockingResume = false;
-					_model.media.play();
+					if (_unlockAutostart) {
+						load(_model.playlist.currentItem);
+						_unlockAutostart = false;
+					} else {
+						_model.media.play();
+					}
 				}
 				return true;
 			}
@@ -540,7 +551,9 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		private function lockHandler(evt:MediaEvent):void {
-			_model.media.play();
+			if (!locking) {
+				_model.media.play();
+			}
 		}
 
 
