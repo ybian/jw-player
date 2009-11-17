@@ -119,7 +119,9 @@
 		
 		/** Interval for the position progress **/
 		protected function positionHandler():void {
-			position = Math.round(stream.time * 10) / 10;
+			if (state == PlayerState.PLAYING) {
+				position = Math.round(stream.time * 10) / 10;
+			}
 			var bufferPercent:Number = stream.bytesTotal == 0 ? 0 : Math.round(stream.bytesLoaded / stream.bytesTotal * 100);
 			var bufferFill:Number = stream.bufferTime == 0 ? 0 : Math.round(stream.bufferLength / stream.bufferTime * 100);
 			if (bufferFill < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
@@ -130,6 +132,7 @@
 				sendBufferEvent(bufferPercent);
 			} else if (bufferFill > 95 && state == PlayerState.BUFFERING) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
+				return;
 			}
 			
 			if (state == PlayerState.BUFFERING){
