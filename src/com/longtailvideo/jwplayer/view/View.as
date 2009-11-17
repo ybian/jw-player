@@ -132,6 +132,8 @@ package com.longtailvideo.jwplayer.view {
 
 			_model.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
+			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, itemHandler);
+			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, itemHandler);
 			_model.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 
 			layoutManager = new PlayerLayoutManager(_player);

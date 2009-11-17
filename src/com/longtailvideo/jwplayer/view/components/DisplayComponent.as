@@ -61,9 +61,10 @@
 			}
 			_icon = new MovieClip();
 			addChildAt(icon, 1);
+
 			_text = new TextField();
 			var textColorTransform:ColorTransform = new ColorTransform();
-			textColorTransform.color = player.config.frontcolor ? player.config.frontcolor.color : 0xFFFFFF;
+			textColorTransform.color = player.config.frontcolor ? player.config.frontcolor.color : 0x999999;
 			text.transform.colorTransform = textColorTransform;
 			text.gridFitType = GridFitType.NONE;
 			addChildAt(text, 2);
@@ -146,20 +147,34 @@
 		
 		
 		public function setText(displayText:String):void {
-			text.text = displayText ? displayText : '';
+			if (_icon is Sprite && (_icon as Sprite).getChildByName('txt') is TextField) {
+				((_icon as Sprite).getChildByName('txt') as TextField).text = displayText ? displayText : '';
+				text.text = '';
+			} else {
+				text.text = displayText ? displayText : '';
+			}
 			positionText();
 		}
 		
 		
 		private function positionText():void {
-			if (text.width > background.scaleX * .75) {
-				text.width = background.scaleX * .75;
-				text.wordWrap = true;
+			if (text.text) {
+				text.visible = true;
+				if (text.width > background.scaleX * .75) {
+					text.width = background.scaleX * .75;
+					text.wordWrap = true;
+				} else {
+					text.autoSize = TextFormatAlign.CENTER;
+				}
+				text.x = (background.scaleX - text.textWidth) / 2;
+				if (_player.skin is SWFSkin) {
+					text.y = icon.y + (icon.height/2) + 10;
+				} else {
+					text.y = icon.y + icon.height + 10;
+				}
 			} else {
-				text.autoSize = TextFormatAlign.CENTER;
+				text.visible = false;
 			}
-			text.x = (background.scaleX - text.textWidth) / 2;
-			text.y = icon.y + (icon.height / 2) + 10;
 		}
 		
 		
@@ -247,5 +262,6 @@
 		protected function get background():MovieClip {
 			return _background;
 		}
+		
 	}
 }

@@ -508,6 +508,11 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		public function resize(width:Number, height:Number):void {
+			if (getConfigParam('position') == "none") {
+				visible = false;
+				return;
+			}
+			
 			_width = width;
 
 			if (getConfigParam('position') == 'over' || _player.fullscreen == true) {

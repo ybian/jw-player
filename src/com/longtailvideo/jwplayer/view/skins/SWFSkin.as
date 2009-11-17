@@ -73,34 +73,7 @@ package com.longtailvideo.jwplayer.view.skins {
 		
 		public override function getSkinElement(component:String, element:String):DisplayObject {
 			// Hack for the error icon
-			if (component == 'display') {
-				if (element == 'errorIcon' && super.getSkinElement(component, 'errorIcon')['icn']) {
-					var errorButton:Sprite = Draw.clone(super.getSkinElement('display', 'playIcon') as Sprite) as Sprite;
-					errorButton.removeChild(errorButton['icn']);
-					errorButton.x = 0;
-					errorButton.y = 0;
-					var errorIcon:Sprite = super.getSkinElement(component, 'errorIcon')['icn'];
-					errorButton.addChild(errorIcon);
-					var errorButttonBackground:DisplayObject = errorButton.getChildAt(0);
-					errorIcon.x = errorButttonBackground.x + (errorButttonBackground.width - errorIcon.width) / 2;
-					errorIcon.y = errorButttonBackground.y + (errorButttonBackground.height - errorIcon.height) / 2;
-					return errorButton;
-				} else if (super.getSkinElement(component, element) && super.getSkinElement(component, element)['bck']) {
-					var skinElement:DisplayObjectContainer = super.getSkinElement(component, element) as DisplayObjectContainer;
-					var xoffset:Number = skinElement['bck'].x * -1;
-					var yoffset:Number = skinElement['bck'].y * -1;
-					for (var i:Number = 0; i < skinElement.numChildren; i++){
-						var child:DisplayObject = skinElement.getChildAt(i);
-						if (child.name != 'bck'){
-							child.x += xoffset;
-							child.y += xoffset;
-						}
-					}
-					skinElement['bck'].x = 0;
-					skinElement['bck'].y = 0;
-					return skinElement;
-				}
-			} else if (component == "dock") {
+			if (component == "dock") {
 				var cls:Class;
 				try {
 					cls = _skin.loaderInfo.applicationDomain.getDefinition("dockbutton") as Class;
