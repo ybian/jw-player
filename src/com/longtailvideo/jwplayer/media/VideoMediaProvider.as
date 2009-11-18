@@ -4,7 +4,7 @@
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
-
+	
 	import flash.events.*;
 	import flash.media.*;
 	import flash.net.*;
@@ -60,18 +60,23 @@
 
 		/** Load content. **/
 		override public function load(itm:PlaylistItem):void {
+			var replay:Boolean;
 			if (_item != itm || _stream.bytesLoaded == 0) {
 				_item = itm;
 				media = _video;
 				_stream.checkPolicyFile = true;
 				_stream.play(item.file);
 			} else {
-				seek(0);
+				replay = true;
 			}
 			_positionInterval = setInterval(positionHandler, 200);
 			_loadTimer = setTimeout(loadTimerComplete, 3000);
 			setState(PlayerState.BUFFERING);
-			sendBufferEvent(0);
+			if (replay){
+				seek(0);
+			} else {
+				sendBufferEvent(0);
+			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			config.mute == true ? setVolume(0) : setVolume(config.volume);
 		}
