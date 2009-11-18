@@ -73,7 +73,7 @@
 			_loadTimer = setTimeout(loadTimerComplete, 3000);
 			setState(PlayerState.BUFFERING);
 			if (replay){
-				seek(0);
+				seekStream(0, false);
 			} else {
 				sendBufferEvent(0);
 			}
@@ -152,13 +152,19 @@
 
 		/** Seek to a new position. **/
 		override public function seek(pos:Number):void {
+			seekStream(pos);
+		}
+		
+		private function seekStream(pos:Number, ply:Boolean=true):void {
 			var bufferLength:Number = _stream.bytesLoaded / _stream.bytesTotal * item.duration;
 			if (pos <= bufferLength) {
 				super.seek(pos);
 				clearInterval(_positionInterval);
 				_positionInterval = undefined;
 				_stream.seek(position);
-				play();
+				if (ply){
+					play();
+				}
 			}
 		}
 
