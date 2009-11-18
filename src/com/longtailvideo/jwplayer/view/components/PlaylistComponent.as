@@ -427,6 +427,8 @@ package com.longtailvideo.jwplayer.view.components {
 			var title:TextField = getButton(idx).getChildByName("title") as TextField;
 			var description:TextField = getButton(idx).getChildByName("description") as TextField;
 			var duration:TextField = getButton(idx).getChildByName("duration") as TextField;
+			var author:TextField = getButton(idx).getChildByName("author") as TextField;
+			var tags:TextField = getButton(idx).getChildByName("tags") as TextField;
 			if (playlistItem.image) {
 				if (getConfigParam('thumbs') != false && _player.config.playlist != 'none' && playlistItem.image) {
 					var img:Sprite = getButton(idx).getChildByName("image") as Sprite;
@@ -456,6 +458,12 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 				if (title) { 
 					title.htmlText = "<b>" + playlistItem.title + "</b>"; 
+				}
+				if (author) { 
+					author.htmlText = playlistItem.author; 
+				}
+				if (tags) { 
+					tags.htmlText = playlistItem.tags; 
 				}
 				if (front) {
 					description.textColor = front.color;
