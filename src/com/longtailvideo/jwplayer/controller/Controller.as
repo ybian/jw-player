@@ -242,10 +242,7 @@ package com.longtailvideo.jwplayer.controller {
 					_model.media.pause();
 					_lockingResume = true;
 				}
-				// If it wasn't playing
-				if (_player.config.autostart || _lockingResume) {
-					_lockingResume = true;
-				}
+				
 				// Tell everyone you're locked
 				if (!wasLocked) {
 					dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_LOCKED));
