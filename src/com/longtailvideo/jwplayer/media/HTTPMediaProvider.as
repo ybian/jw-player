@@ -7,68 +7,67 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
-	
+
 	import flash.events.*;
 	import flash.media.*;
 	import flash.net.*;
 	import flash.utils.*;
-	
-	
+
+
 	public class HTTPMediaProvider extends MediaProvider {
 		/** NetConnection object for setup of the video stream. **/
-		protected var connection:NetConnection;
+		protected var _connection:NetConnection;
 		/** NetStream instance that handles the stream IO. **/
-		protected var stream:NetStream;
+		protected var _stream:NetStream;
 		/** Video object to be instantiated. **/
-		protected var video:Video;
+		protected var _video:Video;
 		/** Sound control object. **/
-		protected var transformer:SoundTransform;
-		/** ID for the position interval. **/
-		protected var interval:Number;
-		/** Interval ID for the loading. **/
-		protected var loadinterval:Number;
+		protected var _transformer:SoundTransform;
+		/** ID for the _position interval. **/
+		protected var _positionInterval:Number;
 		/** Save whether metadata has already been sent. **/
-		protected var meta:Boolean;
+		protected var _meta:Boolean;
 		/** Object with keyframe times and positions. **/
-		protected var keyframes:Object;
+		protected var _keyframes:Object;
 		/** Offset in bytes of the last seek. **/
-		protected var byteoffset:Number;
+		protected var _byteoffset:Number;
 		/** Offset in seconds of the last seek. **/
-		protected var timeoffset:Number;
+		protected var _timeoffset:Number = 0;
 		/** Boolean for mp4 / flv streaming. **/
-		protected var mp4:Boolean;
+		protected var _mp4:Boolean;
 		/** Load offset for bandwidth checking. **/
-		protected var loadtimer:Number;
+		protected var _loadtimer:Number;
 		/** Variable that takes reloading into account. **/
-		protected var iterator:Number;
+		protected var _iterator:Number;
 		/** Start parameter. **/
-		private var startparam:String = 'start';
-		
-		
+		private var _startparam:String = 'start';
+
+
 		/** Constructor; sets up the connection and display. **/
-		public function HTTPMediaProvider() {	
+		public function HTTPMediaProvider() {
+			super('http');
 		}
-		
+
+
 		public override function initializeMediaProvider(cfg:PlayerConfig):void {
 			super.initializeMediaProvider(cfg);
-			_provider = 'http';
-			connection = new NetConnection();
-			connection.connect(null);
-			stream = new NetStream(connection);
-			stream.checkPolicyFile = true;
-			stream.addEventListener(NetStatusEvent.NET_STATUS, statusHandler);
-			stream.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
-			stream.bufferTime = _config.bufferlength;
-			stream.client = new NetClient(this);
-			video = new Video(320, 240);
-			video.smoothing = _config.smoothing;
-			video.attachNetStream(stream);
-			transformer = new SoundTransform();
-			byteoffset = timeoffset = 0;
+			_connection = new NetConnection();
+			_connection.connect(null);
+			_stream = new NetStream(_connection);
+			_stream.checkPolicyFile = true;
+			_stream.addEventListener(NetStatusEvent.NET_STATUS, statusHandler);
+			_stream.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			_stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
+			_stream.bufferTime = config.bufferlength;
+			_stream.client = new NetClient(this);
+			_video = new Video(320, 240);
+			_video.smoothing = config.smoothing;
+			_video.attachNetStream(_stream);
+			_transformer = new SoundTransform();
+			_byteoffset = _timeoffset = 0;
 		}
-		
-		
+
+
 		/** Convert seekpoints to keyframes. **/
 		protected function convertSeekpoints(dat:Object):Object {
 			var kfr:Object = new Object();
@@ -80,59 +79,59 @@ package com.longtailvideo.jwplayer.media {
 			}
 			return kfr;
 		}
-		
-		
+
+
 		/** Catch security errors. **/
 		protected function errorHandler(evt:ErrorEvent):void {
 			error(evt.text);
 		}
-		
-		
+
+
 		/** Return a keyframe byteoffset or timeoffset. **/
-		protected function getOffset(pos:Number, tme:Boolean = false):Number {
-			if (!keyframes) {
+		protected function getOffset(pos:Number, tme:Boolean=false):Number {
+			if (!_keyframes) {
 				return 0;
 			}
-			for (var i:Number = 0; i < keyframes.times.length - 1; i++) {
-				if (keyframes.times[i] <= pos && keyframes.times[i + 1] >= pos) {
+			for (var i:Number = 0; i < _keyframes.times.length - 1; i++) {
+				if (_keyframes.times[i] <= pos && _keyframes.times[i + 1] >= pos) {
 					break;
 				}
 			}
 			if (tme == true) {
-				return keyframes.times[i];
+				return _keyframes.times[i];
 			} else {
-				return keyframes.filepositions[i];
+				return _keyframes.filepositions[i];
 			}
 		}
-		
-		
+
+
 		/** Create the video request URL. **/
 		protected function getURL():String {
 			var url:String = item.file;
-			var off:Number = byteoffset;
+			var off:Number = _byteoffset;
 			if (getConfigProperty('startparam') as String) {
-				startparam = getConfigProperty('startparam');
+				_startparam = getConfigProperty('startparam');
 			}
 			if (item.streamer) {
-				if(item['streamer'].indexOf('/') > 0) {
+				if (item['streamer'].indexOf('/') > 0) {
 					url = item.streamer;
-					url = getURLConcat(url,'file',item.file);
-				} else { 
-					startparam = item.streamer;
+					url = getURLConcat(url, 'file', item.file);
+				} else {
+					_startparam = item.streamer;
 				}
 			}
-			if (mp4) {
-				off = timeoffset;
-			} else if (startparam == 'starttime') {
-				startparam = 'start';
+			if (_mp4) {
+				off = _timeoffset;
+			} else if (_startparam == 'starttime') {
+				_startparam = 'start';
 			}
 			if (off > 0) {
-				url = getURLConcat(url, startparam, off);
+				url = getURLConcat(url, _startparam, off);
 			}
 			return url;
 		}
-		
-		
+
+
 		/** Concatenate a parameter to the url. **/
 		private function getURLConcat(url:String, prm:String, val:*):String {
 			if (url.indexOf('?') > -1) {
@@ -141,80 +140,59 @@ package com.longtailvideo.jwplayer.media {
 				return url + '?' + prm + '=' + val;
 			}
 		}
-		
-		
+
+
 		/** Load content. **/
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
-			_position = timeoffset;
-			if (stream.bytesLoaded + byteoffset < stream.bytesTotal) {
-				stream.close();
+			_position = _timeoffset;
+			if (_stream.bytesLoaded + _byteoffset < _stream.bytesTotal) {
+				_stream.close();
 			}
-			media = video;
-			stream.play(getURL());
-			iterator = 0;
-			clearInterval(interval);
-			interval = setInterval(positionInterval, 100);
-			clearInterval(loadinterval);
-			loadinterval = setInterval(loadHandler, 200);
+			media = _video;
+			_stream.play(getURL());
+			if (!_positionInterval) {
+				_positionInterval = setInterval(positionInterval, 100);
+			}
+			if (!_loadtimer) {
+				_loadtimer = setTimeout(loadTimeout, 3000);
+			}
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0, 0);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+			config.mute == true ? setVolume(0) : setVolume(config.volume);
 		}
-		
-		
-		/** Interval for the loading progress **/
-		protected function loadHandler():void {
-			var ldd:Number = stream.bytesLoaded;
-			var ttl:Number = stream.bytesTotal;
-			var pct:Number = timeoffset / (item.duration + 0.001);
-			var off:Number = Math.round(ttl * pct / (1 - pct));
-			ttl += off;
-			try {
-				var buff:Number = bufferPercent();
-				if (buff > 0) sendBufferEvent(buff, timeoffset);  
-			} catch (err:Error) {
-				error(err.getStackTrace());
-			}
-			if (ldd + off >= ttl && ldd > 0) {
-				clearInterval(loadinterval);
-			}
-			if (!loadtimer) {
-				loadtimer = setTimeout(loadTimeout, 3000);
-			}
-		}
-		
-		
+
+
 		/** timeout for checking the bitrate. **/
 		protected function loadTimeout():void {
 			var obj:Object = new Object();
-			obj.bandwidth = Math.round(stream.bytesLoaded / 1024 / 3 * 8);
+			obj.bandwidth = Math.round(_stream.bytesLoaded / 1024 / 3 * 8);
 			if (item.duration) {
-				obj.bitrate = Math.round(stream.bytesTotal / 1024 * 8 / item.duration);
+				obj.bitrate = Math.round(_stream.bytesTotal / 1024 * 8 / item.duration);
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: obj});
 		}
-		
-		
+
+
 		/** Get metadata information from netstream class. **/
 		public function onData(dat:Object):void {
 			if (dat.width) {
-				video.width = dat.width;
-				video.height = dat.height;
+				_video.width = dat.width;
+				_video.height = dat.height;
 				resize(_width, _height);
 			}
 			if (dat.duration && item.duration <= 0) {
 				item.duration = dat.duration;
 			}
-			if (dat['type'] == 'metadata' && !meta) {
-				meta = true;
+			if (dat['type'] == 'metadata' && !_meta) {
+				_meta = true;
 				if (dat.seekpoints) {
-					mp4 = true;
-					keyframes = convertSeekpoints(dat.seekpoints);
+					_mp4 = true;
+					_keyframes = convertSeekpoints(dat.seekpoints);
 				} else {
-					mp4 = false;
-					keyframes = dat.keyframes;
+					_mp4 = false;
+					_keyframes = dat.keyframes;
 				}
 				if (item.start > 0) {
 					seek(item.start);
@@ -222,86 +200,82 @@ package com.longtailvideo.jwplayer.media {
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: dat});
 		}
-		
-		
+
+
 		/** Pause playback. **/
 		override public function pause():void {
-			stream.pause();
-			clearInterval(interval);
+			_stream.pause();
+			clearInterval(_positionInterval);
+			_positionInterval = undefined;
 			super.pause();
 		}
-		
-		
+
+
 		/** Resume playing. **/
 		override public function play():void {
-			stream.resume();
-			clearInterval(interval);
-			interval = setInterval(positionInterval, 100);
+			_stream.resume();
+			if (!_positionInterval) {
+				_positionInterval = setInterval(positionInterval, 100);
+			}
 			super.play();
 		}
-		
-		
+
+
 		/** Interval for the position progress **/
 		protected function positionInterval():void {
-			iterator++;
-			if (iterator > 10) {
-				_position = Math.round(stream.time * 10) / 10;
-				if (mp4) {
-					_position += timeoffset;
-				}
-			}
-			var bfr:Number = stream.bufferLength / stream.bufferTime * 100;
-			if (bfr > 0 && bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
-				if (state == PlayerState.PLAYING && bfr < 25) {
-					stream.pause();
-					setState(PlayerState.BUFFERING);
-				}
-//				sendBufferEvent(bfr);
-			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
+			_position = Math.round(_stream.time * 10) / 10;
+			if (_mp4) {
+				_position += _timeoffset;
 			}
 			
-			var bufferPct:Number = stream.bytesLoaded / stream.bytesTotal * 100;
-			if (state == PlayerState.BUFFERING && bufferPct > 0) {
-				sendBufferEvent(bufferPct, timeoffset);
-			} else if (position < item.duration) {
-				if (state == PlayerState.PLAYING && position >= 0) {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPct, offset: timeoffset});
+			var bufferPercent:Number = (_stream.bytesLoaded / _stream.bytesTotal) * (1 - _timeoffset / item.duration) * 100;
+			var bufferTime:Number = _stream.bufferTime < (item.duration - position) ? _stream.bufferTime : Math.round(item.duration - position);
+			var bufferFill:Number = _stream.bufferTime == 0 ? 0 : Math.ceil(_stream.bufferLength / bufferTime * 100);
+			if (bufferFill < 25 && state == PlayerState.PLAYING) {
+				_stream.pause();
+				setState(PlayerState.BUFFERING);
+			} else if (bufferFill > 95 && state == PlayerState.BUFFERING) {
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
+			}
+
+			if (state == PlayerState.BUFFERING) {
+				sendBufferEvent(bufferPercent, _timeoffset);
+			} else if (_position < item.duration) {
+				if (state == PlayerState.PLAYING && _position >= 0) {
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: item.duration, bufferPercent: bufferPercent, offset: _timeoffset});
 				}
 			} else if (item.duration > 0) {
 				// Playback completed
 				complete();
 			}
 		}
-		
-		protected function bufferPercent():Number {
-			return stream ? (stream.bytesLoaded / stream.bytesTotal * 100) : 0;
-		}
-		
+
+
 		/** Seek to a specific second. **/
 		override public function seek(pos:Number):void {
 			var off:Number = getOffset(pos);
 			super.seek(pos);
-			clearInterval(interval);
-			if (off < byteoffset || off >= byteoffset + stream.bytesLoaded) {
-				timeoffset = _position = getOffset(pos, true);
-				byteoffset = off;
+			clearInterval(_positionInterval);
+			_positionInterval = undefined;
+			if (off < _byteoffset || off >= _byteoffset + _stream.bytesLoaded) {
+				_timeoffset = _position = getOffset(pos, true);
+				_byteoffset = off;
 				load(item);
 			} else {
 				if (state == PlayerState.PAUSED) {
-					stream.resume();
+					_stream.resume();
 				}
 				_position = pos;
-				if (mp4) {
-					stream.seek(getOffset(position - timeoffset, true));
+				if (_mp4) {
+					_stream.seek(getOffset(_position - _timeoffset, true));
 				} else {
-					stream.seek(getOffset(position, true));
+					_stream.seek(getOffset(_position, true));
 				}
 				play();
 			}
 		}
-		
-		
+
+
 		/** Receive NetStream status updates. **/
 		protected function statusHandler(evt:NetStatusEvent):void {
 			switch (evt.info.code) {
@@ -317,28 +291,28 @@ package com.longtailvideo.jwplayer.media {
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {status: evt.info.code}});
 		}
-		
-		
+
+
 		/** Destroy the HTTP stream. **/
 		override public function stop():void {
-			if (stream.bytesLoaded + byteoffset < stream.bytesTotal) {
-				stream.close();
+			if (_stream.bytesLoaded + _byteoffset < _stream.bytesTotal) {
+				_stream.close();
 			} else {
-				stream.pause();
+				_stream.pause();
 			}
-			clearInterval(interval);
-			clearInterval(loadinterval);
-			byteoffset = timeoffset = 0;
-			keyframes = undefined;
-			meta = false;
+			clearInterval(_positionInterval);
+			_positionInterval = undefined;
+			_position = _byteoffset = _timeoffset = 0;
+			_keyframes = undefined;
+			_meta = false;
 			super.stop();
 		}
-		
-		
+
+
 		/** Set the volume level. **/
 		override public function setVolume(vol:Number):void {
-			transformer.volume = vol / 100;
-			stream.soundTransform = transformer;
+			_transformer.volume = vol / 100;
+			_stream.soundTransform = _transformer;
 			super.setVolume(vol);
 		}
 	}

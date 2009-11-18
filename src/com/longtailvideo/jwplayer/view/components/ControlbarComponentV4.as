@@ -489,14 +489,15 @@ package com.longtailvideo.jwplayer.view.components {
 
 			var mark:DisplayObject = getSkinElementChild('timeSlider', 'mark');
 			var railWidth:Number = getSkinElementChild('timeSlider', 'rail').width;
-			var markWidth:Number = _player.state == PlayerState.IDLE ? 0 : Math.round((evt.bufferPercent / 100) * railWidth);
-			var offsetRatio:Number = evt.offset / evt.duration;
+			var markWidth:Number = _player.state == PlayerState.IDLE ? 0 : Math.round(evt.bufferPercent / 100 * railWidth);
+			var offset:Number = evt.offset / evt.duration;
 
 			try {
-				mark.x = evt.duration > 0 ? Math.round(railWidth * offsetRatio) : 0;
-				mark.width = markWidth * (1 - offsetRatio);
+				mark.x = evt.duration > 0 ? Math.round(railWidth * offset) : 0;
+				mark.width = markWidth;
 				mark.visible = _player.state != PlayerState.IDLE;
 			} catch (e:Error) {
+				trace(e);
 			}
 		}
 

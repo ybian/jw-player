@@ -386,7 +386,7 @@ package com.longtailvideo.jwplayer.controller {
 			} else {
 				_player.playlist.currentIndex = _player.playlist.currentIndex + 1;
 			}
-			loadPlaylistItem(_player.playlist.currentItem);
+			load(_player.playlist.currentItem);
 			return true;
 		}
 
@@ -400,7 +400,7 @@ package com.longtailvideo.jwplayer.controller {
 			} else {
 				_player.playlist.currentIndex = _player.playlist.currentIndex - 1;
 			}
-			loadPlaylistItem(_player.playlist.currentItem);
+			load(_player.playlist.currentItem);
 			return true;
 		}
 

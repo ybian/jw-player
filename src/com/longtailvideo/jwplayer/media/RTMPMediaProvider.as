@@ -1,5 +1,5 @@
 ﻿/**
- * Wrapper for playback of video streamed over RTMP.
+ * Wrapper for playback of _video streamed over RTMP.
  *
  * All playback functionalities are cross-server (FMS, Wowza, Red5), with the exception of:
  * - The SecureToken functionality (Wowza).
@@ -22,47 +22,47 @@ package com.longtailvideo.jwplayer.media {
 
 	public class RTMPMediaProvider extends MediaProvider {
 		/** Video object to be instantiated. **/
-		protected var video:Video;
-		/** NetConnection object for setup of the video stream. **/
-		protected var connection:NetConnection;
+		protected var _video:Video;
+		/** NetConnection object for setup of the _video _stream. **/
+		protected var _connection:NetConnection;
 		/** Loader instance that loads the XML file. **/
-		private var loader:URLLoader;
-		/** NetStream instance that handles the stream IO. **/
-		protected var stream:NetStream;
+		private var _loader:URLLoader;
+		/** NetStream instance that handles the _stream IO. **/
+		protected var _stream:NetStream;
 		/** Sound control object. **/
-		protected var transformer:SoundTransform;
+		protected var _transformer:SoundTransform;
 		/** Save the location of the XML redirect. **/
-		private var smil:String;
-		/** Save that the video has been started. **/
-		protected var started:Boolean;
-		/** ID for the position interval. **/
-		protected var interval:Number;
-		/** Save that a file is unpublished. **/
-		protected var unpublished:Boolean;
+		private var _smil:String;
+		/** Save that the _video has been _started. **/
+		protected var _started:Boolean;
+		/** ID for the position _positionInterval. **/
+		protected var _positionInterval:Number;
+		/** Save that a file is _unpublished. **/
+		protected var _unpublished:Boolean;
 
 
 		public function RTMPMediaProvider() {
+			super('rtmp');
 		}
 
 
 		/** Constructor; sets up the connection and display. **/
 		public override function initializeMediaProvider(cfg:PlayerConfig):void {
 			super.initializeMediaProvider(cfg);
-			_provider = 'rtmp';
-			connection = new NetConnection();
-			connection.addEventListener(NetStatusEvent.NET_STATUS, statusHandler);
-			connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
-			connection.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-			connection.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
-			connection.objectEncoding = ObjectEncoding.AMF0;
-			connection.client = new NetClient(this);
-			loader = new URLLoader();
-			loader.addEventListener(Event.COMPLETE, loaderHandler);
-			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-			video = new Video(320, 240);
-			video.smoothing = _config.smoothing;
-			transformer = new SoundTransform();
+			_connection = new NetConnection();
+			_connection.addEventListener(NetStatusEvent.NET_STATUS, statusHandler);
+			_connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
+			_connection.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			_connection.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
+			_connection.objectEncoding = ObjectEncoding.AMF0;
+			_connection.client = new NetClient(this);
+			_loader = new URLLoader();
+			_loader.addEventListener(Event.COMPLETE, loaderHandler);
+			_loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
+			_loader.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			_video = new Video(320, 240);
+			_video.smoothing = config.smoothing;
+			_transformer = new SoundTransform();
 		}
 
 
@@ -94,8 +94,8 @@ package com.longtailvideo.jwplayer.media {
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
 			if (getConfigProperty('loadbalance') as Boolean == true) {
-				smil = item.file;
-				loader.load(new URLRequest(smil));
+				_smil = item.file;
+				_loader.load(new URLRequest(_smil));
 			} else {
 				finishLoad();
 			}
@@ -114,10 +114,10 @@ package com.longtailvideo.jwplayer.media {
 		/** Finalizes the loading process **/
 		private function finishLoad():void {
 			if (!media) {
-				media = video;
+				media = _video;
 			}
-			connection.connect(item.streamer);
-			_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+			_connection.connect(item.streamer);
+			config.mute == true ? setVolume(0) : setVolume(config.volume);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 		}
 
@@ -125,8 +125,8 @@ package com.longtailvideo.jwplayer.media {
 		/** Get metadata information from netstream class. **/
 		public function onData(dat:Object):void {
 			if (dat.width) {
-				video.width = dat.width;
-				video.height = dat.height;
+				_video.width = dat.width;
+				_video.height = dat.height;
 				resize(_width, _height);
 			}
 			if (dat.duration && item.duration < 0) {
@@ -137,7 +137,7 @@ package com.longtailvideo.jwplayer.media {
 			} else if (dat.type == 'close') {
 				stop();
 			}
-			if (_config.ignoremeta != true) {
+			if (config.ignoremeta != true) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: dat});
 			}
 		}
@@ -145,10 +145,10 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Pause playback. **/
 		override public function pause():void {
-			stream.pause();
-			clearInterval(interval);
+			_stream.pause();
+			clearInterval(_positionInterval);
 			super.pause();
-			if (started && item.duration == 0) {
+			if (_started && item.duration == 0) {
 				stop();
 			}
 		}
@@ -156,39 +156,38 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Resume playing. **/
 		override public function play():void {
-			stream.resume();
-			interval = setInterval(positionInterval, 100);
+			_stream.resume();
+			_positionInterval = setInterval(positionInterval, 100);
 			super.play();
 		}
 
 
 		/** Interval for the position progress. **/
 		protected function positionInterval():void {
-			_position = Math.round(stream.time * 10) / 10;
-			var bfr:Number = Math.round(stream.bufferLength / stream.bufferTime * 100);
-			if (bfr < 95 && position < Math.abs(item.duration - stream.bufferTime - 1)) {
+			_position = Math.round(_stream.time * 10) / 10;
+			var bufferTime:Number = _stream.bufferTime < (item.duration - position) ? _stream.bufferTime : (item.duration - position);
+			var bfr:Number = Math.round(_stream.bufferLength / bufferTime * 100);
+			if (bfr < 95 && position < Math.abs(item.duration - _stream.bufferTime - 1)) {
 				if (state == PlayerState.PLAYING && bfr < 20) {
-					stream.pause();
+					_stream.pause();
 					setState(PlayerState.BUFFERING);
-					stream.bufferTime = _config.bufferlength;
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: _config.bufferlength}});
+					_stream.bufferTime = config.bufferlength;
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: config.bufferlength}});
 				}
 			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
-				stream.bufferTime = _config.bufferlength * 4;
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: _config.bufferlength * 4}});
+				_stream.bufferTime = config.bufferlength * 4;
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: config.bufferlength * 4}});
 			}
 
-			var bufferPercent:Number = Math.round((_position + stream.bufferLength) / item.duration * 100);
 			if (state == PlayerState.BUFFERING) {
-				// Totally accurate, but it looks strange
-				// sendBufferEvent(bufferPercent);
+				//TODO: This works, but it looks weird, as the bufferTime is changing
+				//sendBufferEvent(_stream.bufferLength / _stream.bufferTime * item.duration);
 			} else if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
-					// Totally accurate, but it looks strange
-					// sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent:bufferPercent});
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position,
-							duration: item.duration});
+					//TODO: This works, but it looks weird, as the bufferTime is changing
+					//sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferLength: _stream.bufferLength / _stream.bufferTime * item.duration});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 				}
 			} else if (!isNaN(position) && item.duration > 0) {
 				complete();
@@ -199,26 +198,26 @@ package com.longtailvideo.jwplayer.media {
 		/** Seek to a new position. **/
 		override public function seek(pos:Number):void {
 			_position = pos;
-			clearInterval(interval);
-			stream.seek(position);
-			interval = setInterval(positionInterval, 100);
-			//stream.resume();
+			clearInterval(_positionInterval);
+			_stream.seek(position);
+			_positionInterval = setInterval(positionInterval, 100);
+			//_stream.resume();
 			//super.play();
 		}
 
 
 		/** Start the netstream object. **/
 		protected function setStream():void {
-			stream = new NetStream(connection);
-			stream.checkPolicyFile = true;
-			stream.addEventListener(NetStatusEvent.NET_STATUS, statusHandler);
-			stream.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-			stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
-			stream.bufferTime = _config.bufferlength;
-			stream.client = new NetClient(this);
-			video.attachNetStream(stream);
-			interval = setInterval(positionInterval, 100);
-			stream.play(getID(item.file));
+			_stream = new NetStream(_connection);
+			_stream.checkPolicyFile = true;
+			_stream.addEventListener(NetStatusEvent.NET_STATUS, statusHandler);
+			_stream.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			_stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
+			_stream.bufferTime = config.bufferlength;
+			_stream.client = new NetClient(this);
+			_video.attachNetStream(_stream);
+			_positionInterval = setInterval(positionInterval, 100);
+			_stream.play(getID(item.file));
 		}
 
 
@@ -227,22 +226,22 @@ package com.longtailvideo.jwplayer.media {
 			switch (evt.info.code) {
 				case 'NetConnection.Connect.Success':
 					if (evt.info.secureToken != undefined) {
-						connection.call("secureTokenResponse", null, TEA.decrypt(evt.info.secureToken, _config.token));
+						_connection.call("secureTokenResponse", null, TEA.decrypt(evt.info.secureToken, config.token));
 					}
 					setStream();
 					var res:Responder = new Responder(streamlengthHandler);
-					connection.call("getStreamLength", res, getID(item.file));
-					connection.call("checkBandwidth", null);
+					_connection.call("getStreamLength", res, getID(item.file));
+					_connection.call("checkBandwidth", null);
 					break;
 				case 'NetStream.Play.Start':
-					if (item.start > 0 && !started) {
+					if (item.start > 0 && !_started) {
 						seek(item.start);
 					}
-					started = true;
+					_started = true;
 					break;
 				case 'NetStream.Seek.Notify':
-					clearInterval(interval);
-					interval = setInterval(positionInterval, 100);
+					clearInterval(_positionInterval);
+					_positionInterval = setInterval(positionInterval, 100);
 					break;
 				case 'NetConnection.Connect.Rejected':
 					try {
@@ -261,9 +260,9 @@ package com.longtailvideo.jwplayer.media {
 					break;
 				case 'NetStream.Failed':
 				case 'NetStream.Play.StreamNotFound':
-					if (unpublished) {
+					if (_unpublished) {
 						onData({type: 'complete'});
-						unpublished = false;
+						_unpublished = false;
 					} else {
 						error("Stream not found: " + item.file);
 					}
@@ -272,29 +271,29 @@ package com.longtailvideo.jwplayer.media {
 					error("Server not found: " + item.streamer);
 					break;
 				case 'NetStream.Play.UnpublishNotify':
-					unpublished = true;
+					_unpublished = true;
 					break;
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: evt.info});
 		}
 
 
-		/** Destroy the stream. **/
+		/** Destroy the _stream. **/
 		override public function stop():void {
-			if (stream && stream.time) {
-				stream.close();
+			if (_stream && _stream.time) {
+				_stream.close();
 			}
-			connection.close();
-			started = false;
-			clearInterval(interval);
+			_connection.close();
+			_started = false;
+			clearInterval(_positionInterval);
 			super.stop();
-			if (smil) {
-				item.file = smil;
+			if (_smil) {
+				item.file = _smil;
 			}
 		}
 
 
-		/** Get the streamlength returned from the connection. **/
+		/** Get the streamlength returned from the _connection. **/
 		private function streamlengthHandler(len:Number):void {
 			if (len > 0) {
 				onData({type: 'streamlength', duration: len});
@@ -304,10 +303,10 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Set the volume level. **/
 		override public function setVolume(vol:Number):void {
-			transformer.volume = vol / 100;
-			if (stream) {
+			_transformer.volume = vol / 100;
+			if (_stream) {
 				try {
-					stream.soundTransform = transformer;
+					_stream.soundTransform = _transformer;
 					super.setVolume(vol);
 				} catch (err:Error) {
 

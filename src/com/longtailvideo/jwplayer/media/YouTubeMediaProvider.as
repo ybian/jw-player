@@ -14,52 +14,56 @@ package com.longtailvideo.jwplayer.media {
 	import flash.net.LocalConnection;
 	import flash.net.URLRequest;
 	import flash.system.Security;
-	
-	
+
+
 	public class YouTubeMediaProvider extends MediaProvider {
-		/** Loader for loading the YouTube proxy **/
-		private var loader:Loader;
+		/** Loader for _loading the YouTube proxy **/
+		private var _loader:Loader;
 		/** 'Unique' string to use for proxy connection. **/
-		private var unique:String;
+		private var _unique:String;
 		/** Connection towards the YT proxy. **/
-		private var outgoing:LocalConnection;
+		private var _outgoing:LocalConnection;
 		/** connection from the YT proxy. **/
-		private var inbound:LocalConnection;
+		private var _inbound:LocalConnection;
 		/** Save that a load call has been sent. **/
-		private var loading:Boolean;
+		private var _loading:Boolean;
 		/** Save the connection state. **/
-		private var connected:Boolean;
-		
-		
+		private var _connected:Boolean;
+		/** Buffer percent **/
+		private var _bufferPercent:Number;
+		/** Time offset **/
+		private var _offset:Number = 0;
+
+
 		/** Setup YouTube connections and load proxy. **/
 		public function YouTubeMediaProvider() {
+			super('youtube');
 		}
-		
-		
+
+
 		public override function initializeMediaProvider(cfg:PlayerConfig):void {
 			super.initializeMediaProvider(cfg);
-			_provider = 'youtube';
 			Security.allowDomain('*');
-			outgoing = new LocalConnection();
-			outgoing.allowDomain('*');
-			outgoing.allowInsecureDomain('*');
-			outgoing.addEventListener(StatusEvent.STATUS, onLocalConnectionStatusChange);
-			inbound = new LocalConnection();
-			inbound.allowDomain('*');
-			inbound.allowInsecureDomain('*');
-			inbound.addEventListener(StatusEvent.STATUS, onLocalConnectionStatusChange);
-			inbound.client = this;
-			loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			_outgoing = new LocalConnection();
+			_outgoing.allowDomain('*');
+			_outgoing.allowInsecureDomain('*');
+			_outgoing.addEventListener(StatusEvent.STATUS, onLocalConnectionStatusChange);
+			_inbound = new LocalConnection();
+			_inbound.allowDomain('*');
+			_inbound.allowInsecureDomain('*');
+			_inbound.addEventListener(StatusEvent.STATUS, onLocalConnectionStatusChange);
+			_inbound.client = this;
+			_loader = new Loader();
+			_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 		}
-		
-		
+
+
 		/** Catch load errors. **/
 		private function errorHandler(evt:ErrorEvent):void {
 			error(evt.text);
 		}
-		
-		
+
+
 		/** xtract the current ID from a youtube URL **/
 		private function getID(url:String):String {
 			var arr:Array = url.split('?');
@@ -77,81 +81,84 @@ package com.longtailvideo.jwplayer.media {
 			}
 			return str;
 		}
-		
-		
+
+
 		/** Get the location of yt.swf. **/
 		private function getLocation():String {
 			var loc:String;
 			var url:String = RootReference.stage.loaderInfo.url;
 			if (url.indexOf('http://') == 0) {
-				unique = Math.random().toString().substr(2);
+				_unique = Math.random().toString().substr(2);
 				loc = url.substr(0, url.indexOf('.swf'));
-				loc = loc.substr(0, loc.lastIndexOf('/') + 1) + 'yt.swf?unique=' + unique;
+				loc = loc.substr(0, loc.lastIndexOf('/') + 1) + 'yt.swf?unique=' + _unique;
 			} else {
-				unique = '1';
+				_unique = '1';
 				loc = 'yt.swf';
 			}
 			return loc;
 		}
-		
-		
+
+
 		/** Load the YouTube movie. **/
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
-			_position = 0;
-			loading = true;
+			trace("laod");
+			_position = _offset = 0;
+			_loading = true;
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
-			if (connected) {
+			if (_connected) {
 				completeLoad(itm);
 			} else {
-				loader.load(new URLRequest(getLocation()));
-				inbound.connect('AS2_' + unique);
+				_loader.load(new URLRequest(getLocation()));
+				_inbound.connect('AS2_' + _unique);
 			}
 		}
-		
+
+
 		/** SWF loaded; add it to the tree **/
 		public function onSwfLoadComplete():void {
-			connected = true;
-			if (loading) {
+			_connected = true;
+			if (_loading) {
 				completeLoad(_item);
 			}
 		}
-		
+
+
 		/** Everything loaded - play the video **/
 		private function completeLoad(itm:PlaylistItem):void {
-			if (outgoing) {
+			if (_outgoing) {
 				var gid:String = getID(_item.file);
-				outgoing.send('AS3_' + unique, "cueVideoById", gid, _item.start);
-				resize(_config.width, _config.width / 4 * 3);
-				media = loader;
+				_outgoing.send('AS3_' + _unique, "cueVideoById", gid, _item.start);
+				resize(config.width, config.width / 4 * 3);
+				media = _loader;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-				_config.mute == true ? setVolume(0) : setVolume(_config.volume);
+				config.mute == true ? setVolume(0) : setVolume(config.volume);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
 		}
-		
-		
+
+
 		/** Pause the YouTube movie. **/
 		override public function pause():void {
-			outgoing.send('AS3_' + unique, "pauseVideo");
+			_outgoing.send('AS3_' + _unique, "pauseVideo");
 			super.pause();
 		}
-		
-		
+
+
 		/** Play or pause the video. **/
 		override public function play():void {
-			outgoing.send('AS3_' + unique, "playVideo");
+			_outgoing.send('AS3_' + _unique, "playVideo");
 			super.play();
 		}
-		
-		
+
+
 		/** error was thrown without this handler **/
 		public function onLocalConnectionStatusChange(evt:StatusEvent):void {
 			// sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META,{status:evt.code});
 		}
-		
-		
+
+
 		/** Catch youtube errors. **/
 		public function onError(erc:Number):void {
 			var msg:String = 'Video not found or deleted: ' + getID(item['file']);
@@ -160,8 +167,8 @@ package com.longtailvideo.jwplayer.media {
 			}
 			error(msg);
 		}
-		
-		
+
+
 		/** Catch youtube state changes. **/
 		public function onStateChange(stt:Number):void {
 			switch (Number(stt)) {
@@ -169,7 +176,7 @@ package com.longtailvideo.jwplayer.media {
 					// setState(PlayerState.IDLE);
 					break;
 				case 0:
-					if (_config.state != PlayerState.BUFFERING && _config.state != PlayerState.IDLE) {
+					if (state != PlayerState.BUFFERING && state != PlayerState.IDLE) {
 						complete();
 					}
 					break;
@@ -184,51 +191,65 @@ package com.longtailvideo.jwplayer.media {
 					break;
 			}
 		}
-		
-		
+
+
 		/** Catch Youtube load changes **/
 		public function onLoadChange(ldd:Number, ttl:Number, off:Number):void {
-			sendBufferEvent(ldd / ttl * 100);
+			_bufferPercent = Math.round(ldd / ttl * 100);
+			_offset = off / ttl * item.duration;
+			sendBufferEvent(_bufferPercent, _offset);
 		}
-		
-		
+
+
 		/** Catch Youtube _position changes **/
 		public function onTimeChange(pos:Number, dur:Number):void {
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: pos, duration: dur});
 			if (item.duration < 0) {
 				item.duration = dur;
 			}
+			if (state != PlayerState.PLAYING){
+				super.play();
+			}
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: pos, duration: item.duration, bufferPercent:_bufferPercent, offset: _offset});
 		}
-		
-		
+
+
 		/** Resize the YT player. **/
 		public override function resize(wid:Number, hei:Number):void {
-			outgoing.send('AS3_' + unique, "setSize", wid, hei);
+			_outgoing.send('AS3_' + _unique, "setSize", wid, hei);
 		}
-		
-		
+
+
 		/** Seek to _position. **/
 		override public function seek(pos:Number):void {
-			outgoing.send('AS3_' + unique, "seekTo", pos);
+			_offset = pos;
+			_outgoing.send('AS3_' + _unique, "seekTo", pos);
 			play();
 		}
-		
-		
+
+
 		/** Destroy the youtube video. **/
 		override public function stop():void {
-			if (connected) {
-				outgoing.send('AS3_' + unique, "stopVideo");
+			if (_connected) {
+				_outgoing.send('AS3_' + _unique, "stopVideo");
 			} else {
-				loading = false;
+				_loading = false;
 			}
+			_position = _offset = 0;
 			super.stop();
 		}
-		
-		
+
+
 		/** Set the volume level. **/
 		override public function setVolume(pct:Number):void {
-			outgoing.send('AS3_' + unique, "setVolume", pct);
+			_outgoing.send('AS3_' + _unique, "setVolume", pct);
 			super.setVolume(pct);
+		}
+		
+		/** Complete playback **/
+		override protected function complete():void {
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
+			setState(PlayerState.IDLE);
+			_position = _offset = 0;
 		}
 	}
 }

@@ -7,113 +7,116 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	
+
 	import flash.display.*;
 	import flash.events.*;
 	import flash.net.URLRequest;
 	import flash.system.LoaderContext;
 	import flash.utils.*;
-	
-	
+
+
 	public class ImageMediaProvider extends MediaProvider {
 		/** Loader that loads the image. **/
-		private var loader:Loader;
-		/** ID for the _position interval. **/
-		private var interval:Number;
-		
-		
+		private var _loader:Loader;
+		/** ID for the position _postitionInterval. **/
+		private var _postitionInterval:Number;
+
+
 		/** Constructor; sets up listeners **/
 		public function ImageMediaProvider() {
+			super('image');
 		}
+
 
 		public override function initializeMediaProvider(cfg:PlayerConfig):void {
 			super.initializeMediaProvider(cfg);
-			_provider = 'image';
-			loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
-			loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, progressHandler);
-			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+			_loader = new Loader();
+			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
+			_loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+			_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 		}
-		
-		
+
+
 		/** load image into screen **/
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
 			_position = 0;
-			loader.load(new URLRequest(_item.file), new LoaderContext(true));
+			_loader.load(new URLRequest(item.file), new LoaderContext(true));
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
 		}
-		
-		
+
+
 		/** Catch errors. **/
 		private function errorHandler(evt:ErrorEvent):void {
 			stop();
 			error(evt.text);
 		}
-		
-		
+
+
 		/** Load and place the image on stage. **/
 		private function loaderHandler(evt:Event):void {
-			media = loader;
+			media = _loader;
 			try {
-				Bitmap(loader.content).smoothing = true;
+				Bitmap(_loader.content).smoothing = true;
 			} catch (err:Error) {
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {height: evt.target.height, width: evt.target.width}});
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {height: evt.target.height,
+						width: evt.target.width}});
 			play();
 		}
-		
-		
+
+
 		/** Pause playback of the_item. **/
 		override public function pause():void {
-			clearInterval(interval);
+			clearInterval(_postitionInterval);
 			super.pause();
 		}
-		
-		
+
+
 		/** Resume playback of the_item. **/
 		override public function play():void {
 			super.play();
-			interval = setInterval(positionInterval, 100);
+			_postitionInterval = setInterval(positionInterval, 100);
 		}
-		
-		
+
+
 		/** Interval function that pings the _position. **/
 		protected function positionInterval():void {
-			_position = Math.round(_position * 10 + 1) / 10;
-			if (_position < _item.duration) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration});
+			_position = Math.round(position * 10 + 1) / 10;
+			if (position < _item.duration) {
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position,
+						duration: item.duration});
 			} else if (_item.duration > 0) {
 				complete();
 			}
 		}
-		
-		
+
+
 		/** Send load progress to player. **/
 		private function progressHandler(evt:ProgressEvent):void {
 			var pct:Number = Math.round(evt.bytesLoaded / evt.bytesTotal * 100);
 			sendBufferEvent(pct);
 		}
-		
-		
+
+
 		/** Seek to a certain _position in the_item. **/
 		override public function seek(pos:Number):void {
-			clearInterval(interval);
+			clearInterval(_postitionInterval);
 			_position = pos;
 			play();
 		}
-		
-		
-		/** Stop the image interval. **/
+
+
+		/** Stop the image _postitionInterval. **/
 		override public function stop():void {
-			if (loader.contentLoaderInfo.bytesLoaded != loader.contentLoaderInfo.bytesTotal) {
-				loader.close();
+			if (_loader.contentLoaderInfo.bytesLoaded != _loader.contentLoaderInfo.bytesTotal) {
+				_loader.close();
 			} else {
-				loader.unload();
+				_loader.unload();
 			}
-			clearInterval(interval);
+			clearInterval(_postitionInterval);
 			super.stop();
 		}
 	}

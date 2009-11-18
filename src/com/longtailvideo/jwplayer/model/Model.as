@@ -138,7 +138,7 @@ package com.longtailvideo.jwplayer.model {
 		}
 
 		public function setupMediaProviders():void {
-			setMediaProvider('default', new MediaProvider());
+			setMediaProvider('default', new MediaProvider('default'));
 			setMediaProvider('video', new VideoMediaProvider());
 			setMediaProvider('http', new HTTPMediaProvider());
 			setMediaProvider('rtmp', new RTMPMediaProvider());

@@ -243,9 +243,12 @@
 		
 		
 		protected function clickHandler(event:MouseEvent):void {
-			var clickEvent:String = player.state == PlayerState.PLAYING ? ViewEvent.JWPLAYER_VIEW_PAUSE : ViewEvent.JWPLAYER_VIEW_PLAY;
-			dispatchEvent(new ViewEvent(clickEvent));
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_CLICK));
+			if (player.state == PlayerState.PLAYING || player.state == PlayerState.BUFFERING) {
+				player.pause();
+			} else {
+				player.play();
+			}
 		}
 		
 		
