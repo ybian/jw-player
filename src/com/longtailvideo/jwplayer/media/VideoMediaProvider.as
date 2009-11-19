@@ -3,7 +3,6 @@
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.NetClient;
 	
 	import flash.events.*;
@@ -106,7 +105,7 @@
 				_video.height = dat.height;
 				resize(_width, _height);
 			}
-			if (dat.duration) {
+			if (dat.duration && ! item.duration) {
 				_item.duration = dat.duration;
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: dat});
@@ -132,11 +131,12 @@
 
 		/** Interval for the position progress **/
 		protected function positionHandler():void {
-			_position = Math.round(_stream.time * 10) / 10;
+			var _streamTime:Number = Math.min(_stream.time, item.duration);
+			_position = Math.round(_streamTime * 10) / 10;
 			var bufferPercent:Number = _stream.bytesLoaded / _stream.bytesTotal * 100;
-			var bufferTime:Number = _stream.bufferTime < (item.duration - position) ? _stream.bufferTime : (item.duration - position);
-			var bufferFill:Number = _stream.bufferTime == 0 ? 0 : Math.ceil(_stream.bufferLength / bufferTime * 100);
-
+			var bufferTime:Number = _stream.bufferTime < (item.duration - _streamTime) ? _stream.bufferTime : Math.floor(Math.abs(item.duration - _streamTime));
+			var bufferFill:Number = bufferTime == 0 ? 100 : Math.ceil(_stream.bufferLength / bufferTime * 100);
+			
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
 				_stream.pause();
 				setState(PlayerState.BUFFERING);
