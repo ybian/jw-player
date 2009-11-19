@@ -214,6 +214,7 @@ package com.longtailvideo.jwplayer.controller {
 					break;
 				case RepeatOptions.LIST:
 					if (_model.playlist.currentIndex == _model.playlist.length - 1 && !_model.config.shuffle) {
+						_lockingResume = false;
 						_model.playlist.currentIndex = 0;
 					} else {
 						next();
@@ -379,11 +380,8 @@ package com.longtailvideo.jwplayer.controller {
 			if (locking) {
 				return false;
 			}
-			if (_player.state == PlayerState.PLAYING || _player.state == PlayerState.BUFFERING || _model.config.repeat != RepeatOptions.NONE) {
-				_lockingResume = true;
-			} else {
-				_lockingResume = false;
-			}
+
+			_lockingResume = true;
 			if (_model.config.shuffle) {
 				stop();
 				shuffleItem();
@@ -409,10 +407,8 @@ package com.longtailvideo.jwplayer.controller {
 			if (locking) {
 				return false;
 			}
-			if (_player.state == PlayerState.PLAYING || _player.state == PlayerState.BUFFERING || _model.config.repeat != RepeatOptions.NONE) {
-				_lockingResume = true;
-			}
 
+			_lockingResume = true;
 			if (_model.playlist.currentIndex <= 0) {
 				stop();
 				_model.playlist.currentIndex = _model.playlist.length - 1;
@@ -434,11 +430,8 @@ package com.longtailvideo.jwplayer.controller {
 			if (locking) {
 				return false;
 			}
-			if (_player.state == PlayerState.PLAYING || _player.state == PlayerState.BUFFERING || _model.config.repeat != RepeatOptions.NONE) {
-				_lockingResume = true;
-			} else {
-				_lockingResume = false;
-			}
+
+			_lockingResume = true;
 			if (0 <= index && index < _player.playlist.length) {
 				stop();
 				_player.playlist.currentIndex = index;
