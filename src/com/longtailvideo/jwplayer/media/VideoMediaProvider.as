@@ -3,6 +3,7 @@
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.NetClient;
 	
 	import flash.events.*;
@@ -27,6 +28,8 @@
 		protected var _positionInterval:Number;
 		/** Load offset for bandwidth checking. **/
 		protected var _loadTimer:Number;
+		/** Whether the buffer has filled **/
+		private var _bufferFull:Boolean;
 
 
 		/** Constructor; sets up the connection and display. **/
@@ -66,17 +69,20 @@
 				media = _video;
 				_stream.checkPolicyFile = true;
 				_stream.play(item.file);
+				_stream.pause();
 			} else {
 				replay = true;
 			}
-			_positionInterval = setInterval(positionHandler, 200);
-			_loadTimer = setTimeout(loadTimerComplete, 3000);
+
 			setState(PlayerState.BUFFERING);
 			if (replay){
 				seekStream(0, false);
 			} else {
 				sendBufferEvent(0);
 			}
+			_bufferFull = false;
+			_positionInterval = setInterval(positionHandler, 200);
+			_loadTimer = setTimeout(loadTimerComplete, 3000);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			config.mute == true ? setVolume(0) : setVolume(config.volume);
 		}
@@ -134,8 +140,10 @@
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
 				_stream.pause();
 				setState(PlayerState.BUFFERING);
-			} else if (bufferFill > 95 && state == PlayerState.BUFFERING) {
+				_bufferFull = false;
+			} else if (bufferFill > 95 && state == PlayerState.BUFFERING && _bufferFull == false) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
+				_bufferFull = true;
 			}
 
 			if (state == PlayerState.BUFFERING) {

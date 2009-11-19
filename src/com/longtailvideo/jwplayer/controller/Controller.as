@@ -58,6 +58,8 @@ package com.longtailvideo.jwplayer.controller {
 		private var _lockingResume:Boolean = false;
 		/** Lock manager **/
 		private var _lockManager:LockManager;
+		/** Load after unlock - My favorite variable ever **/
+		private var _unlockAndLoad:Boolean;
 		
 		
 		/** A list with legacy CDN classes that are now redirected to buit-in ones. **/
@@ -125,6 +127,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function setupComplete(evt:Event):void {
 			_setupComplete = true;
+			RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
 			_view.completeView();
 			finalizeSetup();
 		}
@@ -143,18 +146,18 @@ package com.longtailvideo.jwplayer.controller {
 
 				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_READY));
 
-				_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadHandler, false, 1000);
-				_model.playlist.addEventListener(ErrorEvent.ERROR, errorHandler);
-				_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItemHandler, false, 1000);
+				_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, playlistLoadHandler);
+				_player.addEventListener(ErrorEvent.ERROR, errorHandler);
+				_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, playlistItemHandler);
 
 				_model.addEventListener(MediaEvent.JWPLAYER_MEDIA_COMPLETE, completeHandler);
 
 				// Broadcast playlist loaded (which was swallowed during player setup);
 				if (_model.playlist.length > 0) {
 					dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
+					dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, _model.playlist));
 				}
 
-				RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
 
 				if (_player.config.autostart) {
 					if (locking) {
@@ -168,7 +171,6 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		private function playlistLoadHandler(evt:PlaylistEvent=null):void {
-			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, _model.playlist));
 			if (_model.config.shuffle) {
 				shuffleItem();
 			} else {
@@ -238,7 +240,7 @@ package com.longtailvideo.jwplayer.controller {
 			var wasLocked:Boolean = locking;
 			if (_lockManager.lock(plugin, callback)) {
 				// If it was playing, pause playback and plan to resume when you're done
-				if (_player.state == PlayerState.BUFFERING || _player.state == PlayerState.PLAYING) {
+				if (_player.state == PlayerState.PLAYING || _player.state == PlayerState.BUFFERING) {
 					_model.media.pause();
 					_lockingResume = true;
 				}
@@ -269,8 +271,11 @@ package com.longtailvideo.jwplayer.controller {
 					if (_unlockAutostart) {
 						load(_model.playlist.currentItem);
 						_unlockAutostart = false;
+					} else if (_unlockAndLoad) {
+						load(_model.playlist.currentItem);
+						_unlockAndLoad = false;
 					} else {
-						_model.media.play();
+						play();
 					}
 				}
 				return true;
@@ -374,16 +379,28 @@ package com.longtailvideo.jwplayer.controller {
 			if (locking) {
 				return false;
 			}
+			if (_player.state == PlayerState.PLAYING || _player.state == PlayerState.BUFFERING || _model.config.repeat != RepeatOptions.NONE) {
+				_lockingResume = true;
+			} else {
+				_lockingResume = false;
+			}
 			if (_model.config.shuffle) {
+				stop();
 				shuffleItem();
 				play();
-				return true;
 			} else if (_model.playlist.currentIndex == _model.playlist.length - 1) {
+				stop();
 				_player.playlist.currentIndex = 0;
 			} else {
+				stop();
 				_player.playlist.currentIndex = _player.playlist.currentIndex + 1;
 			}
-			load(_player.playlist.currentItem);
+			
+			if (!load(_player.playlist.currentItem)){
+				_unlockAndLoad = true;
+				return false;
+			}
+
 			return true;
 		}
 
@@ -392,12 +409,23 @@ package com.longtailvideo.jwplayer.controller {
 			if (locking) {
 				return false;
 			}
+			if (_player.state == PlayerState.PLAYING || _player.state == PlayerState.BUFFERING || _model.config.repeat != RepeatOptions.NONE) {
+				_lockingResume = true;
+			}
+
 			if (_model.playlist.currentIndex <= 0) {
+				stop();
 				_model.playlist.currentIndex = _model.playlist.length - 1;
 			} else {
+				stop();
 				_player.playlist.currentIndex = _player.playlist.currentIndex - 1;
 			}
-			load(_player.playlist.currentItem);
+			
+			if (!load(_player.playlist.currentItem)){
+				_unlockAndLoad = true;
+				return false;	
+			}
+			
 			return true;
 		}
 
@@ -406,9 +434,18 @@ package com.longtailvideo.jwplayer.controller {
 			if (locking) {
 				return false;
 			}
+			if (_player.state == PlayerState.PLAYING || _player.state == PlayerState.BUFFERING || _model.config.repeat != RepeatOptions.NONE) {
+				_lockingResume = true;
+			} else {
+				_lockingResume = false;
+			}
 			if (0 <= index && index < _player.playlist.length) {
+				stop();
 				_player.playlist.currentIndex = index;
-				load(index);
+				if(!load(index)){
+					_unlockAndLoad = true;
+					return false;
+				}
 				return true;
 			}
 			return false;
@@ -439,7 +476,7 @@ package com.longtailvideo.jwplayer.controller {
 			if (locking) {
 				return false;
 			}
-
+			
 			if (_model.state != ModelStates.IDLE) {
 				_model.media.stop();
 			}
@@ -461,8 +498,11 @@ package com.longtailvideo.jwplayer.controller {
 			if (!_model.playlist.contains(item)) {
 				_model.playlist.load(item);
 			}
-			dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, _model.playlist));
-			var result:Boolean = false;
+
+			if (locking) {
+				_lockingResume = true;
+				return false;
+			}
 			try {
 				if (!item.provider) {
 					JWParser.updateProvider(item);
@@ -471,14 +511,13 @@ package com.longtailvideo.jwplayer.controller {
 				if (setProvider(item)) {
 					_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
 					_model.media.load(item);
-					result = true;
 				} else if (item.file) {
 					_model.playlist.load(item.file)
 				}
 			} catch (err:Error) {
-				result = false;
+				return false;
 			}
-			return result;
+			return true;
 		}
 
 
@@ -548,6 +587,7 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		private function lockHandler(evt:MediaEvent):void {
+			_lockingResume = true;
 			if (!locking) {
 				_model.media.play();
 			}

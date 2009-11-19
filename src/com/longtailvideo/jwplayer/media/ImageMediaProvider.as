@@ -7,7 +7,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-
+	
 	import flash.display.*;
 	import flash.events.*;
 	import flash.net.URLRequest;
@@ -62,9 +62,8 @@ package com.longtailvideo.jwplayer.media {
 			} catch (err:Error) {
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {height: evt.target.height,
-						width: evt.target.width}});
-			play();
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {height: evt.target.height, width: evt.target.width}});
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 		}
 
 

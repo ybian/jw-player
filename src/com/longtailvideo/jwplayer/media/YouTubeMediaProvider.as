@@ -221,7 +221,6 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Seek to _position. **/
 		override public function seek(pos:Number):void {
-			_offset = pos;
 			_outgoing.send('AS3_' + _unique, "seekTo", pos);
 			play();
 		}
