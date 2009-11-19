@@ -178,6 +178,7 @@ package com.longtailvideo.jwplayer.media {
 				case 0:
 					if (state != PlayerState.BUFFERING && state != PlayerState.IDLE) {
 						complete();
+						_offset = 0;
 					}
 					break;
 				case 1:
@@ -242,13 +243,6 @@ package com.longtailvideo.jwplayer.media {
 		override public function setVolume(pct:Number):void {
 			_outgoing.send('AS3_' + _unique, "setVolume", pct);
 			super.setVolume(pct);
-		}
-		
-		/** Complete playback **/
-		override protected function complete():void {
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_COMPLETE);
-			setState(PlayerState.IDLE);
-			_position = _offset = 0;
 		}
 	}
 }
