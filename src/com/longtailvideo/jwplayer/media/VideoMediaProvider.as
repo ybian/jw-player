@@ -3,7 +3,9 @@
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.NetClient;
+	import com.longtailvideo.jwplayer.utils.Strings;
 	
 	import flash.events.*;
 	import flash.media.*;
@@ -63,7 +65,7 @@
 		/** Load content. **/
 		override public function load(itm:PlaylistItem):void {
 			var replay:Boolean;
-			if (_item != itm || _stream.bytesLoaded == 0) {
+			if (item != itm || _stream.bytesLoaded == 0) {
 				_item = itm;
 				media = _video;
 				_stream.checkPolicyFile = true;
@@ -105,8 +107,8 @@
 				_video.height = dat.height;
 				resize(_width, _height);
 			}
-			if (dat.duration && ! item.duration) {
-				_item.duration = dat.duration;
+			if (dat.duration && item.duration < 0) {
+				item.duration = dat.duration;
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: dat});
 		}
@@ -137,6 +139,8 @@
 			var bufferTime:Number = _stream.bufferTime < (item.duration - _streamTime) ? _stream.bufferTime : Math.floor(Math.abs(item.duration - _streamTime));
 			var bufferFill:Number = bufferTime == 0 ? 100 : Math.ceil(_stream.bufferLength / bufferTime * 100);
 			
+			//Logger.log(Strings.print_r({streamtime: _streamTime, position:position, bufferPercent: bufferPercent, bufferFill: bufferFill, bufferTime:bufferTime}));
+			
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
 				_stream.pause();
 				setState(PlayerState.BUFFERING);
@@ -149,7 +153,7 @@
 			if (state == PlayerState.BUFFERING) {
 				sendBufferEvent(bufferPercent);
 			} else if (position < item.duration) {
-				if (state == PlayerState.PLAYING && _position >= 0) {
+				if (state == PlayerState.PLAYING && position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent: bufferPercent});
 				}
 			} else if (item.duration > 0) {
