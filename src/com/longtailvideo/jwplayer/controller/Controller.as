@@ -502,7 +502,7 @@ package com.longtailvideo.jwplayer.controller {
 				}
 
 				if (setProvider(item)) {
-					_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, lockHandler);
+					_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, bufferFullHandler);
 					_model.media.load(item);
 				} else if (item.file) {
 					_model.playlist.load(item.file)
@@ -579,10 +579,11 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function lockHandler(evt:MediaEvent):void {
-			_lockingResume = true;
+		private function bufferFullHandler(evt:MediaEvent):void {
 			if (!locking) {
 				_model.media.play();
+			} else {
+				_lockingResume = true;
 			}
 		}
 
