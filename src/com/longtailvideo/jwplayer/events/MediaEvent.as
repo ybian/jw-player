@@ -185,18 +185,28 @@ package com.longtailvideo.jwplayer.events {
 		}
 		
 		public override function toString():String {
-			return '[MediaEvent type="' + type + '"' 
-				+ ' bufferPercent="' + bufferPercent + '"'
-				+ ' duration="' + duration + '"'
-				+ ' position="' + position + '"'
-				+ ' offset="' + offset + '"'
-				+ ' volume="' + volume + '"'
-				+ ' mute="' + mute + '"'
-				+ ' message="' + message + '"'
-				+ ' id="' + id + '"'
-				+ ' client="' + client + '"'
-				+ ' version="' + version + '"'
-				+ "]";
+			var retString:String = '[MediaEvent type="' + type + '"';
+
+			if (this.type == MediaEvent.JWPLAYER_MEDIA_META) {
+				for (var s:String in metadata) {
+					retString += ' ' + s + '="' + metadata[s] + '"';
+				}
+			} else {
+				retString += ' bufferPercent="' + bufferPercent + '"';
+				retString += ' duration="' + duration + '"';
+				retString += ' position="' + position + '"';
+				retString += ' offset="' + offset + '"';
+				retString += ' volume="' + volume + '"';
+				retString += ' mute="' + mute + '"';
+				retString += ' message="' + message + '"';
+			}
+			
+			retString += ' id="' + id + '"'
+			retString += ' client="' + client + '"'
+			retString += ' version="' + version + '"'
+			retString += "]";
+			
+			return retString;
 		}
 	}
 }

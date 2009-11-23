@@ -24,10 +24,6 @@ package com.longtailvideo.jwplayer.player {
 		 */
 		function get version():String;
 		/**
-		 * Player type getter
-		 */
-		function get commercial():Boolean;
-		/**
 		 * Reference to player's skin.  If no skin has been loaded, returns null.
 		 */
 		function get skin():ISkin;

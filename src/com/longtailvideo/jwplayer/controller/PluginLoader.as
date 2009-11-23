@@ -34,7 +34,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		private var loaders:Dictionary;
 		
-		private var pluginRepository:String = "http://plugins.longtailvideo.com/";
+		protected function get pluginRepository():String { return "http://plugins.longtailvideo.com/"; }
 		
 		public function PluginLoader() {
 			loaders = new Dictionary();

@@ -2,8 +2,7 @@ package com.longtailvideo.jwplayer.view {
 
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
-	import com.longtailvideo.jwplayer.model.Model;
-	import com.longtailvideo.jwplayer.player.PlayerVersion;
+	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Stretcher;
@@ -21,8 +20,8 @@ package com.longtailvideo.jwplayer.view {
 	 **/
 	public class RightclickMenu extends GlobalEventDispatcher {
 
-		/** Player model. **/
-		protected var _model:Model;
+		/** Player API. **/
+		protected var _player:IPlayer;
 		/** Context menu **/
 		protected var context:ContextMenu;
 
@@ -36,8 +35,8 @@ package com.longtailvideo.jwplayer.view {
 		protected var stretching:ContextMenuItem;
 	
 		/** Constructor. **/
-		public function RightclickMenu(model:Model, clip:MovieClip) {
-			_model = model;
+		public function RightclickMenu(player:IPlayer, clip:MovieClip) {
+			_player = player;
 			context = new ContextMenu();
 			context.hideBuiltInItems();
 			clip.contextMenu = context;
@@ -58,46 +57,46 @@ package com.longtailvideo.jwplayer.view {
 				addItem(fullscreen, fullscreenHandler);
 			} catch (err:Error) {
 			}
-			stretching = new ContextMenuItem('Stretching is ' + _model.config.stretching + '...');
+			stretching = new ContextMenuItem('Stretching is ' + _player.config.stretching + '...');
 			addItem(stretching, stretchHandler);
-			if (_model.config['abouttext'] == 'JW Player' || _model.config['abouttext'] == undefined) {
-				about = new ContextMenuItem('About JW Player ' + PlayerVersion.version + '...');
+			if (_player.config['abouttext'] == 'JW Player' || _player.config['abouttext'] == undefined) {
+				about = new ContextMenuItem('About JW Player ' + _player.version + '...');
 			} else {
-				about = new ContextMenuItem('About ' + _model.config['abouttext'] + '...');
+				about = new ContextMenuItem('About ' + _player.config['abouttext'] + '...');
 			}
 			addItem(about, aboutHandler);
 			if (Capabilities.isDebugger == true) {
-				debug = new ContextMenuItem('Logging to ' + _model.config.debug + '...');
+				debug = new ContextMenuItem('Logging to ' + _player.config.debug + '...');
 				addItem(debug, debugHandler);
 			}
 		}
 
 		/** jump to the about page. **/
 		private function aboutHandler(evt:ContextMenuEvent):void {
-			navigateToURL(new URLRequest(_model.config['aboutlink']), '_blank');
+			navigateToURL(new URLRequest(_player.config['aboutlink']), '_blank');
 		}
 
 		/** change the debug system. **/
 		private function debugHandler(evt:ContextMenuEvent):void {
 			var arr:Array = new Array(Logger.NONE, Logger.ARTHROPOD, Logger.CONSOLE, Logger.TRACE);
-			var idx:Number = arr.indexOf(_model.config.debug);
+			var idx:Number = arr.indexOf(_player.config.debug);
 			idx == arr.length - 1 ? idx = 0 : idx++;
 			debug.caption = 'Logging to ' + arr[idx] + '...';
 			setCookie('debug', arr[idx]);
-			_model.config.debug = arr[idx];
+			_player.config.debug = arr[idx];
 		}
 
 		/** Toggle the fullscreen mode. **/
 		private function fullscreenHandler(evt:ContextMenuEvent):void {
-			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, !_model.fullscreen));
+			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, !_player.fullscreen));
 		}
 
 		/** Change the stretchmode. **/
 		private function stretchHandler(evt:ContextMenuEvent):void {
 			var arr:Array = new Array(Stretcher.UNIFORM, Stretcher.FILL, Stretcher.EXACTFIT, Stretcher.NONE);
-			var idx:Number = arr.indexOf(_model.config.stretching);
+			var idx:Number = arr.indexOf(_player.config.stretching);
 			idx == arr.length - 1 ? idx = 0 : idx++;
-			_model.config.stretching = arr[idx];
+			_player.config.stretching = arr[idx];
 			stretching.caption = 'Stretching is ' + arr[idx] + '...';
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_REDRAW));
 		}

@@ -77,8 +77,6 @@
 
 			<!-- Ignore missing type declarations -->
 			<arg line="-warnings=false" />
-
-			<arg line="-define=CONFIG::commercial,false" />
 		</exec>
 	</target>
 
@@ -131,7 +129,6 @@
 		<antcall target="build-test-unit">
 			<param name="swf" value="UnitTestWindowed.swf" />
 			<param name="class" value="PlayerTest.mxml" />
-			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
 
@@ -139,7 +136,6 @@
 		<antcall target="build-test-unit">
 			<param name="swf" value="UnitTestWindowless.swf" />
 			<param name="class" value="PlayerTest.mxml" />
-			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
 
@@ -207,11 +203,8 @@
 			<!-- Compile with network sandbox -->
 			<arg line="-use-network=true" />
 
-			<!-- Ignore missing type definitions -->
-			<arg line="-warnings=false" />
-
-			<!-- Allow additional arguments to be passed in as parameters -->
-			<arg value="${additionalArgLine}" />
+			<!-- Ignore missing type definitions and include additional arguments -->
+			<arg line="-warnings=false ${additionalArgLine}" />
 
 			<!-- Enable debugging -->
 			<arg line="${debugLine}" />
@@ -255,7 +248,6 @@
 			<param name="package" value="${application.package}" />
 			<param name="class" value="${application.class}" />
 			<param name="swf" value="player" />
-			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
 
@@ -264,16 +256,6 @@
 			<param name="package" value="${application.package}" />
 			<param name="class" value="${application.class}" />
 			<param name="swf" value="player" />
-			<param name="additionalArgs" value="-define=CONFIG::commercial,false" />
-		</antcall>
-	</target>
-
-	<target name="build-release-commercial-player" depends="check-properties, clean-release">
-		<antcall target="release-swf">
-			<param name="package" value="${application.package}" />
-			<param name="class" value="${application.class}" />
-			<param name="swf" value="commercial-player" />
-			<param name="additionalArgs" value="-define=CONFIG::commercial,true" />
 		</antcall>
 	</target>
 
@@ -294,9 +276,11 @@
 			<arg line="-compiler.library-path '${flexsdk.lib.dir}'" />
 			<arg line="-compiler.library-path '${lib.dir}'" />
 			<arg line="-include-classes com.longtailvideo.jwplayer.player.Player" />
-			<arg line="-link-report='${release.dir}/sdk-classes.xml'" />
-			<arg line="-define=CONFIG::commercial,true" />
+			<arg line="-link-report='${sdk.dir}/jwplayer-5-classes.xml'" />
 		</exec>
+		
+		<move file="${sdk.dir}/jwplayer-5-classes.xml" todir="${sdk.dir}/lib/" />
+		
 	</target>
 
 

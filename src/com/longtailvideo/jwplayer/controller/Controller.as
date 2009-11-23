@@ -44,26 +44,26 @@ package com.longtailvideo.jwplayer.controller {
 	public class Controller extends GlobalEventDispatcher {
 
 		/** MVC References **/
-		private var _player:IPlayer;
-		private var _model:Model;
-		private var _view:View;
+		protected var _player:IPlayer;
+		protected var _model:Model;
+		protected var _view:View;
 
 		/** Setup completed **/
-		private var _setupComplete:Boolean = false;
+		protected var _setupComplete:Boolean = false;
 		/** Setup finalized **/
-		private var _setupFinalized:Boolean = false;
+		protected var _setupFinalized:Boolean = false;
 		/** Whether to autostart on unlock **/
-		private var _unlockAutostart:Boolean = false;
+		protected var _unlockAutostart:Boolean = false;
 		/** Whether to resume on unlock **/
-		private var _lockingResume:Boolean = false;
+		protected var _lockingResume:Boolean = false;
 		/** Lock manager **/
-		private var _lockManager:LockManager;
+		protected var _lockManager:LockManager;
 		/** Load after unlock - My favorite variable ever **/
-		private var _unlockAndLoad:Boolean;
+		protected var _unlockAndLoad:Boolean;
 		
 		
 		/** A list with legacy CDN classes that are now redirected to buit-in ones. **/
-		private var cdns:Object = {
+		protected var cdns:Object = {
 				bitgravity:{'http.startparam':'starttime', provider:'http'},
 				edgecast:{'http.startparam':'ec_seek', provider:'http'},
 				flvseek:{'http.startparam':'fs', provider:'http'},
@@ -73,7 +73,7 @@ package com.longtailvideo.jwplayer.controller {
 		};
 		
 		/** Reference to a PlaylistItem which has triggered an external MediaProvider load **/
-		private var _delayedItem:PlaylistItem;
+		protected var _delayedItem:PlaylistItem;
 		
 		public function Controller(player:IPlayer, model:Model, view:View) {
 			_player = player;
@@ -98,7 +98,7 @@ package com.longtailvideo.jwplayer.controller {
 			setup.setupPlayer();
 		}
 
-		private function addViewListeners():void {
+		protected function addViewListeners():void {
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PLAY, playHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_PAUSE, pauseHandler);
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_STOP, stopHandler);
@@ -112,20 +112,20 @@ package com.longtailvideo.jwplayer.controller {
 			_view.addEventListener(ViewEvent.JWPLAYER_VIEW_REDRAW, redrawHandler);
 		}
 
-		private function playHandler(evt:ViewEvent):void { play(); }
-		private function stopHandler(evt:ViewEvent):void { stop(); }
-		private function pauseHandler(evt:ViewEvent):void { pause(); }
-		private function nextHandler(evt:ViewEvent):void { next(); }
-		private function prevHandler(evt:ViewEvent):void { previous(); }
-		private function seekHandler(evt:ViewEvent):void { seek(evt.data); }
-		private function muteHandler(evt:ViewEvent):void { mute(evt.data); }
-		private function volumeHandler(evt:ViewEvent):void { setVolume(evt.data); }
-		private function fullscreenHandler(evt:ViewEvent):void { fullscreen(evt.data); }
-		private function loadHandler(evt:ViewEvent):void { load(evt.data); }
-		private function redrawHandler(evt:ViewEvent):void { redraw(); }
+		protected function playHandler(evt:ViewEvent):void { play(); }
+		protected function stopHandler(evt:ViewEvent):void { stop(); }
+		protected function pauseHandler(evt:ViewEvent):void { pause(); }
+		protected function nextHandler(evt:ViewEvent):void { next(); }
+		protected function prevHandler(evt:ViewEvent):void { previous(); }
+		protected function seekHandler(evt:ViewEvent):void { seek(evt.data); }
+		protected function muteHandler(evt:ViewEvent):void { mute(evt.data); }
+		protected function volumeHandler(evt:ViewEvent):void { setVolume(evt.data); }
+		protected function fullscreenHandler(evt:ViewEvent):void { fullscreen(evt.data); }
+		protected function loadHandler(evt:ViewEvent):void { load(evt.data); }
+		protected function redrawHandler(evt:ViewEvent):void { redraw(); }
 
 
-		private function setupComplete(evt:Event):void {
+		protected function setupComplete(evt:Event):void {
 			_setupComplete = true;
 			RootReference.stage.dispatchEvent(new Event(Event.RESIZE));
 			_view.completeView();
@@ -133,14 +133,14 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function setupError(evt:ErrorEvent):void {
+		protected function setupError(evt:ErrorEvent):void {
 			Logger.log("STARTUP: Error occurred during player startup: " + evt.text);
 			_view.completeView(true, evt.text);
 			dispatchEvent(evt.clone());
 		}
 
 
-		private function finalizeSetup():void {
+		protected function finalizeSetup():void {
 			if (!locking && _setupComplete && !_setupFinalized) {
 				_setupFinalized = true;
 
@@ -170,7 +170,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function playlistLoadHandler(evt:PlaylistEvent=null):void {
+		protected function playlistLoadHandler(evt:PlaylistEvent=null):void {
 			if (_model.config.shuffle) {
 				shuffleItem();
 			} else {
@@ -179,27 +179,27 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function shuffleItem():void {
+		protected function shuffleItem():void {
 			_model.playlist.currentIndex = Math.floor(Math.random() * _model.playlist.length);
 		}
 
 
-		private function playlistItemHandler(evt:PlaylistEvent):void {
+		protected function playlistItemHandler(evt:PlaylistEvent):void {
 			_model.config.item = _model.playlist.currentIndex;
 		}
 
 
-		private function errorHandler(evt:ErrorEvent):void {
+		protected function errorHandler(evt:ErrorEvent):void {
 			errorState(evt.text);
 		}
 
 
-		private function errorState(message:String=""):void {
+		protected function errorState(message:String=""):void {
 			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, message));
 		}
 
 
-		private function completeHandler(evt:MediaEvent):void {
+		protected function completeHandler(evt:MediaEvent):void {
 			switch (_model.config.repeat) {
 				case RepeatOptions.SINGLE:
 					play();
@@ -487,7 +487,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function loadPlaylistItem(item:PlaylistItem):Boolean {
+		protected function loadPlaylistItem(item:PlaylistItem):Boolean {
 			if (!_model.playlist.contains(item)) {
 				_model.playlist.load(item);
 			}
@@ -514,7 +514,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function loadString(item:String):Boolean {
+		protected function loadString(item:String):Boolean {
 			if (Strings.extension(item) == "xml") {
 				_model.playlist.load(item);
 				return true;
@@ -525,7 +525,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function loadNumber(item:Number):Boolean {
+		protected function loadNumber(item:Number):Boolean {
 			if (item >= 0 && item < _model.playlist.length) {
 				return loadPlaylistItem(_model.playlist.getItemAt(item));
 			}
@@ -533,7 +533,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function loadObject(item:Object):Boolean {
+		protected function loadObject(item:Object):Boolean {
 			if ((item as Object).hasOwnProperty('file')) {
 				return loadPlaylistItem(new PlaylistItem(item));
 			}
@@ -541,7 +541,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function setProvider(item:PlaylistItem):Boolean {
+		protected function setProvider(item:PlaylistItem):Boolean {
 			var provider:String = item.provider;
 			if (provider) {
 
@@ -570,7 +570,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function mediaSourceLoaded(evt:Event):void {
+		protected function mediaSourceLoaded(evt:Event):void {
 			var loader:MediaProviderLoader = evt.target as MediaProviderLoader;
 			var item:PlaylistItem = _delayedItem;
 			_delayedItem = null;
@@ -620,7 +620,7 @@ package com.longtailvideo.jwplayer.controller {
 		}
 
 
-		private function setCookie(name:String, value:*):void {
+		protected function setCookie(name:String, value:*):void {
 			Configger.saveCookie(name, value);
 		}
 

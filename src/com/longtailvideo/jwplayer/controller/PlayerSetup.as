@@ -49,15 +49,15 @@ package com.longtailvideo.jwplayer.controller {
 	public class PlayerSetup extends EventDispatcher {
 
 		/** MVC references **/
-		private var _player:IPlayer;
-		private var _model:Model;
-		private var _view:View;
+		protected var _player:IPlayer;
+		protected var _model:Model;
+		protected var _view:View;
 		
 		/** TaskQueue **/
-		private var tasker:TaskQueue;
+		protected var tasker:TaskQueue;
 		
 		/** User-defined configuration **/
-		private var confHash:Object;
+		protected var confHash:Object;
 		
 		public function PlayerSetup(player:IPlayer, model:Model, view:View) {
 			_player = player;
@@ -82,19 +82,19 @@ package com.longtailvideo.jwplayer.controller {
 			tasker.runTasks();
 		}
 		
-		private function setupTasksComplete(evt:Event):void {
+		protected function setupTasksComplete(evt:Event):void {
 			complete();
 		}
 		
-		private function setupTasksFailed(evt:ErrorEvent):void {
+		protected function setupTasksFailed(evt:ErrorEvent):void {
 			error(evt.text);
 		}
 
-		private function complete():void {
+		protected function complete():void {
 			dispatchEvent(new Event(Event.COMPLETE));
 		}
 		
-		private function error(message:String):void {
+		protected function error(message:String):void {
 			dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, message));
 		}
 		
@@ -102,13 +102,13 @@ package com.longtailvideo.jwplayer.controller {
 		// Tasks
 		///////////////////////
 		
-		private function insertDelay():void {
+		protected function insertDelay():void {
 			var timer:Timer = new Timer(100, 1);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, tasker.success);
 			timer.start();
 		}
 
-		private function loadConfig():void {
+		protected function loadConfig():void {
 			var configger:Configger = new Configger();
 			configger.addEventListener(Event.COMPLETE, tasker.success);
 			configger.addEventListener(ErrorEvent.ERROR, tasker.failure);
@@ -120,11 +120,11 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 
-		private function loadConfigComplete(evt:Event):void {
+		protected function loadConfigComplete(evt:Event):void {
 			confHash = (evt.target as Configger).config;
 		}
 
-		private function loadSkin(evt:ErrorEvent=null):void {
+		protected function loadSkin(evt:ErrorEvent=null):void {
 			var skin:ISkin;
 			if (confHash && confHash['skin'] && evt == null) {
 				if (Strings.extension(confHash['skin']) == "swf") {
@@ -142,7 +142,7 @@ package com.longtailvideo.jwplayer.controller {
 			skin.load(confHash['skin']);
 		}
 		
-		private function loadSkinComplete(event:Event=null):void {
+		protected function loadSkinComplete(event:Event=null):void {
 			if (event) {
 				var skin:ISkin = event.target as ISkin;
 				skin.removeEventListener(Event.COMPLETE, tasker.success);
@@ -159,12 +159,12 @@ package com.longtailvideo.jwplayer.controller {
 			Logger.setConfig(_model.config);
 		}
 
-		private function setupMediaProviders():void {
+		protected function setupMediaProviders():void {
 			_model.setupMediaProviders();
 			tasker.success();
 		}
 
-		private function setupView():void {
+		protected function setupView():void {
 			try {
 				_view.setupView();
 				tasker.success();
@@ -173,7 +173,7 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 
-		private function loadPlugins():void {
+		protected function loadPlugins():void {
 			if (_model.config.plugins) {
 				var loader:PluginLoader = new PluginLoader();
 				loader.addEventListener(Event.COMPLETE, tasker.success);
@@ -184,7 +184,7 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 		
-		private function loadPluginsComplete(event:Event=null):void {
+		protected function loadPluginsComplete(event:Event=null):void {
 			if (event) {
 				var loader:PluginLoader = event.target as PluginLoader;
 
@@ -209,7 +209,7 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 
-		private function loadPlaylist():void {
+		protected function loadPlaylist():void {
 			_model.playlist.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, tasker.success);
 			_model.playlist.addEventListener(PlayerEvent.JWPLAYER_ERROR, tasker.failure);
 
@@ -222,12 +222,12 @@ package com.longtailvideo.jwplayer.controller {
 			}
 		}
 
-		private function loadPlaylistComplete(event:Event=null):void {
+		protected function loadPlaylistComplete(event:Event=null):void {
 			_model.playlist.removeEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, tasker.success);
 			_model.playlist.removeEventListener(PlayerEvent.JWPLAYER_ERROR, tasker.failure);
 		}
 
-		private function initPlugins():void {
+		protected function initPlugins():void {
 			for each (var pluginId:String in _view.loadedPlugins()) {
 				try {
 					var plugin:IPlugin = _view.getPlugin(pluginId);

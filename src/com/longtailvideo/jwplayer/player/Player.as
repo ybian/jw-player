@@ -29,12 +29,9 @@
 	 * @author Pablo Schklowsky
 	 */
 	public class Player extends Sprite implements IPlayer {
-		protected static var _commercial:Boolean = Boolean(CONFIG::commercial);
-
-		private var model:Model;
-		private var view:View;
-		private var controller:Controller;
-		
+		protected var model:Model;
+		protected var view:View;
+		protected var controller:Controller;
 		
 		/** Player constructor **/
 		public function Player() {
@@ -47,18 +44,29 @@
 		}
 		
 		
-		private function setupPlayer(event:Event = null):void {
+		protected function setupPlayer(event:Event=null):void {
 			try {
 				this.removeEventListener(Event.ADDED_TO_STAGE, setupPlayer);
 			} catch (err:Error) {
 			}
-			model = new Model();
-			view = new View(this, model);
-			controller = new Controller(this, model, view);
+			model = newModel();
+			view = newView(model);
+			controller = newController(model, view);
 			controller.addEventListener(PlayerEvent.JWPLAYER_READY, playerReady, false, -1);
 			controller.setupPlayer();
 		}
 		
+		protected function newModel():Model {
+			return new Model();
+		}
+		
+		protected function newView(mod:Model):View {
+			return new View(this, mod);
+		}
+		
+		protected function newController(mod:Model, vw:View):Controller {
+			return new Controller(this, mod, vw);
+		} 
 		
 		protected function playerReady(evt:PlayerEvent):void {
 			// Only handle JWPLAYER_READY once
@@ -94,14 +102,6 @@
 		 */
 		public function get version():String {
 			return PlayerVersion.version;
-		}
-		
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function get commercial():Boolean {
-			return _commercial;
 		}
 		
 		

@@ -36,38 +36,38 @@ package com.longtailvideo.jwplayer.view {
 
 
 	public class View extends GlobalEventDispatcher {
-		private var _player:IPlayer;
-		private var _model:Model;
-		private var _skin:ISkin;
-		private var _components:IPlayerComponents;
-		private var _fullscreen:Boolean = false;
-		private var stage:Stage;
+		protected var _player:IPlayer;
+		protected var _model:Model;
+		protected var _skin:ISkin;
+		protected var _components:IPlayerComponents;
+		protected var _fullscreen:Boolean = false;
+		protected var stage:Stage;
 
-		private var _root:MovieClip;
+		protected var _root:MovieClip;
 
-		private var _backgroundLayer:MovieClip;
-		private var _mediaLayer:MovieClip;
-		private var _imageLayer:MovieClip;
-		private var _componentsLayer:MovieClip;
-		private var _logoLayer:MovieClip;
-		private var _pluginsLayer:MovieClip;
-		private var _plugins:Object;
+		protected var _backgroundLayer:MovieClip;
+		protected var _mediaLayer:MovieClip;
+		protected var _imageLayer:MovieClip;
+		protected var _componentsLayer:MovieClip;
+		protected var _logoLayer:MovieClip;
+		protected var _pluginsLayer:MovieClip;
+		protected var _plugins:Object;
 
-		private var _displayMasker:MovieClip;
+		protected var _displayMasker:MovieClip;
 
-		private var _image:Loader;
-		private var _logo:Logo;
+		protected var _image:Loader;
+		protected var _logo:Logo;
 
-		private var layoutManager:PlayerLayoutManager;
+		protected var layoutManager:PlayerLayoutManager;
 
 		[Embed(source="../../../../../assets/flash/loader/loader.swf")]
-		private var LoadingScreen:Class;
+		protected var LoadingScreen:Class;
 
 		[Embed(source="../../../../../assets/flash/loader/error.swf")]
-		private var ErrorScreen:Class;
+		protected var ErrorScreen:Class;
 
-		private var loaderScreen:Sprite;
-		private var loaderAnim:DisplayObject;
+		protected var loaderScreen:Sprite;
+		protected var loaderAnim:DisplayObject;
 
 
 		public function View(player:IPlayer, model:Model) {
@@ -96,7 +96,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function resizeStage(evt:Event=null):void {
+		protected function resizeStage(evt:Event=null):void {
 			RootReference.stage.removeEventListener(Event.RESIZE, resizeStage);
 			RootReference.stage.removeEventListener(Event.ADDED_TO_STAGE, resizeStage);
 
@@ -137,7 +137,7 @@ package com.longtailvideo.jwplayer.view {
 			_model.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 
 			layoutManager = new PlayerLayoutManager(_player);
-			var menu:RightclickMenu = new RightclickMenu(_model, _root);
+			var menu:RightclickMenu = new RightclickMenu(_player, _root);
 			menu.addGlobalListener(forward);
 
 			redraw();
@@ -158,7 +158,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function setupLayers():void {
+		protected function setupLayers():void {
 			_backgroundLayer = setupLayer("background", 0);
 			setupBackground();
 
@@ -179,7 +179,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function setupLayer(name:String, index:Number):MovieClip {
+		protected function setupLayer(name:String, index:Number):MovieClip {
 			var layer:MovieClip = new MovieClip();
 			_root.addChildAt(layer, index);
 			layer.name = name;
@@ -189,7 +189,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function setupBackground():void {
+		protected function setupBackground():void {
 			var background:MovieClip = new MovieClip();
 			background.name = "background";
 			_backgroundLayer.addChild(background);
@@ -199,7 +199,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function setupDisplayMask():void {
+		protected function setupDisplayMask():void {
 			_displayMasker = new MovieClip();
 			_displayMasker.graphics.beginFill(0x000000, 1);
 			_displayMasker.graphics.drawRect(0, 0, _player.config.width, _player.config.height);
@@ -211,7 +211,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function setupComponents():void {
+		protected function setupComponents():void {
 			_components = new PlayerComponents(_player);
 
 			setupComponent(_components.display, 0);
@@ -221,13 +221,13 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function setupComponent(component:IPlayerComponent, index:Number):void {
+		protected function setupComponent(component:IPlayerComponent, index:Number):void {
 			component.addGlobalListener(forward);
 			_componentsLayer.addChildAt(component as DisplayObject, index);
 		}
 
 
-		private function resizeHandler(event:Event):void {
+		protected function resizeHandler(event:Event):void {
 			redraw();
 
 			var currentFSMode:Boolean = (RootReference.stage.displayState == StageDisplayState.FULL_SCREEN);
@@ -293,7 +293,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function resizeBackground():void {
+		protected function resizeBackground():void {
 			var bg:DisplayObject = _backgroundLayer.getChildByName("background");
 			bg.width = RootReference.stage.stageWidth;
 			bg.height = RootReference.stage.stageHeight;
@@ -302,7 +302,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function resizeMasker():void {
+		protected function resizeMasker():void {
 			if (_displayMasker == null)
 				setupDisplayMask();
 
@@ -378,7 +378,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function mediaLoaded(evt:MediaEvent):void {
+		protected function mediaLoaded(evt:MediaEvent):void {
 			_mediaLayer.x = _components.display.x;
 			_mediaLayer.y = _components.display.y;
 			if (_model.media.display) {
@@ -388,7 +388,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function itemHandler(evt:PlaylistEvent):void {
+		protected function itemHandler(evt:PlaylistEvent):void {
 			while (_mediaLayer.numChildren) {
 				_mediaLayer.removeChildAt(0);
 			}
@@ -399,7 +399,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function loadImage(url:String):void {
+		protected function loadImage(url:String):void {
 			while (_imageLayer.numChildren) {
 				_imageLayer.removeChildAt(0);
 			}
@@ -411,7 +411,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function imageComplete(evt:Event):void {
+		protected function imageComplete(evt:Event):void {
 			_imageLayer.addChild(_image);
 			_imageLayer.x = _components.display.x;
 			_imageLayer.y = _components.display.y;
@@ -419,13 +419,13 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function imageError(evt:IOErrorEvent):void {
+		protected function imageError(evt:IOErrorEvent):void {
 			_image = null;
 			dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, evt.text));
 		}
 
 
-		private function stateHandler(evt:PlayerStateEvent):void {
+		protected function stateHandler(evt:PlayerStateEvent):void {
 			switch (evt.newstate) {
 				case PlayerState.IDLE:
 					_imageLayer.visible = true;
@@ -443,7 +443,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 
-		private function forward(evt:Event):void {
+		protected function forward(evt:Event):void {
 			if (evt is PlayerEvent)
 				dispatchEvent(evt);
 		}

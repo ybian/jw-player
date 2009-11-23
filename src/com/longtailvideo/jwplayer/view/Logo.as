@@ -18,7 +18,7 @@ package com.longtailvideo.jwplayer.view {
 	
 	public class Logo extends MovieClip {
 		/** Configuration defaults **/
-		private var defaults:Object = {
+		protected var defaults:Object = {
 			prefix: "http://l.longtailvideo.com/", 
 			file: "logo.png", 
 			link: "http://www.longtailvideo.com/players/jw-flv-player/", 
@@ -29,17 +29,17 @@ package com.longtailvideo.jwplayer.view {
 			timeout: 3
 		}
 		/** Reference to the player **/
-		private var _player:IPlayer;
+		protected var _player:IPlayer;
 		/** Reference to the current fade timer **/
-		private var timeout:uint;
+		protected var timeout:uint;
 		/** Reference to the loader **/
-		private var loader:Loader;
+		protected var loader:Loader;
 		/** Animations handler **/
-		private var animations:Animations;
+		protected var animations:Animations;
 		
 		/** Dimensions **/
-		private var _width:Number;
-		private var _height:Number;
+		protected var _width:Number;
+		protected var _height:Number;
 		
 		/** Constructor **/
 		public function Logo(player:IPlayer) {
@@ -53,9 +53,15 @@ package com.longtailvideo.jwplayer.view {
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 			addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 			
+			loadFile();
+		}
+		
+		protected function loadFile():void {
 			var versionRE:RegExp = /(\d+)\.(\d+)\./;
 			var versionInfo:Array = versionRE.exec(_player.version);
-			defaults['file'] = defaults['prefix'] + versionInfo[1] + "/" + versionInfo[2] + "/" + defaults['file'];
+			if (defaults['file'] && defaults['prefix']) {
+				defaults['file'] = defaults['prefix'] + versionInfo[1] + "/" + versionInfo[2] + "/" + defaults['file'];
+			}
 			
 			if (getConfigParam('file')){
 				loader = new Loader();
@@ -66,20 +72,20 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		/** Logo loaded - add to display **/
-		private function loaderHandler(evt:Event):void {
+		protected function loaderHandler(evt:Event):void {
 			visible = false;
 			addChild(loader);
 			resize(_width, _height);
 		}
 		
 		/** Logo failed to load - die **/
-		private function errorHandler(evt:IOErrorEvent):void {
+		protected function errorHandler(evt:IOErrorEvent):void {
 			Logger.log("Failed to load logo: " + evt.text);
 		}
 		
 		
 		/** Handles mouse clicks **/
-		private function clickHandler(evt:MouseEvent):void {
+		protected function clickHandler(evt:MouseEvent):void {
 			_player.pause();
 			if (getConfigParam('link')) {
 				navigateToURL(new URLRequest(getConfigParam('link')));
@@ -87,19 +93,19 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		/** Handles mouse outs **/
-		private function outHandler(evt:MouseEvent):void {
+		protected function outHandler(evt:MouseEvent):void {
 			alpha = getConfigParam('out');
 		}
 		
 		
 		/** Handles mouse overs **/
-		private function overHandler(evt:MouseEvent):void {
+		protected function overHandler(evt:MouseEvent):void {
 			alpha = getConfigParam('over');
 		}
 		
 		
 		/** Handles state changes **/
-		private function stateHandler(evt:PlayerStateEvent):void {
+		protected function stateHandler(evt:PlayerStateEvent):void {
 			if (_player.state == PlayerState.BUFFERING) {
 				clearTimeout(timeout);
 				show();
@@ -108,7 +114,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		/** Fade in **/
-		private function show():void {
+		protected function show():void {
 			visible = true;
 			animations.fade(getConfigParam('out'), 0.1);
 			timeout = setTimeout(hide, getConfigParam('timeout') * 1000);
@@ -117,7 +123,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		/** Fade out **/
-		private function hide():void {
+		protected function hide():void {
 			mouseEnabled = false;
 			animations.fade(0, 0.1);
 		}
@@ -133,13 +139,8 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		/** Gets a configuration parameter **/
-		private function getConfigParam(param:String):* {
-			var result:*;
-			result = defaults[param];
-			if (_player.commercial && _player.config.pluginConfig("logo")[param]) {
-				result = _player.config.pluginConfig("logo")[param];
-			}
-			return result;
+		protected function getConfigParam(param:String):* {
+			return defaults[param];
 		}
 	}
 }
