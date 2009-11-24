@@ -382,7 +382,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		private function addSlider(name:String, orientation:String, event:String, callback:Function):void {
-			var slider:Slider = new Slider(getSkinElement(name + "SliderRail") as Sprite, getSkinElement(name + "SliderBuffer") as Sprite, getSkinElement(name + "SliderProgress") as Sprite, getSkinElement(name + "SliderThumb") as Sprite, orientation);
+			var slider:Slider = new Slider(getSkinElement(name + "SliderRail"), getSkinElement(name + "SliderBuffer"), getSkinElement(name + "SliderProgress"), getSkinElement(name + "SliderThumb"), orientation);
 			slider.addEventListener(event, callback);
 			slider.name = name;
 			_buttons[name] = slider;

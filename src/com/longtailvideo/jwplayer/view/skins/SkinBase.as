@@ -64,7 +64,7 @@ package com.longtailvideo.jwplayer.view.skins {
 			return result;
 		}
 		
-		public function addSkinElement(component:String, element:DisplayObject, name:String=null):void {
+		public function addSkinElement(component:String, name:String, element:DisplayObject):void {
 			if (name)
 				element.name = name;
 			

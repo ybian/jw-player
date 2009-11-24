@@ -62,7 +62,7 @@ package com.longtailvideo.jwplayer.view.interfaces {
 		 * @return 
 		 * 
 		 */
-		function addSkinElement(component:String, element:DisplayObject, name:String=null):void;
+		function addSkinElement(component:String, name:String, element:DisplayObject):void;
 		
 		/**
 		 * 

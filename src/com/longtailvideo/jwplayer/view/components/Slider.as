@@ -34,29 +34,27 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		//protected var _height:Number;
-		public function Slider(rail:Sprite, buffer:Sprite, progress:Sprite, thumb:Sprite, orientation:String) {
+		public function Slider(rail:DisplayObject, buffer:DisplayObject, progress:DisplayObject, thumb:DisplayObject, orientation:String) {
 			super();
 			addEventListener(MouseEvent.MOUSE_DOWN, downHandler);
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 			addEventListener(MouseEvent.MOUSE_OUT, outHandler);
-			_rail = rail;
-			addElement(_rail, "rail", true);
-			_buffer = buffer;
-			addElement(_buffer, "buffer");
-			_progress = progress;
-			addElement(_progress, "progress");
-			_thumb = thumb ? thumb : new Sprite();
-			addElement(_thumb, "thumb");
+			_rail = addElement(rail, "rail", true);
+			_buffer = addElement(buffer, "buffer");
+			_progress = addElement(progress, "progress");
+			_thumb = addElement(thumb, "thumb");
 			_orientation = orientation;
 		}
 
 
-		private function addElement(element:DisplayObject, name:String, visible:Boolean=false):void {
-			if (element) {
-				element.name = name;
-				element.visible = visible;
-				addChild(element);
+		private function addElement(element:DisplayObject, name:String, visible:Boolean=false):Sprite {
+			if (!element) {
+				element = new Sprite();
 			}
+			element.visible = visible;
+			addChild(element);
+			element.name = name;
+			return element as Sprite;
 		}
 
 
@@ -90,15 +88,15 @@ package com.longtailvideo.jwplayer.view.components {
 			this.scaleX = 1;
 			_width = width * scale;
 			_height = height;
-			if (_rail) {
+			if (_rail.getChildByName("bitmap")) {
 				_rail.getChildByName("bitmap").width = _width;
 				resizeElement(_rail);
 			}
-			if (_buffer) {
+			if (_buffer.getChildByName("bitmap")) {
 				_buffer.getChildByName("bitmap").width = _width;
 				resizeElement(_buffer, _currentBuffer);
 			}
-			if (_progress && !_dragging) {
+			if (_progress.getChildByName("bitmap") && !_dragging) {
 				_progress.getChildByName("bitmap").width = _width;
 				resizeElement(_progress, _currentProgress);
 			}

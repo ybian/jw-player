@@ -81,10 +81,6 @@
 	</target>
 
 	<target name="build-test-unit">
-		<condition property="additionalArgLine" value="${additionalArgs}" else="">
-			<isset property="additionalArgs" />
-		</condition>
-
 		<exec executable="${mxmlc.exe}" dir="${basedir}"  failonerror="true">
 			<!-- Point to the main class .as file -->
 			<arg line="'${test.src.dir}/${class}'" />
@@ -113,9 +109,6 @@
 
 			<!-- Ignore missing type definitions -->
 			<arg line="-warnings=false" />
-
-			<!-- Allow additional arguments to be passed in as parameters -->
-			<arg value="${additionalArgLine}" />
 
 			<!-- Enable debugging -->
 			<arg line="-debug=true" />
@@ -167,9 +160,6 @@
 		<condition property="incrementLine" value="-incremental=true" else="">
 			<isset property="increment" />
 		</condition>
-		<condition property="additionalArgLine" value="${additionalArgs}" else="">
-			<isset property="additionalArgs" />
-		</condition>
 
 		<exec executable="${mxmlc.exe}" dir="${basedir}">
 			<!-- Point to the main class .as file -->
@@ -203,8 +193,8 @@
 			<!-- Compile with network sandbox -->
 			<arg line="-use-network=true" />
 
-			<!-- Ignore missing type definitions and include additional arguments -->
-			<arg line="-warnings=false ${additionalArgLine}" />
+			<!-- Ignore missing type definitions -->
+			<arg line="-warnings=false" />
 
 			<!-- Enable debugging -->
 			<arg line="${debugLine}" />
@@ -225,8 +215,6 @@
 			<param name="increment" value="true"/>
 			<param name="outputPath" value="${debug.dir}"/>
 		</antcall>
-		<copy file="${debug.dir}/${swf}.swf" tofile="./player-5.0.swf" />
-		<copy file="${debug.dir}/${swf}.swf" tofile="./player-5.0d.swf" />
 	</target>
 
 	<target name="release-swf">

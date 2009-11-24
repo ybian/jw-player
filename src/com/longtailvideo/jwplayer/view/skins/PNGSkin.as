@@ -1,11 +1,10 @@
 package com.longtailvideo.jwplayer.view.skins {
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
+	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
 	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
@@ -27,19 +26,20 @@ package com.longtailvideo.jwplayer.view.skins {
 
 	public class PNGSkin extends SkinBase implements ISkin {
 		
-		protected var urlPrefix:String;
-		protected var skinXML:XML;
-		protected var props:SkinProperties = new SkinProperties();
-		protected var loaders:Dictionary = new Dictionary();
+		protected var _urlPrefix:String;
+		protected var _skinXML:XML;
+		protected var _props:SkinProperties = new SkinProperties();
+		protected var _loaders:Dictionary = new Dictionary();
+		protected var _components:Object = {};
 		
-		private var errorState:Boolean = false;
+		protected var _errorState:Boolean = false;
 
 		public namespace skinNS = "http://developer.longtailvideo.com/trac/wiki/Skinning";
 		use namespace skinNS;
 
 		public override function load(url:String=null):void {
-			if (url.substr(url.length-4,4).toLowerCase() == ".xml" ) {
-				urlPrefix = url.substring(0, url.lastIndexOf('/')+1);
+			if (Strings.extension(url) == "xml" ) {
+				_urlPrefix = url.substring(0, url.lastIndexOf('/')+1);
 
 				var loader:AssetLoader = new AssetLoader();
 				loader.addEventListener(Event.COMPLETE, loadComplete);
@@ -57,7 +57,7 @@ package com.longtailvideo.jwplayer.view.skins {
 		protected function loadComplete(evt:Event):void {
 			var loader:AssetLoader = AssetLoader(evt.target);
 			try {
-				skinXML = XML(loader.loadedObject);
+				_skinXML = XML(loader.loadedObject);
 				parseSkin();
 			} catch (e:Error) {
 				sendError(e.message);
@@ -67,14 +67,14 @@ package com.longtailvideo.jwplayer.view.skins {
 		protected function parseSkin():void {
 //			use namespace skinNS;
 	
-			if (skinXML.localName() != "skin") {
+			if (_skinXML.localName() != "skin") {
 				sendError("PNG skin descriptor file not correctly formatted");
 				return;
 			}
 			
-			parseConfig(skinXML.settings);
+			parseConfig(_skinXML.settings);
 			
-			for each (var comp:XML in skinXML.components.component) {
+			for each (var comp:XML in _skinXML.components.component) {
 				parseConfig(comp.settings, comp.@name.toString());
 				loadElements(comp.@name.toString(), comp..element);
 			}
@@ -85,10 +85,10 @@ package com.longtailvideo.jwplayer.view.skins {
 		protected function parseConfig(settings:XMLList, component:String=""):void {
 			for each(var setting:XML in settings.setting) {
 				if (component) {
-					props[component + "." + setting.@name.toString()] = setting.@value.toString();
+					_props[component + "." + setting.@name.toString()] = setting.@value.toString();
 				} else {
-					if (props.hasOwnProperty(setting.@name.toString())) {
-						props[setting.@name.toString()] = setting.@value.toString();
+					if (_props.hasOwnProperty(setting.@name.toString())) {
+						_props[setting.@name.toString()] = setting.@value.toString();
 					}
 				}
 			}
@@ -99,44 +99,42 @@ package com.longtailvideo.jwplayer.view.skins {
 			
 			for each (var element:XML in elements) {
 				var newLoader:AssetLoader = new AssetLoader();
-				loaders[newLoader] = {componentName:component, elementName:element.@name.toString()};
+				_loaders[newLoader] = {componentName:component, elementName:element.@name.toString()};
 				newLoader.addEventListener(Event.COMPLETE, elementHandler);
 				newLoader.addEventListener(ErrorEvent.ERROR, elementError);
-				newLoader.load(urlPrefix + component + '/' + element.@src.toString(), Bitmap);  
+				newLoader.load(_urlPrefix + component + '/' + element.@src.toString(), Bitmap);  
 			}
 		}
 		
 		protected function elementHandler(evt:Event):void {
 			try {
-				var elementInfo:Object = loaders[evt.target];
+				var elementInfo:Object = _loaders[evt.target];
 				var bitmap:Bitmap = (evt.target as AssetLoader).loadedObject as Bitmap;
-				var sprite:Sprite = new Sprite();
-				sprite.addChild(bitmap);
-				addSkinElement(elementInfo['componentName'], sprite, elementInfo['elementName']);
-				delete loaders[evt.target];
+				addSkinElement(elementInfo['componentName'], elementInfo['elementName'], bitmap);
+				delete _loaders[evt.target];
 			} catch (e:Error) {
-				if (loaders.hasOwnProperty(evt.target)) {
-					delete loaders[evt.target];
+				if (_loaders.hasOwnProperty(evt.target)) {
+					delete _loaders[evt.target];
 				}
 			} 
 			checkComplete();
 		}
 		
 		protected function elementError(evt:ErrorEvent):void {
-			if (loaders.hasOwnProperty(evt.target)) {
-				delete loaders[evt.target];
+			if (_loaders.hasOwnProperty(evt.target)) {
+				delete _loaders[evt.target];
 				checkComplete();
 			} else {
-				errorState = true;
+				_errorState = true;
 				sendError(evt.text);
 			}
 		}
 		
 		protected function checkComplete():void {
-			if (errorState) return;
+			if (_errorState) return;
 
 			var numElements:Number = 0;
-			for each (var i:Object in loaders) {
+			for each (var i:Object in _loaders) {
 				// Not complete yet
 				numElements ++;
 			}
@@ -151,23 +149,29 @@ package com.longtailvideo.jwplayer.view.skins {
 		
 		
 		public override function getSkinProperties():SkinProperties {
-			return props; 
+			return _props; 
 		}
 		
 		public override function getSkinElement(component:String, element:String):DisplayObject {
-			var result:DisplayObject;
-			var componentDisplayObjectContainer:DisplayObjectContainer = _skin.getChildByName(component) as DisplayObjectContainer;
-			if (componentDisplayObjectContainer) {
-				var original:DisplayObject = componentDisplayObjectContainer.getChildByName(element);
-				if (original && original is DisplayObjectContainer){
-					var bitmapData:BitmapData = ((original as DisplayObjectContainer).getChildAt(0) as Bitmap).bitmapData;
-					var bitmap:Bitmap = new Bitmap(bitmapData);
-					bitmap.name = "bitmap";
-					result = new Sprite();
-					(result as Sprite).addChild(bitmap);
-				}
+			if (_components[component] && _components[component][element]){
+				var sprite:Sprite = _components[component][element] as Sprite;
+				var bitmap:Bitmap = new Bitmap((sprite.getChildByName('bitmap') as Bitmap).bitmapData);
+				var newSprite:Sprite = new Sprite();
+				newSprite.addChild(bitmap);
+				bitmap.name = 'bitmap';
+				return newSprite;
 			}
-			return result;
+			return null;
+		}
+		
+		public override function addSkinElement(component:String, name:String, element:DisplayObject):void {	
+			if (!_components[component]){
+				_components[component] = {};
+			}
+			var sprite:Sprite = new Sprite();
+			sprite.addChild(element);
+			element.name = 'bitmap';
+			_components[component][name] = sprite;
 		}
 	}
 }

@@ -16,6 +16,7 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.view.skins.PNGSkin;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	import com.longtailvideo.jwplayer.view.skins.SkinProperties;
+	import com.longtailvideo.jwplayer.view.skins.ZIPSkin;
 	
 	import flash.display.DisplayObject;
 	import flash.events.ErrorEvent;
@@ -129,7 +130,9 @@ package com.longtailvideo.jwplayer.controller {
 			if (confHash && confHash['skin'] && evt == null) {
 				if (Strings.extension(confHash['skin']) == "swf") {
 					skin = new SWFSkin();
-				} else {
+				} else if (Strings.extension(confHash['skin']) == "zip") {
+					skin = new ZIPSkin();
+				} else if (Strings.extension(confHash['skin']) == "xml") {
 					skin = new PNGSkin();
 				}
 				// If this step fails, load the default skin instead

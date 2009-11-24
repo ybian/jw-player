@@ -1,0 +1,98 @@
+package com.longtailvideo.jwplayer.view.skins {
+	import com.longtailvideo.jwplayer.utils.Strings;
+	import com.longtailvideo.jwplayer.utils.ZipAssetLoader;
+	import com.nochump.util.zip.ZipEntry;
+	import com.nochump.util.zip.ZipFile;
+	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.events.ErrorEvent;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.events.SecurityErrorEvent;
+	import flash.net.URLRequest;
+	import flash.net.URLStream;
+
+
+	public class ZIPSkin extends PNGSkin {
+		private var _zipFile:ZipFile;
+
+
+		public function ZIPSkin() {
+			super();
+		}
+
+
+		public override function load(url:String=null):void {
+			if (Strings.extension(url) == "zip") {
+				_urlPrefix = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
+
+				var urlStream:URLStream = new URLStream();
+				urlStream.addEventListener(Event.COMPLETE, loadComplete);
+				urlStream.addEventListener(IOErrorEvent.IO_ERROR, loadError);
+				urlStream.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadError);
+				urlStream.load(new URLRequest(url));
+			} else if (_skin.numChildren == 0) {
+				sendError("ZIP skin descriptor file must have a .zip extension");
+			}
+		}
+
+
+		protected override function loadComplete(evt:Event):void {
+			var data:URLStream = URLStream(evt.target);
+			_zipFile = new ZipFile(data);
+			try {
+				var zipEntry:ZipEntry = _zipFile.getEntry(_urlPrefix + '.xml');
+				if (!zipEntry) {
+					zipEntry =  _zipFile.getEntry(_urlPrefix+'/'+_urlPrefix + '.xml');
+				}
+				if (zipEntry) {
+					_skinXML = XML(String(_zipFile.getInput(zipEntry)));
+					parseSkin();
+				}
+			} catch (e:Error) {
+				sendError(e.message);
+			}
+		}
+
+
+		protected override function loadElements(component:String, elements:XMLList):void {
+			if (!component)
+				return;
+
+			for each (var element:XML in elements) {
+				var file:String = component + '/' + element.@src.toString();
+				var zipEntry:ZipEntry = _zipFile.getEntry(file);
+				
+				if (zipEntry) {
+					try {
+						var newLoader:ZipAssetLoader = new ZipAssetLoader();
+						_loaders[newLoader] = {componentName: component, elementName: element.@name.toString()};
+						newLoader.addEventListener(Event.COMPLETE, elementHandler);
+						newLoader.addEventListener(ErrorEvent.ERROR, elementError);
+						newLoader.load(_zipFile.getInput(zipEntry));
+					} catch (err:Error) {
+						sendError("Error loading ZIP skin "+component+"'s "+element.toString()+": "+err.message);
+					}
+				}
+			}
+		}
+
+
+		protected override function elementHandler(evt:Event):void {
+			try {
+				var loadedAsset:ZipAssetLoader = evt.target as ZipAssetLoader;
+				var elementInfo:Object = _loaders[loadedAsset];
+				var decodedBitmapData:BitmapData = (loadedAsset.loadedObject as Bitmap).bitmapData;
+				var bitmap:Bitmap = new Bitmap(decodedBitmapData);
+				addSkinElement(elementInfo['componentName'], elementInfo['elementName'], bitmap);
+				delete _loaders[evt.target];
+			} catch (e:Error) {
+				if (_loaders.hasOwnProperty(evt.target)) {
+					delete _loaders[evt.target];
+				}
+			}
+			checkComplete();
+		}
+	}
+}
