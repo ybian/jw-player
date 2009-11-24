@@ -1,6 +1,6 @@
 package com.longtailvideo.jwplayer.view.skins {
+	import com.longtailvideo.jwplayer.utils.AssetLoader;
 	import com.longtailvideo.jwplayer.utils.Strings;
-	import com.longtailvideo.jwplayer.utils.ZipAssetLoader;
 	import com.nochump.util.zip.ZipEntry;
 	import com.nochump.util.zip.ZipFile;
 	
@@ -64,33 +64,16 @@ package com.longtailvideo.jwplayer.view.skins {
 				
 				if (zipEntry) {
 					try {
-						var newLoader:ZipAssetLoader = new ZipAssetLoader();
+						var newLoader:AssetLoader = new AssetLoader();
 						_loaders[newLoader] = {componentName: component, elementName: element.@name.toString()};
 						newLoader.addEventListener(Event.COMPLETE, elementHandler);
 						newLoader.addEventListener(ErrorEvent.ERROR, elementError);
-						newLoader.load(_zipFile.getInput(zipEntry));
+						newLoader.loadBytes(_zipFile.getInput(zipEntry));
 					} catch (err:Error) {
 						sendError("Error loading ZIP skin "+component+"'s "+element.toString()+": "+err.message);
 					}
 				}
 			}
-		}
-
-
-		protected override function elementHandler(evt:Event):void {
-			try {
-				var loadedAsset:ZipAssetLoader = evt.target as ZipAssetLoader;
-				var elementInfo:Object = _loaders[loadedAsset];
-				var decodedBitmapData:BitmapData = (loadedAsset.loadedObject as Bitmap).bitmapData;
-				var bitmap:Bitmap = new Bitmap(decodedBitmapData);
-				addSkinElement(elementInfo['componentName'], elementInfo['elementName'], bitmap);
-				delete _loaders[evt.target];
-			} catch (e:Error) {
-				if (_loaders.hasOwnProperty(evt.target)) {
-					delete _loaders[evt.target];
-				}
-			}
-			checkComplete();
 		}
 	}
 }
