@@ -46,10 +46,8 @@ package com.longtailvideo.jwplayer.view.skins {
 				if (!zipEntry) {
 					zipEntry =  _zipFile.getEntry(_urlPrefix+'/'+_urlPrefix + '.xml');
 				}
-				if (zipEntry) {
-					_skinXML = XML(String(_zipFile.getInput(zipEntry)));
-					parseSkin();
-				}
+				_skinXML = XML(String(_zipFile.getInput(zipEntry)));
+				parseSkin();
 			} catch (e:Error) {
 				sendError(e.message);
 			}

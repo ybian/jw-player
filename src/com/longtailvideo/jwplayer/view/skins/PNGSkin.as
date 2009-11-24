@@ -155,7 +155,7 @@ package com.longtailvideo.jwplayer.view.skins {
 		public override function getSkinElement(component:String, element:String):DisplayObject {
 			if (_components[component] && _components[component][element]){
 				var sprite:Sprite = _components[component][element] as Sprite;
-				var bitmap:Bitmap = new Bitmap((sprite.getChildByName('bitmap') as Bitmap).bitmapData);
+				var bitmap:Bitmap = new Bitmap((sprite.getChildAt(0) as Bitmap).bitmapData);
 				var newSprite:Sprite = new Sprite();
 				newSprite.addChild(bitmap);
 				bitmap.name = 'bitmap';
@@ -170,7 +170,6 @@ package com.longtailvideo.jwplayer.view.skins {
 			}
 			var sprite:Sprite = new Sprite();
 			sprite.addChild(element);
-			element.name = 'bitmap';
 			_components[component][name] = sprite;
 		}
 	}
