@@ -23,6 +23,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.events.EventDispatcher;
 	import flash.utils.describeType;
 
