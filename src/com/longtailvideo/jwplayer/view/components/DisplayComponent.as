@@ -8,6 +8,7 @@
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
+	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
@@ -104,6 +105,14 @@
 						_bufferIcon.getChildAt(0).y = Math.round(_bufferIcon.getChildAt(0).height / -2);
 						_bufferIcon.x = back.width / 2 ;
 						_bufferIcon.y = back.height - icon.height;
+						var bufferBitmap:Bitmap = _bufferIcon.getChildByName('bitmap') as Bitmap;
+						if (bufferBitmap) {
+							try {
+								bufferBitmap.smoothing = true;
+							} catch(e:Error) {
+								// cross-domain issue prevented smoothing
+							}
+						}
 					}
 				} catch (err:Error){
 					_rotate = false;	

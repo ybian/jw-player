@@ -134,7 +134,11 @@ package com.longtailvideo.jwplayer.controller {
 					skin = new ZIPSkin();
 				} else if (Strings.extension(confHash['skin']) == "xml") {
 					skin = new PNGSkin();
+				} else {
+					Logger.log("Could not load skin " + confHash['skin']);
 				}
+			}
+			if (skin) {
 				// If this step fails, load the default skin instead
 				skin.addEventListener(ErrorEvent.ERROR, loadSkin);
 			} else {

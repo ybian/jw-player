@@ -165,7 +165,7 @@ package com.longtailvideo.jwplayer.view.skins {
 		}
 		
 		public override function addSkinElement(component:String, name:String, element:DisplayObject):void {	
-			if (!_components[component]){
+			if (!_components[component]) {
 				_components[component] = {};
 			}
 			var sprite:Sprite = new Sprite();

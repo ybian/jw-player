@@ -65,6 +65,7 @@ package com.longtailvideo.jwplayer.controller {
 			var plugin:String = loaders[loader];
 			loader.removeEventListener(ErrorEvent.ERROR, loadLocalFailed);
 			delete loaders[loader];
+			checkComplete();
 		}
 
 		private function loadV5Plugin(plugin:String):void {
