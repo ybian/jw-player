@@ -57,9 +57,6 @@ package com.longtailvideo.jwplayer.model {
 			controlbar = _controlbar;
 			playlist = _playlist;
 			playlistsize = _playlistsize;
-			
-			// Unsupported config variable defaults
-			this['aboutlink'] = "http://www.longtailvideo.com/players/jw-flv-player/";
 		}
 		
 		public function setConfig(config:Object):void {

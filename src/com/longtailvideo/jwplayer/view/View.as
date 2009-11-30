@@ -137,12 +137,15 @@ package com.longtailvideo.jwplayer.view {
 			_model.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 
 			layoutManager = new PlayerLayoutManager(_player);
-			var menu:RightclickMenu = new RightclickMenu(_player, _root);
-			menu.addGlobalListener(forward);
+			setupRightClick();
 
 			redraw();
 		}
-
+		
+		protected function setupRightClick():void {
+			var menu:RightclickMenu = new RightclickMenu(_player, _root);
+			menu.addGlobalListener(forward);
+		}
 
 		public function completeView(isError:Boolean=false, errorMsg:String=""):void {
 			if (!isError) {

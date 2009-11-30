@@ -2,6 +2,7 @@ package com.longtailvideo.jwplayer.view {
 
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
+	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
@@ -44,7 +45,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		/** Add an item to the contextmenu. **/
-		private function addItem(itm:ContextMenuItem, fcn:Function):void {
+		protected function addItem(itm:ContextMenuItem, fcn:Function):void {
 			itm.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, fcn);
 			itm.separatorBefore = true;
 			context.customItems.push(itm);
@@ -59,25 +60,25 @@ package com.longtailvideo.jwplayer.view {
 			}
 			stretching = new ContextMenuItem('Stretching is ' + _player.config.stretching + '...');
 			addItem(stretching, stretchHandler);
-			if (_player.config['abouttext'] == 'JW Player' || _player.config['abouttext'] == undefined) {
-				about = new ContextMenuItem('About JW Player ' + _player.version + '...');
-			} else {
-				about = new ContextMenuItem('About ' + _player.config['abouttext'] + '...');
-			}
+			setAboutText();
 			addItem(about, aboutHandler);
 			if (Capabilities.isDebugger == true) {
 				debug = new ContextMenuItem('Logging to ' + _player.config.debug + '...');
 				addItem(debug, debugHandler);
 			}
 		}
+		
+		protected function setAboutText():void {
+			about = new ContextMenuItem('About JW Player ' + _player.version + '...');
+		}
 
 		/** jump to the about page. **/
-		private function aboutHandler(evt:ContextMenuEvent):void {
-			navigateToURL(new URLRequest(_player.config['aboutlink']), '_blank');
+		protected function aboutHandler(evt:ContextMenuEvent):void {
+			navigateToURL(new URLRequest('http://www.longtailvideo.com/players/jw-flv-player'), '_blank');
 		}
 
 		/** change the debug system. **/
-		private function debugHandler(evt:ContextMenuEvent):void {
+		protected function debugHandler(evt:ContextMenuEvent):void {
 			var arr:Array = new Array(Logger.NONE, Logger.ARTHROPOD, Logger.CONSOLE, Logger.TRACE);
 			var idx:Number = arr.indexOf(_player.config.debug);
 			idx == arr.length - 1 ? idx = 0 : idx++;
@@ -87,12 +88,12 @@ package com.longtailvideo.jwplayer.view {
 		}
 
 		/** Toggle the fullscreen mode. **/
-		private function fullscreenHandler(evt:ContextMenuEvent):void {
+		protected function fullscreenHandler(evt:ContextMenuEvent):void {
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, !_player.fullscreen));
 		}
 
 		/** Change the stretchmode. **/
-		private function stretchHandler(evt:ContextMenuEvent):void {
+		protected function stretchHandler(evt:ContextMenuEvent):void {
 			var arr:Array = new Array(Stretcher.UNIFORM, Stretcher.FILL, Stretcher.EXACTFIT, Stretcher.NONE);
 			var idx:Number = arr.indexOf(_player.config.stretching);
 			idx == arr.length - 1 ? idx = 0 : idx++;
@@ -101,7 +102,7 @@ package com.longtailvideo.jwplayer.view {
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_REDRAW));
 		}
 		
-		private function setCookie(name:String, value:*):void {
+		protected function setCookie(name:String, value:*):void {
 			Configger.saveCookie(name, value);			
 		}
 

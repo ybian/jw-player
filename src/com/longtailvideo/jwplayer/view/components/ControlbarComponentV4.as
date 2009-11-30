@@ -23,6 +23,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
+	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
