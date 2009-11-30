@@ -65,7 +65,7 @@
 		/** Load content. **/
 		override public function load(itm:PlaylistItem):void {
 			var replay:Boolean;
-			if (item != itm || _stream.bytesLoaded == 0) {
+			if (!item || item.file != itm.file || _stream.bytesLoaded == 0) {
 				_item = itm;
 				media = _video;
 				_stream.checkPolicyFile = true;

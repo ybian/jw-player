@@ -72,7 +72,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Load the _sound. **/
 		override public function load(itm:PlaylistItem):void {
 			_position = 0;
-			if (_item != itm) {
+			if (!_item || _item.file != itm.file) {
 				_item = itm;
 				_sound = new Sound();
 				_sound.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
