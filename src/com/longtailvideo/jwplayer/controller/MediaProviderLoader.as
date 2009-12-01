@@ -39,7 +39,7 @@ package com.longtailvideo.jwplayer.controller {
 			if (url.substr(url.length-4, 4) == ".swf") {
 				newLoader.load(url);
 			} else {
-				newLoader.load(repository + url);
+				newLoader.load(repository + url + '.swf');
 			}
 		}
 		

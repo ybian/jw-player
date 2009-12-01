@@ -502,8 +502,10 @@ package com.longtailvideo.jwplayer.controller {
 				}
 
 				if (setProvider(item)) {
-					_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, bufferFullHandler);
-					_model.media.load(item);
+					if (!_delayedItem) {
+						_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, bufferFullHandler);
+						_model.media.load(item);
+					}
 				} else if (item.file) {
 					_model.playlist.load(item.file)
 				}
@@ -559,7 +561,7 @@ package com.longtailvideo.jwplayer.controller {
 					mediaLoader.addEventListener(Event.COMPLETE, mediaSourceLoaded);
 					mediaLoader.addEventListener(ErrorEvent.ERROR, errorHandler);
 					mediaLoader.loadSource(provider);
-					return false;
+					return true;
 				}
 
 				_model.setActiveMediaProvider(provider);
