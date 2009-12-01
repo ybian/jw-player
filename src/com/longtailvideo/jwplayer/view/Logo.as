@@ -25,8 +25,8 @@ package com.longtailvideo.jwplayer.view {
 			margin: 8, 
 			out: 0.5, 
 			over: 1, 
-			state: false, 
-			timeout: 3
+			timeout: 3,
+			hide: 'true'
 		}
 		/** Reference to the player **/
 		protected var _player:IPlayer;
@@ -124,8 +124,10 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Fade out **/
 		protected function hide():void {
-			mouseEnabled = false;
-			animations.fade(0, 0.1);
+			if (defaults['hide'] == 'true') {
+				mouseEnabled = false;
+				animations.fade(0, 0.1);
+			}
 		}
 		
 		
