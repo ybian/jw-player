@@ -61,6 +61,8 @@ package com.longtailvideo.jwplayer.parsers {
 					item['provider'] = item['type'];
 				} else if (item['file'].indexOf('youtube.com/w') > -1) {
 					item['provider'] = "youtube";
+				} else if (item['streamer'] && item['streamer'].indexOf('rtmp') == 0) {
+					item['provider'] = "rtmp";
 				} else {
 					var ext:String = Strings.extension(item['file']);
 					if (extensions.hasOwnProperty(ext)) {
