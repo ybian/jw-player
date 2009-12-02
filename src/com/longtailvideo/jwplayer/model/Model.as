@@ -3,9 +3,9 @@ package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
-	import com.longtailvideo.jwplayer.media.MediaProvider;
 	import com.longtailvideo.jwplayer.media.HTTPMediaProvider;
 	import com.longtailvideo.jwplayer.media.ImageMediaProvider;
+	import com.longtailvideo.jwplayer.media.MediaProvider;
 	import com.longtailvideo.jwplayer.media.RTMPMediaProvider;
 	import com.longtailvideo.jwplayer.media.SoundMediaProvider;
 	import com.longtailvideo.jwplayer.media.VideoMediaProvider;

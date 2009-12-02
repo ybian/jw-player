@@ -23,7 +23,6 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	
 	import flash.display.DisplayObject;
-	import flash.display.MovieClip;
 	import flash.events.EventDispatcher;
 	import flash.utils.describeType;
 
@@ -86,6 +85,7 @@ package com.longtailvideo.jwplayer.player {
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, mediaTime);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, mediaVolume);
+			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, mediaMute);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_META, mediaMeta);
 			_player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 
@@ -132,6 +132,11 @@ package com.longtailvideo.jwplayer.player {
 		private function mediaVolume(evt:MediaEvent):void {
 			controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.VOLUME, {percentage:evt.volume, id:id, client:client, version:version}));
 		}
+		
+		private function mediaMute(evt:MediaEvent):void {
+			controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.MUTE, {state:evt.mute, id:id, client:client, version:version}));
+		}
+		
 
 		private function mediaMeta(evt:MediaEvent):void {
 			evt.metadata['id'] = id;
@@ -145,7 +150,7 @@ package com.longtailvideo.jwplayer.player {
 				controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.STOP, {id:id, client:client, version:version}));
 			}
 			
-			modelEventDispatcher.dispatchEvent(new ModelEvent(ModelEvent.STATE, {oldstate:evt.oldstate, newstate:evt.newstate}));
+			modelEventDispatcher.dispatchEvent(new ModelEvent(ModelEvent.STATE, {id:id, oldstate:evt.oldstate, newstate:evt.newstate}));
 		}
 
 		// View Event Handlers
@@ -164,7 +169,7 @@ package com.longtailvideo.jwplayer.player {
 		
 		private function viewMute(evt:ViewEvent):void {
 			viewEventDispatcher.dispatchEvent(new com.jeroenwijering.events.ViewEvent(com.jeroenwijering.events.ViewEvent.MUTE, {state:evt.data, id:id, client:client, version:version}));
-			controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.MUTE, {state:evt.data, client:client, version:version}));
+			controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.MUTE, {state:evt.data, id:id, client:client, version:version}));
 		}
 		
 		private function viewNext(evt:ViewEvent):void {
@@ -241,25 +246,25 @@ package com.longtailvideo.jwplayer.player {
 		// Event "dispatcher"
 		
 		public override function sendEvent(typ:String, prm:Object=undefined) : void {
-			Logger.log("V4 plugin sending event: " + typ); 
+			Logger.log("V4 plugin sending event: " + typ);
 			switch (typ) {
 				case com.jeroenwijering.events.ViewEvent.FULLSCREEN:
-					_player.fullscreen = prm['state'];
+					_player.fullscreen = prm;
 					break;
 				case com.jeroenwijering.events.ViewEvent.ITEM:
-					_player.playlist.currentIndex = Number(prm);
+					_player.playlistItem(Number(prm));
 					break;
 				case com.jeroenwijering.events.ViewEvent.LINK:
-					_player.link(Number(prm['index']));
+					_player.link(Number(prm));
 					break;
 				case com.jeroenwijering.events.ViewEvent.LOAD:
 					_player.load(prm);
 					break;
 				case com.jeroenwijering.events.ViewEvent.MUTE:
-					_player.mute = prm['state'];
+					_player.mute = prm;
 					break;
 				case com.jeroenwijering.events.ViewEvent.NEXT:
-					_player.playlist.currentIndex++;
+					_player.playlistNext();
 					break;
 				case com.jeroenwijering.events.ViewEvent.PLAY:
 					if (prm != null && Strings.serialize(prm.toString()) == false) {
@@ -269,13 +274,13 @@ package com.longtailvideo.jwplayer.player {
 					}
 					break;
 				case com.jeroenwijering.events.ViewEvent.PREV:
-					_player.playlist.currentIndex--;
+					_player.playlistPrev();
 					break;
 				case com.jeroenwijering.events.ViewEvent.REDRAW:
 					_player.redraw();
 					break;
 				case com.jeroenwijering.events.ViewEvent.SEEK:
-					_player.seek(prm['position']);
+					_player.seek(Number(prm));
 					break;
 				case com.jeroenwijering.events.ViewEvent.STOP:
 					_player.stop();
@@ -284,7 +289,7 @@ package com.longtailvideo.jwplayer.player {
 					Logger.log(prm);
 					break;
 				case com.jeroenwijering.events.ViewEvent.VOLUME:
-					_player.volume(prm['percentage']);
+					_player.volume(Number(prm));
 					break;
 			}
 		} 
@@ -324,9 +329,9 @@ package com.longtailvideo.jwplayer.player {
 					break;
 			}
 
-			cfg['mute'] = _player.mute;
 			cfg['fullscreen'] = _player.fullscreen;
 			cfg['version'] = _player.version;
+			cfg['item'] = _player.playlist.currentIndex;
 			
 			return cfg;
 		} 

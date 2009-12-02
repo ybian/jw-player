@@ -97,7 +97,7 @@ package com.longtailvideo.jwplayer.controller {
 			loaders[loader] = plugin;
 			
 			if (Strings.extension(plugin) == "swf") { plugin = plugin.substring(0, plugin.length-4); }
-			loader.load(pluginRepository + plugin + ".swf");
+			loader.load(pluginRepository + '4/' + plugin + ".swf");
 		}
 
 		private function loadV4Failed(evt:ErrorEvent):void {
