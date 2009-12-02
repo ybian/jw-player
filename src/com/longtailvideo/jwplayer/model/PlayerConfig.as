@@ -13,45 +13,45 @@ package com.longtailvideo.jwplayer.model {
 	 * @author Pablo Schklowsky
 	 */
 	public dynamic class PlayerConfig extends EventDispatcher {
-		private var _singleItem:PlaylistItem;
+		protected var _singleItem:PlaylistItem;
 
-		private var _playlistfile:String	= null;
+		protected var _playlistfile:String	= null;
 
-		private var _autostart:Boolean 		= false; 
-		private var _bufferlength:Number 	= 5; 
-		private var _displaytitle:Boolean 	= true; 
-		private var _fullscreen:Boolean 	= false;
-		private var _item:Number			= 0;
-		private var _linktarget:String 		= "_blank";
-		private var _mute:Boolean 			= false;
-		private var _repeat:String 			= RepeatOptions.NONE; 
-		private var _shuffle:Boolean 		= false; 
-		private var _smoothing:Boolean 		= true;
+		protected var _autostart:Boolean 		= false; 
+		protected var _bufferlength:Number 	= 5; 
+		protected var _displaytitle:Boolean 	= true; 
+		protected var _fullscreen:Boolean 	= false;
+		protected var _item:Number			= 0;
+		protected var _linktarget:String 		= "_blank";
+		protected var _mute:Boolean 			= false;
+		protected var _repeat:String 			= RepeatOptions.NONE; 
+		protected var _shuffle:Boolean 		= false; 
+		protected var _smoothing:Boolean 		= true;
 		//TODO: Move to ENUM class
-		private var _stretching:String 		= "uniform"; 
-		private var _volume:Number 			= 90;
+		protected var _stretching:String 		= "uniform"; 
+		protected var _volume:Number 			= 90;
 
-		private var _backcolor:Color		= null;
-		private var _frontcolor:Color		= null;
-		private var _lightcolor:Color		= null;
-		private var _screencolor:Color		= null;
+		protected var _backcolor:Color		= null;
+		protected var _frontcolor:Color		= null;
+		protected var _lightcolor:Color		= null;
+		protected var _screencolor:Color		= null;
 
 		//TODO: Move to ENUM class
-		private var _controlbar:String 		= "bottom";
-		private var _dock:Boolean 			= true;
-		private var _height:Number 			= 400;
-		private var _icons:Boolean 			= true;
-		private var _logo:String 			= null;
-		private var _playlist:String 		= "none";
-		private var _playlistsize:Number 	= 180;
-		private var _skin:String 			= null;
-		private var _width:Number 			= 280;
+		protected var _controlbar:String 		= "bottom";
+		protected var _dock:Boolean 			= true;
+		protected var _height:Number 			= 400;
+		protected var _icons:Boolean 			= true;
+		protected var _logo:String 			= null;
+		protected var _playlist:String 		= "none";
+		protected var _playlistsize:Number 	= 180;
+		protected var _skin:String 			= null;
+		protected var _width:Number 			= 280;
 		
-		private var _plugins:String 		= "";
-		private var _pluginConfig:Object 	= {};
+		protected var _plugins:String 		= ""; //plugins initial string
+		protected var _pluginConfig:Object 	= {};
 		
-		private var _playerready:String		= "";
-		private var _debug:String			= Logger.NONE;
+		protected var _playerready:String		= "";
+		protected var _debug:String			= Logger.NONE;
 		
 		public function PlayerConfig():void {
 			controlbar = _controlbar;
@@ -80,7 +80,7 @@ package com.longtailvideo.jwplayer.model {
 			}
 		}
 		
-		private function setProperty(name:String, value:String):void {
+		protected function setProperty(name:String, value:String):void {
 			if (hasOwnProperty(name)) {
 				try {
 					this[name] = TypeChecker.fromString(value, TypeChecker.getType(this, name));
@@ -97,7 +97,7 @@ package com.longtailvideo.jwplayer.model {
 		 * @param name The parameter name in the form "pluginId.propertyname"
 		 * @param value The value to set.
 		 */
-		private function setPluginProperty(name:String, value:String):void {
+		protected function setPluginProperty(name:String, value:String):void {
 			var pluginId:String = name.substring(0, name.indexOf(".")).toLowerCase();
 			var pluginProperty:String = name.substring(name.indexOf(".") + 1, name.length).toLowerCase();
 
@@ -113,7 +113,7 @@ package com.longtailvideo.jwplayer.model {
 		 * Returns a string representation of the playlist's current PlaylistItem property.
 		 * @param key The requested PlaylistItem property
 		 */
-		private function playlistItem(key:String):String {
+		protected function playlistItem(key:String):String {
 			try {
 				return _singleItem[key].toString();
 			} catch (e:Error) {

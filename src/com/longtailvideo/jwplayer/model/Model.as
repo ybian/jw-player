@@ -73,14 +73,14 @@ package com.longtailvideo.jwplayer.model {
 	 * @author Pablo Schklowsky
 	 */
 	public class Model extends GlobalEventDispatcher {
-		private var _config:PlayerConfig;
-		private var _playlist:IPlaylist;
+		protected var _config:PlayerConfig;
+		protected var _playlist:IPlaylist;
 
-		private var _fullscreen:Boolean = false;
+		protected var _fullscreen:Boolean = false;
 
-		private var _currentMedia:MediaProvider;
+		protected var _currentMedia:MediaProvider;
 
-		private var _mediaSources:Object;
+		protected var _mediaSources:Object;
 		
 		/** Constructor **/
 		public function Model() {
@@ -186,7 +186,7 @@ package com.longtailvideo.jwplayer.model {
 		}
 
 		
-		private function forwardEvents(evt:Event):void {
+		protected function forwardEvents(evt:Event):void {
 			if (evt is PlayerEvent) {
 				if (evt.type == MediaEvent.JWPLAYER_MEDIA_ERROR) {
 					// Translate media error into player error.
@@ -198,7 +198,7 @@ package com.longtailvideo.jwplayer.model {
 		}
 
 		/** e.g. http://providers.longtailvideo.com/5/myProvider.swf --> myprovider **/
-		private function url2type(type:String):String {
+		protected function url2type(type:String):String {
 			return type.substring(type.lastIndexOf("/") + 1, type.length).replace(".swf", "").toLowerCase();
 		}
 
