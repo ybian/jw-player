@@ -4,6 +4,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Animations;
 	import com.longtailvideo.jwplayer.utils.Logger;
+	import com.longtailvideo.jwplayer.utils.RootReference;
 	
 	import flash.display.Loader;
 	import flash.display.MovieClip;
@@ -63,7 +64,7 @@ package com.longtailvideo.jwplayer.view {
 				defaults['file'] = defaults['prefix'] + versionInfo[1] + "/" + versionInfo[2] + "/" + defaults['file'];
 			}
 			
-			if (getConfigParam('file')){
+			if (getConfigParam('file') && RootReference.root.loaderInfo.url.indexOf("http")==0) {
 				loader = new Loader();
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loaderHandler);
 				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
@@ -135,8 +136,10 @@ package com.longtailvideo.jwplayer.view {
 		public function resize(width:Number, height:Number):void {
 			_width = width;
 			_height = height;
-			loader.x = defaults['margin'];
-			loader.y = _height - loader.height - defaults['margin'];
+			if (loader) {
+				loader.x = defaults['margin'];
+				loader.y = _height - loader.height - defaults['margin'];
+			}
 		}
 		
 		

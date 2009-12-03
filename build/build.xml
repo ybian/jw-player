@@ -191,7 +191,7 @@
 			<arg line="-target-player=${flexsdk.target}" />
 
 			<!-- Compile with network sandbox -->
-			<arg line="-use-network=true" />
+			<arg line="-use-network=false" />
 
 			<!-- Ignore missing type definitions -->
 			<arg line="-warnings=false" />
