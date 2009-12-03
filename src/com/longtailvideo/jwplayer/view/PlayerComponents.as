@@ -76,11 +76,6 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		
-		private function set controlbar(bar:IControlbarComponent):void {
-			_controlbar = bar;
-		}
-		
-		
 		/**
 		 * @inheritDoc
 		 */

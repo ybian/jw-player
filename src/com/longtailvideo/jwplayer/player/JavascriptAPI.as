@@ -36,11 +36,13 @@ package com.longtailvideo.jwplayer.player {
 
 			if (ExternalInterface.available) {
 				for each (var callback:String in callbacks.replace(/\s/,"").split(",")) {
-					ExternalInterface.call(callback,{
-						id:newEvt.id,
-						client:newEvt.client,
-						version:newEvt.version
-					});
+					try {
+						ExternalInterface.call(callback,{
+							id:newEvt.id,
+							client:newEvt.client,
+							version:newEvt.version
+						});
+					} catch (e:Error) {}
 				}
 			}			
 		}
@@ -133,11 +135,25 @@ package com.longtailvideo.jwplayer.player {
 		}
 
 		private function getConfig():Object {
-			return _emu.config;
+			return stripDots(_emu.config);
+		}
+		
+		private function stripDots(obj:Object):Object {
+			var newObj:Object = {};
+			for (var idx:String in obj) {
+				if (idx.indexOf(".") == -1) {
+					newObj[idx] = obj[idx];
+				}
+			}
+			return newObj;
 		}
 		
 		private function getPlaylist():Object {
-			return _emu.playlist;
+			var arry:Array = [];
+			for each (var obj:Object in _emu.playlist) {
+				arry.push(stripDots(obj));
+			}
+			return arry;
 		}
 		
 		private function getJSPluginConfig(pluginId:String):Object {
