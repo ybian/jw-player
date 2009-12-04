@@ -88,9 +88,9 @@ package com.longtailvideo.jwplayer.view {
 		
 		
 		private function resizeComponent(comp:IPlayerComponent, config:PluginConfig):void {
-			comp.resize(config['width'], config['height']);
 			comp.x = config['x'];
 			comp.y = config['y'];
+			comp.resize(config['width'], config['height']);
 		}
 	}
 }

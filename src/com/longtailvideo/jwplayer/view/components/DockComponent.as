@@ -60,8 +60,6 @@ package com.longtailvideo.jwplayer.view.components {
 			addChild(button);
 			buttons.push(button);
 			resize(getConfigParam('width'), getConfigParam('height'));
-			this.x = getConfigParam('x');
-			this.y = getConfigParam('y');
 			return button;
 		}
 		
@@ -75,30 +73,25 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		
 		public function resize(width:Number, height:Number):void {
-			var margin:Number = 10;
-			var usedHeight:Number = margin;
-			var direction:Number = 1;
-			if (getConfigParam('position') != 'left') {
-				direction = -1;
-			}
-			for (var i:Number = 0; i < buttons.length; i++) {
-				var row:Number = Math.floor(usedHeight / height);
-				if ((usedHeight + buttons[i].height + margin) > ((row + 1) * height)){
-					usedHeight = ((row + 1) * height) + margin;
-					row = Math.floor(usedHeight / height);
+			if (buttons.length > 0) {
+				var margin:Number = 10;
+				var xStart:Number = width - buttons[0].width;
+				var usedHeight:Number = margin;
+				var direction:Number = -1;
+				if (getConfigParam('position') == 'left') {
+					direction = 1;
+					xStart = 0;
 				}
-				buttons[i].y = usedHeight % height;
-				buttons[i].x = (buttons[i].width + margin) * row * direction;
-				usedHeight += buttons[i].height + margin;
-				(buttons[i] as DockButton).centerText();
-			}
-			setConfigParam('y', player.controls.display.y);
-			if (getConfigParam('position') == 'left') {
-				setConfigParam('x', player.controls.display.x + margin);
-			} else {
-				// No need to subtract the width: all of the positions are negative
-				if (buttons.length > 0){
-					setConfigParam('x', player.controls.display.x + player.controls.display.width - buttons[0].width - margin);
+				for (var i:Number = 0; i < buttons.length; i++) {
+					var row:Number = Math.floor(usedHeight / height);
+					if ((usedHeight + buttons[i].height + margin) > ((row + 1) * height)){
+						usedHeight = ((row + 1) * height) + margin;
+						row = Math.floor(usedHeight / height);
+					}
+					buttons[i].y = usedHeight % height;
+					buttons[i].x = xStart + (buttons[i].width + margin) * row * direction;
+					usedHeight += buttons[i].height + margin;
+					(buttons[i] as DockButton).centerText();
 				}
 			}
 		}
