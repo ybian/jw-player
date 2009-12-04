@@ -7,7 +7,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.NetClient;
-
+	
 	import flash.events.*;
 	import flash.media.*;
 	import flash.net.*;
@@ -41,7 +41,8 @@ package com.longtailvideo.jwplayer.media {
 		protected var _iterator:Number;
 		/** Start parameter. **/
 		private var _startparam:String = 'start';
-
+		/** Whether the buffer has filled **/
+		private var _bufferFull:Boolean;
 
 		/** Constructor; sets up the connection and display. **/
 		public function HTTPMediaProvider() {
@@ -151,6 +152,7 @@ package com.longtailvideo.jwplayer.media {
 			}
 			media = _video;
 			_stream.play(getURL());
+			_bufferFull = false;
 			if (!_positionInterval) {
 				_positionInterval = setInterval(positionInterval, 100);
 			}
@@ -205,8 +207,6 @@ package com.longtailvideo.jwplayer.media {
 		/** Pause playback. **/
 		override public function pause():void {
 			_stream.pause();
-			clearInterval(_positionInterval);
-			_positionInterval = undefined;
 			super.pause();
 		}
 
@@ -234,12 +234,16 @@ package com.longtailvideo.jwplayer.media {
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
 				_stream.pause();
 				setState(PlayerState.BUFFERING);
-			} else if (bufferFill > 95 && state == PlayerState.BUFFERING) {
+				_bufferFull = false;
+			} else if (bufferFill > 95 && state == PlayerState.BUFFERING && _bufferFull == false) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
+				_bufferFull = true;
 			}
 
-			if (state == PlayerState.BUFFERING) {
-				sendBufferEvent(bufferPercent, _timeoffset);
+			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
+				if (!_bufferFull) {
+					sendBufferEvent(bufferPercent, _timeoffset);
+				}
 			} else if (_position < item.duration) {
 				if (state == PlayerState.PLAYING && _position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: item.duration, bufferPercent: bufferPercent, offset: _timeoffset});

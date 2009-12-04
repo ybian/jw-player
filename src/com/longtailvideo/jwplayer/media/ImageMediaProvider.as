@@ -85,8 +85,7 @@ package com.longtailvideo.jwplayer.media {
 		protected function positionInterval():void {
 			_position = Math.round(position * 10 + 1) / 10;
 			if (position < _item.duration) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position,
-						duration: item.duration});
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 			} else if (_item.duration > 0) {
 				complete();
 			}

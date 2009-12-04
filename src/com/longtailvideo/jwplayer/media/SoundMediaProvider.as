@@ -153,8 +153,8 @@ package com.longtailvideo.jwplayer.media {
 				_bufferFull = true;
 			}
 			
-			if (state == PlayerState.BUFFERING) {
-				if (!isNaN(bufferPercent)){
+			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
+				if (!isNaN(bufferPercent) && !_bufferFull){
 					sendBufferEvent(bufferPercent);
 				}
 			} else if (_position < _item.duration) {

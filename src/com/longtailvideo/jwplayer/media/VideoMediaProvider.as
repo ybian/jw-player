@@ -3,9 +3,7 @@
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.NetClient;
-	import com.longtailvideo.jwplayer.utils.Strings;
 	
 	import flash.events.*;
 	import flash.media.*;
@@ -150,8 +148,10 @@
 				_bufferFull = true;
 			}
 
-			if (state == PlayerState.BUFFERING) {
-				sendBufferEvent(bufferPercent);
+			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
+				if (!_bufferFull) {
+					sendBufferEvent(bufferPercent);
+				}
 			} else if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent: bufferPercent});
