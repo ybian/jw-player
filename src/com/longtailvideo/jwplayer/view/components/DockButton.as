@@ -59,9 +59,12 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			super.init();
 			_imageLayer.addChild(_text);
-			_assetColor = _assetColor ? _assetColor : new Color(0xFFFFFF);
-			_outIcon.transform.colorTransform = createColorTransform(_assetColor);
-			_text.textColor = _assetColor.color;
+			if (_assetColor) {
+				_outIcon.transform.colorTransform = createColorTransform(_assetColor);
+				_text.textColor = _assetColor.color;
+			} else {
+				_text.textColor = 0xFFFFFF;
+			}
 			mouseChildren = false;
 			buttonMode = true;
 		}

@@ -59,7 +59,9 @@ package com.longtailvideo.jwplayer.view.components {
 			button.text = text;
 			addChild(button);
 			buttons.push(button);
-			resize(width, height);
+			resize(getConfigParam('width'), getConfigParam('height'));
+			this.x = getConfigParam('x');
+			this.y = getConfigParam('y');
 			return button;
 		}
 		
