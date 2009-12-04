@@ -75,12 +75,12 @@ package com.longtailvideo.jwplayer.view.components {
 		public function resize(width:Number, height:Number):void {
 			if (buttons.length > 0) {
 				var margin:Number = 10;
-				var xStart:Number = width - buttons[0].width;
+				var xStart:Number = width - buttons[0].width - margin;
 				var usedHeight:Number = margin;
 				var direction:Number = -1;
 				if (getConfigParam('position') == 'left') {
 					direction = 1;
-					xStart = 0;
+					xStart = margin;
 				}
 				for (var i:Number = 0; i < buttons.length; i++) {
 					var row:Number = Math.floor(usedHeight / height);

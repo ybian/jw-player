@@ -21,6 +21,7 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.view.interfaces.IPlaylistComponent;
 	import com.longtailvideo.jwplayer.view.interfaces.ISkin;
 	
+	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.MovieClip;
@@ -415,6 +416,9 @@ package com.longtailvideo.jwplayer.view {
 
 
 		protected function imageComplete(evt:Event):void {
+			if (_image.content is Bitmap) {
+				(_image.content as Bitmap).smoothing = true;
+			}
 			_imageLayer.addChild(_image);
 			_imageLayer.x = _components.display.x;
 			_imageLayer.y = _components.display.y;
