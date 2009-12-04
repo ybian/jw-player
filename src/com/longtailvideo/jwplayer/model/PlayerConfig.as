@@ -105,7 +105,7 @@ package com.longtailvideo.jwplayer.model {
 				if (!_pluginConfig.hasOwnProperty(pluginId)) {
 					_pluginConfig[pluginId] = new PluginConfig(pluginId);
 				}
-				_pluginConfig[pluginId][pluginProperty] = value;
+				_pluginConfig[pluginId][pluginProperty] = TypeChecker.fromString(value);
 			}
 		}
 
