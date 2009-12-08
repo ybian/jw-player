@@ -516,8 +516,8 @@ package com.longtailvideo.jwplayer.view.components {
 			_width = width;
 
 			if (getConfigParam('position') == 'over' || _player.fullscreen == true) {
-				player.config.pluginConfig("controlbar")['x'] = getConfigParam('margin');
-				player.config.pluginConfig("controlbar")['y'] = height - background.height - getConfigParam('margin');
+				x = getConfigParam('margin');
+				y = height - background.height - getConfigParam('margin');
 				_width = width - 2 * getConfigParam('margin');
 			}
 
