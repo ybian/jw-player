@@ -3,11 +3,13 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Animations;
+	import com.longtailvideo.jwplayer.utils.AssetLoader;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	
-	import flash.display.Loader;
+	import flash.display.Bitmap;
 	import flash.display.MovieClip;
+	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
@@ -34,7 +36,7 @@ package com.longtailvideo.jwplayer.view {
 		/** Reference to the current fade timer **/
 		protected var timeout:uint;
 		/** Reference to the loader **/
-		protected var loader:Loader;
+		protected var loader:AssetLoader;
 		/** Animations handler **/
 		protected var animations:Animations;
 		
@@ -65,17 +67,17 @@ package com.longtailvideo.jwplayer.view {
 			}
 			
 			if (getConfigParam('file') && RootReference.root.loaderInfo.url.indexOf("http")==0) {
-				loader = new Loader();
-				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loaderHandler);
-				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-				loader.load(new URLRequest(getConfigParam('file')));
+				loader = new AssetLoader();
+				loader.addEventListener(Event.COMPLETE,loaderHandler);
+				loader.addEventListener(ErrorEvent.ERROR, errorHandler);
+				loader.load(getConfigParam('file'));
 			}
 		}
 		
 		/** Logo loaded - add to display **/
 		protected function loaderHandler(evt:Event):void {
 			visible = false;
-			addChild(loader);
+			addChild(loader.loadedObject);
 			resize(_width, _height);
 		}
 		
@@ -136,9 +138,9 @@ package com.longtailvideo.jwplayer.view {
 		public function resize(width:Number, height:Number):void {
 			_width = width;
 			_height = height;
-			if (loader) {
-				loader.x = defaults['margin'];
-				loader.y = _height - loader.height - defaults['margin'];
+			if (loader.loadedObject) {
+				(loader.loadedObject as Bitmap).x = defaults['margin'];
+				(loader.loadedObject as Bitmap).y = _height - (loader.loadedObject as Bitmap).height - defaults['margin'];
 			}
 		}
 		

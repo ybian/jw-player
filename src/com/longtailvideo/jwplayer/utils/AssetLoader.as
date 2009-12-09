@@ -88,6 +88,7 @@ package com.longtailvideo.jwplayer.utils {
 				_loader = new Loader();
 				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadComplete);
 				_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadError);
+				_loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadError);
 			}
 			return _loader;
 		}

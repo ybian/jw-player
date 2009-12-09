@@ -77,6 +77,17 @@ package com.longtailvideo.jwplayer.utils {
 			rct.graphics.drawRect(0, 0, wid, hei);
 			tgt.addChild(rct);
 			return rct;
-		};
+		}
+		
+		/**
+		 * 
+		 * Smooth an image
+		 **/
+		public static function smooth(bitmap:Bitmap):void {
+			try {
+				bitmap.smoothing = true;
+			} catch (err:Error) {
+			}
+		}
 	}
 }

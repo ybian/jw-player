@@ -7,6 +7,7 @@ package com.longtailvideo.jwplayer.media {
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.utils.Draw;
 	
 	import flash.display.*;
 	import flash.events.*;
@@ -57,10 +58,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Load and place the image on stage. **/
 		private function loaderHandler(evt:Event):void {
 			media = _loader;
-			try {
-				Bitmap(_loader.content).smoothing = true;
-			} catch (err:Error) {
-			}
+			Draw.smooth(_loader.content as Bitmap);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {height: evt.target.height, width: evt.target.width}});
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);

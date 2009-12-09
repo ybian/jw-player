@@ -17,7 +17,7 @@ package com.longtailvideo.jwplayer.media {
 
 
 	public class YouTubeMediaProvider extends MediaProvider {
-		/** Loader for _loading the YouTube proxy **/
+		/** Loader for loading the YouTube proxy **/
 		private var _loader:Loader;
 		/** 'Unique' string to use for proxy connection. **/
 		private var _unique:String;

@@ -4,7 +4,9 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.utils.AssetLoader;
 	import com.longtailvideo.jwplayer.utils.Draw;
+	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Stacker;
 	import com.longtailvideo.jwplayer.utils.Stretcher;
@@ -20,13 +22,14 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
-	import flash.net.URLRequest;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
@@ -65,6 +68,8 @@ package com.longtailvideo.jwplayer.view.components {
 		private var skinLoaded:Boolean = false;
 		private var pendingResize:Rectangle;
 		private var pendingBuild:Boolean = false;
+		/** Map of images and loaders **/
+		private var imageLoaderMap:Dictionary = new Dictionary();
 		
 		public function PlaylistComponent(player:IPlayer) {
 			super(player, "playlist");
@@ -309,6 +314,7 @@ package com.longtailvideo.jwplayer.view.components {
 				pendingBuild = true;
 				return
 			}
+
 			var wid:Number = getConfigParam("width");
 			var hei:Number = getConfigParam("height");
 			listmask.height = hei;
@@ -432,15 +438,13 @@ package com.longtailvideo.jwplayer.view.components {
 			if (playlistItem.image) {
 				if (getConfigParam('thumbs') != false && _player.config.playlist != 'none' && playlistItem.image) {
 					var img:Sprite = getButton(idx).getChildByName("image") as Sprite;
-					if (img) {
-						var msk:Sprite = Draw.rect(getButton(idx), '0xFF0000', img.width, img.height, img.x, img.y);
-						var ldr:Loader = new Loader();
-						img.mask = msk;
-						img.addChild(ldr);
-						ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
-						if (playlistItem.image) {
-							ldr.load(new URLRequest(playlistItem.image));
-						}
+					img.alpha = 0;
+					if (img && playlistItem.image) {
+						var ldr:AssetLoader = new AssetLoader();
+						imageLoaderMap[ldr] = idx;
+						ldr.addEventListener(Event.COMPLETE, loaderHandler);
+						ldr.addEventListener(ErrorEvent.ERROR, errorHandler);
+						ldr.load(playlistItem.image);
 					}
 				}
 			}
@@ -482,8 +486,33 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Loading of image completed; resume loading **/
 		private function loaderHandler(evt:Event):void {
-			var ldr:Loader = Loader(evt.target.loader);
-			Stretcher.stretch(ldr, image[0], image[1], Stretcher.FILL);
+			try {
+				var ldr:AssetLoader = evt.target as AssetLoader;
+				var button:Sprite = getButton(imageLoaderMap[ldr]);
+				var img:Sprite = button.getChildByName("image") as Sprite;
+				img.alpha = 1;
+				var msk:Sprite = Draw.rect(button, '0xFF0000', img.width, img.height, img.x, img.y);
+				img.mask = msk;
+				img.addChild(ldr.loadedObject);
+				Draw.smooth(ldr.loadedObject);
+				Stretcher.stretch(ldr.loadedObject, image[0], image[1], Stretcher.FILL);
+			} catch (err:Error) {
+				Logger.log('Error loading playlist image: '+err.message);
+			}
+		}
+		
+		
+		/** Loading of image failed; hide image **/
+		private function errorHandler(evt:Event):void {
+			try {
+				var ldr:AssetLoader = evt.target as AssetLoader;
+				var button:Sprite = getButton(imageLoaderMap[ldr]);
+				var img:Sprite = button.getChildByName("image") as Sprite;
+				img.visible = false;
+				(buttons[imageLoaderMap[ldr]].s as Stacker).rearrange(getConfigParam("width"));
+			} catch (err:Error) {
+				Logger.log('Error loading playlist image '+(ldr.loadedObject as Loader).loaderInfo.url+': '+err.message);
+			}
 		}
 		
 		

@@ -6,6 +6,7 @@ package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.parsers.JWParser;
 	import com.longtailvideo.jwplayer.parsers.ParserFactory;
 	import com.longtailvideo.jwplayer.utils.AssetLoader;
+	
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	

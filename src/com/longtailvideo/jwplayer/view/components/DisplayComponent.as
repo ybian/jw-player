@@ -5,6 +5,7 @@
 	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
+	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
@@ -107,11 +108,7 @@
 						_bufferIcon.y = back.height - icon.height;
 						var bufferBitmap:Bitmap = _bufferIcon.getChildByName('bitmap') as Bitmap;
 						if (bufferBitmap) {
-							try {
-								bufferBitmap.smoothing = true;
-							} catch(e:Error) {
-								// cross-domain issue prevented smoothing
-							}
+							Draw.smooth(bufferBitmap);
 						}
 					}
 				} catch (err:Error){
