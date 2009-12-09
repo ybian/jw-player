@@ -35,7 +35,6 @@
 		
 		/** Player constructor **/
 		public function Player() {
-			new RootReference(this);
 			try {
 				this.addEventListener(Event.ADDED_TO_STAGE, setupPlayer);
 			} catch (err:Error) {
@@ -49,6 +48,7 @@
 				this.removeEventListener(Event.ADDED_TO_STAGE, setupPlayer);
 			} catch (err:Error) {
 			}
+			new RootReference(this);
 			model = newModel();
 			view = newView(model);
 			controller = newController(model, view);

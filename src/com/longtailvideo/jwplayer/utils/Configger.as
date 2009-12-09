@@ -84,8 +84,10 @@ package com.longtailvideo.jwplayer.utils {
 		}
 
 		private function loadCookies():void {
-			var cookie:SharedObject = SharedObject.getLocal('com.jeroenwijering','/');
-			writeCookieData(cookie.data);
+			try {
+				var cookie:SharedObject = SharedObject.getLocal('com.jeroenwijering','/');
+				writeCookieData(cookie.data);
+			} catch (err:Error) {}
 		}
 
 		/** Overwrite cookie data. **/ 

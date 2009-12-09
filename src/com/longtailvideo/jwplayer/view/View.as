@@ -176,7 +176,11 @@ package com.longtailvideo.jwplayer.view {
 
 			_pluginsLayer = setupLayer("plugins", 4);
 			_plugins = {};
-
+			
+			setupLogo();
+		}
+		
+		protected function setupLogo():void {
 			_logoLayer = setupLayer("logo", 5);
 			_logo = new Logo(_player);
 			_logoLayer.addChild(_logo);
