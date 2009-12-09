@@ -232,7 +232,7 @@ package com.longtailvideo.jwplayer.media {
 			var bufferFill:Number;
 			if (item.duration >= 0) {
 				bufferPercent = (_stream.bytesLoaded / _stream.bytesTotal) * (1 - _timeoffset / item.duration) * 100;
-				var bufferTime = _stream.bufferTime < (item.duration - position) ? _stream.bufferTime : Math.round(item.duration - position);
+				var bufferTime:Number = _stream.bufferTime < (item.duration - position) ? _stream.bufferTime : Math.round(item.duration - position);
 				bufferFill = _stream.bufferTime == 0 ? 0 : Math.ceil(_stream.bufferLength / bufferTime * 100);
 			} else {
 				bufferPercent = 0;

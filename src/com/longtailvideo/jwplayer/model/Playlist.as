@@ -115,11 +115,15 @@ package com.longtailvideo.jwplayer.model {
 			var loader:AssetLoader = evt.target as AssetLoader;
 			var loadedXML:XML = loader.loadedObject as XML;
 			var parser:IPlaylistParser = ParserFactory.getParser(loadedXML);
-			var playlistItems:Array = parser.parse(loadedXML);
-			if (playlistItems.length > 0) {
-				load(playlistItems);
+			if (parser) {
+				var playlistItems:Array = parser.parse(loadedXML);
+				if (playlistItems.length > 0) {
+					load(playlistItems);
+				} else {
+					playlistError("XML could not be parsed or playlist was empty");
+				}
 			} else {
-				playlistError("XML could not be parsed or playlist was empty");
+				playlistError("Playlist file did not contain a valid playlist");
 			}
 		}
 		
