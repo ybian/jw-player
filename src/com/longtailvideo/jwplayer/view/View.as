@@ -420,7 +420,7 @@ package com.longtailvideo.jwplayer.view {
 
 
 		protected function imageComplete(evt:Event):void {
-			Draw.smooth((_image.loadedObject as Loader).content as Bitmap);
+			Draw.smooth(_image.loadedObject as Bitmap);
 			_imageLayer.addChild(_image.loadedObject);
 			_imageLayer.x = _components.display.x;
 			_imageLayer.y = _components.display.y;
