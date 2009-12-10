@@ -62,8 +62,8 @@ package com.longtailvideo.jwplayer.view {
 		protected function loadFile():void {
 			var versionRE:RegExp = /(\d+)\.(\d+)\./;
 			var versionInfo:Array = versionRE.exec(_player.version);
-			if (defaults['file'] && defaults['prefix']) {
-				defaults['file'] = defaults['prefix'] + versionInfo[1] + "/" + versionInfo[2] + "/" + defaults['file'];
+			if (getConfigParam('file') && getConfigParam('prefix')) {
+				defaults['file'] = getConfigParam('prefix') + versionInfo[1] + "/" + versionInfo[2] + "/" + getConfigParam('file');
 			}
 			
 			if (getConfigParam('file') && RootReference.root.loaderInfo.url.indexOf("http")==0) {
@@ -127,7 +127,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Fade out **/
 		protected function hide():void {
-			if (defaults['hide'] == 'true') {
+			if (getConfigParam('hide') == 'true') {
 				mouseEnabled = false;
 				animations.fade(0, 0.1);
 			}
@@ -139,8 +139,8 @@ package com.longtailvideo.jwplayer.view {
 			_width = width;
 			_height = height;
 			if (loader.loadedObject) {
-				(loader.loadedObject as Bitmap).x = defaults['margin'];
-				(loader.loadedObject as Bitmap).y = _height - (loader.loadedObject as Bitmap).height - defaults['margin'];
+				(loader.loadedObject as Bitmap).x = getConfigParam('margin');
+				(loader.loadedObject as Bitmap).y = _height - (loader.loadedObject as Bitmap).height - getConfigParam('margin');
 			}
 		}
 		
