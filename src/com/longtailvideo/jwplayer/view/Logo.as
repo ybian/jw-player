@@ -82,7 +82,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		/** Logo failed to load - die **/
-		protected function errorHandler(evt:IOErrorEvent):void {
+		protected function errorHandler(evt:ErrorEvent):void {
 			Logger.log("Failed to load logo: " + evt.text);
 		}
 		
