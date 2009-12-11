@@ -87,6 +87,7 @@ package com.longtailvideo.jwplayer.player {
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, mediaVolume);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, mediaMute);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_META, mediaMeta);
+			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_COMPLETE, mediaComplete);
 			_player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 
 			_player.addEventListener(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, viewFullscreen);
@@ -145,6 +146,10 @@ package com.longtailvideo.jwplayer.player {
 			modelEventDispatcher.dispatchEvent(new ModelEvent(ModelEvent.META, evt.metadata));
 		}
 		
+		private function mediaComplete(evt:MediaEvent):void {
+			modelEventDispatcher.dispatchEvent(new ModelEvent(ModelEvent.STATE, {id:id, oldstate:_player.state, newstate:ModelStates.COMPLETED}));
+		}
+		
 		private function stateHandler(evt:PlayerStateEvent):void {
 			if (evt.newstate == PlayerState.IDLE && (evt.oldstate == PlayerState.BUFFERING || evt.oldstate == PlayerState.PLAYING)) {
 				controllerEventDispatcher.dispatchEvent(new ControllerEvent(ControllerEvent.STOP, {id:id, client:client, version:version}));
@@ -152,7 +157,7 @@ package com.longtailvideo.jwplayer.player {
 			
 			modelEventDispatcher.dispatchEvent(new ModelEvent(ModelEvent.STATE, {id:id, oldstate:evt.oldstate, newstate:evt.newstate}));
 		}
-
+		
 		// View Event Handlers
 
 		private function viewFullscreen(evt:ViewEvent):void {
