@@ -47,7 +47,11 @@ package com.longtailvideo.jwplayer.controller {
 			var loader:AssetLoader = evt.target as AssetLoader;
 			try {
 				loadedSource = loader.loadedObject as MediaProvider;
-				dispatchEvent(new Event(Event.COMPLETE));
+				if (loadedSource) {
+					dispatchEvent(new Event(Event.COMPLETE));
+				} else {
+					dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, "Loaded file is not a valid media provider."));
+				}
 			} catch (e:Error) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
 			}

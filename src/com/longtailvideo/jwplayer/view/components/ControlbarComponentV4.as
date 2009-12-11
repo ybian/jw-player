@@ -23,7 +23,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
-	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
@@ -156,14 +155,14 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 
 			var wid:Number = width;
+			var margin:Number = controlbarConfig['margin'];
+
 			if (controlbarConfig['position'] == 'over' || _player.fullscreen == true) {
-				skin.x = controlbarConfig['margin'];
-				skin.y = height - skin.height - controlbarConfig['margin'];
-				wid = width - 2 * controlbarConfig['margin'];
-			} else {
-				skin.x = 0;
-				skin.y = 0;
+				x = margin;
+				y = height - skin.height - margin;
+				wid = width - 2 * margin;
 			}
+
 			try {
 				getSkinComponent('fullscreenButton').visible = false;
 				getSkinComponent('normalscreenButton').visible = false;
