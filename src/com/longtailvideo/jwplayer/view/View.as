@@ -420,11 +420,16 @@ package com.longtailvideo.jwplayer.view {
 
 
 		protected function imageComplete(evt:Event):void {
-			Draw.smooth(_image.loadedObject as Bitmap);
-			_imageLayer.addChild(_image.loadedObject);
-			_imageLayer.x = _components.display.x;
-			_imageLayer.y = _components.display.y;
-			Stretcher.stretch(_image.loadedObject, _player.config.width, _player.config.height, _player.config.stretching);
+			if (_image.loadedObject is Bitmap) {
+				Draw.smooth(_image.loadedObject as Bitmap);
+				_imageLayer.addChild(_image.loadedObject);
+				_imageLayer.x = _components.display.x;
+				_imageLayer.y = _components.display.y;
+				Stretcher.stretch(_image.loadedObject, _player.config.width, _player.config.height, _player.config.stretching);
+			} else {
+				_image = null;
+				Logger.log('Error loading preview image.');
+			}
 		}
 
 

@@ -115,7 +115,10 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Finalizes the loading process **/
 		private function finishLoad():void {
-			if (!media) {
+			var ext:String = item.file.substr(-4);
+			if (ext == '.mp3'){
+				media = null;
+			} else if (!media) {
 				media = _video;
 			}
 			_connection.connect(item.streamer);
@@ -164,6 +167,10 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Resume playing. **/
 		override public function play():void {
+			/* 
+			* Livestreams will reset their buffer if _stream.resume is called,
+			* so we suppress them after the intial call
+			*/
 			if (!(livestream && _started)) {
 				_stream.resume();
 			}
