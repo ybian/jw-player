@@ -41,7 +41,7 @@ package com.longtailvideo.jwplayer.media {
 		protected var _unpublished:Boolean;
 		/** Whether the buffer has filled **/
 		private var _bufferFull:Boolean;
-
+		
 		public function RTMPMediaProvider() {
 			super('rtmp');
 		}
@@ -195,8 +195,8 @@ package com.longtailvideo.jwplayer.media {
 			
 			if (bfr < 95 && position < Math.abs(item.duration - _stream.bufferTime - 1)) {
 				if (state == PlayerState.PLAYING && bfr < 20) {
-					_stream.pause();
 					_bufferFull = false;
+					_stream.pause();
 					setState(PlayerState.BUFFERING);
 					_stream.bufferTime = config.bufferlength;
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: config.bufferlength}});
@@ -213,7 +213,7 @@ package com.longtailvideo.jwplayer.media {
 			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
 				//TODO: This works, but it looks weird, as the bufferTime is changing
 				/*
-				if (!_bufferFull){
+				if (!_bufferingComplete){
 					sendBufferEvent(_stream.bufferLength / _stream.bufferTime * item.duration);
 				}
 				*/

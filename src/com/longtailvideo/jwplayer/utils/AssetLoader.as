@@ -69,7 +69,7 @@ package com.longtailvideo.jwplayer.utils {
 				if (LoadedClass) {
 					loadedObject = (evt.target as LoaderInfo).content as LoadedClass;
 				} else {
-					loadedObject = (evt.target as LoaderInfo).content
+					loadedObject = (evt.target as LoaderInfo).content;
 				}
 				dispatchEvent(new Event(Event.COMPLETE));
 			} catch (e:Error) {

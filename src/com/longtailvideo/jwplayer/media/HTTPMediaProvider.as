@@ -43,7 +43,9 @@ package com.longtailvideo.jwplayer.media {
 		private var _startparam:String = 'start';
 		/** Whether the buffer has filled **/
 		private var _bufferFull:Boolean;
-
+		/** Whether the enitre video has been buffered **/
+		private var _bufferingComplete:Boolean;
+		
 		/** Constructor; sets up the connection and display. **/
 		public function HTTPMediaProvider() {
 			super('http');
@@ -147,12 +149,14 @@ package com.longtailvideo.jwplayer.media {
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
 			_position = _timeoffset;
+			_bufferFull = false;
+			_bufferingComplete = false;
 			if (_stream.bytesLoaded + _byteoffset < _stream.bytesTotal) {
 				_stream.close();
 			}
 			media = _video;
 			_stream.play(getURL());
-			_bufferFull = false;
+
 			if (!_positionInterval) {
 				_positionInterval = setInterval(positionInterval, 100);
 			}
@@ -224,6 +228,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Interval for the position progress **/
 		protected function positionInterval():void {
 			_position = Math.round(_stream.time * 10) / 10;
+			var percentoffset:Number;
 			if (_mp4) {
 				_position += _timeoffset;
 			}
@@ -231,26 +236,32 @@ package com.longtailvideo.jwplayer.media {
 			var bufferPercent:Number;
 			var bufferFill:Number;
 			if (item.duration > 0) {
+				percentoffset =  Math.round(_timeoffset /  item.duration * 100);
 				bufferPercent = (_stream.bytesLoaded / _stream.bytesTotal) * (1 - _timeoffset / item.duration) * 100;
 				var bufferTime:Number = _stream.bufferTime < (item.duration - position) ? _stream.bufferTime : Math.round(item.duration - position);
 				bufferFill = _stream.bufferTime == 0 ? 0 : Math.ceil(_stream.bufferLength / bufferTime * 100);
 			} else {
+				percentoffset = 0;
 				bufferPercent = 0;
 				bufferFill = _stream.bufferLength/_stream.bufferTime * 100;
 			}
 
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
-				_stream.pause();
 				_bufferFull = false;
+				_stream.pause();
 				setState(PlayerState.BUFFERING);
 			} else if (bufferFill > 95 && state == PlayerState.BUFFERING && _bufferFull == false) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 				_bufferFull = true;
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
 
 			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
-				if (!_bufferFull) {
+				if (!_bufferingComplete) {
+					if ((bufferPercent + percentoffset) == 100 && _bufferingComplete == false) {
+						_bufferingComplete = true;
+					}
 					sendBufferEvent(bufferPercent, _timeoffset);
+					
 				}
 			} else if (_position < item.duration) {
 				if (state == PlayerState.PLAYING && _position >= 0) {

@@ -29,6 +29,8 @@
 		protected var _loadTimer:Number;
 		/** Whether the buffer has filled **/
 		private var _bufferFull:Boolean;
+		/** Whether the enitre video has been buffered **/
+		private var _bufferingComplete:Boolean;
 
 
 		/** Constructor; sets up the connection and display. **/
@@ -63,6 +65,8 @@
 		/** Load content. **/
 		override public function load(itm:PlaylistItem):void {
 			var replay:Boolean;
+			_bufferFull = false;
+			_bufferingComplete = false;
 			if (!item || item.file != itm.file || _stream.bytesLoaded == 0) {
 				_item = itm;
 				media = _video;
@@ -79,7 +83,6 @@
 			} else {
 				sendBufferEvent(0);
 			}
-			_bufferFull = false;
 			_positionInterval = setInterval(positionHandler, 200);
 			_loadTimer = setTimeout(loadTimerComplete, 3000);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
@@ -136,20 +139,22 @@
 			var bufferPercent:Number = _stream.bytesLoaded / _stream.bytesTotal * 100;
 			var bufferTime:Number = _stream.bufferTime < (item.duration - _streamTime) ? _stream.bufferTime : Math.floor(Math.abs(item.duration - _streamTime));
 			var bufferFill:Number = bufferTime == 0 ? 100 : Math.ceil(_stream.bufferLength / bufferTime * 100);
-			
-			//Logger.log(Strings.print_r({streamtime: _streamTime, position:position, bufferPercent: bufferPercent, bufferFill: bufferFill, bufferTime:bufferTime}));
+
 			
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
+				_bufferFull = false;
 				_stream.pause();
 				setState(PlayerState.BUFFERING);
-				_bufferFull = false;
 			} else if (bufferFill > 95 && state == PlayerState.BUFFERING && _bufferFull == false) {
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 				_bufferFull = true;
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
 
 			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
-				if (!_bufferFull) {
+				if (!_bufferingComplete) {
+					if (bufferPercent == 100 && _bufferingComplete == false) {
+						_bufferingComplete = true;
+					}
 					sendBufferEvent(bufferPercent);
 				}
 			} else if (position < item.duration) {
