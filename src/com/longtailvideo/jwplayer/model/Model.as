@@ -121,10 +121,11 @@ package com.longtailvideo.jwplayer.model {
 
 		/** The current fullscreen state of the player **/
 		public function get fullscreen():Boolean {
-			return _config.fullscreen;
+			return _fullscreen;
 		}
 
 		public function set fullscreen(b:Boolean):void {
+			_fullscreen = b;
 			_config.fullscreen = b;
 		}
 

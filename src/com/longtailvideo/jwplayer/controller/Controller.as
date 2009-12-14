@@ -480,6 +480,8 @@ package com.longtailvideo.jwplayer.controller {
 				return loadString(item as String);
 			} else if (item is Number) {
 				return loadNumber(item as Number);
+			} else if (item is Array) {
+				return loadArray(item as Array);
 			} else if (item is Object) {
 				return loadObject(item as Object);
 			}
@@ -526,6 +528,14 @@ package com.longtailvideo.jwplayer.controller {
 			return false;
 		}
 
+
+		protected function loadArray(item:Array):Boolean {
+			if (item.length > 0) {
+				_model.playlist.load(item);
+				return true;
+			}
+			return false;
+		}
 
 		protected function loadNumber(item:Number):Boolean {
 			if (item >= 0 && item < _model.playlist.length) {

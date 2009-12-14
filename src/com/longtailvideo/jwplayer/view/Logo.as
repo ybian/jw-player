@@ -11,7 +11,6 @@ package com.longtailvideo.jwplayer.view {
 	import flash.display.MovieClip;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
-	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
@@ -29,7 +28,8 @@ package com.longtailvideo.jwplayer.view {
 			out: 0.5, 
 			over: 1, 
 			timeout: 3,
-			hide: 'true'
+			hide: 'true',
+			position: 'bottom-left'
 		}
 		/** Reference to the player **/
 		protected var _player:IPlayer;
@@ -138,9 +138,21 @@ package com.longtailvideo.jwplayer.view {
 		public function resize(width:Number, height:Number):void {
 			_width = width;
 			_height = height;
-			if (loader.loadedObject) {
-				(loader.loadedObject as Bitmap).x = getConfigParam('margin');
-				(loader.loadedObject as Bitmap).y = _height - (loader.loadedObject as Bitmap).height - getConfigParam('margin');
+			var image:Bitmap = (loader.loadedObject as Bitmap);
+			var margin:Number = getConfigParam('margin');
+			var position:String = (getConfigParam('position') as String).toLowerCase(); 
+			if (image) {
+				if (position.indexOf('right') >= 0) {
+					image.x = _width - image.width - margin;
+				} else {
+					image.x = margin;
+				}
+				
+				if (position.indexOf('bottom') >= 0) {
+					image.y = _height - image.height - margin;
+				} else {
+					image.y = margin;
+				}
 			}
 		}
 		
