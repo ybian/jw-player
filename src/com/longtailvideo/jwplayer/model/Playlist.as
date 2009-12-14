@@ -44,11 +44,12 @@ package com.longtailvideo.jwplayer.model {
 	
 	
 	public class Playlist extends GlobalEventDispatcher implements IPlaylist {
-		/** **/
+		/** An array holding all of the PlaylistItem objects **/
 		private var list:Array;
-		/** **/
+		/** The current playlist index **/
 		private var index:Number;
-		
+		/** Keep track of the last playlistItem, so we can send a PLAYLIST_ITEM event at the correct time **/
+		private var lastItem:PlaylistItem = null;
 		
 		/**
 		 * Constructor
@@ -104,7 +105,7 @@ package com.longtailvideo.jwplayer.model {
 				list = newList;
 				index = 0;
 				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, this));
-				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, this));
+				currentIndex = 0;
 			} else {
 				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, "Loaded playlist is empty"));
 			}
@@ -193,11 +194,13 @@ package com.longtailvideo.jwplayer.model {
 		 * @inheritDoc
 		 */
 		public function set currentIndex(idx:Number):void {
-			if (idx != index && idx < list.length) {
+			if (getItemAt(idx) != lastItem) {
 				if (idx >= 0) {
 					index = idx;
+					lastItem = currentItem;
 					dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, this));
 				} else {
+					lastItem = null;
 					index = -1;
 				}
 			}
@@ -217,7 +220,7 @@ package com.longtailvideo.jwplayer.model {
 		public function get length():Number {
 			return list.length;
 		}
-
+		
 		/**
 		 * @inheritDoc
 		 **/
