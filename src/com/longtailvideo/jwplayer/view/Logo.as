@@ -28,8 +28,8 @@ package com.longtailvideo.jwplayer.view {
 			out: 0.5, 
 			over: 1, 
 			timeout: 3,
-			hide: 'true',
-			position: 'bottom-left'
+			hide: "true",
+			position: "bottom-left"
 		}
 		/** Reference to the player **/
 		protected var _player:IPlayer;
@@ -76,7 +76,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Logo loaded - add to display **/
 		protected function loaderHandler(evt:Event):void {
-			visible = false;
+			if (getConfigParam('hide').toString() == "true") visible = false;
 			addChild(loader.loadedObject);
 			resize(_width, _height);
 		}
@@ -127,7 +127,7 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Fade out **/
 		protected function hide():void {
-			if (getConfigParam('hide') == 'true') {
+			if (getConfigParam('hide').toString() == "true") {
 				mouseEnabled = false;
 				animations.fade(0, 0.1);
 			}
@@ -138,7 +138,7 @@ package com.longtailvideo.jwplayer.view {
 		public function resize(width:Number, height:Number):void {
 			_width = width;
 			_height = height;
-			var image:Bitmap = (loader.loadedObject as Bitmap);
+			var image:Bitmap = loader ? (loader.loadedObject as Bitmap) : null;
 			var margin:Number = getConfigParam('margin');
 			var position:String = (getConfigParam('position') as String).toLowerCase(); 
 			if (image) {

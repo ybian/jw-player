@@ -497,7 +497,7 @@ package com.longtailvideo.jwplayer.view.components {
 				mark.width = markWidth;
 				mark.visible = _player.state != PlayerState.IDLE;
 			} catch (e:Error) {
-				trace(e);
+				Logger.log(e);
 			}
 		}
 

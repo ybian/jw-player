@@ -43,8 +43,6 @@ package com.longtailvideo.jwplayer.utils {
 			var max:Number = stack[idx].x + stack[idx].w;
 			for (var i:Number = 0; i < stack.length; i++) {
 				if (i != idx && stack[i].c.visible == true && stack[i].w < _width && stack[i].x < max && stack[i].x + stack[i].w > min) {
-					//trace(stack[idx].n+' overlaps with '+stack[i].n);
-					//trace(stack[i].x+'-'+max+' / '+(stack[i].x+stack[i].w)+'-'+min);
 					return true;
 				}
 			}

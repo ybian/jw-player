@@ -102,7 +102,6 @@ package com.longtailvideo.jwplayer.media {
 		/** Load the YouTube movie. **/
 		override public function load(itm:PlaylistItem):void {
 			_item = itm;
-			trace("laod");
 			_position = _offset = 0;
 			_loading = true;
 			setState(PlayerState.BUFFERING);
