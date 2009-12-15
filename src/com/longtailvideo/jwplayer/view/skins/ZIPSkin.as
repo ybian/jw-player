@@ -4,8 +4,6 @@ package com.longtailvideo.jwplayer.view.skins {
 	import com.nochump.util.zip.ZipEntry;
 	import com.nochump.util.zip.ZipFile;
 	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
@@ -45,6 +43,8 @@ package com.longtailvideo.jwplayer.view.skins {
 				var zipEntry:ZipEntry = _zipFile.getEntry(_urlPrefix + '.xml');
 				if (!zipEntry) {
 					zipEntry =  _zipFile.getEntry(_urlPrefix+'/'+_urlPrefix + '.xml');
+				} else {
+					_urlPrefix = null;
 				}
 				_skinXML = XML(String(_zipFile.getInput(zipEntry)));
 				parseSkin();
@@ -60,6 +60,9 @@ package com.longtailvideo.jwplayer.view.skins {
 
 			for each (var element:XML in elements) {
 				var file:String = component + '/' + element.@src.toString();
+				if (_urlPrefix){
+					file = _urlPrefix +'/'+file;
+				}
 				var zipEntry:ZipEntry = _zipFile.getEntry(file);
 				
 				if (zipEntry) {
