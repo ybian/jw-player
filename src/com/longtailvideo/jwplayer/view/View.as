@@ -170,6 +170,8 @@ package com.longtailvideo.jwplayer.view {
 
 			_imageLayer = setupLayer("image", 2);
 			_image = new AssetLoader();
+			_image.addEventListener(Event.COMPLETE, imageComplete);
+			_image.addEventListener(ErrorEvent.ERROR, imageError);
 
 			_componentsLayer = setupLayer("components", 3);
 
@@ -411,29 +413,24 @@ package com.longtailvideo.jwplayer.view {
 				_imageLayer.removeChildAt(0);
 			}
 
-			_image = new AssetLoader();
-			_image.addEventListener(Event.COMPLETE, imageComplete);
-			_image.addEventListener(ErrorEvent.ERROR, imageError);
 			_image.load(url);
 		}
 
 
 		protected function imageComplete(evt:Event):void {
-			if (_image.loadedObject is Bitmap) {
+			if (_image && _image.loadedObject is Bitmap) {
 				Draw.smooth(_image.loadedObject as Bitmap);
 				_imageLayer.addChild(_image.loadedObject);
 				_imageLayer.x = _components.display.x;
 				_imageLayer.y = _components.display.y;
 				Stretcher.stretch(_image.loadedObject, _player.config.width, _player.config.height, _player.config.stretching);
 			} else {
-				_image = null;
 				Logger.log('Error loading preview image.');
 			}
 		}
 
 
 		protected function imageError(evt:ErrorEvent):void {
-			_image = null;
 			Logger.log('Error loading preview image: '+evt.text);
 			//dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, evt.text));
 		}

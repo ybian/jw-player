@@ -50,6 +50,8 @@ package com.longtailvideo.jwplayer.model {
 		private var index:Number;
 		/** Keep track of the last playlistItem, so we can send a PLAYLIST_ITEM event at the correct time **/
 		private var lastItem:PlaylistItem = null;
+		/** AssetLoader to grab playlist XML files **/
+		private var playlistLoader:AssetLoader;
 		
 		/**
 		 * Constructor
@@ -57,6 +59,9 @@ package com.longtailvideo.jwplayer.model {
 		public function Playlist() {
 			list = [];
 			index = -1;
+			playlistLoader = new AssetLoader();
+			playlistLoader.addEventListener(Event.COMPLETE, playlistLoaded);
+			playlistLoader.addEventListener(ErrorEvent.ERROR, playlistLoadError);
 		}
 		
 		
@@ -92,9 +97,6 @@ package com.longtailvideo.jwplayer.model {
 					newList.push((newPlaylist as Playlist).getItemAt(i));
 				}
 			} else if (newPlaylist is String && newPlaylist != "") {
-				var playlistLoader:AssetLoader = new AssetLoader();
-				playlistLoader.addEventListener(Event.COMPLETE, playlistLoaded);
-				playlistLoader.addEventListener(ErrorEvent.ERROR, playlistLoadError);
 				playlistLoader.load(String(newPlaylist), XML);
 				return;
 			} else {
@@ -105,7 +107,6 @@ package com.longtailvideo.jwplayer.model {
 				list = newList;
 				index = 0;
 				dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, this));
-				currentIndex = 0;
 			} else {
 				dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, "Loaded playlist is empty"));
 			}
@@ -114,8 +115,7 @@ package com.longtailvideo.jwplayer.model {
 		
 		
 		protected function playlistLoaded(evt:Event):void {
-			var loader:AssetLoader = evt.target as AssetLoader;
-			var loadedXML:XML = loader.loadedObject as XML;
+			var loadedXML:XML = playlistLoader.loadedObject as XML;
 			var parser:IPlaylistParser = ParserFactory.getParser(loadedXML);
 			if (parser) {
 				var playlistItems:Array = parser.parse(loadedXML);
