@@ -130,7 +130,6 @@ package com.longtailvideo.jwplayer.media {
 		 **/
 		public function seek(pos:Number):void {
 			_position = pos;
-			//			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration:item.duration});
 		}
 
 

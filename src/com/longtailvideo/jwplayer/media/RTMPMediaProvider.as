@@ -18,29 +18,30 @@ package com.longtailvideo.jwplayer.media {
 	import flash.media.*;
 	import flash.net.*;
 	import flash.utils.*;
-
-
+	
 	public class RTMPMediaProvider extends MediaProvider {
 		/** Video object to be instantiated. **/
 		protected var _video:Video;
-		/** NetConnection object for setup of the _video _stream. **/
+		/** NetConnection object for setup of the video stream. **/
 		protected var _connection:NetConnection;
 		/** Loader instance that loads the XML file. **/
 		private var _loader:URLLoader;
-		/** NetStream instance that handles the _stream IO. **/
+		/** NetStream instance that handles the stream IO. **/
 		protected var _stream:NetStream;
 		/** Sound control object. **/
 		protected var _transformer:SoundTransform;
 		/** Save the location of the XML redirect. **/
 		private var _smil:String;
-		/** Save that the _video has been _started. **/
-		protected var _started:Boolean;
-		/** ID for the position _positionInterval. **/
+		/** ID for the position positionInterval. **/
 		protected var _positionInterval:Number;
-		/** Save that a file is _unpublished. **/
+		/** Save that a file is unpublished. **/
 		protected var _unpublished:Boolean;
 		/** Whether the buffer has filled **/
 		private var _bufferFull:Boolean;
+		/** Save that the video has been started. **/
+		protected var _streamStarted:Boolean;
+		/** Whether the stream is active **/
+		private var _streamActive:Boolean;
 		
 		public function RTMPMediaProvider() {
 			super('rtmp');
@@ -93,6 +94,8 @@ package com.longtailvideo.jwplayer.media {
 			_item = itm;
 			_position = 0;
 			_bufferFull = false;
+			_streamStarted = false;
+			_streamActive = false;
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
 			if (getConfigProperty('loadbalance') as Boolean == true) {
@@ -134,7 +137,7 @@ package com.longtailvideo.jwplayer.media {
 				_video.height = dat.height;
 				resize(_width, _height);
 			}
-			if (dat.duration && item.duration < 0) {
+			if (dat.duration && item.duration <= 0) {
 				item.duration = dat.duration;
 			}
 			if (dat.type == 'complete') {
@@ -150,16 +153,18 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Determines if the stream is a live stream **/
 		private function get livestream():Boolean {
-			return item.duration == 0;
+			// We assume it's a livestream until we hear otherwise.
+			return !(item.duration > 0);
 		}
 
 		/** Pause playback. **/
 		override public function pause():void {
+			_streamActive = false;
 			_stream.pause();
 			clearInterval(_positionInterval);
 			_positionInterval = undefined;
 			super.pause();
-			if (_started && item.duration == 0) {
+			if (livestream) {
 				stop();
 			}
 		}
@@ -171,9 +176,17 @@ package com.longtailvideo.jwplayer.media {
 			* Livestreams will reset their buffer if _stream.resume is called,
 			* so we suppress them after the intial call
 			*/
-			if (!(livestream && _started)) {
+			if (!livestream && !_streamActive) {
+				_streamActive = true;
 				_stream.resume();
 			}
+			if (!_streamStarted && item.start > 0) {
+				_streamStarted = true;
+				seek(item.start);
+			} else {
+				_streamStarted = true;
+			}
+			
 			if (!_positionInterval) {
 				_positionInterval = setInterval(positionInterval, 100);
 			}
@@ -189,21 +202,25 @@ package com.longtailvideo.jwplayer.media {
 			if (!livestream) {
 				var bufferTime:Number = _stream.bufferTime < (item.duration - position) ? _stream.bufferTime : (item.duration - position);
 				bfr = Math.round(_stream.bufferLength / bufferTime * 100);
-			} else {
+			} else if (_stream.bufferLength > 0) {
 				bfr = Math.round(_stream.bufferLength / _stream.bufferTime * 100);
+			} else if (_streamActive){
+				bfr = 100;
 			}
+			
 			
 			if (bfr < 95 && position < Math.abs(item.duration - _stream.bufferTime - 1)) {
 				if (state == PlayerState.PLAYING && bfr < 20) {
 					_bufferFull = false;
+					_streamActive = false;
 					_stream.pause();
 					setState(PlayerState.BUFFERING);
 					_stream.bufferTime = config.bufferlength;
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: config.bufferlength}});
 				}
 			} else if (bfr > 95 && state == PlayerState.BUFFERING) {
-				_stream.bufferTime = config.bufferlength * 4;
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: config.bufferlength * 4}});
+				//_stream.bufferTime = config.bufferlength * 4;
+				//sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {bufferlength: config.bufferlength * 4}});
 				if (!_bufferFull){
 					_bufferFull = true;
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
@@ -258,7 +275,10 @@ package com.longtailvideo.jwplayer.media {
 		}
 
 
-		/** Receive NetStream status updates. **/
+		/** Receive NetStream status updates. 
+		 * 
+		 * For more info see http://help.adobe.com/en_US/Flex/4.0/langref/flash/events/NetStatusEvent.html#info
+		 **/
 		protected function statusHandler(evt:NetStatusEvent):void {
 			switch (evt.info.code) {
 				case 'NetConnection.Connect.Success':
@@ -271,10 +291,6 @@ package com.longtailvideo.jwplayer.media {
 					_connection.call("checkBandwidth", null);
 					break;
 				case 'NetStream.Play.Start':
-					if (item.start > 0 && !_started) {
-						seek(item.start);
-					}
-					_started = true;
 					break;
 				case 'NetStream.Seek.Notify':
 					clearInterval(_positionInterval);
@@ -319,6 +335,8 @@ package com.longtailvideo.jwplayer.media {
 						sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 					}
 					break;
+				case 'NetStream.Play.Reset':
+					break;
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: evt.info});
 		}
@@ -326,11 +344,12 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Destroy the _stream. **/
 		override public function stop():void {
+			_streamStarted = false;
+			_streamActive = false;
 			if (_stream && _stream.time) {
 				_stream.close();
 			}
 			_connection.close();
-			_started = false;
 			clearInterval(_positionInterval);
 			_positionInterval = undefined;
 			super.stop();
