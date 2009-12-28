@@ -180,11 +180,11 @@ package com.longtailvideo.jwplayer.media {
 				_streamActive = true;
 				_stream.resume();
 			}
-			if (!_streamStarted && item.start > 0) {
+			if (!_streamStarted) {
 				_streamStarted = true;
-				seek(item.start);
-			} else {
-				_streamStarted = true;
+				if (!livestream) {
+					seek(item.start);
+				}
 			}
 			
 			if (!_positionInterval) {
