@@ -124,7 +124,13 @@
 		 */
 		public static function extension(filename:String):String {
 			if (filename.lastIndexOf(".") > 0) {
-				return filename.substring(filename.lastIndexOf(".")+1, filename.length).toLowerCase();
+				//https://mail.google.com/a/longtailvideo.com/#inbox/125e06cbfca4149f
+				if (filename.lastIndexOf("?") > 0){
+					Logger.log(filename.substring(filename.lastIndexOf(".")+1, filename.lastIndexOf("?")).toLowerCase());
+					return filename.substring(filename.lastIndexOf(".")+1, filename.lastIndexOf("?")).toLowerCase();	
+				} else {
+					return filename.substring(filename.lastIndexOf(".")+1, filename.length).toLowerCase();
+				}
 			} else {
 				return "";
 			}

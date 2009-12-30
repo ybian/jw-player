@@ -39,7 +39,7 @@ package com.longtailvideo.jwplayer.utils {
 		public function load(location:String, expectedClass:Class=null):void {
 			LoadedClass = expectedClass;
 
-			var ext:String = location.substring(location.lastIndexOf(".") + 1, location.length);
+			var ext:String = Strings.extension(location);
 
 			if (_loaderExtensions.indexOf(ext.toLowerCase()) >= 0) {
 				useLoader(location);
