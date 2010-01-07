@@ -58,7 +58,7 @@ package com.longtailvideo.jwplayer.view.components {
 					_controlbar.addChild(displayObject);
 				}
 				
-				if (displayObject is TextField) {
+				if (displayObject is TextField || displayObject is Slider) {
 					_currentLeft = _currentLeft + 5;
 				}
 				
@@ -67,7 +67,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 				_currentLeft = _currentLeft + displayObject.width;								
 
-				if (displayObject is TextField) {
+				if (displayObject is TextField || displayObject is Slider) {
 					_currentLeft = _currentLeft + 5;
 				}
 				
@@ -98,14 +98,14 @@ package com.longtailvideo.jwplayer.view.components {
 					_controlbar.addChild(displayObject);
 				}
 
-				if (displayObject is TextField) {
+				if (displayObject is TextField || displayObject is Slider) {
 					_currentRight = _currentRight - 5;
 				}
 				
 				_currentRight = _currentRight - displayObject.width;
 				displayObject.x = _currentRight;
 				displayObject.y = (_height - displayObject.height) / 2;
-				if (displayObject is TextField) {
+				if (displayObject is TextField || displayObject is Slider) {
 					_currentRight = _currentRight - 5;
 				}
 			}
@@ -135,7 +135,12 @@ package com.longtailvideo.jwplayer.view.components {
 						} else if (element is Slider) {
 							(element as Slider).resize(elementWidth, element.height);
 						}
-						placeLeft(element);
+						element.visible = true;
+						if (!_controlbar.contains(element)) {
+							_controlbar.addChild(element);
+						}
+						element.x = _currentLeft;	
+						element.y = (_height - element.height) / 2;
 					}
 				}
 			}

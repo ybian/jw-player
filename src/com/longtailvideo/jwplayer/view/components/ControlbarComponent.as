@@ -8,7 +8,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Animations;
-	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IControlbarComponent;
 	
@@ -206,6 +205,7 @@ package com.longtailvideo.jwplayer.view.components {
 				hideButton('play');
 			} else if (player.state == PlayerState.IDLE) {
 				getSlider('time').reset();
+				getSlider('time').thumbVisible = false;
 				if (_player.playlist.currentItem) {
 					setTime(0, _player.playlist.currentItem.duration);
 				}
@@ -266,6 +266,7 @@ package com.longtailvideo.jwplayer.view.components {
 				case MediaEvent.JWPLAYER_MEDIA_TIME:
 					setTime(evt.position, evt.duration);
 					if (scrubber) {
+						scrubber.thumbVisible = (evt.duration > 0);
 						scrubber.setProgress(evt.position / evt.duration * 100);
 						if (evt.bufferPercent >= 0) {
 							scrubber.setBuffer(evt.bufferPercent);
@@ -358,8 +359,8 @@ package com.longtailvideo.jwplayer.view.components {
 			addComponentButton('mute', ViewEvent.JWPLAYER_VIEW_MUTE, true);
 			addTextField('elapsed');
 			addTextField('duration');
-			addSlider('time', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
-			addSlider('volume', Slider.HORIZONTAL, ViewEvent.JWPLAYER_VIEW_CLICK, volumeHandler);
+			addSlider('time', ViewEvent.JWPLAYER_VIEW_CLICK, seekHandler);
+			addSlider('volume', ViewEvent.JWPLAYER_VIEW_CLICK, volumeHandler);
 		}
 
 
@@ -381,8 +382,8 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 
 
-		private function addSlider(name:String, orientation:String, event:String, callback:Function):void {
-			var slider:Slider = new Slider(getSkinElement(name + "SliderRail"), getSkinElement(name + "SliderBuffer"), getSkinElement(name + "SliderProgress"), getSkinElement(name + "SliderThumb"), orientation);
+		private function addSlider(name:String, event:String, callback:Function, margin:Number=0):void {
+			var slider:Slider = new Slider(getSkinElement(name + "SliderRail"), getSkinElement(name + "SliderBuffer"), getSkinElement(name + "SliderProgress"), getSkinElement(name + "SliderThumb"));
 			slider.addEventListener(event, callback);
 			slider.name = name;
 			_buttons[name] = slider;

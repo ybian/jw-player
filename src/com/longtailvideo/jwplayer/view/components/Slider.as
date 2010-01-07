@@ -10,13 +10,10 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 	public class Slider extends Sprite {
-		public static var HORIZONTAL:String = "horizontal";
-		public static var VERTICAL:String = "vertical";
 		protected var _rail:Sprite;
 		protected var _buffer:Sprite;
 		protected var _progress:Sprite;
 		protected var _thumb:Sprite;
-		protected var _orientation:String;
 		protected var _currentThumb:Number = 0;
 		protected var _currentProgress:Number = 0;
 		protected var _currentBuffer:Number = 0;
@@ -34,7 +31,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		//protected var _height:Number;
-		public function Slider(rail:DisplayObject, buffer:DisplayObject, progress:DisplayObject, thumb:DisplayObject, orientation:String) {
+		public function Slider(rail:DisplayObject, buffer:DisplayObject, progress:DisplayObject, thumb:DisplayObject) {
 			super();
 			addEventListener(MouseEvent.MOUSE_DOWN, downHandler);
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
@@ -43,7 +40,6 @@ package com.longtailvideo.jwplayer.view.components {
 			_buffer = addElement(buffer, "buffer");
 			_progress = addElement(progress, "progress");
 			_thumb = addElement(thumb, "thumb");
-			_orientation = orientation;
 		}
 
 
@@ -60,9 +56,6 @@ package com.longtailvideo.jwplayer.view.components {
 
 		protected function setThumb(progress:Number):void {
 			_currentThumb = progress;
-			if (_thumb) {
-				_thumb.visible = true;
-			}
 		}
 
 
@@ -176,7 +169,7 @@ package com.longtailvideo.jwplayer.view.components {
 			//slider.transform.colorTransform = light;
 		}
 
-		/** Reset the slider to it's original state**/
+		/** Reset the slider to its original state**/
 		public function reset():void {
 			setBuffer(0);
 			setProgress(0);
@@ -188,6 +181,14 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		public function unlock():void{
 			_lock = false;
+		}
+		
+		public function get thumbVisible():Boolean {
+			return _thumb.visible;
+		}
+		
+		public function set thumbVisible(state:Boolean):void {
+			_thumb.visible = state;
 		}
 	}
 }

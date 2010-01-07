@@ -173,10 +173,14 @@
 					text.autoSize = TextFormatAlign.CENTER;
 				}
 				text.x = (background.scaleX - text.textWidth) / 2;
-				if (_player.skin is SWFSkin) {
-					text.y = icon.y + (icon.height/2) + 10;
+				if (contains(icon)) {
+					if (_player.skin is SWFSkin) {
+						text.y = icon.y + (icon.height/2) + 10;
+					} else {
+						text.y = icon.y + icon.height + 10;
+					}
 				} else {
-					text.y = icon.y + icon.height + 10;
+					text.y = (background.scaleY - text.textHeight) / 2;
 				}
 			} else {
 				text.visible = false;
@@ -186,7 +190,7 @@
 		
 		protected function setDisplay(displayIcon:DisplayObject, displayText:String = null):void {
 			setIcon(displayIcon);
-			setText(displayText);
+			setText(displayText ? displayText : text.text);
 		}
 		
 		

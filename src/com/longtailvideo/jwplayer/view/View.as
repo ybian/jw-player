@@ -68,6 +68,8 @@ package com.longtailvideo.jwplayer.view {
 
 		protected var loaderScreen:Sprite;
 		protected var loaderAnim:DisplayObject;
+		
+		protected var currentLayer:Number = 0;
 
 
 		public function View(player:IPlayer, model:Model) {
@@ -162,27 +164,28 @@ package com.longtailvideo.jwplayer.view {
 
 
 		protected function setupLayers():void {
-			_backgroundLayer = setupLayer("background", 0);
+			_backgroundLayer = setupLayer("background", currentLayer++);
 			setupBackground();
 
-			_mediaLayer = setupLayer("media", 1);
+			_mediaLayer = setupLayer("media", currentLayer++);
 			_mediaLayer.visible = false;
 
-			_imageLayer = setupLayer("image", 2);
+			_imageLayer = setupLayer("image", currentLayer++);
 			_image = new AssetLoader();
 			_image.addEventListener(Event.COMPLETE, imageComplete);
 			_image.addEventListener(ErrorEvent.ERROR, imageError);
 
-			_componentsLayer = setupLayer("components", 3);
+			setupLogo();
 
-			_pluginsLayer = setupLayer("plugins", 4);
+			_componentsLayer = setupLayer("components", currentLayer++);
+
+			_pluginsLayer = setupLayer("plugins", currentLayer++);
 			_plugins = {};
 			
-			setupLogo();
 		}
 		
 		protected function setupLogo():void {
-			_logoLayer = setupLayer("logo", 5);
+			_logoLayer = setupLayer("logo", currentLayer++);
 			_logo = new Logo(_player);
 			_logoLayer.addChild(_logo);
 		}
