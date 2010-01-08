@@ -53,6 +53,8 @@ package com.longtailvideo.jwplayer.view {
 
 		/** Initialize the rightclick menu. **/
 		public function initializeMenu():void {
+			setAboutText();
+			addItem(about, aboutHandler);
 			try {
 				fullscreen = new ContextMenuItem('Toggle Fullscreen...');
 				addItem(fullscreen, fullscreenHandler);
@@ -60,8 +62,6 @@ package com.longtailvideo.jwplayer.view {
 			}
 			stretching = new ContextMenuItem('Stretching is ' + _player.config.stretching + '...');
 			addItem(stretching, stretchHandler);
-			setAboutText();
-			addItem(about, aboutHandler);
 			if (Capabilities.isDebugger == true) {
 				debug = new ContextMenuItem('Logging to ' + _player.config.debug + '...');
 				addItem(debug, debugHandler);

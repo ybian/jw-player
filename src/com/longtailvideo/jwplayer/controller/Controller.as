@@ -119,7 +119,7 @@ package com.longtailvideo.jwplayer.controller {
 		protected function prevHandler(evt:ViewEvent):void { previous(); }
 		protected function seekHandler(evt:ViewEvent):void { seek(evt.data); }
 		protected function muteHandler(evt:ViewEvent):void { mute(evt.data); }
-		protected function volumeHandler(evt:ViewEvent):void { setVolume(evt.data); }
+		protected function volumeHandler(evt:ViewEvent):void { mute(false); setVolume(evt.data); }
 		protected function fullscreenHandler(evt:ViewEvent):void { fullscreen(evt.data); }
 		protected function loadHandler(evt:ViewEvent):void { load(evt.data); }
 		protected function redrawHandler(evt:ViewEvent):void { redraw(); }
@@ -325,9 +325,6 @@ package com.longtailvideo.jwplayer.controller {
 					case PlayerState.IDLE:
 						load(_model.playlist.currentItem);
 						break;
-					case PlayerState.BUFFERING:
-					case PlayerState.PLAYING:
-						_model.media.seek(_model.playlist.currentItem.start);
 					case PlayerState.PAUSED:
 						_model.media.play();
 						break;

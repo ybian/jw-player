@@ -286,9 +286,11 @@ package com.longtailvideo.jwplayer.view.components {
 				if (!_player.config.mute) {
 					volume.setBuffer(100);
 					volume.setProgress(_player.config.volume);
+					volume.thumbVisible = true;
 					volume.resize(getSkinElement("volumeSliderRail").width, volume.height);
 				} else {
 					volume.reset();
+					volume.thumbVisible = false;
 					volume.resize(getSkinElement("volumeSliderRail").width, volume.height);
 				}
 			}
@@ -412,15 +414,13 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		private function volumeHandler(evt:ViewEvent):void {
-			if (!_player.mute) {
-				var volume:Number = Math.round(evt.data * 100);
-				if (!_player.locked) {
-					var volumeEvent:MediaEvent = new MediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME);
-					volumeEvent.volume = volume;
-					updateVolumeSlider(volumeEvent);
-				}
-				dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_VOLUME, volume));
+			var volume:Number = Math.round(evt.data * 100);
+			if (!_player.locked) {
+				var volumeEvent:MediaEvent = new MediaEvent(MediaEvent.JWPLAYER_MEDIA_VOLUME);
+				volumeEvent.volume = volume;
+				updateVolumeSlider(volumeEvent);
 			}
+			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_VOLUME, volume));
 		}
 
 

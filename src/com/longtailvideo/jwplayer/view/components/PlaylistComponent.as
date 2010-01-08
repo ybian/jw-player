@@ -628,7 +628,9 @@ package com.longtailvideo.jwplayer.view.components {
 			clearInterval(scrollInterval);
 			active = undefined;
 			buildPlaylist(true);
-			resize(background.width, background.height);
+			if (background) {
+				resize(background.width, background.height);
+			}
 		}
 		
 		
