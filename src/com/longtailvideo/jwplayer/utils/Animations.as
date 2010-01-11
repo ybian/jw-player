@@ -18,7 +18,9 @@ package com.longtailvideo.jwplayer.utils {
 		/** Text **/
 		private var _str:String;
 		
-		/** Constructor **/
+		/** Constructor 
+		 * @param tgt	The Movielip to animate.
+		 **/
 		public function Animations(tgt:MovieClip) {
 			_tgt = tgt;
 		}
@@ -26,7 +28,6 @@ package com.longtailvideo.jwplayer.utils {
 		/**
 		 * Fade function for MovieClip.
 		 *
-		 * @param tgt	The Movieclip to fade out.
 		 * @param end	The final alpha value.
 		 * @param spd	The amount of alpha change per frame.
 		 **/
@@ -59,7 +60,6 @@ package com.longtailvideo.jwplayer.utils {
 		/**
 		 * Smoothly move a Movielip to a certain position.
 		 *
-		 * @param tgt	The Movielip to move.
 		 * @param xps	The x destination.
 		 * @param yps	The y destination.
 		 * @param spd	The movement speed (1 - 2).
@@ -96,7 +96,6 @@ package com.longtailvideo.jwplayer.utils {
 		/**
 		 * Typewrite text into a textfield.
 		 *
-		 * @param tgt	Movieclip that has a 'field' TextField.
 		 * @param txt	The textstring to write.
 		 * @param spd	The speed of typing (1 - 2).
 		 **/

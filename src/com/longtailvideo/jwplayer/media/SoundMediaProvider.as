@@ -158,16 +158,16 @@ package com.longtailvideo.jwplayer.media {
 			}
 			
 			
-			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
-				if (!isNaN(bufferPercent) && !_bufferingComplete){
-					if (bufferPercent == 100 && _bufferingComplete == false) {
-						_bufferingComplete = true;
-					}
-					sendBufferEvent(bufferPercent);
+			if (!isNaN(bufferPercent) && !_bufferingComplete){
+				if (bufferPercent == 100 && _bufferingComplete == false) {
+					_bufferingComplete = true;
 				}
-			} else if (_position < _item.duration) {
+				sendBufferEvent(bufferPercent);
+			}
+			
+			if (_position < _item.duration) {
 				if (state == PlayerState.PLAYING){
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration, bufferPercent: bufferPercent});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration});
 				}
 			} else if (_item.duration > 0) {
 				complete();

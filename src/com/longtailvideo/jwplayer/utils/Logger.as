@@ -58,20 +58,6 @@ package com.longtailvideo.jwplayer.utils {
 			Logger.send(txt);
 		}
 		
-		
-		/**
-		 * Set output system to use for logging. The output is also saved in a cookie.
-		 *
-		 * @param put	System to use (ARTHROPOD, CONSOLE, TRACE or NONE).StatusEvent
-		 **/
-		private function updateOutput():void {
-			if (_config.debug == ARTHROPOD) {
-				CONNECTION.allowInsecureDomain('*');
-				CONNECTION.addEventListener(StatusEvent.STATUS, Logger.status);
-			}
-		}
-		
-		
 		/** Send the messages to the output system. **/
 		private static function send(text:String):void {
 			var debug:String = _config ? _config.debug : TRACE;
@@ -100,6 +86,10 @@ package com.longtailvideo.jwplayer.utils {
 		
 		public static function setConfig(config:PlayerConfig):void {
 			_config = config;
+			if (_config.debug == ARTHROPOD) {
+				CONNECTION.allowInsecureDomain('*');
+				CONNECTION.addEventListener(StatusEvent.STATUS, Logger.status);
+			}
 		}
 		
 		

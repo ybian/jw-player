@@ -150,16 +150,16 @@
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
 
-			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
-				if (!_bufferingComplete) {
-					if (bufferPercent == 100 && _bufferingComplete == false) {
-						_bufferingComplete = true;
-					}
-					sendBufferEvent(bufferPercent);
+			if (!_bufferingComplete) {
+				if (bufferPercent == 100 && _bufferingComplete == false) {
+					_bufferingComplete = true;
 				}
-			} else if (position < item.duration) {
+				sendBufferEvent(bufferPercent);
+			}
+
+			if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration, bufferPercent: bufferPercent});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 				}
 			} else if (item.duration > 0) {
 				complete();

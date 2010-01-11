@@ -255,17 +255,16 @@ package com.longtailvideo.jwplayer.media {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
 
-			if (state == PlayerState.BUFFERING || state == PlayerState.PAUSED) {
-				if (!_bufferingComplete) {
-					if ((bufferPercent + percentoffset) == 100 && _bufferingComplete == false) {
-						_bufferingComplete = true;
-					}
-					sendBufferEvent(bufferPercent, _timeoffset);
-					
+			if (!_bufferingComplete) {
+				if ((bufferPercent + percentoffset) == 100 && _bufferingComplete == false) {
+					_bufferingComplete = true;
 				}
-			} else if (_position < item.duration) {
+				sendBufferEvent(bufferPercent, _timeoffset);
+			}
+			
+			if (_position < item.duration) {
 				if (state == PlayerState.PLAYING && _position >= 0) {
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: item.duration, bufferPercent: bufferPercent, offset: _timeoffset});
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: item.duration, offset: _timeoffset});
 				}
 			} else if (item.duration > 0) {
 				// Playback completed
