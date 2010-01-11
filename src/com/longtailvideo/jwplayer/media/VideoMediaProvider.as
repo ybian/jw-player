@@ -68,15 +68,16 @@
 			_bufferFull = false;
 			_bufferingComplete = false;
 			if (!item || item.file != itm.file || _stream.bytesLoaded == 0) {
-				_item = itm;
 				media = _video;
 				_stream.checkPolicyFile = true;
-				_stream.play(item.file);
+				_stream.play(itm.file);
 				_stream.pause();
 			} else {
 				replay = true;
 			}
 
+			_item = itm;
+			
 			setState(PlayerState.BUFFERING);
 			if (replay){
 				seekStream(0, false);

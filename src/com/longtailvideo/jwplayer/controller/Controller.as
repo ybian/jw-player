@@ -14,7 +14,6 @@ package com.longtailvideo.jwplayer.controller {
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
-	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.View;
 	
 	import flash.events.ErrorEvent;
@@ -158,14 +157,6 @@ package com.longtailvideo.jwplayer.controller {
 					//dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, _model.playlist));
 				}
 
-
-				if (_player.config.autostart) {
-					if (locking) {
-						_unlockAutostart = true;
-					} else {
-						load(_model.playlist.currentItem);
-					}
-				}
 			}
 		}
 
@@ -176,6 +167,11 @@ package com.longtailvideo.jwplayer.controller {
 			} else {
 				_model.playlist.currentIndex = _model.config.item;
 			}
+
+			if(_model.config.autostart) {
+				play();
+			}
+				
 		}
 
 
@@ -269,14 +265,11 @@ package com.longtailvideo.jwplayer.controller {
 				}
 				if (!locking && (_lockingResume || _unlockAutostart)) {
 					_lockingResume = false;
+					play();
 					if (_unlockAutostart) {
-						load(_model.playlist.currentItem);
 						_unlockAutostart = false;
 					} else if (_unlockAndLoad) {
-						load(_model.playlist.currentItem);
 						_unlockAndLoad = false;
-					} else {
-						play();
 					}
 				}
 				return true;
@@ -320,10 +313,15 @@ package com.longtailvideo.jwplayer.controller {
 			if (locking) {
 				return false;
 			}
+
 			if (_model.playlist.currentItem) {
 				switch (_player.state) {
 					case PlayerState.IDLE:
 						load(_model.playlist.currentItem);
+						if (!_delayedItem) {
+							_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, bufferFullHandler);
+							_model.media.load(_model.playlist.currentItem);
+						}
 						break;
 					case PlayerState.PAUSED:
 						_model.media.play();
@@ -391,7 +389,7 @@ package com.longtailvideo.jwplayer.controller {
 				_player.playlist.currentIndex = _player.playlist.currentIndex + 1;
 			}
 			
-			if (!load(_player.playlist.currentItem)){
+			if (locking) {
 				_unlockAndLoad = true;
 				return false;
 			}
@@ -402,21 +400,21 @@ package com.longtailvideo.jwplayer.controller {
 
 		public function previous():Boolean {
 			if (locking) {
+				_unlockAndLoad = true;
 				return false;
 			}
 
 			_lockingResume = true;
-			if (_model.playlist.currentIndex <= 0) {
+			if (_model.config.shuffle) {
+				stop();
+				shuffleItem();
+				play();
+			} else if (_model.playlist.currentIndex <= 0) {
 				stop();
 				_model.playlist.currentIndex = _model.playlist.length - 1;
 			} else {
 				stop();
 				_player.playlist.currentIndex = _player.playlist.currentIndex - 1;
-			}
-			
-			if (!load(_player.playlist.currentItem)){
-				_unlockAndLoad = true;
-				return false;	
 			}
 			
 			return true;
@@ -425,6 +423,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		public function setPlaylistIndex(index:Number):Boolean {
 			if (locking) {
+				_unlockAndLoad = true;
 				return false;
 			}
 
@@ -432,10 +431,7 @@ package com.longtailvideo.jwplayer.controller {
 			if (0 <= index && index < _player.playlist.length) {
 				stop();
 				_player.playlist.currentIndex = index;
-				if(!load(index)){
-					_unlockAndLoad = true;
-					return false;
-				}
+				play();
 				return true;
 			}
 			return false;
@@ -464,6 +460,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		public function load(item:*):Boolean {
 			if (locking) {
+				_unlockAndLoad = true;
 				return false;
 			}
 			
@@ -486,25 +483,22 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		protected function loadPlaylistItem(item:PlaylistItem):Boolean {
-			if (!_model.playlist.contains(item)) {
-				_model.playlist.load(item);
-			}
-
 			if (locking) {
 				_lockingResume = true;
 				return false;
 			}
+
+			if (!_model.playlist.contains(item)) {
+				_model.playlist.load(item);
+				return false;
+			}
+			
 			try {
 				if (!item.provider) {
 					JWParser.updateProvider(item);
 				}
 
-				if (setProvider(item)) {
-					if (!_delayedItem) {
-						_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, bufferFullHandler);
-						_model.media.load(item);
-					}
-				} else if (item.file) {
+				if (!setProvider(item) && item.file) {
 					_model.playlist.load(item.file)
 				}
 			} catch (err:Error) {
@@ -515,13 +509,8 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		protected function loadString(item:String):Boolean {
-			if (Strings.extension(item) == "xml") {
-				_model.playlist.load(item);
-				return true;
-			} else {
-				return loadPlaylistItem(new PlaylistItem({file: item}));
-			}
-			return false;
+			_model.playlist.load(new PlaylistItem({file: item}));
+			return true;
 		}
 
 
@@ -543,7 +532,8 @@ package com.longtailvideo.jwplayer.controller {
 
 		protected function loadObject(item:Object):Boolean {
 			if ((item as Object).hasOwnProperty('file')) {
-				return loadPlaylistItem(new PlaylistItem(item));
+				_model.playlist.load(new PlaylistItem(item));
+				return true;
 			}
 			return false;
 		}
@@ -551,6 +541,8 @@ package com.longtailvideo.jwplayer.controller {
 
 		protected function setProvider(item:PlaylistItem):Boolean {
 			var provider:String = item.provider;
+			_delayedItem = null;
+			
 			if (provider) {
 
 				// Backwards compatibility for CDNs in the 'type' flashvar.
@@ -580,10 +572,9 @@ package com.longtailvideo.jwplayer.controller {
 
 		protected function mediaSourceLoaded(evt:Event):void {
 			var loader:MediaProviderLoader = evt.target as MediaProviderLoader;
-			var item:PlaylistItem = _delayedItem;
+			_model.setMediaProvider(_delayedItem.provider, loader.loadedSource);
 			_delayedItem = null;
-			_model.setMediaProvider(item.provider, loader.loadedSource);
-			load(item);
+			play();
 		}
 
 
