@@ -580,9 +580,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		private function bufferFullHandler(evt:MediaEvent):void {
 			if (!locking) {
-				if (_model.state == PlayerState.BUFFERING) {
-					_model.media.play();
-				}
+				_model.media.play();
 			} else {
 				_lockingResume = true;
 			}

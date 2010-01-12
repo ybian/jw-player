@@ -152,7 +152,7 @@ package com.longtailvideo.jwplayer.media {
 						setState(PlayerState.BUFFERING);
 					}
 				}
-			} else if (_sound.bytesLoaded > 0 && !_bufferFull) {
+			} else if (state == PlayerState.BUFFERING && _sound.bytesLoaded > 0 && !_bufferFull) {
 				_bufferFull = true;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
