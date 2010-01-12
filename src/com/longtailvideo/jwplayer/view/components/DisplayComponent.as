@@ -134,7 +134,7 @@
 				removeChild(icon);
 			} catch (err:Error) {
 			}
-			if (displayIcon) {
+			if (displayIcon && _player.config.icons) {
 				_icon = displayIcon;
 				addChild(icon);
 				positionIcon();

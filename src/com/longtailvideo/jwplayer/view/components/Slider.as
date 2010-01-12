@@ -96,7 +96,7 @@ package com.longtailvideo.jwplayer.view.components {
 				resizeElement(_progress, _currentProgress);
 			}
 			if (_thumb && !_dragging) {
-				_thumb.x = _width * _currentThumb / 100;
+				_thumb.x = (_width-_thumb.width) * _currentThumb / 100;
 			}
 			verticalCenter();
 		}
