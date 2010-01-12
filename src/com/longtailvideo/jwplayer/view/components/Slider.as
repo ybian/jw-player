@@ -33,6 +33,8 @@ package com.longtailvideo.jwplayer.view.components {
 		//protected var _height:Number;
 		public function Slider(rail:DisplayObject, buffer:DisplayObject, progress:DisplayObject, thumb:DisplayObject) {
 			super();
+			this.buttonMode = true;
+			this.mouseChildren = false;
 			addEventListener(MouseEvent.MOUSE_DOWN, downHandler);
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 			addEventListener(MouseEvent.MOUSE_OUT, outHandler);

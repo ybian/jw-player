@@ -29,6 +29,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+	import flash.text.TextFormatAlign;
 	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
@@ -212,7 +213,7 @@ package com.longtailvideo.jwplayer.view.components {
 			img.graphics.beginFill(0, 1);
 			img.graphics.drawRect(0, 0, 80, back.height);
 			img.graphics.endFill();
-			addElement(img, btn, 1, 1);
+			addElement(img, btn, 0, 0);
 			
 			var titleTextFormat:TextFormat = new TextFormat();
 			titleTextFormat.size = 13;
@@ -245,8 +246,10 @@ package com.longtailvideo.jwplayer.view.components {
 			duration.name = "duration";
 			duration.width = 40;
 			duration.height = 20;
+			duration.defaultTextFormat = descriptionTextFormat;
 			addElement(duration, btn, 335, 4);
 			
+
 			backOver.width = btn.width;			
 			back.width = btn.width;
 			
@@ -438,8 +441,8 @@ package com.longtailvideo.jwplayer.view.components {
 			if (playlistItem.image) {
 				if (getConfigParam('thumbs') != false && _player.config.playlist != 'none' && playlistItem.image) {
 					var img:Sprite = getButton(idx).getChildByName("image") as Sprite;
-					img.alpha = 0;
 					if (img && playlistItem.image) {
+						img.alpha = 0;
 						var ldr:AssetLoader = new AssetLoader();
 						imageLoaderMap[ldr] = idx;
 						ldr.addEventListener(Event.COMPLETE, loaderHandler);

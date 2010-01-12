@@ -28,6 +28,8 @@ package com.longtailvideo.jwplayer.view.components {
 				_background.y = 0;
 			}
 			_imageLayer = new Sprite();
+			_imageLayer.buttonMode = true;
+			_imageLayer.mouseChildren = false;
 			nameDisplayObject("imageLayer", _imageLayer);
 			addChild(_imageLayer);
 			_imageLayer.x = 0;
@@ -36,6 +38,7 @@ package com.longtailvideo.jwplayer.view.components {
 			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
 			addEventListener(MouseEvent.MOUSE_OUT, outHandler);
 			addEventListener(MouseEvent.CLICK, clickHandler);
+			
 		}
 		
 		

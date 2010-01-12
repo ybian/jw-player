@@ -46,6 +46,8 @@
 			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
 			player.addEventListener(PlayerEvent.JWPLAYER_ERROR, errorHandler);
 			addEventListener(MouseEvent.CLICK, clickHandler);
+			this.buttonMode = true;
+			this.mouseChildren = false;
 		}
 		
 		
