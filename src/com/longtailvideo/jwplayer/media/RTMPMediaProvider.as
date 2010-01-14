@@ -79,7 +79,7 @@ package com.longtailvideo.jwplayer.media {
 			var ext:String = url.substr(-4);
 			if (ext == '.mp3') {
 				return 'mp3:' + url.substr(0, url.length - 4);
-			} else if (ext == '.mp4' || ext == '.mov' || ext == '.aac' || ext == '.m4a' || ext == '.f4v') {
+			} else if (ext == '.mp4' || ext == '.mov' || ext == '.aac' || ext == '.m4a' || ext == '.f4v' || ext == '.m4v') {
 				return 'mp4:' + url;
 			} else if (ext == '.flv') {
 				return url.substr(0, url.length - 4);
