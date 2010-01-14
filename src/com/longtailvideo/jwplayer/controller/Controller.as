@@ -165,6 +165,9 @@ package com.longtailvideo.jwplayer.controller {
 			if (_model.config.shuffle) {
 				shuffleItem();
 			} else {
+				if (_model.config.item >= _model.playlist.length) {
+					_model.config.item = _model.playlist.length - 1;
+				}
 				_model.playlist.currentIndex = _model.config.item;
 			}
 

@@ -246,7 +246,8 @@ package com.longtailvideo.jwplayer.view.components {
 			duration.name = "duration";
 			duration.width = 40;
 			duration.height = 20;
-			duration.defaultTextFormat = descriptionTextFormat;
+			titleTextFormat.size = 11;
+			duration.defaultTextFormat = titleTextFormat;
 			addElement(duration, btn, 335, 4);
 			
 
