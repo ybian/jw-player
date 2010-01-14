@@ -80,6 +80,8 @@
 			
 			setState(PlayerState.BUFFERING);
 			if (replay){
+				sendBufferEvent(0);
+				sendBufferEvent(100);
 				seekStream(0, false);
 			} else {
 				sendBufferEvent(0);

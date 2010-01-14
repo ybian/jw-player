@@ -192,9 +192,8 @@ package com.longtailvideo.jwplayer.model {
 				if (evt.type == MediaEvent.JWPLAYER_MEDIA_ERROR) {
 					// Translate media error into player error.
 					dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, (evt as MediaEvent).message));
-				} else {
-					dispatchEvent(evt);
-				}
+				} 
+				dispatchEvent(evt);
 			}
 		}
 

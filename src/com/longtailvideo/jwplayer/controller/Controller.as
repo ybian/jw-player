@@ -373,27 +373,21 @@ package com.longtailvideo.jwplayer.controller {
 
 		public function next():Boolean {
 			if (locking) {
-				return false;
-			}
-
-			_lockingResume = true;
-			if (_model.config.shuffle) {
-				stop();
-				shuffleItem();
-				play();
-			} else if (_model.playlist.currentIndex == _model.playlist.length - 1) {
-				stop();
-				_player.playlist.currentIndex = 0;
-			} else {
-				stop();
-				_player.playlist.currentIndex = _player.playlist.currentIndex + 1;
-			}
-			
-			if (locking) {
 				_unlockAndLoad = true;
 				return false;
 			}
 
+			_lockingResume = true;
+			stop();
+			if (_model.config.shuffle) {
+				shuffleItem();
+			} else if (_model.playlist.currentIndex == _model.playlist.length - 1) {
+				_player.playlist.currentIndex = 0;
+			} else {
+				_player.playlist.currentIndex = _player.playlist.currentIndex + 1;
+			}
+			play();
+			
 			return true;
 		}
 
@@ -405,17 +399,15 @@ package com.longtailvideo.jwplayer.controller {
 			}
 
 			_lockingResume = true;
+			stop();
 			if (_model.config.shuffle) {
-				stop();
 				shuffleItem();
-				play();
 			} else if (_model.playlist.currentIndex <= 0) {
-				stop();
 				_model.playlist.currentIndex = _model.playlist.length - 1;
 			} else {
-				stop();
 				_player.playlist.currentIndex = _player.playlist.currentIndex - 1;
 			}
+			play();
 			
 			return true;
 		}
