@@ -4,7 +4,6 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
-	import com.longtailvideo.jwplayer.utils.AssetLoader;
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
@@ -17,19 +16,22 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.view.skins.DefaultSkin;
 	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
 	
+	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Loader;
+	import flash.display.LoaderInfo;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import flash.events.ErrorEvent;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
+	import flash.net.URLRequest;
+	import flash.system.LoaderContext;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
-	import flash.text.TextFormatAlign;
 	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
@@ -444,11 +446,11 @@ package com.longtailvideo.jwplayer.view.components {
 					var img:Sprite = getButton(idx).getChildByName("image") as Sprite;
 					if (img && playlistItem.image) {
 						img.alpha = 0;
-						var ldr:AssetLoader = new AssetLoader();
+						var ldr:Loader = new Loader();
 						imageLoaderMap[ldr] = idx;
-						ldr.addEventListener(Event.COMPLETE, loaderHandler);
-						ldr.addEventListener(ErrorEvent.ERROR, errorHandler);
-						ldr.load(playlistItem.image);
+						ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
+						ldr.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+						ldr.load(new URLRequest(playlistItem.image), new LoaderContext(true));
 					}
 				}
 			}
@@ -491,15 +493,19 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Loading of image completed; resume loading **/
 		private function loaderHandler(evt:Event):void {
 			try {
-				var ldr:AssetLoader = evt.target as AssetLoader;
+				var ldr:Loader = (evt.target as LoaderInfo).loader;
 				var button:Sprite = getButton(imageLoaderMap[ldr]);
 				var img:Sprite = button.getChildByName("image") as Sprite;
 				img.alpha = 1;
 				var msk:Sprite = Draw.rect(button, '0xFF0000', img.width, img.height, img.x, img.y);
 				img.mask = msk;
-				img.addChild(ldr.loadedObject);
-				Draw.smooth(ldr.loadedObject);
-				Stretcher.stretch(ldr.loadedObject, image[0], image[1], Stretcher.FILL);
+				img.addChild(ldr);
+				try {
+					Draw.smooth(ldr.content as Bitmap);
+				} catch (e:Error) {
+					Logger.log('Could not smooth thumbnail image: ' + e.message);
+				}
+				Stretcher.stretch(ldr, image[0], image[1], Stretcher.FILL);
 			} catch (err:Error) {
 				Logger.log('Error loading playlist image: '+err.message);
 			}
@@ -509,13 +515,13 @@ package com.longtailvideo.jwplayer.view.components {
 		/** Loading of image failed; hide image **/
 		private function errorHandler(evt:Event):void {
 			try {
-				var ldr:AssetLoader = evt.target as AssetLoader;
+				var ldr:Loader = (evt.target as LoaderInfo).loader;
 				var button:Sprite = getButton(imageLoaderMap[ldr]);
 				var img:Sprite = button.getChildByName("image") as Sprite;
 				img.visible = false;
 				(buttons[imageLoaderMap[ldr]].s as Stacker).rearrange(getConfigParam("width"));
 			} catch (err:Error) {
-				Logger.log('Error loading playlist image '+(ldr.loadedObject as Loader).loaderInfo.url+': '+err.message);
+				Logger.log('Error loading playlist image '+ ldr.loaderInfo.url+': '+err.message);
 			}
 		}
 		

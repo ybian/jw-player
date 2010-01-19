@@ -3,17 +3,21 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Animations;
-	import com.longtailvideo.jwplayer.utils.AssetLoader;
+	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	
 	import flash.display.Bitmap;
+	import flash.display.DisplayObject;
+	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
+	import flash.system.LoaderContext;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
 	
@@ -36,7 +40,7 @@ package com.longtailvideo.jwplayer.view {
 		/** Reference to the current fade timer **/
 		protected var timeout:uint;
 		/** Reference to the loader **/
-		protected var loader:AssetLoader;
+		protected var loader:Loader;
 		/** Animations handler **/
 		protected var animations:Animations;
 		
@@ -67,18 +71,23 @@ package com.longtailvideo.jwplayer.view {
 			}
 			
 			if (getConfigParam('file') && RootReference.root.loaderInfo.url.indexOf("http")==0) {
-				loader = new AssetLoader();
-				loader.addEventListener(Event.COMPLETE,loaderHandler);
-				loader.addEventListener(ErrorEvent.ERROR, errorHandler);
-				loader.load(getConfigParam('file'));
+				loader = new Loader();
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+				loader.load(new URLRequest(getConfigParam('file')),new LoaderContext(true));
 			}
 		}
 		
 		/** Logo loaded - add to display **/
 		protected function loaderHandler(evt:Event):void {
 			if (getConfigParam('hide').toString() == "true") visible = false;
-			addChild(loader.loadedObject);
+			addChild(loader);
 			resize(_width, _height);
+			try {
+				Draw.smooth(loader.content as Bitmap);
+			} catch (e:Error) {
+				Logger.log("Could not smooth logo: " + e.message);
+			}
 		}
 		
 		/** Logo failed to load - die **/
@@ -138,7 +147,7 @@ package com.longtailvideo.jwplayer.view {
 		public function resize(width:Number, height:Number):void {
 			_width = width;
 			_height = height;
-			var image:Bitmap = loader ? (loader.loadedObject as Bitmap) : null;
+			var image:DisplayObject = loader ? loader : null;
 			var margin:Number = getConfigParam('margin');
 			var position:String = (getConfigParam('position') as String).toLowerCase(); 
 			if (image) {

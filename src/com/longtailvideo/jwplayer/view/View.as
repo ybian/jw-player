@@ -11,7 +11,6 @@ package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.player.PlayerV4Emulation;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
-	import com.longtailvideo.jwplayer.utils.AssetLoader;
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.RootReference;
@@ -25,6 +24,7 @@ package com.longtailvideo.jwplayer.view {
 	
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
+	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -33,6 +33,9 @@ package com.longtailvideo.jwplayer.view {
 	import flash.display.StageScaleMode;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.net.URLRequest;
+	import flash.system.LoaderContext;
 
 
 	public class View extends GlobalEventDispatcher {
@@ -55,7 +58,7 @@ package com.longtailvideo.jwplayer.view {
 
 		protected var _displayMasker:MovieClip;
 
-		protected var _image:AssetLoader;
+		protected var _image:Loader;
 		protected var _logo:Logo;
 
 		protected var layoutManager:PlayerLayoutManager;
@@ -171,9 +174,9 @@ package com.longtailvideo.jwplayer.view {
 			_mediaLayer.visible = false;
 
 			_imageLayer = setupLayer("image", currentLayer++);
-			_image = new AssetLoader();
-			_image.addEventListener(Event.COMPLETE, imageComplete);
-			_image.addEventListener(ErrorEvent.ERROR, imageError);
+			_image = new Loader();
+			_image.contentLoaderInfo.addEventListener(Event.COMPLETE, imageComplete);
+			_image.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, imageError);
 
 			setupLogo();
 
@@ -266,7 +269,7 @@ package com.longtailvideo.jwplayer.view {
 			if (_imageLayer.numChildren) {
 				_imageLayer.x = _components.display.x;
 				_imageLayer.y = _components.display.y;
-				Stretcher.stretch(_image.loadedObject, _player.config.width, _player.config.height, _player.config.stretching);
+				Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
 			}
 
 			if (_mediaLayer.numChildren && _model.media.display) {
@@ -416,19 +419,21 @@ package com.longtailvideo.jwplayer.view {
 				_imageLayer.removeChildAt(0);
 			}
 
-			_image.load(url);
+			_image.load(new URLRequest(url), new LoaderContext(true));
 		}
 
 
 		protected function imageComplete(evt:Event):void {
-			if (_image && _image.loadedObject is Bitmap) {
-				Draw.smooth(_image.loadedObject as Bitmap);
-				_imageLayer.addChild(_image.loadedObject);
+			if (_image) {
+				_imageLayer.addChild(_image);
 				_imageLayer.x = _components.display.x;
 				_imageLayer.y = _components.display.y;
-				Stretcher.stretch(_image.loadedObject, _player.config.width, _player.config.height, _player.config.stretching);
-			} else {
-				Logger.log('Error loading preview image.');
+				Stretcher.stretch(_image, _player.config.width, _player.config.height, _player.config.stretching);
+				try {
+					Draw.smooth(_image.content as Bitmap);
+				} catch (e:Error) {
+					Logger.log('Could not smooth preview image: ' + e.message);
+				}
 			}
 		}
 
