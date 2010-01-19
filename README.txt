@@ -16,8 +16,9 @@ If the build is successful, player.swf will appear in the "bin-release" folder.
 Alternately, if you're using Flex Builder or Flash Builder, you may use the following method to build the player:
 
 1. Create a new Actionscript project (you can give it any name except "Player").
-2. Under "Project Contents", choose the checkout tree (the folder where this README file lives).
-3. Click the "Finish" button
-4. Alter your main application class to inherit from com.longtailvideo.jwplayer.player.Player. 
-5. Under the "Project" menu, choose "Export Release Build".
-6. The player will be compiled as bin-release/{Your Project Name}.swf.
+2. Under "Project Contents", select the checkout tree (the folder where this README file lives).
+3. If using Flex Builder 3, click the "Next" button, then type "src" into the "Main Source Folder" field.
+4. Click the "Finish" button
+5. Alter your main application class to inherit from com.longtailvideo.jwplayer.player.Player. 
+6. Under the "Project" menu, choose "Export Release Build".
+7. The player will be compiled as bin-release/{Your Project Name}.swf.
