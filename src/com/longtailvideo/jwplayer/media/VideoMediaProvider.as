@@ -25,12 +25,16 @@
 		protected var _transformer:SoundTransform;
 		/** ID for the position interval. **/
 		protected var _positionInterval:Number;
-		/** Load offset for bandwidth checking. **/
-		protected var _loadTimer:Number;
 		/** Whether the buffer has filled **/
 		private var _bufferFull:Boolean;
 		/** Whether the enitre video has been buffered **/
 		private var _bufferingComplete:Boolean;
+		/** Whether we have checked the bandwidth. **/
+		private var _bandwidthChecked:Boolean;
+		/** Whether to switch on bandwidth detection **/
+		private var _bandwidthSwitch:Boolean = true;
+		/** Bandwidth check interval **/
+		private var _bandwidthTimeout:Number = 2000;
 
 
 		/** Constructor; sets up the connection and display. **/
@@ -49,10 +53,10 @@
 			_stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
 			_stream.bufferTime = config.bufferlength;
 			_stream.client = new NetClient(this);
+			_transformer = new SoundTransform();
 			_video = new Video(320, 240);
 			_video.smoothing = config.smoothing;
 			_video.attachNetStream(_stream);
-			_transformer = new SoundTransform();
 		}
 
 
@@ -67,6 +71,13 @@
 			var replay:Boolean;
 			_bufferFull = false;
 			_bufferingComplete = false;
+			if (itm.levels.length > 0) {
+				itm.setLevel(itm.getLevel(config.bandwidth, config.width));
+				_bandwidthChecked = false;
+			} else {
+				_bandwidthChecked = true;
+			}
+			
 			if (!item || item.file != itm.file || _stream.bytesLoaded == 0) {
 				media = _video;
 				_stream.checkPolicyFile = true;
@@ -86,23 +97,11 @@
 			} else {
 				sendBufferEvent(0);
 			}
+			clearInterval(_positionInterval);
 			_positionInterval = setInterval(positionHandler, 200);
-			_loadTimer = setTimeout(loadTimerComplete, 3000);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			config.mute == true ? setVolume(0) : setVolume(config.volume);
 		}
-
-
-		/** timeout for checking the bitrate. **/
-		protected function loadTimerComplete():void {
-			var obj:Object = new Object();
-			obj.bandwidth = Math.round(_stream.bytesLoaded / 1024 / 3 * 8);
-			if (item.duration) {
-				obj.bitrate = Math.round(_stream.bytesTotal / 1024 * 8 / item.duration);
-			}
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: obj});
-		}
-
 
 		/** Get metadata information from netstream class. **/
 		public function onData(dat:Object):void {
@@ -137,18 +136,23 @@
 
 		/** Interval for the position progress **/
 		protected function positionHandler():void {
+			if (!_bandwidthChecked && _stream.bytesLoaded > 0) {
+				_bandwidthChecked = true;
+				setTimeout(checkBandwidth, _bandwidthTimeout, _stream.bytesLoaded);
+			}
+			
 			var _streamTime:Number = Math.min(_stream.time, item.duration);
 			_position = Math.round(_streamTime * 10) / 10;
 			var bufferPercent:Number = _stream.bytesLoaded / _stream.bytesTotal * 100;
 			var bufferTime:Number = _stream.bufferTime < (item.duration - _streamTime) ? _stream.bufferTime : Math.floor(Math.abs(item.duration - _streamTime));
-			var bufferFill:Number = bufferTime == 0 ? 100 : Math.ceil(_stream.bufferLength / bufferTime * 100);
+			var bufferFill:Number = bufferTime == 0 ? 100 : Math.floor(_stream.bufferLength / bufferTime * 100);
 
 			
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
 				_bufferFull = false;
 				_stream.pause();
 				setState(PlayerState.BUFFERING);
-			} else if (bufferFill > 95 && state == PlayerState.BUFFERING && _bufferFull == false) {
+			} else if (bufferFill > 95 && state == PlayerState.BUFFERING && _bufferFull == false && bufferTime > 0) {
 				_bufferFull = true;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 			}
@@ -169,6 +173,28 @@
 			}
 		}
 
+		private function checkBandwidth(lastLoaded:Number):void {
+			var currentLoaded:Number = _stream.bytesLoaded;
+			var bandwidth:Number = ((currentLoaded - lastLoaded) / 1024) * 8 / (_bandwidthTimeout / 1000);
+			if (currentLoaded < _stream.bytesTotal) {
+				if (bandwidth > 0) {
+					config.bandwidth = bandwidth;
+					var obj:Object = {bandwidth:bandwidth};
+					if (item.duration > 0) {
+						obj.bitrate = Math.round(_stream.bytesTotal / 1024 * 8 / item.duration);
+					}
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: obj});
+				}
+				if (_bandwidthSwitch) {
+					_bandwidthSwitch = false;
+					if (item.currentLevel != item.getLevel(config.bandwidth, config.width)) {
+						load(item);
+						return;
+					}
+				}
+			}
+			setTimeout(checkBandwidth, _bandwidthTimeout, currentLoaded);
+		}
 
 		/** Seek to a new position. **/
 		override public function seek(pos:Number):void {
@@ -211,7 +237,6 @@
 				_stream.pause();
 				_stream.seek(0);
 			}
-			_loadTimer = undefined;
 			clearInterval(_positionInterval);
 			_positionInterval = undefined;
 			super.stop();

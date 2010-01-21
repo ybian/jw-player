@@ -12,6 +12,7 @@ package com.longtailvideo.jwplayer.player {
 	import com.longtailvideo.jwplayer.model.IPlaylist;
 	import com.longtailvideo.jwplayer.model.Model;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.model.PlaylistItemLevel;
 	import com.longtailvideo.jwplayer.plugins.IPlugin;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.plugins.V4Plugin;
@@ -348,6 +349,7 @@ package com.longtailvideo.jwplayer.player {
 			cfg['fullscreen'] = _player.fullscreen;
 			cfg['version'] = _player.version;
 			cfg['item'] = _player.playlist.currentIndex;
+			cfg['level'] = _player.playlist.currentItem.currentLevel;
 			
 			return cfg;
 		} 
@@ -385,6 +387,13 @@ package com.longtailvideo.jwplayer.player {
 			
 			for (var i:String in item) {
 				obj[i] = item[i];
+			}
+			
+			if (item.levels.length > 0) {
+				obj['levels'] = [];
+				for each (var level:PlaylistItemLevel in item.levels) {
+					obj['levels'].push({url:level.file, bitrate:level.bitrate, width:level.width});
+				}
 			}
 			
 			return obj;

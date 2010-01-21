@@ -17,40 +17,42 @@ package com.longtailvideo.jwplayer.model {
 
 		protected var _playlistfile:String	= null;
 
-		protected var _autostart:Boolean 		= false; 
+		protected var _autostart:Boolean 	= false; 
+		protected var _bandwidth:Number		= 1500;
 		protected var _bufferlength:Number 	= 5; 
-		protected var _displaytitle:Boolean 	= true; 
+		protected var _displaytitle:Boolean = true; 
 		protected var _fullscreen:Boolean 	= false;
 		protected var _item:Number			= 0;
-		protected var _linktarget:String 		= "_blank";
-		protected var _mute:Boolean 			= false;
-		protected var _repeat:String 			= RepeatOptions.NONE; 
+		protected var _linktarget:String 	= "_blank";
+		protected var _mute:Boolean 		= false;
+		protected var _repeat:String 		= RepeatOptions.NONE; 
 		protected var _shuffle:Boolean 		= false; 
-		protected var _smoothing:Boolean 		= true;
+		protected var _smoothing:Boolean 	= true;
+		
 		//TODO: Move to ENUM class
-		protected var _stretching:String 		= "uniform"; 
-		protected var _volume:Number 			= 90;
+		protected var _stretching:String 	= "uniform"; 
+		protected var _volume:Number 		= 90;
 
 		protected var _backcolor:Color		= null;
 		protected var _frontcolor:Color		= null;
 		protected var _lightcolor:Color		= null;
-		protected var _screencolor:Color		= null;
+		protected var _screencolor:Color	= null;
 
 		//TODO: Move to ENUM class
-		protected var _controlbar:String 		= "bottom";
-		protected var _dock:Boolean 			= true;
-		protected var _height:Number 			= 400;
-		protected var _icons:Boolean 			= true;
+		protected var _controlbar:String 	= "bottom";
+		protected var _dock:Boolean 		= true;
+		protected var _height:Number 		= 400;
+		protected var _icons:Boolean 		= true;
 		protected var _logo:String 			= null;
 		protected var _playlist:String 		= "none";
 		protected var _playlistsize:Number 	= 180;
 		protected var _skin:String 			= null;
-		protected var _width:Number 			= 280;
+		protected var _width:Number 		= 280;
 		
 		protected var _plugins:String 		= ""; //plugins initial string
 		protected var _pluginConfig:Object 	= {};
 		
-		protected var _playerready:String		= "";
+		protected var _playerready:String	= "";
 		protected var _debug:String			= Logger.NONE;
 		
 		public function PlayerConfig():void {
@@ -280,6 +282,10 @@ package com.longtailvideo.jwplayer.model {
 		/** Automatically start the player on load. @default false **/
 		public function get autostart():Boolean { return _autostart; }
 		public function set autostart(x:Boolean):void { _autostart = x; }
+
+		/** Automatically start the player on load. @default false **/
+		public function get bandwidth():Number { return _bandwidth; }
+		public function set bandwidth(x:Number):void { _bandwidth = x; }
 
 		/** 
 		 * Number of seconds of the file that has to be loaded before starting. Set this to a low value to enable instant-start and to a 

@@ -21,6 +21,8 @@ package com.longtailvideo.jwplayer.parsers {
 		 * @see			RSSParser
 		 **/
 		public static function parseGroup(obj:XML, itm:Object):Object {
+			var ytp:Boolean = false;
+
 			for each (var i:XML in obj.children()) {
 				if (i.namespace().prefix == MediaParser.PREFIX) {
 					switch (i.localName().toLowerCase()) {
@@ -36,6 +38,16 @@ package com.longtailvideo.jwplayer.parsers {
 							}
 							if (i.children().length() > 0) {
 								itm = MediaParser.parseGroup(i, itm);
+							}
+							if (i.@width && i.@bitrate) {
+								if (!itm.levels) {
+									itm.levels = new Array();
+								}
+								itm.levels.push({
+									width:i.@width.toString(),
+									bitrate:i.@bitrate.toString(),
+									file:i.@url.toString()
+								});
 							}
 							break;
 						case 'title':
@@ -55,7 +67,7 @@ package com.longtailvideo.jwplayer.parsers {
 							break;
 						case 'player':
 							if (i.@url.indexOf('youtube.com') > 0) {
-								var ytp:Boolean = true;
+								ytp = true;
 								itm['file'] = i.@url.toString();
 							}
 							break;
