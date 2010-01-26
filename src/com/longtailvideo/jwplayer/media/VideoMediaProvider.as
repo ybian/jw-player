@@ -104,7 +104,7 @@
 		}
 
 		/** Get metadata information from netstream class. **/
-		public function onData(dat:Object):void {
+		public function onClientData(dat:Object):void {
 			if (dat.width) {
 				_video.width = dat.width;
 				_video.height = dat.height;

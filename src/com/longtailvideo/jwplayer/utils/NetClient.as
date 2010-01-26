@@ -21,7 +21,7 @@ package com.longtailvideo.jwplayer.utils {
 			for (var i:Object in dat) {
 				out[i] = dat[i];
 			}
-			callback.onData(out);
+			callback.onClientData(out);
 		}
 		
 		/** Checking the available bandwidth. **/
