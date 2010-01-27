@@ -175,13 +175,13 @@
 
 		private function checkBandwidth(lastLoaded:Number):void {
 			var currentLoaded:Number = _stream.bytesLoaded;
-			var bandwidth:Number = ((currentLoaded - lastLoaded) / 1024) * 8 / (_bandwidthTimeout / 1000);
+			var bandwidth:Number = Math.ceil((currentLoaded - lastLoaded) / 1024) * 8 / (_bandwidthTimeout / 1000);
 			if (currentLoaded < _stream.bytesTotal) {
 				if (bandwidth > 0) {
 					config.bandwidth = bandwidth;
 					var obj:Object = {bandwidth:bandwidth};
 					if (item.duration > 0) {
-						obj.bitrate = Math.round(_stream.bytesTotal / 1024 * 8 / item.duration);
+						obj.bitrate = Math.ceil(_stream.bytesTotal / 1024 * 8 / item.duration);
 					}
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: obj});
 				}

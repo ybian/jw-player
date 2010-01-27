@@ -30,10 +30,12 @@ package com.longtailvideo.jwplayer.media {
      * - Load balancing with SMIL files (with the 'rtmp.loadbalance=true' flashvar).
      **/
     public class RTMPMediaProvider extends MediaProvider {
-        /** Save if the bandwidth checkin already occurs. **/
-        private var _bandwidthChecked:Boolean;
+		/** Save if the bandwidth checkin already occurs. **/
+		private var _bandwidthChecked:Boolean;
         /** Interval for bw checking - with dynamic streaming. **/
         private var _bandwidthInterval:Number;
+		/** Whether to connect to a stream when bandwidth is detected. **/
+		private var _bandwidthSwitch:Boolean;
         /** NetConnection object for setup of the video stream. **/
         private var _connection:NetConnection;
         /** Is dynamic streaming possible. **/
@@ -146,6 +148,7 @@ package com.longtailvideo.jwplayer.media {
             _item = itm;
             _position = 0;
 			_bufferFull = false;
+			_bandwidthSwitch = false;			
             _timeoffset = item.start;
 			if (item.levels.length > 0) { item.setLevel(item.getLevel(config.bandwidth, config.width)); }
             clearInterval(_positionInterval);
@@ -236,7 +239,10 @@ package com.longtailvideo.jwplayer.media {
             if (dat.type == 'bandwidth') {
                 config.bandwidth = dat.bandwidth;
                 Configger.saveCookie('bandwidth', dat.bandwidth);
-                setStream();
+				if (_bandwidthSwitch) {
+					_bandwidthSwitch = false;
+                	setStream();
+				}
             }
             if (dat.code == 'NetStream.Play.TransitionComplete') {
 				if (_transitionLevel >= 0) {
@@ -394,6 +400,7 @@ package com.longtailvideo.jwplayer.media {
                                 setStream();
                             } else {
 								_bandwidthChecked = true;
+								_bandwidthSwitch = true;
                                 _connection.call('checkBandwidth', null);
                             }
                         } else {

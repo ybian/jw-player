@@ -24,7 +24,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Sound control object. **/
 		protected var _transformer:SoundTransform;
 		/** ID for the _position interval. **/
-		protected var _positionInterval:Number;
+		protected var _positionInterval:uint;
 		/** Save whether metadata has already been sent. **/
 		protected var _meta:Boolean;
 		/** Object with keyframe times and positions. **/
@@ -35,8 +35,6 @@ package com.longtailvideo.jwplayer.media {
 		protected var _timeoffset:Number = 0;
 		/** Boolean for mp4 / flv streaming. **/
 		protected var _mp4:Boolean;
-		/** Load offset for bandwidth checking. **/
-		protected var _loadtimer:Number;
 		/** Variable that takes reloading into account. **/
 		protected var _iterator:Number;
 		/** Start parameter. **/
@@ -45,6 +43,12 @@ package com.longtailvideo.jwplayer.media {
 		private var _bufferFull:Boolean;
 		/** Whether the enitre video has been buffered **/
 		private var _bufferingComplete:Boolean;
+		/** Whether we have checked the bandwidth. **/
+		private var _bandwidthSwitch:Boolean = true;
+		/** Whether we have checked bandwidth **/
+		private var _bandwidthChecked:Boolean;
+		/** Bandwidth check delay **/
+		private var _bandwidthTimeout:Number = 2000;
 		
 		/** Constructor; sets up the connection and display. **/
 		public function HTTPMediaProvider() {
@@ -151,18 +155,20 @@ package com.longtailvideo.jwplayer.media {
 			_position = _timeoffset;
 			_bufferFull = false;
 			_bufferingComplete = false;
+			_bandwidthChecked = false;
+			_bandwidthSwitch = true;
+			
+			if (item.levels.length > 0) { item.setLevel(item.getLevel(config.bandwidth, config.width)); }
+			
 			if (_stream.bytesLoaded + _byteoffset < _stream.bytesTotal) {
 				_stream.close();
 			}
 			media = _video;
 			_stream.play(getURL());
-
-			if (!_positionInterval) {
-				_positionInterval = setInterval(positionInterval, 100);
-			}
-			if (!_loadtimer) {
-				_loadtimer = setTimeout(loadTimeout, 3000);
-			}
+			
+			clearInterval(_positionInterval);
+			_positionInterval = setInterval(positionInterval, 100);
+			
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0, 0);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
@@ -170,16 +176,30 @@ package com.longtailvideo.jwplayer.media {
 		}
 
 
-		/** timeout for checking the bitrate. **/
-		protected function loadTimeout():void {
-			var obj:Object = new Object();
-			obj.bandwidth = Math.round(_stream.bytesLoaded / 1024 / 3 * 8);
-			if (item.duration) {
-				obj.bitrate = Math.round(_stream.bytesTotal / 1024 * 8 / item.duration);
-			}
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: obj});
-		}
+		/** Bandwidth is checked as long the stream hasn't completed loading. **/
+		private function checkBandwidth(lastLoaded:Number):void {
+			var currentLoaded:Number = _stream.bytesLoaded;
+			var bandwidth:Number = Math.ceil((currentLoaded - lastLoaded) / 1024) * 8 / (_bandwidthTimeout / 1000);
 
+			if (currentLoaded < _stream.bytesTotal) {
+				if (bandwidth > 0) {
+					config.bandwidth = bandwidth;
+					var obj:Object = {bandwidth:bandwidth};
+					if (item.duration > 0) {
+						obj.bitrate = Math.ceil(_stream.bytesTotal / 1024 * 8 / item.duration);
+					}
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: obj});
+				}
+				if (_bandwidthSwitch) {
+					_bandwidthSwitch = false;
+					if (item.currentLevel != item.getLevel(config.bandwidth, config.width)) {
+						load(item);
+						return;
+					}
+				}
+				setTimeout(checkBandwidth, _bandwidthTimeout, currentLoaded);
+			}
+		}
 
 		/** Get metadata information from netstream class. **/
 		public function onClientData(dat:Object):void {
@@ -245,7 +265,12 @@ package com.longtailvideo.jwplayer.media {
 				bufferPercent = 0;
 				bufferFill = _stream.bufferLength/_stream.bufferTime * 100;
 			}
-
+	
+			if (!_bandwidthChecked && _stream.bytesLoaded > 0 && _stream.bytesLoaded < _stream.bytesTotal) {
+				_bandwidthChecked = true;
+				setTimeout(checkBandwidth, _bandwidthTimeout, _stream.bytesLoaded);
+			}
+			
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
 				_bufferFull = false;
 				_stream.pause();
@@ -342,6 +367,16 @@ package com.longtailvideo.jwplayer.media {
 			_transformer.volume = vol / 100;
 			_stream.soundTransform = _transformer;
 			super.setVolume(vol);
+		}
+
+		/** Handle a resize event **/
+		override public function resize(width:Number, height:Number):void {
+			super.resize(width, height);
+			if (item.levels.length > 0 && item.getLevel(config.bandwidth, config.width) != item.currentLevel) {
+				_byteoffset = getOffset(position);
+				_timeoffset = _position = getOffset(position,true);
+				load(item);
+			}
 		}
 	}
 }

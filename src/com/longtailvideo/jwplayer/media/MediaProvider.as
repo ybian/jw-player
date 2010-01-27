@@ -319,7 +319,7 @@ package com.longtailvideo.jwplayer.media {
 		protected function set media(m:DisplayObject):void {
 			if (m) {
 				_media = new MovieClip();
-				//_media.visible = false;
+				_media.visible = false;
 				_media.addChild(m);
 				if (_width * _height > 0) {
 					Stretcher.stretch(_media, _width, _height, _config.stretching);
