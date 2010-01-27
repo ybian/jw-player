@@ -132,7 +132,6 @@ package com.longtailvideo.jwplayer.view {
 			setupLayers();
 			setupComponents();
 
-			RootReference.stage.addEventListener(Event.FULLSCREEN, resizeHandler);
 			RootReference.stage.addEventListener(Event.RESIZE, resizeHandler);
 
 			_model.addEventListener(MediaEvent.JWPLAYER_MEDIA_LOADED, mediaLoaded);
@@ -243,12 +242,12 @@ package com.longtailvideo.jwplayer.view {
 
 
 		protected function resizeHandler(event:Event):void {
-			redraw();
-
 			var currentFSMode:Boolean = (RootReference.stage.displayState == StageDisplayState.FULL_SCREEN);
 			if (_model.fullscreen != currentFSMode) {
 				dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_FULLSCREEN, currentFSMode));
 			}
+
+			redraw();
 		}
 
 

@@ -94,11 +94,15 @@ package com.longtailvideo.jwplayer.utils {
 		}
 		
 		/** Receive NetStream playback codes. **/
-		public function onPlayStatus(dat:Object):void {
-			if (dat.code == "NetStream.Play.Complete") {
-				forward(dat, 'complete');
-			} else {
-				forward(dat, 'playstatus');
+		public function onPlayStatus(... rest):void {
+			for each (var dat:Object in rest) {
+				if (dat && dat.hasOwnProperty('code')) {
+					if (dat.code == "NetStream.Play.Complete") {
+						forward(dat, 'complete');
+					} else {
+						forward(dat, 'playstatus');
+					}
+				}
 			}
 		}
 		

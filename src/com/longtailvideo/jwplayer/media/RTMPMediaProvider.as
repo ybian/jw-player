@@ -40,12 +40,10 @@ package com.longtailvideo.jwplayer.media {
         private var _dynamic:Boolean;
 		/** The currently playing RTMP stream. **/
 		private var _currentFile:String;
-		/** The currently active RTMP stream. **/
-		private var _currentStream:String;
         /** ID for the position interval. **/
         private var _positionInterval:Number;
-        /** Loader instance that loads the XML file. **/
-        private var _xmlLoader:AssetLoader;
+        /** Loaders for loading SMIL files. **/
+        private var _xmlLoaders:Dictionary;
         /** NetStream instance that handles the stream IO. **/
         private var _stream:NetStream;
         /** Interval ID for subscription pings. **/
@@ -78,9 +76,7 @@ package com.longtailvideo.jwplayer.media {
             _connection.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
             _connection.objectEncoding = ObjectEncoding.AMF0;
             _connection.client = new NetClient(this);
-            _xmlLoader = new AssetLoader();
-            _xmlLoader.addEventListener(Event.COMPLETE, loaderHandler);
-            _xmlLoader.addEventListener(ErrorEvent.ERROR, errorHandler);
+			_xmlLoaders = new Dictionary();
             _transformer = new SoundTransform();
             _video = new Video(320, 240);
             _video.smoothing = config.smoothing;
@@ -125,7 +121,6 @@ package com.longtailvideo.jwplayer.media {
             config.bandwidth = bdw;
             Configger.saveCookie('bandwidth', bdw);
             if (item.levels.length > 0 && item.getLevel(config.bandwidth, config.width) != item.currentLevel) {
-				item.setLevel(item.getLevel(config.bandwidth, config.width));
                 swap(item.currentLevel);
             }
         }
@@ -151,59 +146,64 @@ package com.longtailvideo.jwplayer.media {
             _item = itm;
             _position = 0;
 			_bufferFull = false;
-            if (item.levels.length > 0) {
-                loadLevelSync();
-            }
             _timeoffset = item.start;
+			if (item.levels.length > 0) { item.setLevel(item.getLevel(config.bandwidth, config.width)); }
             clearInterval(_positionInterval);
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
             if (getConfigProperty('loadbalance')) {
-				if (!item.hasOwnProperty('smil')) { item.smil = []; }
-				item.smilIndex = item.levels.length > 0 ? item.currentLevel : 0; 
-                item.smil[item.smilIndex] = item.file;
-                _xmlLoader.load(item.file, XML);
-            } else {
+				loadSmil();
+			} else {
 				finishLoad();
-            }
+			}
         }
 
-		/** Finalizes the loading process **/
-		private function finishLoad():void {
-			var ext:String = item.file.substr(-4);
-			if (ext == '.mp3'){
-				media = null;
-			} else {
-				media = _video;
-			}
-			if (item.streamer != _currentStream || !_isStreaming) {
-				_currentStream = item.streamer;
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-				_connection.connect(item.streamer);
-			} else {
-				seek(_timeoffset);
-			}
+		/** Load a SMIL file for load-balancing **/
+		private function loadSmil():void {
+			if (!item.hasOwnProperty('smil')) { 
+				item.smil = [];				
+				if (item.levels.length > 0) {
+					for (var i:Number = 0; i < item.levels.length; i++) {
+						item.smil[i] = (item.levels[i] as PlaylistItemLevel).file;
+					}
+				} else {
+					item.smil[0] = item.file;
+				}
+			} 
+			
+			var smilFile:String = item.levels.length > 0 ? item.smil[item.currentLevel] : item.smil[0];
+			
+			var loader:AssetLoader = new AssetLoader();
+			loader.addEventListener(Event.COMPLETE, loaderHandler);
+			loader.addEventListener(ErrorEvent.ERROR, errorHandler);
+			_xmlLoaders[loader] = smilFile;
+			loader.load(smilFile, XML);
 		}
 		
-        /** Make sure the selected level is actually the item.file. **/
-        private function loadLevelSync():void {
-            for (var i:Number = 0; i < item.levels.length; i++) {
-                if (item.file == (item.levels[i] as PlaylistItemLevel).file) {
-                    item.setLevel(i);
-                    break;
-                }
-            }
-        }
-
+		/** Finalizes the loading process **/
+		private function finishLoad():void {
+			if (item.file.substr(-4) == '.mp3') {
+				media = null;
+			} else if (!media) {
+				media = _video;
+			}
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+			_connection.connect(item.streamer);
+		}
+		
         /** Get the streamer / file from the loadbalancing XML. **/
         private function loaderHandler(evt:Event):void {
             var xml:XML = XML((evt.target as AssetLoader).loadedObject);
-            item.streamer = xml.head.meta.@base.toString();
 			var fileLocation:String = xml.body.video.@src.toString();
+			var smilLocation:String = _xmlLoaders[evt.target];
+			delete _xmlLoaders[evt.target];
 			if (item.levels.length > 0) {
-				(item.levels[item.smilIndex] as PlaylistItemLevel).file = fileLocation;
+				var level:PlaylistItemLevel = item.levels[(item.smil as Array).indexOf(smilLocation)] as PlaylistItemLevel; 
+				level.streamer = xml.head.meta.@base.toString();
+				level.file = fileLocation;
 			} else {
-            	item.file = fileLocation;
+				item.streamer = xml.head.meta.@base.toString();
+           		item.file = fileLocation;
 			}
 			finishLoad();
         }
@@ -238,9 +238,9 @@ package com.longtailvideo.jwplayer.media {
                 Configger.saveCookie('bandwidth', dat.bandwidth);
                 setStream();
             }
-            if (dat.code == 'NetStream.Play.TransitionComplete'|| (dat.code == 'NetStream.Play.Transition' && dat.reason == 'NetStream.Transition.Success')) {
+            if (dat.code == 'NetStream.Play.TransitionComplete') {
 				if (_transitionLevel >= 0) {
-					Logger.log("Transition to level " + item.currentLevel + "complete");
+					Logger.log("Transition to level " + item.currentLevel + " complete");
                 	_transitionLevel = -1;
 				}
             }
@@ -255,7 +255,7 @@ package com.longtailvideo.jwplayer.media {
 			}
 			
 			clearInterval(_positionInterval);
-			setState(PlayerState.PAUSED);
+			super.pause();
             if (_stream) { 
 				Logger.log("NetStream.pause()");
 				_stream.pause(); 
@@ -264,13 +264,13 @@ package com.longtailvideo.jwplayer.media {
 
         /** Resume playing. **/
         override public function play():void {
-            if (_stream) {
+			clearInterval(_positionInterval);
+            if (state == PlayerState.PAUSED) {
 				Logger.log("NetStream.resume()");
 				_stream.resume();				
 			}
-			clearInterval(_positionInterval);
-            _positionInterval = setInterval(positionInterval, 100);
-			setState(PlayerState.PLAYING);
+			super.play();
+			_positionInterval = setInterval(positionInterval, 100);
         }
 
         /** Interval for the position progress. **/
@@ -306,9 +306,8 @@ package com.longtailvideo.jwplayer.media {
             super.resize(width, height);
 			if (state == PlayerState.PLAYING) {
             	if (item.levels.length > 0 && item.currentLevel != item.getLevel(config.bandwidth, config.width)) {
-					item.setLevel(item.getLevel(config.bandwidth, config.width));
                 	if (_dynamic) {
-	                    swap(item.currentLevel);
+	                    swap(item.getLevel(config.bandwidth, config.width));
                 	} else {
 	                    seek(position);
                 	}
@@ -318,8 +317,9 @@ package com.longtailvideo.jwplayer.media {
 
         /** Seek to a new position. **/
         override public function seek(pos:Number):void {
-            _timeoffset = pos;
+            super.seek(pos);
             _transitionLevel = -1;
+			_timeoffset = pos;
             clearInterval(_positionInterval);
             clearInterval(_bandwidthInterval);
 			if (item.levels.length > 0 && item.getLevel(config.bandwidth, config.width) != item.currentLevel) {
@@ -330,7 +330,7 @@ package com.longtailvideo.jwplayer.media {
                     return;
                 }
             }
-			if (state != PlayerState.PLAYING) {
+			if (state == PlayerState.PAUSED) {
 				play();
 			}
             if (getConfigProperty('subscribe')) {
@@ -342,9 +342,11 @@ package com.longtailvideo.jwplayer.media {
 					Logger.log("NetStream.play(" + getID(item.file) + ")");
 					try {
                     	_stream.play(getID(item.file));
-					} catch(e:Error) {}
+					} catch(e:Error) {
+						Logger.log("Error: " + e.message);
+					}
                 }
-                if (_timeoffset >= 0 || state == PlayerState.IDLE) {
+                if (_timeoffset > 0 || state == PlayerState.IDLE) {
                     if (_stream) {
 						Logger.log("NetStream.seek(" + _timeoffset + ")");
 						_stream.seek(_timeoffset);
@@ -377,8 +379,8 @@ package com.longtailvideo.jwplayer.media {
             switch (evt.info.code) {
                 case 'NetConnection.Connect.Success':
                     if (evt.info.secureToken != undefined) {
-                        _connection.call("secureTokenResponse", null, TEA.decrypt(evt.info.secureToken,
-                                                                                 config.token));
+                      	_connection.call("secureTokenResponse", null, TEA.decrypt(evt.info.secureToken,
+                                                                                  config.token));
                     }
                     if (evt.info.data) {
                         checkDynamic(evt.info.data.version);
@@ -388,7 +390,7 @@ package com.longtailvideo.jwplayer.media {
                         return;
                     } else {
                         if (item.levels.length > 0) {
-                            if (_dynamic || _bandwidthInterval) {
+                            if (_dynamic || _bandwidthChecked) {
                                 setStream();
                             } else {
 								_bandwidthChecked = true;
@@ -477,9 +479,9 @@ package com.longtailvideo.jwplayer.media {
 			if (item.hasOwnProperty('smil')) {
 				/** Replace file values with original redirects **/
 				if (item.levels.length > 0) {
-					for (var i:Number = 0; i < item.levels.length; i++) {
-						if (i < item.smil.length && item.smil[i]) {
-							(item.levels[i] as PlaylistItemLevel).file = item.smil[i];
+					for each (var level:PlaylistItemLevel in item.levels) { 
+						for (var i:Number = 0; i < (item.smil as Array).length; i++) {
+							level.file = item.smil[i];
 						}
 					}
 				} else {
@@ -502,7 +504,8 @@ package com.longtailvideo.jwplayer.media {
                 Logger.log('Already tranisitioning to level ' + item.currentLevel + ' ; transition ignored');
             } else {
                 _transitionLevel = newLevel;
-                Logger.log('transition to level ' + item.currentLevel + ' initiated');
+				item.setLevel(newLevel);
+                Logger.log('transition to level ' + newLevel + ' initiated');
                 var nso:NetStreamPlayOptions = new NetStreamPlayOptions();
                 nso.streamName = getID(item.file);
                 nso.transition = NetStreamPlayTransitions.SWITCH;
@@ -518,6 +521,8 @@ package com.longtailvideo.jwplayer.media {
             if (_stream) {
                 _stream.soundTransform = _transformer;
             }
+			
+			super.setVolume(vol);
         }
 		
 		/** Completes video playback **/

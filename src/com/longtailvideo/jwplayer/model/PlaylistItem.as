@@ -14,12 +14,12 @@ package com.longtailvideo.jwplayer.model {
 		public var link:String			= "";
 		public var mediaid:String		= "";
 		public var start:Number			= 0;
-		public var streamer:String		= "";
 		public var tags:String			= "";
 		public var title:String			= "";
 		public var provider:String		= "";
 		
 		protected var _file:String			= "";
+		protected var _streamer:String		= "";
 		protected var _currentLevel:Number 	= -1;
 		protected var _levels:Array			= [];
 		
@@ -31,7 +31,7 @@ package com.longtailvideo.jwplayer.model {
 					var levels:Array = obj[itm] as Array;
 					for each (var level:Object in levels) {
 						if (level['file'] && level['bitrate'] && level['width']) {
-							addLevel(new PlaylistItemLevel(level['file'], level['bitrate'], level['width']));
+							addLevel(new PlaylistItemLevel(level['file'], level['bitrate'], level['width'], level['streamer']));
 						}
 					}
 				} else {
@@ -43,7 +43,8 @@ package com.longtailvideo.jwplayer.model {
 		/** File property is now a getter, to take levels into account **/
 		public function get file():String {
 			if (_levels.length > 0 && _currentLevel > -1 && _currentLevel < _levels.length) {
-				return (_levels[_currentLevel] as PlaylistItemLevel).file;
+				var level:PlaylistItemLevel = _levels[_currentLevel] as PlaylistItemLevel; 
+				return level.file ? level.file : _file;
 			} else {
 				return _file;
 			}
@@ -52,6 +53,21 @@ package com.longtailvideo.jwplayer.model {
 		/** File setter.  Note, if levels are defined, this will be ignored. **/
 		public function set file(f:String):void {
 			_file = f;
+		}
+		
+		/** Streamer property is now a getter, to take levels into account **/
+		public function get streamer():String {
+			if (_levels.length > 0 && _currentLevel > -1 && _currentLevel < _levels.length) {
+				var level:PlaylistItemLevel = _levels[_currentLevel] as PlaylistItemLevel; 
+				return level.streamer ? level.streamer : _streamer;
+			} else {
+				return _streamer;
+			}
+		}
+		
+		/** Streamer setter.  Note, if levels are defined, this will be ignored. **/
+		public function set streamer(s:String):void {
+			_streamer = s;
 		}
 		
 		/** The quality levels associated with this playlist item **/
