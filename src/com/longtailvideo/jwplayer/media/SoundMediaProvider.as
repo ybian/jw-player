@@ -210,8 +210,8 @@ package com.longtailvideo.jwplayer.media {
 			_transformer.volume = vol / 100;
 			if (_channel) {
 				_channel.soundTransform = _transformer;
-				super.setVolume(vol);
 			}
+			super.setVolume(vol);
 		}
 	}
 }
