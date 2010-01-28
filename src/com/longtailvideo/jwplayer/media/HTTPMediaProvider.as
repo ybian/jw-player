@@ -30,7 +30,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Object with keyframe times and positions. **/
 		protected var _keyframes:Object;
 		/** Offset in bytes of the last seek. **/
-		protected var _byteoffset:Number;
+		protected var _byteoffset:Number = 0;
 		/** Offset in seconds of the last seek. **/
 		protected var _timeoffset:Number = 0;
 		/** Boolean for mp4 / flv streaming. **/
@@ -67,11 +67,10 @@ package com.longtailvideo.jwplayer.media {
 			_stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, errorHandler);
 			_stream.bufferTime = config.bufferlength;
 			_stream.client = new NetClient(this);
+			_transformer = new SoundTransform();
 			_video = new Video(320, 240);
 			_video.smoothing = config.smoothing;
 			_video.attachNetStream(_stream);
-			_transformer = new SoundTransform();
-			_byteoffset = _timeoffset = 0;
 		}
 
 
@@ -87,13 +86,36 @@ package com.longtailvideo.jwplayer.media {
 			return kfr;
 		}
 
-
 		/** Catch security errors. **/
 		protected function errorHandler(evt:ErrorEvent):void {
 			error(evt.text);
 		}
 
-
+		/** Bandwidth is checked as long the stream hasn't completed loading. **/
+		private function checkBandwidth(lastLoaded:Number):void {
+			var currentLoaded:Number = _stream.bytesLoaded;
+			var bandwidth:Number = Math.ceil((currentLoaded - lastLoaded) / 1024) * 8 / (_bandwidthTimeout / 1000);
+			
+			if (currentLoaded < _stream.bytesTotal) {
+				if (bandwidth > 0) {
+					config.bandwidth = bandwidth;
+					var obj:Object = {bandwidth:bandwidth};
+					if (item.duration > 0) {
+						obj.bitrate = Math.ceil(_stream.bytesTotal / 1024 * 8 / item.duration);
+					}
+					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: obj});
+				}
+				if (_bandwidthSwitch) {
+					_bandwidthSwitch = false;
+					if (item.currentLevel != item.getLevel(config.bandwidth, config.width)) {
+						load(item);
+						return;
+					}
+				}
+				setTimeout(checkBandwidth, _bandwidthTimeout, currentLoaded);
+			}
+		}
+		
 		/** Return a keyframe byteoffset or timeoffset. **/
 		protected function getOffset(pos:Number, tme:Boolean=false):Number {
 			if (!_keyframes) {
@@ -120,20 +142,21 @@ package com.longtailvideo.jwplayer.media {
 				_startparam = getConfigProperty('startparam');
 			}
 			if (item.streamer) {
-				if (item['streamer'].indexOf('/') > 0) {
+				if (item.streamer.indexOf('/') > 0) {
 					url = item.streamer;
 					url = getURLConcat(url, 'file', item.file);
 				} else {
 					_startparam = item.streamer;
 				}
 			}
-			if (_mp4) {
+			if (_mp4 || _startparam == 'starttime') {
 				off = _timeoffset;
-			} else if (_startparam == 'starttime') {
-				_startparam = 'start';
 			}
-			if (off > 0) {
+			if (!_mp4 || off > 0) {
 				url = getURLConcat(url, _startparam, off);
+			}
+			if (config['token'] || item['token']) {
+				url = getURLConcat(url, 'token', item['token'] ? item['token'] : config['token']);
 			}
 			return url;
 		}
@@ -175,32 +198,6 @@ package com.longtailvideo.jwplayer.media {
 			config.mute == true ? setVolume(0) : setVolume(config.volume);
 		}
 
-
-		/** Bandwidth is checked as long the stream hasn't completed loading. **/
-		private function checkBandwidth(lastLoaded:Number):void {
-			var currentLoaded:Number = _stream.bytesLoaded;
-			var bandwidth:Number = Math.ceil((currentLoaded - lastLoaded) / 1024) * 8 / (_bandwidthTimeout / 1000);
-
-			if (currentLoaded < _stream.bytesTotal) {
-				if (bandwidth > 0) {
-					config.bandwidth = bandwidth;
-					var obj:Object = {bandwidth:bandwidth};
-					if (item.duration > 0) {
-						obj.bitrate = Math.ceil(_stream.bytesTotal / 1024 * 8 / item.duration);
-					}
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: obj});
-				}
-				if (_bandwidthSwitch) {
-					_bandwidthSwitch = false;
-					if (item.currentLevel != item.getLevel(config.bandwidth, config.width)) {
-						load(item);
-						return;
-					}
-				}
-				setTimeout(checkBandwidth, _bandwidthTimeout, currentLoaded);
-			}
-		}
-
 		/** Get metadata information from netstream class. **/
 		public function onClientData(dat:Object):void {
 			if (dat.width) {
@@ -208,17 +205,17 @@ package com.longtailvideo.jwplayer.media {
 				_video.height = dat.height;
 				resize(_width, _height);
 			}
-			if (dat.duration && item.duration <= 0) {
-				item.duration = dat.duration;
+			if (dat['duration'] && item.duration <= 0) {
+				item.duration = dat['duration'];
 			}
 			if (dat['type'] == 'metadata' && !_meta) {
 				_meta = true;
-				if (dat.seekpoints) {
+				if (dat['seekpoints']) {
 					_mp4 = true;
-					_keyframes = convertSeekpoints(dat.seekpoints);
+					_keyframes = convertSeekpoints(dat['seekpoints']);
 				} else {
 					_mp4 = false;
-					_keyframes = dat.keyframes;
+					_keyframes = dat['keyframes'];
 				}
 				if (item.start > 0) {
 					seek(item.start);
@@ -297,6 +294,15 @@ package com.longtailvideo.jwplayer.media {
 			}
 		}
 
+		/** Handle a resize event **/
+		override public function resize(width:Number, height:Number):void {
+			super.resize(width, height);
+			if (item.levels.length > 0 && item.getLevel(config.bandwidth, config.width) != item.currentLevel) {
+				_byteoffset = getOffset(position);
+				_timeoffset = _position = getOffset(position,true);
+				load(item);
+			}
+		}
 
 		/** Seek to a specific second. **/
 		override public function seek(pos:Number):void {
@@ -369,14 +375,5 @@ package com.longtailvideo.jwplayer.media {
 			super.setVolume(vol);
 		}
 
-		/** Handle a resize event **/
-		override public function resize(width:Number, height:Number):void {
-			super.resize(width, height);
-			if (item.levels.length > 0 && item.getLevel(config.bandwidth, config.width) != item.currentLevel) {
-				_byteoffset = getOffset(position);
-				_timeoffset = _position = getOffset(position,true);
-				load(item);
-			}
-		}
 	}
 }

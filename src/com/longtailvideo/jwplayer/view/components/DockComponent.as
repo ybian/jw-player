@@ -17,9 +17,9 @@ package com.longtailvideo.jwplayer.view.components {
 	
 	public class DockComponent extends CoreComponent implements IDockComponent {
 		/** Default configuration vars for this plugin. **/
-		public var defaults:Object = {
-				align: 'right'
-			};
+		public var defaults:Object = { 
+			align: 'right' 
+		};
 		/** Object with all the buttons in the dock. **/
 		private var buttons:Array;
 		/** Timeout for hiding the buttons when the video plays. **/

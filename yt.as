@@ -32,7 +32,8 @@ function loadHandler() {
 		ytPlayer.unMute();
 		ytPlayer.setVolume(100);
 	}
-};
+}
+
 function byteHandler() {
 	var btl = ytPlayer.getVideoBytesLoaded();
 	var ttl = ytPlayer.getVideoBytesTotal();
@@ -44,7 +45,8 @@ function byteHandler() {
 			clearInterval(byteInterval);
 		}
 	}
-};
+}
+
 function timeHandler() {
 	var pos = Math.round(ytPlayer.getCurrentTime()*10)/10;
 	var dur = Math.round(ytPlayer.getDuration()*10)/10;
@@ -56,8 +58,7 @@ function timeHandler() {
 		}
 	}
 	position = pos;
-};
-
+}
 
 
 // Event handlers
@@ -71,12 +72,12 @@ function onPlayerStateChange(stt:Number) {
 		timeInterval = setInterval(timeHandler,200);
 	}
 	_as2_to_as3.send('AS2_'+unique,"onStateChange",stt);
-}; 
+}
+
 function onPlayerError(erc:Number) {
 	_as2_to_as3.send('AS2_'+unique,"onError",erc);
 	clearInterval(timeInterval);
-};
-
+}
 
 // Directive forwards
 _as3_to_as2.pauseVideo = function() { ytPlayer.pauseVideo(); };

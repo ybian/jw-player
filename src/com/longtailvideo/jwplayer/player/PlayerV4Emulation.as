@@ -64,10 +64,9 @@ package com.longtailvideo.jwplayer.player {
 		}
 		
 		private function playerReady(evt:PlayerEvent):void {
-			var newEvt:PlayerEvent = new PlayerEvent("");
-			id = newEvt.id;
-			client = newEvt.client;
-			version = newEvt.version;
+			id = evt.id;
+			client = evt.client;
+			version = evt.version;
 			 
 			dispatchEvent(new com.jeroenwijering.events.PlayerEvent(com.jeroenwijering.events.PlayerEvent.READY));
 			setupListeners();
@@ -349,7 +348,7 @@ package com.longtailvideo.jwplayer.player {
 			cfg['fullscreen'] = _player.fullscreen;
 			cfg['version'] = _player.version;
 			cfg['item'] = _player.playlist.currentIndex;
-			cfg['level'] = _player.playlist.currentItem.currentLevel;
+			cfg['level'] = _player.playlist.currentItem ? _player.playlist.currentItem.currentLevel : 0;
 			
 			return cfg;
 		} 

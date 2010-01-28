@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.controller.RepeatOptions;
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Strings;
@@ -52,6 +53,7 @@ package com.longtailvideo.jwplayer.model {
 		protected var _plugins:String 		= ""; //plugins initial string
 		protected var _pluginConfig:Object 	= {};
 		
+		protected var _id:String			= "";
 		protected var _playerready:String	= "";
 		protected var _debug:String			= Logger.NONE;
 		
@@ -155,8 +157,8 @@ package com.longtailvideo.jwplayer.model {
 		/** URL to an external page the display, controlbar and playlist can link to. **/
 		public function get link():String { return playlistItem('link'); }
 
-		/** Unique identifier. **/		
-		public function get mediaid():String {			return playlistItem('mediaid');		}		
+		/** Unique identifier for media content. **/		
+		public function get mediaid():String { return playlistItem('mediaid'); }		
 		
 		/** Position in seconds where playback has to start. Won't work for regular (progressive) videos, but only for streaming (HTTP / RTMP). **/
 		public function get start():String { return playlistItem('start'); }
@@ -343,11 +345,7 @@ package com.longtailvideo.jwplayer.model {
 		public function get plugins():String { return _plugins; }
 		public function set plugins(x:String):void { _plugins = x; }
 
-		/** Javascript player ready callback handlers **/		
-		public function get playerready():String { return _playerready; }
-		public function set playerready(x:String):void { _playerready = x; }
-		
-		/** Javascript player ready callback handlers **/		
+		/** The current debugging mode. **/		
 		public function get debug():String {
 			return _debug;
 		}
@@ -374,9 +372,7 @@ package com.longtailvideo.jwplayer.model {
 			}
 		}
 		
-		/**
-		 * A list of available pluginConfig keys. 
-		 */
+		/** A list of available pluginConfig keys. **/
 		public function get pluginIds():Array {
 			var names:Array = [];
 
@@ -390,5 +386,19 @@ package com.longtailvideo.jwplayer.model {
 			
 			return names;
 		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// JAVASCRIPT INTERACTION
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		/** The player's Javascript objectID. Auto-detected, but should be set manually for Linux Javascript support. **/
+		public function get id():String { return _id; }
+		public function set id(x:String):void { PlayerEvent.id = _id = x; }
+		
+		/** Javascript player ready callback handlers **/		
+		public function get playerready():String { return _playerready; }
+		public function set playerready(x:String):void { _playerready = x; }
+		
+		
 	}
 }

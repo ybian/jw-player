@@ -438,7 +438,6 @@ package com.longtailvideo.jwplayer.view {
 
 		protected function imageError(evt:ErrorEvent):void {
 			Logger.log('Error loading preview image: '+evt.text);
-			//dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_ERROR, evt.text));
 		}
 
 

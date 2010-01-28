@@ -30,17 +30,15 @@ package com.longtailvideo.jwplayer.player {
 		}
 		
 		private function playerReady(evt:PlayerEvent):void {
-			var newEvt:PlayerEvent = new PlayerEvent("");
-			
 			var callbacks:String = _player.config.playerready ? _player.config.playerready + "," + "playerReady" : "playerReady";  
 
 			if (ExternalInterface.available) {
 				for each (var callback:String in callbacks.replace(/\s/,"").split(",")) {
 					try {
 						ExternalInterface.call(callback,{
-							id:newEvt.id,
-							client:newEvt.client,
-							version:newEvt.version
+							id:evt.id,
+							client:evt.client,
+							version:evt.version
 						});
 					} catch (e:Error) {}
 				}
