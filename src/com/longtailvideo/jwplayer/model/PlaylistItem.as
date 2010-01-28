@@ -1,4 +1,5 @@
 package com.longtailvideo.jwplayer.model {
+	import com.longtailvideo.jwplayer.utils.Strings;
 
 	/**
 	 * Playlist item data.  The class is dynamic; any items parsed from the jwplayer XML namespace are added to the item.
@@ -9,25 +10,25 @@ package com.longtailvideo.jwplayer.model {
 		public var author:String		= "";
 		public var date:String			= "";
 		public var description:String	= "";
-		public var duration:Number		= -1;
 		public var image:String			= "";
 		public var link:String			= "";
 		public var mediaid:String		= "";
-		public var start:Number			= 0;
 		public var tags:String			= "";
 		public var title:String			= "";
 		public var provider:String		= "";
 		
 		protected var _file:String			= "";
 		protected var _streamer:String		= "";
+		protected var _duration:Number		= -1;
+		protected var _start:Number			= 0;
+		
 		protected var _currentLevel:Number 	= -1;
 		protected var _levels:Array			= [];
 		
+		
 		public function PlaylistItem(obj:Object = null) {
 			for (var itm:String in obj) {
-				if (this[itm] && typeof(this[itm]) == typeof(0)) {
-					this[itm] = Number(obj[itm]);
-				} else if (itm == "levels" && obj[itm] is Array) {
+				if (itm == "levels" && obj[itm] is Array) {
 					var levels:Array = obj[itm] as Array;
 					for each (var level:Object in levels) {
 						if (level['file'] && level['bitrate'] && level['width']) {
@@ -114,6 +115,13 @@ package com.longtailvideo.jwplayer.model {
 				throw(new Error("Level index out of bounds"));
 			}
 		}
+		
+		public function get start():Number { return _start; }
+		public function set start(s:*):void { _start = Strings.seconds(String(s)); }
+
+		public function get duration():Number { return _duration; }
+		public function set duration(d:*):void { _duration = Strings.seconds(String(d)); }
+
 		
 		// For backwards compatibility
 		public function get type():String { return provider; }

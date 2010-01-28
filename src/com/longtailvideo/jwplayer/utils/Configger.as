@@ -130,7 +130,7 @@ package com.longtailvideo.jwplayer.utils {
 		}
 		
 		private function setConfigParam(name:String, value:String):void {
-			_config[name.toLowerCase()] = Strings.serialize(Strings.decode(value));
+			_config[name.toLowerCase()] = Strings.serialize(Strings.trim(Strings.decode(value)));
 		}
 
 	}

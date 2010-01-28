@@ -165,6 +165,11 @@
 
 			return result;
 		}
+		
+		/** Remove white space from before and after a string. **/
+		public static function trim(s:String):String {
+			return s.replace(/^\s+/, '').replace(/\s+$/, '');
+		}
 
 	}
 
