@@ -210,6 +210,9 @@ package com.longtailvideo.jwplayer.media {
 				super.play();
 			}
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: pos, duration: item.duration, offset: _offset});
+			if (pos > item.duration) {
+				complete();
+			}
 		}
 
 
