@@ -274,7 +274,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Dispatches buffer change notifications **/
 		protected function sendBufferEvent(bufferPercent:Number, offset:Number=0):void {
-			if (_bufferPercent != bufferPercent) {
+			if (_bufferPercent != bufferPercent && 0 >= _bufferPercent > 100) {
 				_bufferPercent = bufferPercent;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, {'bufferPercent': _bufferPercent,
 					'offset': offset, 'duration': _item.duration});
