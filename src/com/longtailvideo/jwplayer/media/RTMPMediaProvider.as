@@ -86,7 +86,7 @@ package com.longtailvideo.jwplayer.media {
 
         /** Check if the player can use dynamic streaming (server versions and no load balancing). **/
         private function checkDynamic(str:String):void {
-            var clt:Number = Number((new PlayerEvent('')).client.split(' ')[1].split(',')[0]);
+            var clt:Number = Number(PlayerEvent.client.split(' ')[1].split(',')[0]);
             var mjr:Number = Number(str.split(',')[0]);
             var mnr:Number = Number(str.split(',')[1]);
             if (!(getConfigProperty('loadbalance') && clt > 9 && (mjr > 3 || (mjr == 3 && mnr > 4)))) {

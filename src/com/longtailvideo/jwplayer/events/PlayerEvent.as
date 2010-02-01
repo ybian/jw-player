@@ -100,7 +100,7 @@ package com.longtailvideo.jwplayer.events {
 			setupStaticVars();
 			
 			this.id = PlayerEvent.id;
-			this.client = PlayerEvent.version;
+			this.client = PlayerEvent.client;
 			this.version = PlayerEvent.version;
 			this.message = msg;
 		}
