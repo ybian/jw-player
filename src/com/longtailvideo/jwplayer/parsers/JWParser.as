@@ -51,25 +51,25 @@ package com.longtailvideo.jwplayer.parsers {
 					itm[i.localName()] = Strings.serialize(i.text().toString());
 				}
 			}
-			updateProvider(itm);
 			return itm;
 		}
 		
-		public static function updateProvider(item:Object):void {
-			if (!item['provider'] && item['file']) {
-				if (item['type']) {
-					item['provider'] = item['type'];
-				} else if (item['file'].indexOf('youtube.com/w') > -1) {
-					item['provider'] = "youtube";
-				} else if (item['streamer'] && item['streamer'].indexOf('rtmp') == 0) {
-					item['provider'] = "rtmp";
-				} else {
-					var ext:String = Strings.extension(item['file']);
-					if (extensions.hasOwnProperty(ext)) {
-						item['provider'] = extensions[ext];
-					}
+		public static function getProvider(item:Object):String {
+			if (item['type']) {
+				return item['type'];
+			} else if (item['file'].indexOf('youtube.com/w') > -1) {
+				return "youtube";
+			} else if (item['streamer'] && item['streamer'].indexOf('rtmp') == 0) {
+				return "rtmp";
+			} else if (item['streamer'] && item['streamer'].indexOf('http') == 0) {
+				return "http";
+			} else {
+				var ext:String = Strings.extension(item['file']);
+				if (extensions.hasOwnProperty(ext)) {
+					return extensions[ext];
 				}
 			}
+			return "";
 		}
 
 	}

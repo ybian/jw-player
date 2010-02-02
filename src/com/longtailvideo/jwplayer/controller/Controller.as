@@ -170,7 +170,7 @@ package com.longtailvideo.jwplayer.controller {
 				}
 				_model.playlist.currentIndex = _model.config.item;
 			}
-
+			load(_model.playlist.currentItem);
 			if(_model.config.autostart) {
 				play();
 			}
@@ -489,16 +489,14 @@ package com.longtailvideo.jwplayer.controller {
 			}
 			
 			try {
-				if (!item.provider) {
-					JWParser.updateProvider(item);
-				}
-
-				if (!setProvider(item) && item.file) {
-					_model.playlist.load(item.file)
-				}
+				if (!item.streamer && _model.config.streamer) { item.streamer = _model.config.streamer; }
+				if (!item.provider) { item.provider = JWParser.getProvider(item); }
+				if (!setProvider(item) && item.file) { _model.playlist.load(item.file); }
 			} catch (err:Error) {
+				Logger.log(err.message, "ERROR");
 				return false;
 			}
+			Logger.log("Loading PlaylistItem: " + item.toString(), "LOAD");
 			return true;
 		}
 

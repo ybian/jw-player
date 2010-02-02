@@ -116,12 +116,22 @@ package com.longtailvideo.jwplayer.model {
 			}
 		}
 		
+		public function toString():String {
+			return "[PlaylistItem" +
+				(this.file ? " file=" + this.file : "") +
+				(this.streamer ? " streamer=" + this.streamer : "") +
+				(this.provider ? " provider=" + this.provider : "") +
+				(this.levels.length ? " level=" + this.currentLevel.toString() : "") +
+				"]";
+			
+		}
+		
+		
 		public function get start():Number { return _start; }
 		public function set start(s:*):void { _start = Strings.seconds(String(s)); }
 
 		public function get duration():Number { return _duration; }
 		public function set duration(d:*):void { _duration = Strings.seconds(String(d)); }
-
 		
 		// For backwards compatibility
 		public function get type():String { return provider; }

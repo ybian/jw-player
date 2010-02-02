@@ -85,8 +85,7 @@ package com.longtailvideo.jwplayer.model {
 				}
 			} else if (newPlaylist is PlaylistItem) {
 				var pli:PlaylistItem = newPlaylist as PlaylistItem;
-				JWParser.updateProvider(pli);
-				if (pli.provider) {
+				if (JWParser.getProvider(pli)) {
 					newList.push(pli);
 				} else {
 					load(pli.file);

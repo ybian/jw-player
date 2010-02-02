@@ -78,7 +78,11 @@
 				_bandwidthChecked = true;
 			}
 			
-			if (!item || item.file != itm.file || _stream.bytesLoaded == 0) {
+			if (!item 
+					|| item.file != itm.file 
+					|| _stream.bytesLoaded == 0 
+					|| (_stream.bytesLoaded < _stream.bytesTotal > 0)) 
+			{
 				media = _video;
 				_stream.checkPolicyFile = true;
 				_stream.play(itm.file);
@@ -87,20 +91,21 @@
 				replay = true;
 			}
 
+			setState(PlayerState.BUFFERING);
+			sendBufferEvent(0);
+			config.mute == true ? setVolume(0) : setVolume(config.volume);
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
+
+			if (replay){
+				if (itm.duration <= 0) { itm.duration = item.duration; }
+				seekStream(itm.start, false);
+			}
+
 			_item = itm;
 			
-			setState(PlayerState.BUFFERING);
-			if (replay){
-				sendBufferEvent(0);
-				sendBufferEvent(100);
-				seekStream(0, false);
-			} else {
-				sendBufferEvent(0);
-			}
 			clearInterval(_positionInterval);
 			_positionInterval = setInterval(positionHandler, 200);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			config.mute == true ? setVolume(0) : setVolume(config.volume);
+
 		}
 
 		/** Get metadata information from netstream class. **/

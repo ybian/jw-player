@@ -232,6 +232,7 @@ package com.longtailvideo.jwplayer.view {
 			setupComponent(_components.playlist, 1);
 			setupComponent(_components.controlbar, 2);
 			setupComponent(_components.dock, 3);
+			
 		}
 
 
@@ -331,7 +332,7 @@ package com.longtailvideo.jwplayer.view {
 			return _components;
 		}
 
-
+		/** This feature, while not yet implemented, will allow the API to replace the built-in components with any class that implements the control interfaces. **/
 		public function overrideComponent(newComponent:IPlayerComponent):void {
 			if (newComponent is IControlbarComponent) {
 				// Replace controlbar
