@@ -148,7 +148,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Play or pause the video. **/
 		override public function play():void {
 			_outgoing.send('AS3_' + _unique, "playVideo");
-			super.play();
+//			super.play();
 		}
 
 
@@ -184,7 +184,7 @@ package com.longtailvideo.jwplayer.media {
 					super.play();
 					break;
 				case 2:
-					super.pause();
+//					super.pause();
 					break;
 				case 3:
 					setState(PlayerState.BUFFERING);
@@ -203,6 +203,7 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Catch Youtube _position changes **/
 		public function onTimeChange(pos:Number, dur:Number):void {
+			_position = pos;
 			if (item.duration < 0) {
 				item.duration = dur;
 			}
@@ -224,6 +225,7 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Seek to _position. **/
 		override public function seek(pos:Number):void {
+			super.seek(pos);
 			_outgoing.send('AS3_' + _unique, "seekTo", pos);
 			play();
 		}

@@ -28,6 +28,8 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _dragging:Boolean;
 		/** Lock state of the slider **/
 		protected var _lock:Boolean;
+		/** If the buffer has a percentage offset **/
+		protected var _bufferOffset:Number = 0;
 
 
 		//protected var _height:Number;
@@ -77,23 +79,30 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 		}
 
+		public function setBufferOffset(offset:Number):void {
+			_bufferOffset = offset;
+		}
 
 		public function resize(width:Number, height:Number):void {
 			var scale:Number = this.scaleX;
 			this.scaleX = 1;
 			_width = width * scale;
 			_height = height;
-			if (_rail.getChildByName("bitmap")) {
-				_rail.getChildByName("bitmap").width = _width;
-				resizeElement(_rail);
+			var railMap:DisplayObject = _rail.getChildByName("bitmap"); 
+			if (railMap) {
+				railMap.width = _width;
+				resizeElement(railMap);
 			}
-			if (_buffer.getChildByName("bitmap")) {
-				_buffer.getChildByName("bitmap").width = _width;
-				resizeElement(_buffer, _currentBuffer);
+			var bufferMap:DisplayObject = _buffer.getChildByName("bitmap"); 
+			if (bufferMap) {
+				bufferMap.width = _width;
+				bufferMap.x = _width * _bufferOffset / 100;
+				resizeElement(bufferMap, _currentBuffer);
 			}
-			if (_progress.getChildByName("bitmap") && !_dragging) {
-				_progress.getChildByName("bitmap").width = _width;
-				resizeElement(_progress, _currentProgress);
+			var progressMap:DisplayObject = _progress.getChildByName("bitmap"); 
+			if (progressMap && !_dragging) {
+				progressMap.width = _width;
+				resizeElement(progressMap, _currentProgress);
 			}
 			if (_thumb && !_dragging) {
 				_thumb.x = (_width-_thumb.width) * _currentThumb / 100;
@@ -102,7 +111,7 @@ package com.longtailvideo.jwplayer.view.components {
 		}
 
 
-		private function resizeElement(element:Sprite, maskpercentage:Number=100):void {
+		private function resizeElement(element:DisplayObject, maskpercentage:Number=100):void {
 			if (element) {
 				if (_width && _height) {
 					var mask:Sprite;
@@ -111,13 +120,13 @@ package com.longtailvideo.jwplayer.view.components {
 					} else {
 						mask = new Sprite();
 						mask.name = "mask";
-						element.addChild(mask);
+						addChild(mask);
 						element.mask = mask;
 					}
-					mask.x = 0;
+					mask.x = element.x;
 					mask.graphics.clear();
-					mask.graphics.beginFill(0x000000, 0);
-					mask.graphics.drawRect(element.x, 0, _width * maskpercentage / 100, element.height);
+					mask.graphics.beginFill(0x0000ff, 0);
+					mask.graphics.drawRect(0, 0, _width * maskpercentage / 100, element.height);
 					mask.graphics.endFill();
 				}
 			}

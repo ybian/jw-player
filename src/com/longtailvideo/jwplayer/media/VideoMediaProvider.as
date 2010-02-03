@@ -88,21 +88,17 @@
 				_stream.play(itm.file);
 				_stream.pause();
 			} else {
-				replay = true;
-			}
-
-			setState(PlayerState.BUFFERING);
-			sendBufferEvent(0);
-			config.mute == true ? setVolume(0) : setVolume(config.volume);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-
-			if (replay){
 				if (itm.duration <= 0) { itm.duration = item.duration; }
 				seekStream(itm.start, false);
 			}
 
+			super.load(itm);
 			_item = itm;
-			
+
+			config.mute == true ? setVolume(0) : setVolume(config.volume);
+
+			setState(PlayerState.BUFFERING);
+			sendBufferEvent(0);
 			clearInterval(_positionInterval);
 			_positionInterval = setInterval(positionHandler, 200);
 

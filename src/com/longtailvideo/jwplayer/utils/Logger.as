@@ -61,10 +61,13 @@ package com.longtailvideo.jwplayer.utils {
 		/** Send the messages to the output system. **/
 		private static function send(text:String):void {
 			var debug:String = _config ? _config.debug : TRACE;
-			
 			switch (debug) {
 				case ARTHROPOD:
-					CONNECTION.send(CONNECTION_NAME, 'debug', 'CDC309AF', text,	0xCCCCCC);
+					try {
+						CONNECTION.send(CONNECTION_NAME, 'debug', 'CDC309AF', text,	0xCCCCCC);
+					} catch(e:Error) {
+						trace(text);					
+					}
 					break;
 				case CONSOLE:
 					if (ExternalInterface.available) {

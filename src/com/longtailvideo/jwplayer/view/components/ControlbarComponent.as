@@ -257,20 +257,15 @@ package com.longtailvideo.jwplayer.view.components {
 			var scrubber:Slider = getSlider('time');
 			switch (evt.type) {
 				case MediaEvent.JWPLAYER_MEDIA_BUFFER:
-					//setTime(evt.position, evt.duration);
-					if (scrubber) {
-						//scrubber.setProgress(evt.position / evt.duration *100);
-						scrubber.setBuffer(evt.bufferPercent);
-					}
-					break;
 				case MediaEvent.JWPLAYER_MEDIA_TIME:
-					setTime(evt.position, evt.duration);
 					if (scrubber) {
+						scrubber.setProgress(evt.position / evt.duration *100);
 						scrubber.thumbVisible = (evt.duration > 0);
-						scrubber.setProgress(evt.position / evt.duration * 100);
-						if (evt.bufferPercent >= 0) {
+						if (evt.bufferPercent > 0) {
 							scrubber.setBuffer(evt.bufferPercent);
+							scrubber.setBufferOffset(evt.offset / evt.duration * 100);
 						}
+						if (evt.position > 0) { setTime(evt.position, evt.duration); }
 					}
 					break;
 				default:

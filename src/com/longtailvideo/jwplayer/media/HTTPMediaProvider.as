@@ -318,7 +318,6 @@ package com.longtailvideo.jwplayer.media {
 				if (state == PlayerState.PAUSED) {
 					_stream.resume();
 				}
-				_position = pos;
 				if (_mp4) {
 					_stream.seek(getOffset(_position - _timeoffset, true));
 				} else {

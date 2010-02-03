@@ -81,7 +81,7 @@ package com.longtailvideo.jwplayer.view.components {
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_TIME, timeHandler);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_MUTE, muteHandler);
 			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_VOLUME, volumeHandler);
-			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, bufferHandler);
+			_player.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER, timeHandler);
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_LOADED, itemHandler);
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_UPDATED, itemHandler);
 			_player.addEventListener(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, itemHandler);
@@ -462,6 +462,7 @@ package com.longtailvideo.jwplayer.view.components {
 			}
 			try {
 				var xps:Number = Math.round(pct * (getSkinElementChild('timeSlider', 'rail').width - getSkinElementChild('timeSlider', 'icon').width));
+				bufferHandler(evt);
 				if (dur > 0) {
 					getSkinElementChild('timeSlider', 'icon').visible = _player.state != PlayerState.IDLE;
 					getSkinElementChild('timeSlider', 'mark').visible = _player.state != PlayerState.IDLE;
@@ -469,7 +470,6 @@ package com.longtailvideo.jwplayer.view.components {
 						getSkinElementChild('timeSlider', 'icon').x = xps;
 						getSkinElementChild('timeSlider', 'done').width = xps;
 					}
-					bufferHandler(evt);
 					getSkinElementChild('timeSlider', 'done').visible = _player.state != PlayerState.IDLE;
 				} else {
 					if (_player.state != PlayerState.PLAYING) {
@@ -484,7 +484,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 
 		private function bufferHandler(evt:MediaEvent):void {
-			if (evt.bufferPercent < 0)
+			if (!evt || evt.bufferPercent < 0)
 				return;
 
 			var mark:DisplayObject = getSkinElementChild('timeSlider', 'mark');
