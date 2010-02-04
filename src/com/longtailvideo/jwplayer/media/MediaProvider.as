@@ -279,7 +279,6 @@ package com.longtailvideo.jwplayer.media {
 				var obj:Object = {
 					'bufferPercent': _bufferPercent, 
 					'offset': offset, 
-					'duration': _item.duration,
 					'position': Math.max(0, _position)
 				};
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, obj);

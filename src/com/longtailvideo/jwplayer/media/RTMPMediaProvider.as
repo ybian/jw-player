@@ -62,6 +62,14 @@ package com.longtailvideo.jwplayer.media {
         private var _video:Video;
 		/** Whether or not the buffer is full **/
 		private var _bufferFull:Boolean = false;
+		/** Duration of the DVR stream (grows with a timer). **/
+		private var _dvrDuration:Number = 0;
+		/** Total duration of the DVR stream (set by configuration). **/
+		private var _dvrTotalDuration:Number = 0;
+		/** How long to wait between updates to DVR duration **/
+		private var _dvrCheckDelay:Number = 1000;
+		/** Interval ID for growing the DVR duration. **/
+		private var _dvrInterval:Number;
 
 		public function RTMPMediaProvider() {
 			super('rtmp');
@@ -100,6 +108,15 @@ package com.longtailvideo.jwplayer.media {
         private function doSubscribe(id:String):void {
             _connection.call("FCSubscribe", null, id);
         }
+
+		/** If there's a DVR stream, calcluate the position by incrementing it via a setInterval(). **/
+		private function dvrPosition():void {
+			_dvrDuration += Math.ceil(_dvrCheckDelay / 1000);
+			if(_dvrTotalDuration > 0) {
+				var bufferPct:Number = Math.min(100, Math.ceil(100 * _dvrDuration / _dvrTotalDuration));
+				sendBufferEvent(bufferPct);			
+			}
+		}
 
         /** Catch security errors. **/
         private function errorHandler(evt:ErrorEvent):void {
@@ -151,6 +168,9 @@ package com.longtailvideo.jwplayer.media {
 			_bandwidthSwitch = false;			
             _timeoffset = item.start;
 			if (item.levels.length > 0) { item.setLevel(item.getLevel(config.bandwidth, config.width)); }
+			
+			_dvrTotalDuration = duration;
+			
             clearInterval(_positionInterval);
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
@@ -226,8 +246,13 @@ package com.longtailvideo.jwplayer.media {
 				_video.height = dat.height;
 				resize(_width, _height);
             }
-            if (dat.duration && item.duration <= 0) {
-                item.duration = dat.duration;
+            if (dat.duration) {
+				if (isDVR) {
+					// Save the DVR duration differently, adding a small buffer.
+					_dvrDuration = dat.duration + 3;
+				} else if (duration <= 0) {
+                	item.duration = dat.duration;
+				}
             }
             if (dat.type == 'complete') {
                 clearInterval(_positionInterval);
@@ -255,7 +280,7 @@ package com.longtailvideo.jwplayer.media {
 
         /** Pause playback. **/
         override public function pause():void {
-			if (isLivestream()) {
+			if (isLivestream) {
 				stop();
 				return;
 			}
@@ -284,11 +309,11 @@ package com.longtailvideo.jwplayer.media {
             var pos:Number = Math.round((_stream.time) * 10) / 10;
 			var bfr:Number = _stream.bufferLength / _stream.bufferTime;
 
-			if (bfr < 0.25 && pos < item.duration - 5 && state != PlayerState.BUFFERING) {
+			if (bfr < 0.25 && pos < duration - 5 && state != PlayerState.BUFFERING) {
 				_bufferFull = false;
 				setState(PlayerState.BUFFERING);
             } else if (bfr > 1 && state != PlayerState.PLAYING) {
-				if (state == PlayerState.BUFFERING && !isLivestream()) {
+				if (state == PlayerState.BUFFERING && !isLivestream) {
 					_bufferFull = true;
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, {bufferPercent: bfr});
 				}
@@ -296,10 +321,10 @@ package com.longtailvideo.jwplayer.media {
             if (state != PlayerState.PLAYING) {
                 return;
             }
-            if (pos < item.duration) {
+            if (pos < duration) {
 				_position = pos;
-				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
-            } else if (position > 0 && item.duration > 0) {
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: duration});
+            } else if (position > 0 && duration > 0 && (!isDVR || _dvrTotalDuration > 0)) {
 				Logger.log("NetStream.pause()");
                 _stream.pause();
                 clearInterval(_positionInterval);
@@ -323,11 +348,13 @@ package com.longtailvideo.jwplayer.media {
 
         /** Seek to a new position. **/
         override public function seek(pos:Number):void {
+			if (isDVR && pos > _dvrDuration) { pos = _dvrDuration; }
             super.seek(pos);
             _transitionLevel = -1;
 			_timeoffset = pos;
             clearInterval(_positionInterval);
             clearInterval(_bandwidthInterval);
+			clearInterval(_dvrInterval);
 			if (item.levels.length > 0 && item.getLevel(config.bandwidth, config.width) != item.currentLevel) {
                 item.setLevel(item.getLevel(config.bandwidth, config.width));
                 if (getConfigProperty('loadbalance')) {
@@ -342,6 +369,16 @@ package com.longtailvideo.jwplayer.media {
             if (getConfigProperty('subscribe')) {
 				Logger.log("NetStream.play(" + getID(item.file) + ")");
                 _stream.play(getID(item.file));
+			} else if(isDVR) {
+				if(state != PlayerState.PLAYING) {
+					try {
+						_stream.play(getID(item.file),0,-1);
+					} catch(e:Error) {
+						error("Could not play DVR stream: " + e.message);
+					}
+				}
+				if(_timeoffset > 0) { _stream.seek(_timeoffset); }
+				_dvrInterval = setInterval(dvrPosition,1000);
             } else {
                 if (_currentFile != item.file) {
                     _currentFile = item.file;
@@ -465,6 +502,10 @@ package com.longtailvideo.jwplayer.media {
 				case 'NetStream.Play.Transition':
 					onClientData(evt.info);
 					break;
+				case 'NetStream.Play.Stop':
+					if(isDVR) { stop(); }
+					break;
+					
             }
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: evt.info});
         }
@@ -500,7 +541,10 @@ package com.longtailvideo.jwplayer.media {
         /** Get the streamlength returned from the connection. **/
         private function streamlengthHandler(len:Number):void {
 			Logger.log("duration: " + len);
-            if (len && item.duration <= 0) {
+			
+			if (isDVR && _dvrTotalDuration > 0) {
+				_dvrDuration = len;
+			} else if (!isDVR && len && duration <= 0) {
                 item.duration = len;
             }
         }
@@ -540,11 +584,22 @@ package com.longtailvideo.jwplayer.media {
 		}
 		
 		/** Determines if the stream is a live stream **/
-		private function isLivestream():Boolean {
+		protected function get isLivestream():Boolean {
 			// We assume it's a livestream until we hear otherwise.
-			return (!(item.duration > 0) && _stream && _stream.bufferLength > 0);
+			return (!(duration > 0) && _stream && _stream.bufferLength > 0);
 		}
 		
+		protected function get isDVR():Boolean {
+			return Boolean(getConfigProperty('dvr'));
+		}
+		
+		protected function get duration():Number {
+			if (isDVR) {
+				return _dvrTotalDuration > 0 ? _dvrTotalDuration : _dvrDuration;
+			} else {
+				return item.duration;
+			}
+		}
 		
     }
 }
