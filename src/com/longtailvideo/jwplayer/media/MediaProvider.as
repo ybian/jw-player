@@ -277,9 +277,10 @@ package com.longtailvideo.jwplayer.media {
 			if (_bufferPercent != bufferPercent && 0 <= bufferPercent < 100) {
 				_bufferPercent = bufferPercent;
 				var obj:Object = {
-					'bufferPercent': _bufferPercent, 
-					'offset': offset, 
-					'position': Math.max(0, _position)
+					'bufferPercent':	_bufferPercent, 
+					'offset': 			offset, 
+					'duration': 		_item.duration,
+					'position': 		Math.max(0, _position)
 				};
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER, obj);
 			}

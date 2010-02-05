@@ -66,6 +66,8 @@ package com.longtailvideo.jwplayer.media {
 		private var _dvrDuration:Number = 0;
 		/** Total duration of the DVR stream (set by configuration). **/
 		private var _dvrTotalDuration:Number = 0;
+		/** If the item's duration should be set back to 0 on load. **/
+		private var _dvrResetDuration:Boolean = false;
 		/** How long to wait between updates to DVR duration **/
 		private var _dvrCheckDelay:Number = 1000;
 		/** Interval ID for growing the DVR duration. **/
@@ -115,6 +117,9 @@ package com.longtailvideo.jwplayer.media {
 			if(_dvrTotalDuration > 0) {
 				var bufferPct:Number = Math.min(100, Math.ceil(100 * _dvrDuration / _dvrTotalDuration));
 				sendBufferEvent(bufferPct);			
+			} else {
+				if (item.duration == 0) { _dvrResetDuration = true; }
+				item.duration = _dvrDuration;
 			}
 		}
 
@@ -169,9 +174,13 @@ package com.longtailvideo.jwplayer.media {
             _timeoffset = item.start;
 			if (item.levels.length > 0) { item.setLevel(item.getLevel(config.bandwidth, config.width)); }
 			
-			_dvrTotalDuration = duration;
+			if (_dvrResetDuration) { item.duration = 0; }
+			_dvrTotalDuration = item.duration;
+			_dvrDuration = 0;
+			clearInterval(_dvrInterval);
+			_dvrInterval = 0;
 			
-            clearInterval(_positionInterval);
+			clearInterval(_positionInterval);
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
             if (getConfigProperty('loadbalance')) {
@@ -349,12 +358,10 @@ package com.longtailvideo.jwplayer.media {
         /** Seek to a new position. **/
         override public function seek(pos:Number):void {
 			if (isDVR && pos > _dvrDuration) { pos = _dvrDuration; }
-            super.seek(pos);
             _transitionLevel = -1;
 			_timeoffset = pos;
             clearInterval(_positionInterval);
             clearInterval(_bandwidthInterval);
-			clearInterval(_dvrInterval);
 			if (item.levels.length > 0 && item.getLevel(config.bandwidth, config.width) != item.currentLevel) {
                 item.setLevel(item.getLevel(config.bandwidth, config.width));
                 if (getConfigProperty('loadbalance')) {
@@ -377,8 +384,10 @@ package com.longtailvideo.jwplayer.media {
 						error("Could not play DVR stream: " + e.message);
 					}
 				}
-				if(_timeoffset > 0) { _stream.seek(_timeoffset); }
-				_dvrInterval = setInterval(dvrPosition,1000);
+				if(_timeoffset > 0) {
+					_stream.seek(_timeoffset);
+				}
+				if (!_dvrInterval) { _dvrInterval = setInterval(dvrPosition,1000); }
             } else {
                 if (_currentFile != item.file) {
                     _currentFile = item.file;
@@ -595,7 +604,7 @@ package com.longtailvideo.jwplayer.media {
 		
 		protected function get duration():Number {
 			if (isDVR) {
-				return _dvrTotalDuration > 0 ? _dvrTotalDuration : _dvrDuration;
+				return _dvrTotalDuration > 0 ? _dvrTotalDuration : item.duration;
 			} else {
 				return item.duration;
 			}

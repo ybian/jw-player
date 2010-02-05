@@ -131,7 +131,10 @@ package com.longtailvideo.jwplayer.model {
 		public function set start(s:*):void { _start = Strings.seconds(String(s)); }
 
 		public function get duration():Number { return _duration; }
-		public function set duration(d:*):void { _duration = Strings.seconds(String(d)); }
+		public function set duration(d:*):void { 
+			_duration = Strings.seconds(String(d));
+			if (_duration == 0) { _duration = -1; }
+		}
 		
 		// For backwards compatibility
 		public function get type():String { return provider; }
