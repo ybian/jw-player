@@ -170,11 +170,16 @@ package com.longtailvideo.jwplayer.controller {
 				}
 				_model.playlist.currentIndex = _model.config.item;
 			}
+
 			load(_model.playlist.currentItem);
+
 			if(_model.config.autostart) {
-				play();
+				if (locking) {
+					_unlockAutostart = true;
+				} else {
+					play();
+				}
 			}
-				
 		}
 
 
@@ -263,7 +268,7 @@ package com.longtailvideo.jwplayer.controller {
 				if (!locking) {
 					dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_UNLOCKED));
 				}
-				if (!_setupFinalized) {
+				if (_setupComplete && !_setupFinalized) {
 					finalizeSetup();
 				}
 				if (!locking && (_lockingResume || _unlockAutostart)) {
