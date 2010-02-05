@@ -71,7 +71,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Reference to the currently active playlistitem. **/
 		protected var _item:PlaylistItem;
 		/** The current position inside the file. **/
-		protected var _position:Number;
+		protected var _position:Number = 0;
 		/** The current volume of the audio output stream **/
 		private var _volume:Number;
 		/** The playback state for the currently loaded media.  @see com.longtailvideo.jwplayer.model.ModelStates **/

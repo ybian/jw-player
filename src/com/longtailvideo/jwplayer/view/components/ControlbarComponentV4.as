@@ -466,7 +466,7 @@ package com.longtailvideo.jwplayer.view.components {
 				if (dur > 0) {
 					getSkinElementChild('timeSlider', 'icon').visible = _player.state != PlayerState.IDLE;
 					getSkinElementChild('timeSlider', 'mark').visible = _player.state != PlayerState.IDLE;
-					if (!scrubber) {
+					if (!scrubber || scrubber.name != 'timeSlider') {
 						getSkinElementChild('timeSlider', 'icon').x = xps;
 						getSkinElementChild('timeSlider', 'done').width = xps;
 					}
