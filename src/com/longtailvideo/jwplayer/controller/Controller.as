@@ -73,6 +73,8 @@ package com.longtailvideo.jwplayer.controller {
 		
 		/** Reference to a PlaylistItem which has triggered an external MediaProvider load **/
 		protected var _delayedItem:PlaylistItem;
+		/** Loader for external MediaProviders **/
+		protected var _mediaLoader:MediaProviderLoader;
 		
 		public function Controller(player:IPlayer, model:Model, view:View) {
 			_player = player;
@@ -194,6 +196,8 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		protected function errorHandler(evt:ErrorEvent):void {
+			_delayedItem = null;
+			_mediaLoader = null;
 			errorState(evt.text);
 		}
 
@@ -318,6 +322,11 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		public function play():Boolean {
+			if (_mediaLoader) {
+				_delayedItem = _model.playlist.currentItem;
+				return false;
+			}
+
 			if (locking) {
 				return false;
 			}
@@ -326,10 +335,8 @@ package com.longtailvideo.jwplayer.controller {
 				switch (_player.state) {
 					case PlayerState.IDLE:
 						load(_model.playlist.currentItem);
-						if (!_delayedItem) {
-							_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, bufferFullHandler);
-							_model.media.load(_model.playlist.currentItem);
-						}
+						_model.media.addEventListener(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL, bufferFullHandler);
+						_model.media.load(_model.playlist.currentItem);
 						break;
 					case PlayerState.PAUSED:
 						_model.media.play();
@@ -539,8 +546,7 @@ package com.longtailvideo.jwplayer.controller {
 
 		protected function setProvider(item:PlaylistItem):Boolean {
 			var provider:String = item.provider;
-			_delayedItem = null;
-			
+
 			if (provider) {
 
 				// Backwards compatibility for CDNs in the 'type' flashvar.
@@ -551,12 +557,10 @@ package com.longtailvideo.jwplayer.controller {
 
 				// If the model doesn't have an instance of the provider, load & instantiate it
 				if (!_model.hasMediaProvider(provider)) {
-					_delayedItem = item;
-
-					var mediaLoader:MediaProviderLoader = new MediaProviderLoader();
-					mediaLoader.addEventListener(Event.COMPLETE, mediaSourceLoaded);
-					mediaLoader.addEventListener(ErrorEvent.ERROR, errorHandler);
-					mediaLoader.loadSource(provider);
+					_mediaLoader = new MediaProviderLoader();
+					_mediaLoader.addEventListener(Event.COMPLETE, mediaSourceLoaded);
+					_mediaLoader.addEventListener(ErrorEvent.ERROR, errorHandler);
+					_mediaLoader.loadSource(provider);
 					return true;
 				}
 
@@ -569,10 +573,15 @@ package com.longtailvideo.jwplayer.controller {
 
 
 		protected function mediaSourceLoaded(evt:Event):void {
-			var loader:MediaProviderLoader = evt.target as MediaProviderLoader;
-			_model.setMediaProvider(_delayedItem.provider, loader.loadedSource);
+			var loader:MediaProviderLoader = _mediaLoader;
 			_delayedItem = null;
-			play();
+			_mediaLoader = null;
+			if (_delayedItem) {
+				_model.setMediaProvider(_delayedItem.provider, loader.loadedSource);
+				play();
+			} else {
+				_model.setMediaProvider(_model.playlist.currentItem.provider, loader.loadedSource);				
+			}
 		}
 
 

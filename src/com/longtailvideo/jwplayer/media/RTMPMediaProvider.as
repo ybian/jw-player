@@ -1,9 +1,7 @@
 ﻿/**
  * Wrapper for playback of _video streamed over RTMP.
  *
- * All playback functionalities are cross-server (FMS, Wowza, Red5), with the exception of:
- * - The SecureToken functionality (Wowza).
- * - getStreamLength / checkBandwidth (FMS3).
+ * All playback functionalities are cross-server (FMS, Wowza, Red5)
  **/
 package com.longtailvideo.jwplayer.media {
     import com.longtailvideo.jwplayer.events.MediaEvent;
