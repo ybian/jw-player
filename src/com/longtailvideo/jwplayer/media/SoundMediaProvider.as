@@ -91,7 +91,7 @@ package com.longtailvideo.jwplayer.media {
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-			config.mute == true ? setVolume(0) : setVolume(config.volume);
+			streamVolume(config.mute ? 0 : config.volume);
 		}
 
 
@@ -207,11 +207,17 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Set the volume level. **/
 		override public function setVolume(vol:Number):void {
-			_transformer.volume = vol / 100;
+			streamVolume(vol);
+			super.setVolume(vol);
+		}
+		
+
+		/** Set the stream's volume, without sending a volume event **/
+		protected function streamVolume(level:Number):void {
+			_transformer.volume = level / 100;
 			if (_channel) {
 				_channel.soundTransform = _transformer;
 			}
-			super.setVolume(vol);
 		}
 	}
 }

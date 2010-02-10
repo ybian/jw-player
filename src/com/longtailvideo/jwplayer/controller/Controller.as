@@ -256,6 +256,7 @@ package com.longtailvideo.jwplayer.controller {
 				
 				// Tell everyone you're locked
 				if (!wasLocked) {
+					Logger.log(plugin.id + " locking playback", "LOCK");
 					dispatchEvent(new PlayerEvent(PlayerEvent.JWPLAYER_LOCKED));
 					_lockManager.executeCallback();
 				}

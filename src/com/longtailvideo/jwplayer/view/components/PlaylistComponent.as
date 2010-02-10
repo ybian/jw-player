@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.events.PlaylistEvent;
+	import com.longtailvideo.jwplayer.events.ViewEvent;
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.player.PlayerState;
@@ -569,7 +570,9 @@ package com.longtailvideo.jwplayer.view.components {
 		
 		/** Handle a click on a button. **/
 		private function clickHandler(evt:MouseEvent):void {
-			_player.playlistItem(Number(evt.target.name));
+			var itemNumber:Number = Number(evt.target.name); 
+			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_ITEM, itemNumber)); 
+			_player.playlistItem(itemNumber);
 		}
 		
 		

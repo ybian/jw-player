@@ -92,13 +92,15 @@
 				seekStream(itm.start, false);
 			}
 
-			super.load(itm);
 			_item = itm;
-
-			config.mute == true ? setVolume(0) : setVolume(config.volume);
 
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
+
+			super.load(itm);
+			
+			streamVolume(config.mute ? 0 : config.volume);
+			
 			clearInterval(_positionInterval);
 			_positionInterval = setInterval(positionHandler, 200);
 
@@ -246,9 +248,16 @@
 
 		/** Set the volume level. **/
 		override public function setVolume(vol:Number):void {
-			_transformer.volume = vol / 100;
-			_stream.soundTransform = _transformer;
+			streamVolume(vol);			
 			super.setVolume(vol);
+		}
+		
+		/** Set the stream's volume, without sending a volume event **/
+		protected function streamVolume(level:Number):void {
+			_transformer.volume = level / 100;
+			if (_stream) {
+				_stream.soundTransform = _transformer;
+			}
 		}
 	}
 }

@@ -105,7 +105,6 @@ package com.longtailvideo.jwplayer.media {
 			_position = _offset = 0;
 			_loading = true;
 			setState(PlayerState.BUFFERING);
-			sendBufferEvent(0);
 			if (_connected) {
 				completeLoad(itm);
 			} else {
@@ -132,15 +131,18 @@ package com.longtailvideo.jwplayer.media {
 				resize(config.width, config.width / 4 * 3);
 				media = _loader;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
-				config.mute == true ? setVolume(0) : setVolume(config.volume);
+				sendBufferEvent(0);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
+				_outgoing.send('AS3_' + _unique, "setVolume", (config.mute ? 0 : config.volume / 100));
 			}
 		}
 
 
 		/** Pause the YouTube movie. **/
 		override public function pause():void {
-			_outgoing.send('AS3_' + _unique, "pauseVideo");
+			if (state == PlayerState.PLAYING || state == PlayerState.BUFFERING) {
+				_outgoing.send('AS3_' + _unique, "pauseVideo");
+			}
 			super.pause();
 		}
 
@@ -184,7 +186,7 @@ package com.longtailvideo.jwplayer.media {
 					super.play();
 					break;
 				case 2:
-//					super.pause();
+					super.pause();
 					break;
 				case 3:
 					setState(PlayerState.BUFFERING);

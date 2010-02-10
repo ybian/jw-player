@@ -70,6 +70,8 @@ package com.longtailvideo.jwplayer.media {
 		private var _dvrCheckDelay:Number = 1000;
 		/** Interval ID for growing the DVR duration. **/
 		private var _dvrInterval:Number;
+		/** Whether we should pause the stream when we first connect to it **/
+		private var	_lockOnStream:Boolean = false;
 
 		public function RTMPMediaProvider() {
 			super('rtmp');
@@ -169,6 +171,7 @@ package com.longtailvideo.jwplayer.media {
             _position = 0;
 			_bufferFull = false;
 			_bandwidthSwitch = false;			
+			_lockOnStream = false;			
             _timeoffset = item.start;
 			if (item.levels.length > 0) { item.setLevel(item.getLevel(config.bandwidth, config.width)); }
 			
@@ -294,18 +297,21 @@ package com.longtailvideo.jwplayer.media {
 			
 			clearInterval(_positionInterval);
 			super.pause();
-            if (_stream) { 
-				Logger.log("NetStream.pause()");
+            if (_stream) {
 				_stream.pause(); 
+			} else {
+				_lockOnStream = true;
 			}
         }
 
         /** Resume playing. **/
         override public function play():void {
 			clearInterval(_positionInterval);
-            if (state == PlayerState.PAUSED) {
-				Logger.log("NetStream.resume()");
-				_stream.resume();				
+			if (_lockOnStream) {
+				_lockOnStream = false;
+				seek(_timeoffset);
+			} else if (state == PlayerState.PAUSED) {
+				_stream.resume();
 			}
 			super.play();
 			_positionInterval = setInterval(positionInterval, 100);
@@ -332,7 +338,6 @@ package com.longtailvideo.jwplayer.media {
 				_position = pos;
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: duration});
             } else if (position > 0 && duration > 0 && (!isDVR || _dvrTotalDuration > 0)) {
-				Logger.log("NetStream.pause()");
                 _stream.pause();
                 clearInterval(_positionInterval);
 				complete();
@@ -372,7 +377,6 @@ package com.longtailvideo.jwplayer.media {
 				play();
 			}
             if (getConfigProperty('subscribe')) {
-				Logger.log("NetStream.play(" + getID(item.file) + ")");
                 _stream.play(getID(item.file));
 			} else if(isDVR) {
 				if(state != PlayerState.PLAYING) {
@@ -389,7 +393,6 @@ package com.longtailvideo.jwplayer.media {
             } else {
                 if (_currentFile != item.file) {
                     _currentFile = item.file;
-					Logger.log("NetStream.play(" + getID(item.file) + ")");
 					try {
                     	_stream.play(getID(item.file));
 					} catch(e:Error) {
@@ -398,7 +401,6 @@ package com.longtailvideo.jwplayer.media {
                 }
                 if (_timeoffset > 0 || state == PlayerState.IDLE) {
                     if (_stream) {
-						Logger.log("NetStream.seek(" + _timeoffset + ")");
 						_stream.seek(_timeoffset);
 					}
                 }
@@ -420,8 +422,12 @@ package com.longtailvideo.jwplayer.media {
 			_stream.bufferTime = config.bufferlength;
 			_stream.client = new NetClient(this);
 			_video.attachNetStream(_stream);
-			config.mute == true ? setVolume(0) : setVolume(config.volume);
-			seek(_timeoffset);
+
+			streamVolume(config.mute ? 0 : config.volume);
+
+			if (!_lockOnStream) {
+				seek(_timeoffset);
+			}
         }
 
         /** Receive NetStream status updates. **/
@@ -520,7 +526,6 @@ package com.longtailvideo.jwplayer.media {
         /** Destroy the stream. **/
         override public function stop():void {
             if (_stream && _stream.time) {
-				Logger.log("NetStream.close()");
 				_stream.close();
             }
             _isStreaming = false;
@@ -547,8 +552,6 @@ package com.longtailvideo.jwplayer.media {
 
         /** Get the streamlength returned from the connection. **/
         private function streamlengthHandler(len:Number):void {
-			Logger.log("duration: " + len);
-			
 			if (isDVR && _dvrTotalDuration > 0) {
 				_dvrDuration = len;
 			} else if (!isDVR && len && duration <= 0) {
@@ -567,21 +570,23 @@ package com.longtailvideo.jwplayer.media {
                 var nso:NetStreamPlayOptions = new NetStreamPlayOptions();
                 nso.streamName = getID(item.file);
                 nso.transition = NetStreamPlayTransitions.SWITCH;
-				Logger.log("NetStream.play2(" + nso + ")");
                 _stream.play2(nso);
             }
         }
 
         /** Set the volume level. **/
         override public function setVolume(vol:Number):void {
-            _transformer.volume = vol / 100;
-			
-            if (_stream) {
-                _stream.soundTransform = _transformer;
-            }
-			
+			streamVolume(vol);
 			super.setVolume(vol);
         }
+		
+		/** Set the stream's volume, without sending a volume event **/
+		protected function streamVolume(level:Number):void {
+			_transformer.volume = level / 100;
+			if (_stream) {
+				_stream.soundTransform = _transformer;
+			}
+		}
 		
 		/** Completes video playback **/
 		override protected function complete():void {

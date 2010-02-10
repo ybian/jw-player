@@ -2,7 +2,6 @@ package com.longtailvideo.jwplayer.view {
 
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.ViewEvent;
-	import com.longtailvideo.jwplayer.model.PlayerConfig;
 	import com.longtailvideo.jwplayer.player.IPlayer;
 	import com.longtailvideo.jwplayer.utils.Configger;
 	import com.longtailvideo.jwplayer.utils.Logger;
@@ -62,7 +61,7 @@ package com.longtailvideo.jwplayer.view {
 			}
 			stretching = new ContextMenuItem('Stretching is ' + _player.config.stretching + '...');
 			addItem(stretching, stretchHandler);
-			if (Capabilities.isDebugger == true) {
+			if (Capabilities.isDebugger == true || _player.config.debug != Logger.NONE) {
 				debug = new ContextMenuItem('Logging to ' + _player.config.debug + '...');
 				addItem(debug, debugHandler);
 			}

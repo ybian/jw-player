@@ -257,8 +257,10 @@
 		protected function clickHandler(event:MouseEvent):void {
 			dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_CLICK));
 			if (player.state == PlayerState.PLAYING || player.state == PlayerState.BUFFERING) {
+				dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_PAUSE));
 				player.pause();
 			} else {
+				dispatchEvent(new ViewEvent(ViewEvent.JWPLAYER_VIEW_PLAY));
 				player.play();
 			}
 		}

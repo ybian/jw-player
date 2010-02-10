@@ -79,8 +79,8 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Resume playback of the_item. **/
 		override public function play():void {
-			super.play();
 			_postitionInterval = setInterval(positionInterval, 100);
+			super.play();
 		}
 
 
