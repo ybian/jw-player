@@ -145,7 +145,6 @@
 			}
 			
 			var _streamTime:Number = Math.min(_stream.time, item.duration);
-			_position = Math.round(_streamTime * 10) / 10;
 			var bufferPercent:Number = _stream.bytesLoaded / _stream.bytesTotal * 100;
 			var bufferTime:Number = _stream.bufferTime < (item.duration - _streamTime) ? _stream.bufferTime : Math.floor(Math.abs(item.duration - _streamTime));
 			var bufferFill:Number = bufferTime == 0 ? 100 : Math.floor(_stream.bufferLength / bufferTime * 100);
@@ -167,6 +166,12 @@
 				sendBufferEvent(bufferPercent);
 			}
 
+			if (state != PlayerState.PLAYING) {
+				return;
+			}
+
+			_position = Math.round(_streamTime * 10) / 10;
+			
 			if (position < item.duration) {
 				if (state == PlayerState.PLAYING && position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});

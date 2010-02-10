@@ -284,6 +284,10 @@ package com.longtailvideo.jwplayer.media {
 				sendBufferEvent(bufferPercent, _timeoffset);
 			}
 			
+			if (state != PlayerState.PLAYING) {
+				return;
+			}
+				
 			if (_position < item.duration) {
 				if (state == PlayerState.PLAYING && _position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: item.duration, offset: _timeoffset});

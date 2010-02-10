@@ -111,10 +111,10 @@ package com.longtailvideo.jwplayer.media {
 		
 		/** Resume playback of the item. **/
 		public function play():void {
-			setState(PlayerState.PLAYING);
 			if (_media) {
 				_media.visible = true;
 			}
+			setState(PlayerState.PLAYING);
 		}
 		
 		
@@ -324,7 +324,6 @@ package com.longtailvideo.jwplayer.media {
 		protected function set media(m:DisplayObject):void {
 			if (m) {
 				_media = new MovieClip();
-				_media.visible = false;
 				_media.addChild(m);
 				if (_width * _height > 0) {
 					Stretcher.stretch(_media, _width, _height, _config.stretching);
