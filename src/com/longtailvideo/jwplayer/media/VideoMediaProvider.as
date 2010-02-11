@@ -25,6 +25,8 @@
 		protected var _transformer:SoundTransform;
 		/** ID for the position interval. **/
 		protected var _positionInterval:Number;
+		/** Currently playing file. **/
+		protected var _currentFile:String;
 		/** Whether the buffer has filled **/
 		private var _bufferFull:Boolean;
 		/** Whether the enitre video has been buffered **/
@@ -79,11 +81,12 @@
 			}
 			
 			if (!item 
-					|| item.file != itm.file 
+					|| _currentFile != itm.file 
 					|| _stream.bytesLoaded == 0 
 					|| (_stream.bytesLoaded < _stream.bytesTotal > 0)) 
 			{
 				media = _video;
+				_currentFile = itm.file;
 				_stream.checkPolicyFile = true;
 				_stream.play(itm.file);
 				_stream.pause();
