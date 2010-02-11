@@ -51,7 +51,7 @@
 						itm['duration'] = Strings.seconds(i.text());
 						break;
 					case 'meta':
-						itm[i.@rel] = i.text().toString();
+						itm[Strings.xmlAttribute(i, 'rel')] = i.text().toString();
 						break;
 				}
 			}

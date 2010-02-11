@@ -170,6 +170,15 @@
 		public static function trim(s:String):String {
 			return s.replace(/^\s+/, '').replace(/\s+$/, '');
 		}
+		
+		/** Get the value of a case-insensitive attribute in an XML node **/
+		public static function xmlAttribute(xml:XML, attribute:String):String {
+			for each (var attrib:XML in xml.attributes()) {
+				if (attrib.name().toString().toLowerCase() == attribute.toLowerCase())
+					return attrib.toString();
+			}
+			return "";
+		}
 
 	}
 

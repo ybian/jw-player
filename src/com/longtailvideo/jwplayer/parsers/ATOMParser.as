@@ -1,6 +1,7 @@
 package com.longtailvideo.jwplayer.parsers {
 
 	import com.longtailvideo.jwplayer.model.PlaylistItem;
+	import com.longtailvideo.jwplayer.utils.Strings;
 
 	/**
 	 * Parse an ATOM feed and translate it to a feedarray.
@@ -33,10 +34,10 @@ package com.longtailvideo.jwplayer.parsers {
 						itm['description'] = i.text().toString();
 						break;
 					case 'link':
-						if (i.@rel == 'alternate') {
-							itm['link'] = i.@href.toString();
-						} else if (i.@rel == 'enclosure') {
-							itm['file'] = i.@href.toString();
+						if (Strings.xmlAttribute(i, 'rel') == 'alternate') {
+							itm['link'] = Strings.xmlAttribute(i, 'href');
+						} else if (Strings.xmlAttribute(i, 'rel') == 'enclosure') {
+							itm['file'] = Strings.xmlAttribute(i, 'href');
 						}
 						break;
 					case 'published':

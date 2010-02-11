@@ -110,7 +110,7 @@ package com.longtailvideo.jwplayer.events {
 				if (!PlayerEvent.id && ExternalInterface.available) {
 					PlayerEvent.id = ExternalInterface.objectID;
 				}
-				if (!PlayerEvent.client) { PlayerEvent.client = "FLASH" + Capabilities.version; }
+				if (!PlayerEvent.client) { PlayerEvent.client = "FLASH " + Capabilities.version; }
 				if (!PlayerEvent.version) { PlayerEvent.version = PlayerVersion.version; }
 			} catch (e:Error) {}
 		}

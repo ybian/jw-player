@@ -28,13 +28,13 @@ package com.longtailvideo.jwplayer.parsers {
 				}
 				switch (i.localName().toLowerCase()) {
 					case 'ref':
-						itm['file'] = i.@href.toString();
+						itm['file'] = Strings.xmlAttribute(i, 'href');
 						break;
 					case 'title':
 						itm['title'] = i.text().toString();
 						break;
 					case 'moreinfo':
-						itm['link'] = i.@href.toString();
+						itm['link'] = Strings.xmlAttribute(i, 'href');
 						break;
 					case 'abstract':
 						itm['description'] = i.text().toString();
@@ -43,13 +43,13 @@ package com.longtailvideo.jwplayer.parsers {
 						itm['author'] = i.text().toString();
 						break;
 					case 'duration':
-						itm['duration'] = Strings.seconds(i.@value.toString());
+						itm['duration'] = Strings.seconds(Strings.xmlAttribute(i, 'value'));
 						break;
 					case 'starttime':
-						itm['start'] = Strings.seconds(i.@value.toString());
+						itm['start'] = Strings.seconds(Strings.xmlAttribute(i, 'value'));
 						break;
 					case 'param':
-						itm[i.@name] = i.@value.toString();
+						itm[Strings.xmlAttribute(i, 'name')] = Strings.xmlAttribute(i, 'value');
 						break;
 				}
 			}
