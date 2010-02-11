@@ -442,7 +442,7 @@ package com.longtailvideo.jwplayer.media {
                     }
                     if (evt.info.data) {
                         checkDynamic(evt.info.data.version);
-                    }
+					}
                     if (getConfigProperty('subscribe')) {
                         _subscribeInterval = setInterval(doSubscribe, 1000, getID(item.file));
                         return;
@@ -536,9 +536,9 @@ package com.longtailvideo.jwplayer.media {
             clearInterval(_positionInterval);
             clearInterval(_bandwidthInterval);
             _position = 0;
-            _timeoffset = item.start;
+            _timeoffset = item ? item.start : -1;
 			super.stop();
-			if (item.hasOwnProperty('smil')) {
+			if (item && item.hasOwnProperty('smil')) {
 				/** Replace file values with original redirects **/
 				if (item.levels.length > 0) {
 					for each (var level:PlaylistItemLevel in item.levels) { 
