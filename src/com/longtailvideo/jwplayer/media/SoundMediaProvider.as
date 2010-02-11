@@ -29,6 +29,8 @@ package com.longtailvideo.jwplayer.media {
 		private var _bufferFull:Boolean;
 		/** Whether the enitre video has been buffered **/
 		private var _bufferingComplete:Boolean;
+		/** User-defined item duration **/
+		private var _userDuration:Number = -1;
 		
 		/** Constructor; sets up the connection and display. **/
 		public function SoundMediaProvider() {
@@ -76,6 +78,7 @@ package com.longtailvideo.jwplayer.media {
 			_position = 0;
 			_bufferFull = false;
 			_bufferingComplete = false;
+			_userDuration = itm.duration > 0 ? itm.duration : -1;
 			if (!_item || _item.file != itm.file) {
 				_item = itm;
 				_sound = new Sound();
@@ -131,7 +134,7 @@ package com.longtailvideo.jwplayer.media {
 		protected function positionHandler(progressEvent:ProgressEvent=null):void {
 			var bufferPercent:Number;
 			
-			if (_sound.bytesLoaded / _sound.bytesTotal > 0.1 && _item.duration <= 0) {
+			if (_sound.bytesLoaded / _sound.bytesTotal > 0.1 && (_item.duration <= 0 || _userDuration < 0)) {
 				_item.duration = _sound.length / 1000 / _sound.bytesLoaded * _sound.bytesTotal;
 			}
 			
@@ -165,10 +168,12 @@ package com.longtailvideo.jwplayer.media {
 				sendBufferEvent(bufferPercent);
 			}
 			
+			if (state != PlayerState.PLAYING) {
+				return;
+			}
+			
 			if (_position < _item.duration) {
-				if (state == PlayerState.PLAYING){
-					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration});
-				}
+				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: _item.duration});
 			} else if (_item.duration > 0) {
 				complete();
 			}

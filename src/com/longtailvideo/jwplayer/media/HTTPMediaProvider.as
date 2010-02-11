@@ -289,7 +289,7 @@ package com.longtailvideo.jwplayer.media {
 			}
 				
 			if (_position < item.duration) {
-				if (state == PlayerState.PLAYING && _position >= 0) {
+				if (_position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: _position, duration: item.duration, offset: _timeoffset});
 				}
 			} else if (item.duration > 0) {

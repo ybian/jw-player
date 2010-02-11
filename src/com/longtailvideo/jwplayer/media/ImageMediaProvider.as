@@ -86,6 +86,8 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Interval function that pings the _position. **/
 		protected function positionInterval():void {
+			if (state != PlayerState.PLAYING) { return; }
+
 			_position = Math.round(position * 10 + 1) / 10;
 			if (position < _item.duration) {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});

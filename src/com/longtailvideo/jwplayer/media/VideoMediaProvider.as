@@ -173,7 +173,7 @@
 			_position = Math.round(_streamTime * 10) / 10;
 			
 			if (position < item.duration) {
-				if (state == PlayerState.PLAYING && position >= 0) {
+				if (position >= 0) {
 					sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_TIME, {position: position, duration: item.duration});
 				}
 			} else if (item.duration > 0) {
