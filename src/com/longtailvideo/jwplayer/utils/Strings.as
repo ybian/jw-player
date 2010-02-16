@@ -124,7 +124,6 @@
 		 */
 		public static function extension(filename:String):String {
 			if (filename.lastIndexOf(".") > 0) {
-				//https://mail.google.com/a/longtailvideo.com/#inbox/125e06cbfca4149f
 				if (filename.lastIndexOf("?") > 0){
 					Logger.log(filename.substring(filename.lastIndexOf(".")+1, filename.lastIndexOf("?")).toLowerCase());
 					return filename.substring(filename.lastIndexOf(".")+1, filename.lastIndexOf("?")).toLowerCase();	

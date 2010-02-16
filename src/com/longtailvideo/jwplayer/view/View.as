@@ -1,5 +1,6 @@
 package com.longtailvideo.jwplayer.view {
 	import com.longtailvideo.jwplayer.events.GlobalEventDispatcher;
+	import com.longtailvideo.jwplayer.events.IGlobalEventDispatcher;
 	import com.longtailvideo.jwplayer.events.MediaEvent;
 	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
@@ -52,7 +53,6 @@ package com.longtailvideo.jwplayer.view {
 		protected var _mediaLayer:MovieClip;
 		protected var _imageLayer:MovieClip;
 		protected var _componentsLayer:MovieClip;
-		protected var _logoLayer:MovieClip;
 		protected var _pluginsLayer:MovieClip;
 		protected var _plugins:Object;
 
@@ -187,9 +187,7 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		protected function setupLogo():void {
-			_logoLayer = setupLayer("logo", currentLayer++);
 			_logo = new Logo(_player);
-			_logoLayer.addChild(_logo);
 		}
 
 
@@ -230,15 +228,16 @@ package com.longtailvideo.jwplayer.view {
 
 			setupComponent(_components.display, 0);
 			setupComponent(_components.playlist, 1);
-			setupComponent(_components.controlbar, 2);
-			setupComponent(_components.dock, 3);
+			setupComponent(_logo, 2);
+			setupComponent(_components.controlbar, 3);
+			setupComponent(_components.dock, 4);
 			
 		}
 
 
-		protected function setupComponent(component:IPlayerComponent, index:Number):void {
-			component.addGlobalListener(forward);
-			_componentsLayer.addChildAt(component as DisplayObject, index);
+		protected function setupComponent(component:*, index:Number):void {
+			if (component is IGlobalEventDispatcher) { (component as IGlobalEventDispatcher).addGlobalListener(forward); }
+			if (component is DisplayObject) { _componentsLayer.addChildAt(component as DisplayObject, index); }
 		}
 
 
@@ -278,9 +277,9 @@ package com.longtailvideo.jwplayer.view {
 				_model.media.resize(_player.config.width, _player.config.height);
 			}
 
-			if (_logoLayer.numChildren) {
-				_logoLayer.x = _components.display.x;
-				_logoLayer.y = _components.display.y;
+			if (_logo) {
+				_logo.x = _components.display.x;
+				_logo.y = _components.display.y;
 				_logo.resize(_player.config.width, _player.config.height);
 			}
 
@@ -447,7 +446,7 @@ package com.longtailvideo.jwplayer.view {
 				case PlayerState.IDLE:
 					_imageLayer.visible = true;
 					_mediaLayer.visible = false;
-					_logoLayer.visible = false;
+					if (_logo) _logo.visible = false;
 					break;
 				case PlayerState.BUFFERING:
 				case PlayerState.PLAYING:
@@ -455,7 +454,7 @@ package com.longtailvideo.jwplayer.view {
 						_mediaLayer.visible = true;
 						_imageLayer.visible = false;
 					}
-					_logoLayer.visible = true;
+					if (_logo) _logo.visible = true;
 					break;
 			}
 		}

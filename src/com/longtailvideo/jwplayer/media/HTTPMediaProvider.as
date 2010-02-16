@@ -48,7 +48,9 @@ package com.longtailvideo.jwplayer.media {
 		/** Whether we have checked bandwidth **/
 		private var _bandwidthChecked:Boolean;
 		/** Bandwidth check delay **/
-		private var _bandwidthTimeout:Number = 2000;
+		private var _bandwidthDelay:Number = 2000;
+		/** Bandwidth timeout id **/
+		private var _bandwidthTimeout:uint;
 		
 		/** Constructor; sets up the connection and display. **/
 		public function HTTPMediaProvider() {
@@ -94,7 +96,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Bandwidth is checked as long the stream hasn't completed loading. **/
 		private function checkBandwidth(lastLoaded:Number):void {
 			var currentLoaded:Number = _stream.bytesLoaded;
-			var bandwidth:Number = Math.ceil((currentLoaded - lastLoaded) / 1024) * 8 / (_bandwidthTimeout / 1000);
+			var bandwidth:Number = Math.ceil((currentLoaded - lastLoaded) / 1024) * 8 / (_bandwidthDelay / 1000);
 			
 			if (currentLoaded < _stream.bytesTotal) {
 				if (bandwidth > 0) {
@@ -107,12 +109,14 @@ package com.longtailvideo.jwplayer.media {
 				}
 				if (_bandwidthSwitch) {
 					_bandwidthSwitch = false;
+					_bandwidthChecked = false;
 					if (item.currentLevel != item.getLevel(config.bandwidth, config.width)) {
 						load(item);
 						return;
 					}
 				}
-				setTimeout(checkBandwidth, _bandwidthTimeout, currentLoaded);
+				clearTimeout(_bandwidthTimeout);
+				_bandwidthTimeout = setTimeout(checkBandwidth, _bandwidthDelay, currentLoaded);
 			}
 		}
 		
@@ -178,7 +182,6 @@ package com.longtailvideo.jwplayer.media {
 			_position = _timeoffset;
 			_bufferFull = false;
 			_bufferingComplete = false;
-			_bandwidthChecked = false;
 			_bandwidthSwitch = true;
 			
 			if (item.levels.length > 0) { item.setLevel(item.getLevel(config.bandwidth, config.width)); }
@@ -265,7 +268,8 @@ package com.longtailvideo.jwplayer.media {
 	
 			if (!_bandwidthChecked && _stream.bytesLoaded > 0 && _stream.bytesLoaded < _stream.bytesTotal) {
 				_bandwidthChecked = true;
-				setTimeout(checkBandwidth, _bandwidthTimeout, _stream.bytesLoaded);
+				clearTimeout(_bandwidthTimeout);
+				_bandwidthTimeout = setTimeout(checkBandwidth, _bandwidthDelay, _stream.bytesLoaded);
 			}
 			
 			if (bufferFill < 25 && state == PlayerState.PLAYING) {
@@ -366,6 +370,7 @@ package com.longtailvideo.jwplayer.media {
 			_positionInterval = undefined;
 			_position = _byteoffset = _timeoffset = 0;
 			_keyframes = undefined;
+			_bandwidthChecked = false;
 			_meta = false;
 			super.stop();
 		}

@@ -51,16 +51,31 @@ package com.longtailvideo.jwplayer.view {
 		/** Constructor **/
 		public function Logo(player:IPlayer) {
 			super();
-			this.buttonMode = true;
-			this.mouseChildren = false;
 			animations = new Animations(this);
 			_player = player;
 			player.addEventListener(PlayerStateEvent.JWPLAYER_PLAYER_STATE, stateHandler);
-			addEventListener(MouseEvent.CLICK, clickHandler);
-			addEventListener(MouseEvent.MOUSE_OVER, overHandler);
-			addEventListener(MouseEvent.MOUSE_OUT, outHandler);
-			
+			setupDefaults();
+			setupMouseEvents();
 			loadFile();
+		}
+		
+		/**
+		 * This method can be overridden to set alternate default values. 
+		 */
+		protected function setupDefaults():void {
+			return;
+		}
+
+		protected function setupMouseEvents():void {
+			this.mouseChildren = false;
+			this.buttonMode = true;
+			if (getConfigParam('link')) {
+				addEventListener(MouseEvent.MOUSE_OVER, overHandler);
+				addEventListener(MouseEvent.MOUSE_OUT, outHandler);
+				addEventListener(MouseEvent.CLICK, clickHandler);
+			} else {
+				this.mouseEnabled = false;
+			}
 		}
 		
 		protected function loadFile():void {
@@ -74,7 +89,7 @@ package com.longtailvideo.jwplayer.view {
 				loader = new Loader();
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
 				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-				loader.load(new URLRequest(getConfigParam('file')),new LoaderContext(true));
+				loader.load(new URLRequest(getConfigParam('file')));
 			}
 		}
 		
@@ -88,6 +103,7 @@ package com.longtailvideo.jwplayer.view {
 			} catch (e:Error) {
 				Logger.log("Could not smooth logo: " + e.message);
 			}
+			outHandler();
 		}
 		
 		/** Logo failed to load - die **/
@@ -105,14 +121,16 @@ package com.longtailvideo.jwplayer.view {
 		}
 		
 		/** Handles mouse outs **/
-		protected function outHandler(evt:MouseEvent):void {
+		protected function outHandler(evt:MouseEvent=null):void {
 			alpha = getConfigParam('out');
 		}
 		
 		
 		/** Handles mouse overs **/
 		protected function overHandler(evt:MouseEvent):void {
-			alpha = getConfigParam('over');
+			if (getConfigParam('link')) {
+				alpha = getConfigParam('over');
+			}
 		}
 		
 		
@@ -127,10 +145,13 @@ package com.longtailvideo.jwplayer.view {
 		
 		/** Fade in **/
 		protected function show():void {
-			visible = true;
-			animations.fade(getConfigParam('out'), 0.1);
-			timeout = setTimeout(hide, getConfigParam('timeout') * 1000);
-			mouseEnabled = true;
+			if (getConfigParam('hide').toString() == "true") {
+				visible = true;
+				alpha = 0;
+				animations.fade(getConfigParam('out'), 0.1);
+				timeout = setTimeout(hide, getConfigParam('timeout') * 1000);
+				mouseEnabled = true;
+			}
 		}
 		
 		

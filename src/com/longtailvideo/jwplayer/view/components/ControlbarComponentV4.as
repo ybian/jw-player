@@ -525,7 +525,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 			stage.removeEventListener(MouseEvent.MOUSE_UP, upHandler);
 			scrubber.icon.stopDrag();
-			if (sliderType == 'timeSlider' && _player.playlist) {
+			if (sliderType == 'timeSlider' && _player.playlist && _player.playlist.currentItem) {
 				mpl = _player.playlist.currentItem.duration;
 			} else if (sliderType == 'volumeSlider') {
 				mpl = 100;
