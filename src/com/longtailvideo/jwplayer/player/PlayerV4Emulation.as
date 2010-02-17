@@ -385,7 +385,9 @@ package com.longtailvideo.jwplayer.player {
 			};
 			
 			for (var i:String in item) {
-				obj[i] = item[i];
+				if (i.indexOf(".") < 0) {
+					obj[i] = item[i];
+				}
 			}
 			
 			if (item.levels.length > 0) {

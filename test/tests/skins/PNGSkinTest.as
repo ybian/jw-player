@@ -18,8 +18,8 @@ package tests.skins {
 		[Test(async,timeout="150000")]
 		public override function testLoad():void {
 			Async.handleEvent(this, skin, Event.COMPLETE, skinLoaded, 10000);
-//			Async.failOnEvent(this, skin, ErrorEvent.ERROR, 10000);
-			skin.load("../../../JWPlayer/skins/beelden/beelden.xml");
+			Async.failOnEvent(this, skin, ErrorEvent.ERROR, 10000);
+			skin.load("assets/skin/png/skin.xml");
 		}
 		
 		public function skinLoaded(evt:Event, params:*):void {

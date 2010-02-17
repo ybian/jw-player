@@ -124,7 +124,7 @@ package com.longtailvideo.jwplayer.view.skins {
 			if (_loaders.hasOwnProperty(evt.target)) {
 				delete _loaders[evt.target];
 				checkComplete();
-			} else {
+			} else if (!_errorState) {
 				_errorState = true;
 				sendError(evt.text);
 			}

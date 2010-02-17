@@ -142,7 +142,10 @@ package com.longtailvideo.jwplayer.controller {
 				// If this step fails, load the default skin instead
 				skin.addEventListener(ErrorEvent.ERROR, loadSkin);
 			} else {
-				if (evt) Logger.log("Error loading skin: " + evt.text); 
+				if (evt) { 
+					Logger.log("Error loading skin: " + evt.text);
+					(evt.target as EventDispatcher).removeEventListener(ErrorEvent.ERROR, loadSkin);
+				}
 				skin = new DefaultSkin();
 				skin.addEventListener(ErrorEvent.ERROR, tasker.failure);
 			}
