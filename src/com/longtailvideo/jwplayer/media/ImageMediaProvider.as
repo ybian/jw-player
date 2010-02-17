@@ -44,7 +44,6 @@ package com.longtailvideo.jwplayer.media {
 			_item = itm;
 			_position = 0;
 			_loader.load(new URLRequest(item.file), new LoaderContext(true));
-			super.load(itm);
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
 		}
@@ -60,6 +59,7 @@ package com.longtailvideo.jwplayer.media {
 		/** Load and place the image on stage. **/
 		private function loaderHandler(evt:Event):void {
 			media = _loader;
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			try {
 				Draw.smooth(_loader.content as Bitmap);
 			} catch (e:Error) {

@@ -101,6 +101,9 @@
 			<arg line="-locale ${flexsdk.locale}" />
 			<arg line="-compiler.library-path '${flexsdk.locale.dir}'" />
 
+			<!-- Target a minimum flash player -->
+			<arg line="-target-player=${flexsdk.target}" />
+
 			<!-- Enable incremental compilation -->
 			<arg line="-incremental=true" />
 
