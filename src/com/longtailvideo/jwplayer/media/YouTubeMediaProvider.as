@@ -133,7 +133,7 @@ package com.longtailvideo.jwplayer.media {
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 				sendBufferEvent(0);
 				sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
-				_outgoing.send('AS3_' + _unique, "setVolume", (config.mute ? 0 : config.volume / 100));
+				_outgoing.send('AS3_' + _unique, "setVolume", (config.mute ? 0 : config.volume));
 			}
 		}
 
