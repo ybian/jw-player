@@ -195,9 +195,9 @@ package com.longtailvideo.jwplayer.media {
 			clearInterval(_positionInterval);
 			_positionInterval = setInterval(positionInterval, 100);
 			
+			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0, 0);
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			streamVolume(config.mute ? 0 : config.volume);
 		}
 

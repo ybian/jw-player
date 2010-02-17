@@ -26,7 +26,7 @@ package {
 					this.visualRunner = visualRunner;
 					core.addListener(new UIListener(visualRunner));
 				}
-				core.addListener(new XMLListener("Astaire"));
+				core.addListener(new XMLListener("Bogart"));
 				core.addListener(new PlayerTestRunListener(this, new PlayerTestResultPrinter()));
 				core.run(PlayerTestSuite);
 			} catch (err:Error){

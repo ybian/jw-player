@@ -47,7 +47,7 @@ package tests.media {
 				[MediaEvent.JWPLAYER_MEDIA_VOLUME, MediaEvent.JWPLAYER_MEDIA_LOADED,MediaEvent.JWPLAYER_MEDIA_META]);
 			
 			testDefinition.addState(PlayerState.BUFFERING,
-				[PlayerState.PLAYING],
+				[PlayerState.PLAYING,PlayerState.IDLE],
 				[MediaEvent.JWPLAYER_MEDIA_BUFFER,MediaEvent.JWPLAYER_MEDIA_META]);
 			
 			testDefinition.addState(PlayerState.PLAYING,

@@ -97,10 +97,10 @@
 
 			_item = itm;
 
+			super.load(itm);
+			
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
-
-			super.load(itm);
 			
 			streamVolume(config.mute ? 0 : config.volume);
 			

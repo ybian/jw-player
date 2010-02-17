@@ -31,7 +31,7 @@ package tests.controller {
 		
 		[Test]
 		public function testLock():void {
-			lockManager.lock(testPlugin1, function(){unlock(testPlugin1)});
+			lockManager.lock(testPlugin1, function():void{unlock(testPlugin1)});
 			Assert.assertTrue(lockManager.locked());
 		}
 		
@@ -43,7 +43,7 @@ package tests.controller {
 		
 		[Test]
 		public function testCallback():void {
-			lockManager.lock(testPlugin1, function(){callbackValue = time;});
+			lockManager.lock(testPlugin1, function():void{callbackValue = time;});
 			lockManager.executeCallback();
 			Assert.assertEquals(callbackValue, time);
 			Assert.assertTrue(lockManager.locked());
@@ -51,7 +51,7 @@ package tests.controller {
 		
 		[Test]
 		public function testLockUnlock():void {
-			lockManager.lock(testPlugin1, function(){unlock(testPlugin1)});
+			lockManager.lock(testPlugin1, function():void{unlock(testPlugin1)});
 			Assert.assertTrue(lockManager.locked());
 			Assert.assertTrue(lockManager.unlock(testPlugin1));
 			Assert.assertFalse(lockManager.locked());
@@ -59,7 +59,7 @@ package tests.controller {
 		
 		[Test]
 		public function testLockCallbackUnlock():void {
-			lockManager.lock(testPlugin1, function(){callbackValue = time;unlock(testPlugin1);});
+			lockManager.lock(testPlugin1, function():void{callbackValue = time;unlock(testPlugin1);});
 			Assert.assertTrue(lockManager.locked());
 			lockManager.executeCallback();
 			Assert.assertEquals(callbackValue, time);
@@ -68,9 +68,9 @@ package tests.controller {
 		
 		[Test]
 		public function testLock1Lock2CallbackUnlock1():void {
-			lockManager.lock(testPlugin1, function(){callbackValue = time;unlock(testPlugin1);});
+			lockManager.lock(testPlugin1, function():void{callbackValue = time;unlock(testPlugin1);});
 			Assert.assertTrue(lockManager.locked());
-			lockManager.lock(testPlugin2, function(){unlock(testPlugin2)}); 
+			lockManager.lock(testPlugin2, function():void{unlock(testPlugin2)}); 
 			Assert.assertTrue(lockManager.locked());
 			lockManager.executeCallback();
 			Assert.assertEquals(callbackValue, time);
@@ -79,9 +79,9 @@ package tests.controller {
 		
 		[Test]
 		public function testLock1Lock2Unlock2():void {
-			lockManager.lock(testPlugin1, function(){unlock(testPlugin1)}); 
+			lockManager.lock(testPlugin1, function():void{unlock(testPlugin1)}); 
 			Assert.assertTrue(lockManager.locked());
-			lockManager.lock(testPlugin2, function(){unlock(testPlugin2)}); 
+			lockManager.lock(testPlugin2, function():void{unlock(testPlugin2)}); 
 			Assert.assertTrue(lockManager.locked());
 			Assert.assertFalse(lockManager.unlock(testPlugin2));
 			Assert.assertTrue(lockManager.locked());
@@ -89,11 +89,11 @@ package tests.controller {
 		
 		[Test]
 		public function testLock1Unlock1Lock2Unlock2():void {
-			lockManager.lock(testPlugin1, function(){unlock(testPlugin1)});
+			lockManager.lock(testPlugin1, function():void{unlock(testPlugin1)});
 			Assert.assertTrue(lockManager.locked());
 			Assert.assertTrue(lockManager.unlock(testPlugin1));
 			Assert.assertFalse(lockManager.locked());
-			lockManager.lock(testPlugin2, function(){unlock(testPlugin2)});
+			lockManager.lock(testPlugin2, function():void{unlock(testPlugin2)});
 			Assert.assertTrue(lockManager.locked());
 			Assert.assertTrue(lockManager.unlock(testPlugin2));
 			Assert.assertFalse(lockManager.locked());
@@ -102,9 +102,9 @@ package tests.controller {
 		
 		[Test]
 		public function testLock1Lock2CallbackUnlock1CallbackUnlock2():void {
-			lockManager.lock(testPlugin1, function(){callbackValue = time; unlock(testPlugin1);});
+			lockManager.lock(testPlugin1, function():void{callbackValue = time; unlock(testPlugin1);});
 			Assert.assertTrue(lockManager.locked());
-			lockManager.lock(testPlugin2, function(){callbackValue = time;}); 
+			lockManager.lock(testPlugin2, function():void{callbackValue = time;}); 
 			Assert.assertTrue(lockManager.locked());
 			lockManager.executeCallback();
 			Assert.assertEquals(callbackValue, time);

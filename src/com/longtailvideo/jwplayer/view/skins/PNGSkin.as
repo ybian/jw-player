@@ -172,5 +172,9 @@ package com.longtailvideo.jwplayer.view.skins {
 			sprite.addChild(element);
 			_components[component][name] = sprite;
 		}
+		
+		public override function hasComponent(component:String):Boolean {
+			return _components.hasOwnProperty(component);
+		}
 	}
 }

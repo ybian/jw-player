@@ -27,7 +27,6 @@ package tests.skins {
 			Assert.assertTrue("Testing Controlbar.playButton", skin.getSkinElement('controlbar','playButton') is DisplayObject);	
 			Assert.assertTrue("Testing Controlbar.muteButton", skin.getSkinElement('controlbar','muteButton') is DisplayObject);	
 			Assert.assertTrue("Testing Controlbar.linkButton", skin.getSkinElement('controlbar','linkButton') is DisplayObject);	
-			Assert.assertTrue("Testing Controlbar.stopButton", skin.getSkinElement('controlbar','stopButton') is DisplayObject);	
 			Assert.assertTrue("Testing Controlbar.pauseButton", skin.getSkinElement('controlbar','pauseButton') is DisplayObject);	
 			Assert.assertTrue("Testing Controlbar.volumeSlider", skin.getSkinElement('controlbar','volumeSlider') is DisplayObject);	
 			Assert.assertTrue("Testing Controlbar.timeSlider", skin.getSkinElement('controlbar','timeSlider') is DisplayObject);	

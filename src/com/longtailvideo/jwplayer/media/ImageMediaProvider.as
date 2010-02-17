@@ -44,6 +44,7 @@ package com.longtailvideo.jwplayer.media {
 			_item = itm;
 			_position = 0;
 			_loader.load(new URLRequest(item.file), new LoaderContext(true));
+			super.load(itm);
 			setState(PlayerState.BUFFERING);
 			sendBufferEvent(0);
 		}
@@ -64,7 +65,6 @@ package com.longtailvideo.jwplayer.media {
 			} catch (e:Error) {
 				Logger.log("Could not smooth image file: " + e.message);
 			}
-			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_LOADED);
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_META, {metadata: {height: evt.target.height, width: evt.target.width}});
 			sendMediaEvent(MediaEvent.JWPLAYER_MEDIA_BUFFER_FULL);
 		}

@@ -193,15 +193,16 @@ package com.longtailvideo.jwplayer.model {
 		 * @inheritDoc
 		 */
 		public function set currentIndex(idx:Number):void {
-			if (getItemAt(idx) != lastItem) {
-				if (idx >= 0) {
-					index = idx;
+			if (idx > list.length) idx = 0;
+			if (idx >= 0) {
+				index = idx;
+				if (getItemAt(idx) != lastItem) {
 					lastItem = currentItem;
 					dispatchEvent(new PlaylistEvent(PlaylistEvent.JWPLAYER_PLAYLIST_ITEM, this));
-				} else {
-					lastItem = null;
-					index = -1;
-				}
+				} 
+			} else {
+				lastItem = null;
+				index = -1;
 			}
 		}
 		

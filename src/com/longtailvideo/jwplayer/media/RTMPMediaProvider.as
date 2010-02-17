@@ -182,13 +182,13 @@ package com.longtailvideo.jwplayer.media {
 			_dvrInterval = 0;
 			
 			clearInterval(_positionInterval);
-			setState(PlayerState.BUFFERING);
-			sendBufferEvent(0);
             if (getConfigProperty('loadbalance')) {
 				loadSmil();
 			} else {
 				finishLoad();
 			}
+			setState(PlayerState.BUFFERING);
+			sendBufferEvent(0);
         }
 
 		/** Load a SMIL file for load-balancing **/
@@ -307,6 +307,7 @@ package com.longtailvideo.jwplayer.media {
         /** Resume playing. **/
         override public function play():void {
 			clearInterval(_positionInterval);
+			if (!_stream) return;
 			if (_lockOnStream) {
 				_lockOnStream = false;
 				seek(_timeoffset);

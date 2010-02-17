@@ -1,5 +1,6 @@
 package tests.media {
 	import com.longtailvideo.jwplayer.events.MediaEvent;
+	import com.longtailvideo.jwplayer.events.PlayerEvent;
 	import com.longtailvideo.jwplayer.events.PlayerStateEvent;
 	import com.longtailvideo.jwplayer.media.MediaProvider;
 	import com.longtailvideo.jwplayer.model.PlayerConfig;
@@ -47,7 +48,7 @@ package tests.media {
 		
 		public function MediaProviderTestJig(source:MediaProvider, playlistItem:PlaylistItem, testDefintion:MediaProviderTestDefinition):void {
 			_provider = source;
-			source.initializeMediaProvider(new PlayerConfig(new Playlist()));
+			source.initializeMediaProvider(new PlayerConfig());
 			_playlistItem = playlistItem;
 			_testDefintion = testDefintion;
 			_currentState = testDefinition.getState(PlayerState.IDLE);
@@ -120,7 +121,7 @@ package tests.media {
 		}
 		
 		
-		private function eventHandler(testEvent:MediaEvent):void {
+		private function eventHandler(testEvent:PlayerEvent):void {
 			var time:Date = new Date();
 			switch (testEvent.type) {
 				case PlayerStateEvent.JWPLAYER_PLAYER_STATE:
