@@ -530,7 +530,8 @@ package com.longtailvideo.jwplayer.controller {
 
 		protected function loadNumber(item:Number):Boolean {
 			if (item >= 0 && item < _model.playlist.length) {
-				return loadPlaylistItem(_model.playlist.getItemAt(item));
+				_model.playlist.currentIndex = item;
+				return loadPlaylistItem(_model.playlist.currentItem);
 			}
 			return false;
 		}
