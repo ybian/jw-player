@@ -138,9 +138,13 @@ package com.longtailvideo.jwplayer.player {
 		
 		private function stripDots(obj:Object):Object {
 			var newObj:Object = {};
-			for (var idx:String in obj) {
-				if (idx.indexOf(".") == -1) {
-					newObj[idx] = obj[idx];
+			for (var i:String in obj) {
+				if (i.indexOf(".") < 0) {
+					if (typeof(obj[i]) == "object") {
+						newObj[i] = stripDots(obj[i]);
+					} else {
+						newObj[i] = obj[i];
+					}
 				}
 			}
 			return newObj;
@@ -170,7 +174,7 @@ package com.longtailvideo.jwplayer.player {
 			if (controllerCallbacks.hasOwnProperty(evt.type)) {
 				for each (var callback:String in controllerCallbacks[evt.type]) {
 					if (ExternalInterface.available) {
-						ExternalInterface.call(callback, evt.data);
+						ExternalInterface.call(callback, stripDots(evt.data));
 					}
 				}
 			}
@@ -180,7 +184,7 @@ package com.longtailvideo.jwplayer.player {
 			if (modelCallbacks.hasOwnProperty(evt.type)) {
 				for each (var callback:String in modelCallbacks[evt.type]) {
 					if (ExternalInterface.available) {
-						ExternalInterface.call(callback, evt.data);
+						ExternalInterface.call(callback, stripDots(evt.data));
 					}
 				}
 			}
@@ -190,7 +194,7 @@ package com.longtailvideo.jwplayer.player {
 			if (viewCallbacks.hasOwnProperty(evt.type)) {
 				for each (var callback:String in viewCallbacks[evt.type]) {
 					if (ExternalInterface.available) {
-						ExternalInterface.call(callback, evt.data);
+						ExternalInterface.call(callback, stripDots(evt.data));
 					}
 				}
 			}
