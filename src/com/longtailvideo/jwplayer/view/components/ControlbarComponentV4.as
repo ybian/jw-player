@@ -370,6 +370,7 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 				hiding = setTimeout(moveTimeout, 2000);
 				_player.controls.display.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+				addEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
 			}
 		}
 		
@@ -378,6 +379,7 @@ package com.longtailvideo.jwplayer.view.components {
 				clearTimeout(hiding);
 				try {
 					_player.controls.display.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+					removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
 				} catch (e:Error) {}
 			}
 			Mouse.show();
