@@ -50,6 +50,9 @@ package com.longtailvideo.jwplayer.parsers {
 				if (i.namespace().prefix == JWParser.PREFIX) {
 					itm[i.localName()] = Strings.serialize(i.text().toString());
 				}
+				if(!itm['file'] && String(itm['link']).toLowerCase().indexOf('youtube') > -1) {
+					itm['file'] = itm['link'];
+				}
 			}
 			return itm;
 		}
