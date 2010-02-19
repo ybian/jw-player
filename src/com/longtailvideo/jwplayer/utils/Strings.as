@@ -125,7 +125,6 @@
 		public static function extension(filename:String):String {
 			if (filename.lastIndexOf(".") > 0) {
 				if (filename.lastIndexOf("?") > 0){
-					Logger.log(filename.substring(filename.lastIndexOf(".")+1, filename.lastIndexOf("?")).toLowerCase());
 					return filename.substring(filename.lastIndexOf(".")+1, filename.lastIndexOf("?")).toLowerCase();	
 				} else {
 					return filename.substring(filename.lastIndexOf(".")+1, filename.length).toLowerCase();

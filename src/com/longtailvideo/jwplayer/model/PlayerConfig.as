@@ -1,6 +1,6 @@
 package com.longtailvideo.jwplayer.model {
 	import com.longtailvideo.jwplayer.controller.RepeatOptions;
-	import com.longtailvideo.jwplayer.events.PlayerEvent;
+	import com.longtailvideo.jwplayer.player.PlayerVersion;
 	import com.longtailvideo.jwplayer.plugins.PluginConfig;
 	import com.longtailvideo.jwplayer.utils.Logger;
 	import com.longtailvideo.jwplayer.utils.Strings;
@@ -393,7 +393,7 @@ package com.longtailvideo.jwplayer.model {
 		
 		/** The player's Javascript objectID. Auto-detected, but should be set manually for Linux Javascript support. **/
 		public function get id():String { return _id; }
-		public function set id(x:String):void { PlayerEvent.id = _id = x; }
+		public function set id(x:String):void { PlayerVersion.id = _id = x; }
 		
 		/** Javascript player ready callback handlers **/		
 		public function get playerready():String { return _playerready; }

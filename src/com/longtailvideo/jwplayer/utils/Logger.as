@@ -90,8 +90,12 @@ package com.longtailvideo.jwplayer.utils {
 		public static function setConfig(config:PlayerConfig):void {
 			_config = config;
 			if (_config.debug == ARTHROPOD) {
-				CONNECTION.allowInsecureDomain('*');
-				CONNECTION.addEventListener(StatusEvent.STATUS, Logger.status);
+				try {
+					CONNECTION.allowInsecureDomain('*');
+					CONNECTION.addEventListener(StatusEvent.STATUS, Logger.status);
+				} catch(e:Error) {
+					trace(e.message);
+				}
 			}
 		}
 		

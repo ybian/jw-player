@@ -203,6 +203,7 @@ package com.longtailvideo.jwplayer.media {
 
 		/** Get metadata information from netstream class. **/
 		public function onClientData(dat:Object):void {
+			if (!dat) return;
 			if (dat.width) {
 				_video.width = dat.width;
 				_video.height = dat.height;

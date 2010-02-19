@@ -85,10 +85,6 @@ package com.longtailvideo.jwplayer.events {
 		 */
 		public static var JWPLAYER_ERROR:String = "jwplayerError";
 		
-		public static var id:String;
-		public static var client:String;
-		public static var version:String;
-		
 		public var id:String;
 		public var client:String;
 		public var version:String;
@@ -97,24 +93,14 @@ package com.longtailvideo.jwplayer.events {
 		public function PlayerEvent(type:String, msg:String=undefined) {
 			super(type, false, false);
 
-			setupStaticVars();
-			
-			this.id = PlayerEvent.id;
-			this.client = PlayerEvent.client;
-			this.version = PlayerEvent.version;
+			try {
+				this.id = PlayerVersion.id ? PlayerVersion.id : ExternalInterface.objectID;
+			} catch(e:Error) {}
+			this.client = "FLASH " + Capabilities.version;
+			this.version = PlayerVersion.version;
 			this.message = msg;
 		}
-		
-		private function setupStaticVars():void {
-			try {
-				if (!PlayerEvent.id && ExternalInterface.available) {
-					PlayerEvent.id = ExternalInterface.objectID;
-				}
-				if (!PlayerEvent.client) { PlayerEvent.client = "FLASH " + Capabilities.version; }
-				if (!PlayerEvent.version) { PlayerEvent.version = PlayerVersion.version; }
-			} catch (e:Error) {}
-		}
-		
+
 		public override function toString():String {
 			return '[PlayerEvent type="' + type + '"' 
 				+ ' id="' + id + '"'

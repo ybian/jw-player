@@ -301,7 +301,7 @@ package com.longtailvideo.jwplayer.media {
 		 * @param property The property to be retrieved.
 		 * **/
 		protected function getConfigProperty(property:String):* {
-			if (item.hasOwnProperty(_provider + "." + property)) {
+			if (item && item.hasOwnProperty(_provider + "." + property)) {
 				return item[_provider + "." + property];
 			} else {
 				return _config.pluginConfig(provider)[property];
