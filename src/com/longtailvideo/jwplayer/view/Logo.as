@@ -98,11 +98,6 @@ package com.longtailvideo.jwplayer.view {
 			if (getConfigParam('hide').toString() == "true") visible = false;
 			addChild(loader);
 			resize(_width, _height);
-			try {
-				Draw.smooth(loader.content as Bitmap);
-			} catch (e:Error) {
-				Logger.log("Could not smooth logo: " + e.message);
-			}
 			outHandler();
 		}
 		
