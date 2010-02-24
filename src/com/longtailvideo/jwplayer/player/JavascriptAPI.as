@@ -137,7 +137,7 @@ package com.longtailvideo.jwplayer.player {
 		}
 		
 		private function stripDots(obj:Object):Object {
-			var newObj:Object = {};
+			var newObj:Object = (obj is Array) ? new Array() : new Object();
 			for (var i:String in obj) {
 				if (i.indexOf(".") < 0) {
 					if (typeof(obj[i]) == "object") {

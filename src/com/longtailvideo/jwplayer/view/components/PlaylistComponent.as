@@ -73,7 +73,7 @@ package com.longtailvideo.jwplayer.view.components {
 		private var pendingResize:Rectangle;
 		private var pendingBuild:Boolean = false;
 		/** Map of images and loaders **/
-		private var imageLoaderMap:Dictionary = new Dictionary();
+		private var imageLoaderMap:Dictionary;
 		
 		public function PlaylistComponent(player:IPlayer) {
 			super(player, "playlist");
@@ -339,6 +339,7 @@ package com.longtailvideo.jwplayer.view.components {
 					list.removeChild(getButton(j));
 				}
 				buttons = new Array();
+				imageLoaderMap = new Dictionary();
 			} else {
 				if (proportion > 1) {
 					scrollEase();
@@ -495,18 +496,21 @@ package com.longtailvideo.jwplayer.view.components {
 		private function loaderHandler(evt:Event):void {
 			try {
 				var ldr:Loader = (evt.target as LoaderInfo).loader;
-				var button:Sprite = getButton(imageLoaderMap[ldr]);
-				var img:Sprite = button.getChildByName("image") as Sprite;
-				img.alpha = 1;
-				var msk:Sprite = Draw.rect(button, '0xFF0000', img.width, img.height, img.x, img.y);
-				img.mask = msk;
-				img.addChild(ldr);
-				try {
-					Draw.smooth(ldr.content as Bitmap);
-				} catch (e:Error) {
-					Logger.log('Could not smooth thumbnail image: ' + e.message);
+				if (ldr in imageLoaderMap) {
+					var button:Sprite = getButton(imageLoaderMap[ldr]);
+					delete imageLoaderMap[ldr];
+					var img:Sprite = button.getChildByName("image") as Sprite;
+					img.alpha = 1;
+					var msk:Sprite = Draw.rect(button, '0xFF0000', img.width, img.height, img.x, img.y);
+					img.mask = msk;
+					img.addChild(ldr);
+					try {
+						Draw.smooth(ldr.content as Bitmap);
+					} catch (e:Error) {
+						Logger.log('Could not smooth thumbnail image: ' + e.message);
+					}
+					Stretcher.stretch(ldr, image[0], image[1], Stretcher.FILL);
 				}
-				Stretcher.stretch(ldr, image[0], image[1], Stretcher.FILL);
 			} catch (err:Error) {
 				Logger.log('Error loading playlist image: '+err.message);
 			}
