@@ -93,7 +93,7 @@
         </flashvar>
         <flashvar type="select">
             <name>dock</name>
-            <default>false</default>
+            <default>true</default>
             <description>Set this to true to show the dock with large buttons in the top right of the player. Available since 4.5.</description>
             <select>
                 <option>false</option>

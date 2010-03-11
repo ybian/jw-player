@@ -7,11 +7,10 @@
 	import com.longtailvideo.jwplayer.player.PlayerState;
 	import com.longtailvideo.jwplayer.utils.Draw;
 	import com.longtailvideo.jwplayer.view.interfaces.IDisplayComponent;
-	import com.longtailvideo.jwplayer.view.skins.SWFSkin;
+	import com.longtailvideo.jwplayer.view.skins.PNGSkin;
 	
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -84,39 +83,48 @@
 		}
 		
 		
-		protected function setupIcon(name:String):void {
-			var back:Sprite = getSkinElement('background') as Sprite;
-			var icon:Sprite = getSkinElement(name + 'Icon') as Sprite;
-			if (back) {
-				back.x = 0;
-				back.y = 0;
-				back.addChild(icon);
-				icon.x = (back.width - icon.width) / 2;
-				icon.y = (back.height - icon.height) / 2;
-				_icons[name] = back;
-			} else {
-				_icons[name] = icon;
+		/**
+		 * Takes in an icon from a PNG skin and rearranges its children so that it's centered around 0, 0 
+		 */
+		protected function centerIcon(icon:Sprite):void {
+			if (icon && icon.getChildAt(0) is Bitmap) {
+				icon.getChildAt(0).x = -Math.round(icon.getChildAt(0).width)/2;
+				icon.getChildAt(0).y = -Math.round(icon.getChildAt(0).height)/2;
 			}
+		}
+		
+		protected function setupIcon(name:String):void {
+			var icon:Sprite = getSkinElement(name + 'Icon') as Sprite;
+			if (_player.skin is PNGSkin) centerIcon(icon);
+			
 			if (name == "buffer") {
-				try {
-					if (_icons[name] is MovieClip && (_icons[name] as MovieClip).totalFrames > 1) {
-						// Buffer is already animated; no need to rotate.
-						_rotate = false;
-					} else {
-						_bufferIcon = (_icons[name] as DisplayObjectContainer).getChildAt((_icons[name] as DisplayObjectContainer).numChildren - 1) as Sprite;
-						_bufferIcon.getChildAt(0).x = Math.round(_bufferIcon.getChildAt(0).width / -2);
-						_bufferIcon.getChildAt(0).y = Math.round(_bufferIcon.getChildAt(0).height / -2);
-						_bufferIcon.x = back.width / 2 ;
-						_bufferIcon.y = back.height - icon.height;
+				if (icon is MovieClip && (icon as MovieClip).totalFrames > 1) {
+					// Buffer is already animated; no need to rotate.
+					_rotate = false;
+				} else {
+					try {
+						_bufferIcon = icon;
 						var bufferBitmap:Bitmap = _bufferIcon.getChildByName('bitmap') as Bitmap;
 						if (bufferBitmap) {
 							Draw.smooth(bufferBitmap);
 						}
+					} catch (e:Error) {
+						_rotate = false;
 					}
-				} catch (err:Error){
-					_rotate = false;	
 				}
 			}
+			
+			var back:Sprite = getSkinElement('background') as Sprite;
+
+			if (back) {
+				if (_player.skin is PNGSkin) centerIcon(back);
+				back.addChild(icon);
+				back.x = back.y = icon.x = icon.y = 0;
+ 				_icons[name] = back;
+			} else {
+				_icons[name] = icon;
+			}
+
 		}
 		
 		
@@ -143,14 +151,8 @@
 		
 		
 		private function positionIcon():void {
-			if (_player.skin is SWFSkin) {
-				// SWF skins' display icons have centered origins
-				icon.x = background.scaleX / 2;
-				icon.y = background.scaleY / 2;
-			} else {
-				icon.x = (background.scaleX - icon.width) / 2;
-				icon.y = (background.scaleY - icon.height) / 2;
-			}
+			icon.x = background.scaleX / 2;
+			icon.y = background.scaleY / 2;
 		}
 		
 		
@@ -176,11 +178,7 @@
 				}
 				text.x = (background.scaleX - text.textWidth) / 2;
 				if (contains(icon)) {
-					if (_player.skin is SWFSkin) {
-						text.y = icon.y + (icon.height/2) + 10;
-					} else {
-						text.y = icon.y + icon.height + 10;
-					}
+					text.y = icon.y + (icon.height/2) + 10;
 				} else {
 					text.y = (background.scaleY - text.textHeight) / 2;
 				}
@@ -192,12 +190,12 @@
 		
 		protected function setDisplay(displayIcon:DisplayObject, displayText:String = null):void {
 			setIcon(displayIcon);
-			setText(displayText ? displayText : text.text);
+			setText(displayText != null ? displayText : text.text);
 		}
 		
 		
 		protected function clearDisplay():void {
-			setDisplay(null, null);
+			setDisplay(null, '');
 		}
 		
 		
@@ -206,7 +204,7 @@
 			clearRotation();
 			switch (player.state) {
 				case PlayerState.BUFFERING:
-					setDisplay(_icons['buffer']);
+					setDisplay(_icons['buffer'], '');
 					if (_rotate){
 						startRotation();
 					}
@@ -235,13 +233,12 @@
 		
 		
 		protected function updateRotation():void {
-			if (icon is DisplayObjectContainer) {
-				_bufferIcon.rotation += 15;
-			}
+			if (_bufferIcon) _bufferIcon.rotation += 15;
 		}
 		
 		
 		protected function clearRotation():void {
+			if (_bufferIcon) _bufferIcon.rotation = 0;
 			if (_rotateInterval) {
 				clearInterval(_rotateInterval);
 				_rotateInterval = undefined;
