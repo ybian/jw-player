@@ -43,7 +43,11 @@ package com.longtailvideo.jwplayer.view {
 
 
 		private function addLayout(plugin:String):void {
-			var cfg:PluginConfig = _player.config.pluginConfig(plugin); 
+			var cfg:PluginConfig = _player.config.pluginConfig(plugin);
+			if (plugin == "controlbar") {
+				toLayout.push(cfg);
+				return;
+			}
 			if (!_player.fullscreen && testPosition(cfg['position']) && Number(cfg['size']) > 0 ) {
 				toLayout.push(cfg);
 			} else {

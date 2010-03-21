@@ -144,7 +144,7 @@ package com.longtailvideo.jwplayer.view.components {
 
 		
 		private function startFader():void {
-			if (controlbarConfig['position'] == 'over' || (_player.fullscreen && controlbarConfig['position'] != 'none')) {
+			if (controlbarConfig['position'] == 'over') {
 				if (!isNaN(hiding)) {
 					clearTimeout(hiding);
 				}
@@ -513,7 +513,7 @@ package com.longtailvideo.jwplayer.view.components {
 			
 			_width = width;
 
-			if (getConfigParam('position') == 'over' || _player.fullscreen == true) {
+			if (getConfigParam('position') == 'over') {
 				x = getConfigParam('margin');
 				y = height - background.height - getConfigParam('margin');
 				_width = width - 2 * getConfigParam('margin');
